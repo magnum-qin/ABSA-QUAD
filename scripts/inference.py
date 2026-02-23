@@ -34,7 +34,8 @@ def load_model(checkpoint_path: str, config: dict, device: str) -> DimASQPModel:
         use_rethink=config['model']['rethink']['enabled'],
         num_rethink_iterations=config['model']['rethink']['num_iterations'],
         va_min=config['model']['va_min'],
-        va_max=config['model']['va_max']
+        va_max=config['model']['va_max'],
+        loss_weights=config['training'].get('loss_weights')
     )
     
     checkpoint = torch.load(checkpoint_path, map_location=device)

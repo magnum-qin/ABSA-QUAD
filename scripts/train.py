@@ -7,6 +7,7 @@ import os
 import sys
 import yaml
 import json
+import heapq
 import argparse
 import logging
 from datetime import datetime
@@ -144,22 +145,21 @@ class Trainer:
         # Scheduler
         num_training_steps = len(train_dataloader) * config['training']['num_epochs']
         num_warmup_steps = int(num_training_steps * config['training']['warmup_ratio'])
-        
+        self.num_warmup_steps = num_warmup_steps  # stored for FGM warmup guard
+
         self.scheduler = get_linear_schedule_with_warmup(
             self.optimizer,
             num_warmup_steps=num_warmup_steps,
             num_training_steps=num_training_steps
         )
-        
-        # Loss weights
-        self.loss_weights = config['training']['loss_weights']
-        
+
         # FGM adversarial training
         fgm_config = config['training'].get('fgm', {})
         self.use_fgm = fgm_config.get('enabled', False)
         if self.use_fgm:
             self.fgm = FGM(model, epsilon=fgm_config.get('epsilon', 0.5))
-            logger.info(f"FGM adversarial training enabled (epsilon={self.fgm.epsilon})")
+            logger.info(f"FGM adversarial training enabled (epsilon={self.fgm.epsilon}), "
+                        f"warmup guard: first {num_warmup_steps} steps disabled")
 
         # EMA (Exponential Moving Average)
         ema_config = config['training'].get('ema', {})
@@ -172,10 +172,12 @@ class Trainer:
         self.best_metric = 0.0
         self.patience_counter = 0
         self.global_step = 0
-        
+
         # Checkpointing
         self.save_dir = Path(config['training']['save_dir'])
         self.save_dir.mkdir(parents=True, exist_ok=True)
+        self.save_top_k = config['training'].get('save_top_k', 3)
+        self.top_k_checkpoints = []  # min-heap: (cF1, epoch, path)
     
     def train_epoch(self, epoch: int) -> dict:
         """Train for one epoch"""
@@ -220,8 +222,8 @@ class Trainer:
             self.optimizer.zero_grad()
             loss.backward()
 
-            # FGM adversarial training
-            if self.use_fgm:
+            # FGM adversarial training (disabled during warmup to avoid early instability)
+            if self.use_fgm and self.global_step >= self.num_warmup_steps:
                 self.fgm.attack()
                 adv_outputs = self.model(
                     input_ids=input_ids,
@@ -350,14 +352,30 @@ class Trainer:
         # Save EMA state
         if self.use_ema:
             checkpoint['ema_state_dict'] = self.ema.state_dict()
-        
+
         # Save latest
         torch.save(checkpoint, self.save_dir / 'checkpoint_latest.pt')
-        
+
         # Save best
         if is_best:
             torch.save(checkpoint, self.save_dir / 'checkpoint_best.pt')
             logger.info(f"✅ Saved new best model with cF1: {metrics['continuous_f1']:.4f}")
+
+        # Save top-k: keep the best save_top_k checkpoints by cF1
+        current_cf1 = metrics.get('continuous_f1', 0.0)
+        if current_cf1 > 0:
+            epoch_path = self.save_dir / f'checkpoint_epoch{epoch:03d}.pt'
+            if len(self.top_k_checkpoints) < self.save_top_k:
+                torch.save(checkpoint, epoch_path)
+                heapq.heappush(self.top_k_checkpoints, (current_cf1, epoch, str(epoch_path)))
+                logger.info(f"Top-{self.save_top_k} saved: epoch {epoch}, cF1={current_cf1:.4f}")
+            elif current_cf1 > self.top_k_checkpoints[0][0]:
+                _, old_epoch, old_path = heapq.heappop(self.top_k_checkpoints)
+                Path(old_path).unlink(missing_ok=True)
+                torch.save(checkpoint, epoch_path)
+                heapq.heappush(self.top_k_checkpoints, (current_cf1, epoch, str(epoch_path)))
+                logger.info(f"Top-{self.save_top_k} updated: epoch {epoch} "
+                            f"(cF1={current_cf1:.4f}) replaced epoch {old_epoch}")
     
     def train(self):
         """Main training loop"""
@@ -482,7 +500,8 @@ def main():
         use_rethink=config['model']['rethink']['enabled'],
         num_rethink_iterations=config['model']['rethink']['num_iterations'],
         va_min=config['model']['va_min'],
-        va_max=config['model']['va_max']
+        va_max=config['model']['va_max'],
+        loss_weights=config['training']['loss_weights']
     )
     
     # Count parameters

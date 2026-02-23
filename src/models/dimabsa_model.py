@@ -198,13 +198,19 @@ class DimASQPModel(nn.Module):
         use_rethink: bool = True,
         num_rethink_iterations: int = 1,
         va_min: float = 1.0,
-        va_max: float = 9.0
+        va_max: float = 9.0,
+        loss_weights: dict = None
     ):
         super().__init__()
-        
+
         self.use_rethink = use_rethink
+        assert num_rethink_iterations >= 1, "num_rethink_iterations must be >= 1"
         self.num_rethink_iterations = num_rethink_iterations
         self.num_bio_labels = num_bio_labels
+        self.loss_weights = loss_weights or {
+            'span': 1.0, 'pair': 1.0, 'entity': 1.0,
+            'attribute': 1.0, 'va': 1.0, 'consistency': 0.5
+        }
         self.num_entity_labels = num_entity_labels
         self.num_attribute_labels = num_attribute_labels
         
@@ -387,38 +393,61 @@ class DimASQPModel(nn.Module):
             "spans": spans
         }
         
-        # ================ Stage 2: Feature-level Rethink ================
+        # ================ Stage 2: Feature-level Rethink (num_rethink_iterations loops) ================
         if self.use_rethink:
-            # Apply rethink module
-            refined_hidden, refined_pair_repr = self.rethink_module(
-                hidden_states=hidden_states,
-                attention_mask=attention_mask,
-                bio_probs=bio_probs_s1,
-                pair_repr=pair_repr_s1,
-                pair_valid_probs=pair_probs_s1,
-                entity_probs=entity_probs_s1,
-                attribute_probs=attr_probs_s1,
-                valence=valence_s1,
-                arousal=arousal_s1
-            )
-            
-            # Stage 2 predictions
-            bio_logits_s2 = self.span_extractor_stage2(refined_hidden)
-            
-            # Re-extract spans with refined features
-            spans_s2 = self.span_extractor.extract_spans(bio_logits_s2, attention_mask)
-            aspect_repr_s2, opinion_repr_s2, pair_mask_s2 = self._get_span_representations(
-                refined_hidden, spans_s2
-            )
-            
-            pair_logits_s2, entity_logits_s2, attr_logits_s2 = self.pair_classifier_stage2(
-                aspect_repr_s2, opinion_repr_s2
-            )
-            
-            pair_repr_s2 = torch.cat([aspect_repr_s2, opinion_repr_s2], dim=-1)
-            valence_s2, arousal_s2 = self.va_regressor_stage2(pair_repr_s2)
-            
-            # Update outputs with Stage 2 predictions
+            # Initialize iterative state from Stage 1 outputs
+            cur_hidden = hidden_states
+            cur_bio_probs = bio_probs_s1
+            cur_pair_repr = pair_repr_s1
+            cur_pair_valid_probs = pair_probs_s1
+            cur_entity_probs = entity_probs_s1
+            cur_attr_probs = attr_probs_s1
+            cur_valence = valence_s1
+            cur_arousal = arousal_s1
+
+            for _ in range(self.num_rethink_iterations):
+                refined_hidden, _ = self.rethink_module(
+                    hidden_states=cur_hidden,
+                    attention_mask=attention_mask,
+                    bio_probs=cur_bio_probs,
+                    pair_repr=cur_pair_repr,
+                    pair_valid_probs=cur_pair_valid_probs,
+                    entity_probs=cur_entity_probs,
+                    attribute_probs=cur_attr_probs,
+                    valence=cur_valence,
+                    arousal=cur_arousal
+                )
+
+                bio_logits_s2 = self.span_extractor_stage2(refined_hidden)
+                bio_probs_s2 = F.softmax(bio_logits_s2, dim=-1)
+
+                # Re-extract spans with refined features (fix: use stage2 extractor)
+                spans_s2 = self.span_extractor_stage2.extract_spans(bio_logits_s2, attention_mask)
+                aspect_repr_s2, opinion_repr_s2, pair_mask_s2 = self._get_span_representations(
+                    refined_hidden, spans_s2
+                )
+
+                pair_logits_s2, entity_logits_s2, attr_logits_s2 = self.pair_classifier_stage2(
+                    aspect_repr_s2, opinion_repr_s2
+                )
+                pair_probs_s2 = F.softmax(pair_logits_s2, dim=-1)
+                entity_probs_s2 = F.softmax(entity_logits_s2, dim=-1)
+                attr_probs_s2 = F.softmax(attr_logits_s2, dim=-1)
+
+                pair_repr_s2 = torch.cat([aspect_repr_s2, opinion_repr_s2], dim=-1)
+                valence_s2, arousal_s2 = self.va_regressor_stage2(pair_repr_s2)
+
+                # Feed this iteration's outputs into the next
+                cur_hidden = refined_hidden
+                cur_bio_probs = bio_probs_s2
+                cur_pair_repr = pair_repr_s2
+                cur_pair_valid_probs = pair_probs_s2
+                cur_entity_probs = entity_probs_s2
+                cur_attr_probs = attr_probs_s2
+                cur_valence = valence_s2
+                cur_arousal = arousal_s2
+
+            # Update outputs with final iteration's predictions
             outputs.update({
                 "bio_logits_s1": bio_logits_s1,
                 "bio_logits": bio_logits_s2,
@@ -577,12 +606,26 @@ class DimASQPModel(nn.Module):
 
         num_matched_pairs = 0
 
+        num_pair_samples = 0  # count samples that contribute to pair_loss
+
         for b, gold_pairs in enumerate(pair_labels):
+            num_pred_pairs = outputs["pair_logits"].size(1)
+
+            # Defect 1 fix: even when gold_pairs is empty, train validity head
+            # to output "all invalid" for predicted pairs (negative signal)
             if len(gold_pairs) == 0:
+                valid_indices = (outputs["pair_mask"][b] > 0.5).nonzero(as_tuple=True)[0]
+                if len(valid_indices) > 0:
+                    pair_logits_valid = outputs["pair_logits"][b, valid_indices]
+                    # All targets are 0 (invalid) since no gold pairs exist
+                    pair_targets_b = torch.zeros(len(valid_indices), dtype=torch.long, device=device)
+                    pair_loss += F.cross_entropy(
+                        pair_logits_valid, pair_targets_b, label_smoothing=0.1
+                    )
+                    num_pair_samples += 1
                 continue
 
             pred_spans = outputs["spans"][b]
-            num_pred_pairs = outputs["pair_logits"].size(1)
 
             if num_pred_pairs == 0:
                 continue
@@ -603,6 +646,9 @@ class DimASQPModel(nn.Module):
             # Hungarian matching
             if cost_matrix.size > 0 and len(pred_pair_info) > 0:
                 row_indices, col_indices = linear_sum_assignment(cost_matrix)
+
+                # Defect 4 fix: track actually used pairs (not filtered by bounds)
+                actually_matched_pred_set = set()
 
                 # Compute losses for matched pairs
                 for g_idx, p_idx in zip(row_indices, col_indices):
@@ -637,22 +683,44 @@ class DimASQPModel(nn.Module):
                     va_loss += F.huber_loss(arousal_b[p_idx:p_idx+1], a_target)
 
                     num_matched_pairs += 1
+                    actually_matched_pred_set.add(int(p_idx))
 
-        # Normalize losses
+                # Pair validity loss: only pairs that passed bounds check are marked valid
+                valid_indices = (outputs["pair_mask"][b] > 0.5).nonzero(as_tuple=True)[0]
+                if len(valid_indices) > 0:
+                    pair_logits_valid = outputs["pair_logits"][b, valid_indices]
+                    pair_targets_b = torch.zeros(len(valid_indices), dtype=torch.long, device=device)
+                    for local_idx, global_idx in enumerate(valid_indices.tolist()):
+                        if global_idx in actually_matched_pred_set:
+                            pair_targets_b[local_idx] = 1
+                    pair_loss += F.cross_entropy(
+                        pair_logits_valid, pair_targets_b, label_smoothing=0.1
+                    )
+                    num_pair_samples += 1
+
+        # Normalize losses (Defect 2 fix: normalize pair_loss by actual contributing samples)
         num_matched_pairs = max(num_matched_pairs, 1)
         entity_loss = entity_loss / num_matched_pairs
         attr_loss = attr_loss / num_matched_pairs
         va_loss = va_loss / num_matched_pairs
+        pair_loss = pair_loss / max(num_pair_samples, 1)
 
-        # Total loss
-        total_loss = bio_loss + entity_loss + attr_loss + va_loss
+        # Total loss with configurable weights (Bug fix: apply loss_weights from config)
+        lw = self.loss_weights
+        total_loss = (
+            lw['span']      * bio_loss    +
+            lw['pair']      * pair_loss   +
+            lw['entity']    * entity_loss +
+            lw['attribute'] * attr_loss   +
+            lw['va']        * va_loss
+        )
 
         # Consistency loss for Rethink (detach s1 to stabilize)
         if self.use_rethink and "bio_logits_s1" in outputs:
             active_logits_s1 = outputs["bio_logits_s1"].view(-1, self.num_bio_labels)[active_mask]
             bio_loss_s1 = F.cross_entropy(active_logits_s1, active_labels)
             consistency_loss = self.consistency_loss(bio_loss_s1.detach(), bio_loss)
-            total_loss = total_loss + 0.1 * consistency_loss
+            total_loss = total_loss + lw['consistency'] * consistency_loss
         else:
             consistency_loss = torch.tensor(0.0, device=device)
 
