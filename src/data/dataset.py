@@ -305,14 +305,18 @@ def create_dataloader(
     batch_size: int = 16,
     max_length: int = 256,
     shuffle: bool = True,
-    num_workers: int = 0
+    num_workers: int = 0,
+    entity_labels: list = None,
+    attribute_labels: list = None
 ) -> DataLoader:
     """Create a DataLoader for DimASQP"""
     import platform
     dataset = DimASQPDataset(
         data_path=data_path,
         tokenizer=tokenizer,
-        max_length=max_length
+        max_length=max_length,
+        entity_labels=entity_labels,
+        attribute_labels=attribute_labels
     )
 
     use_pin_memory = torch.cuda.is_available()

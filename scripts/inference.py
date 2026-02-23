@@ -21,9 +21,9 @@ from src.data.dataset import DimASQPDataset, collate_fn
 from torch.utils.data import DataLoader
 
 
-def load_model(checkpoint_path: str, config: dict, device: str) -> DimASQPModel:
-    """Load trained model from checkpoint"""
-    model = DimASQPModel(
+def _create_model(config: dict) -> DimASQPModel:
+    """Create a DimASQPModel from config (without loading weights)."""
+    return DimASQPModel(
         encoder_name=config['model']['encoder_name'],
         num_entity_labels=config['model']['num_entity_labels'],
         num_attribute_labels=config['model']['num_attribute_labels'],
@@ -35,14 +35,88 @@ def load_model(checkpoint_path: str, config: dict, device: str) -> DimASQPModel:
         num_rethink_iterations=config['model']['rethink']['num_iterations'],
         va_min=config['model']['va_min'],
         va_max=config['model']['va_max'],
-        loss_weights=config['training'].get('loss_weights')
+        loss_weights=config['training'].get('loss_weights'),
+        entity_labels=config['data'].get('entity_labels'),
+        attribute_labels=config['data'].get('attribute_labels')
     )
-    
+
+
+def _apply_ema_weights(model: DimASQPModel, checkpoint: dict) -> bool:
+    """Apply EMA shadow weights to model if available. Returns True if applied."""
+    ema_state = checkpoint.get('ema_state_dict')
+    if ema_state and 'shadow' in ema_state:
+        shadow = ema_state['shadow']
+        for name, param in model.named_parameters():
+            if name in shadow:
+                param.data.copy_(shadow[name])
+        return True
+    return False
+
+
+def load_model(checkpoint_path: str, config: dict, device: str) -> DimASQPModel:
+    """Load trained model from checkpoint, preferring EMA shadow weights."""
+    model = _create_model(config)
     checkpoint = torch.load(checkpoint_path, map_location=device)
-    model.load_state_dict(checkpoint['model_state_dict'])
+
+    if _apply_ema_weights(model, checkpoint):
+        print("  Loaded EMA shadow weights (used during validation)")
+    else:
+        model.load_state_dict(checkpoint['model_state_dict'])
+        print("  Loaded raw model weights (no EMA found)")
+
     model.to(device)
     model.eval()
-    
+    return model
+
+
+def load_ensemble_model(checkpoint_dir: str, config: dict, device: str) -> DimASQPModel:
+    """Load multiple checkpoints and average their weights (Weight Averaging ensemble).
+
+    Prefers EMA shadow weights when available. Only averages top-k epoch checkpoints,
+    skipping checkpoint_best.pt and checkpoint_latest.pt to avoid double-counting.
+    """
+    ckpt_dir = Path(checkpoint_dir)
+    # Only use epoch checkpoints (e.g. checkpoint_epoch023.pt), skip best/latest
+    ckpt_paths = sorted(ckpt_dir.glob('checkpoint_epoch*.pt'))
+    if not ckpt_paths:
+        raise FileNotFoundError(f"No epoch checkpoints found in {checkpoint_dir}")
+
+    print(f"  Ensemble: averaging {len(ckpt_paths)} checkpoints:")
+    for p in ckpt_paths:
+        print(f"    - {p.name}")
+
+    # Accumulate state dicts
+    avg_state = None
+    n = 0
+    for path in ckpt_paths:
+        ckpt = torch.load(path, map_location=device)
+        # Prefer EMA shadow weights
+        ema_state = ckpt.get('ema_state_dict')
+        if ema_state and 'shadow' in ema_state:
+            state = ema_state['shadow']
+            source = "EMA"
+        else:
+            state = ckpt['model_state_dict']
+            source = "raw"
+        print(f"    {path.name}: using {source} weights")
+
+        if avg_state is None:
+            avg_state = {k: v.clone().float() for k, v in state.items()}
+        else:
+            for k in avg_state:
+                if k in state:
+                    avg_state[k] += state[k].float()
+        n += 1
+
+    # Average
+    for k in avg_state:
+        avg_state[k] /= n
+
+    model = _create_model(config)
+    model.load_state_dict(avg_state, strict=False)
+    model.to(device)
+    model.eval()
+    print(f"  Ensemble model loaded ({n} checkpoints averaged)")
     return model
 
 
@@ -90,8 +164,12 @@ def save_predictions(predictions: list, output_path: str):
 
 def main():
     parser = argparse.ArgumentParser(description='Generate DimASQP Predictions')
-    parser.add_argument('--checkpoint', type=str, required=True,
-                       help='Path to model checkpoint')
+    parser.add_argument('--checkpoint', type=str, default=None,
+                       help='Path to single model checkpoint')
+    parser.add_argument('--ensemble', action='store_true',
+                       help='Use weight-averaging ensemble of top-k checkpoints')
+    parser.add_argument('--checkpoint_dir', type=str, default=None,
+                       help='Directory containing top-k checkpoints (for --ensemble)')
     parser.add_argument('--config', type=str, default='configs/config.yaml',
                        help='Path to config file')
     parser.add_argument('--test_file', type=str, required=True,
@@ -103,22 +181,31 @@ def main():
     parser.add_argument('--device', type=str, default=None,
                        help='Device to use')
     args = parser.parse_args()
-    
+
+    if not args.ensemble and not args.checkpoint:
+        parser.error("--checkpoint is required when not using --ensemble")
+    if args.ensemble and not args.checkpoint_dir:
+        parser.error("--checkpoint_dir is required when using --ensemble")
+
     # Load config
     with open(args.config, 'r') as f:
         config = yaml.safe_load(f)
-    
+
     # Set device
     device = args.device or config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
-    
+
     # Load tokenizer
     print(f"Loading tokenizer: {config['model']['encoder_name']}")
     tokenizer = AutoTokenizer.from_pretrained(config['model']['encoder_name'])
-    
+
     # Load model
-    print(f"Loading model from: {args.checkpoint}")
-    model = load_model(args.checkpoint, config, device)
+    if args.ensemble:
+        print(f"Loading ensemble from: {args.checkpoint_dir}")
+        model = load_ensemble_model(args.checkpoint_dir, config, device)
+    else:
+        print(f"Loading model from: {args.checkpoint}")
+        model = load_model(args.checkpoint, config, device)
     
     # Create test dataset
     print(f"Loading test data from: {args.test_file}")

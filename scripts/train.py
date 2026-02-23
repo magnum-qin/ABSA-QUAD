@@ -466,6 +466,10 @@ def main():
     logger.info(f"Loading tokenizer: {config['model']['encoder_name']}")
     tokenizer = AutoTokenizer.from_pretrained(config['model']['encoder_name'])
     
+    # Read label lists from config (with defaults for backward compatibility)
+    entity_labels = config['data'].get('entity_labels')
+    attribute_labels = config['data'].get('attribute_labels')
+
     # Create datasets
     logger.info("Loading datasets...")
     train_dataloader = create_dataloader(
@@ -473,20 +477,24 @@ def main():
         tokenizer=tokenizer,
         batch_size=config['training']['batch_size'],
         max_length=config['data']['max_seq_length'],
-        shuffle=True
+        shuffle=True,
+        entity_labels=entity_labels,
+        attribute_labels=attribute_labels
     )
-    
+
     val_dataloader = create_dataloader(
         data_path=config['data']['dev_file'],
         tokenizer=tokenizer,
         batch_size=config['training']['batch_size'],
         max_length=config['data']['max_seq_length'],
-        shuffle=False
+        shuffle=False,
+        entity_labels=entity_labels,
+        attribute_labels=attribute_labels
     )
-    
+
     logger.info(f"Train samples: {len(train_dataloader.dataset)}")
     logger.info(f"Val samples: {len(val_dataloader.dataset)}")
-    
+
     # Create model
     logger.info("Creating model...")
     model = DimASQPModel(
@@ -501,7 +509,9 @@ def main():
         num_rethink_iterations=config['model']['rethink']['num_iterations'],
         va_min=config['model']['va_min'],
         va_max=config['model']['va_max'],
-        loss_weights=config['training']['loss_weights']
+        loss_weights=config['training']['loss_weights'],
+        entity_labels=entity_labels,
+        attribute_labels=attribute_labels
     )
     
     # Count parameters

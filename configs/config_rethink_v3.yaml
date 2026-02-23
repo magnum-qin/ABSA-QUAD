@@ -66,9 +66,9 @@ training:
     enabled: true
     decay: 0.999
 
-  # Loss weights
+  # Loss weights (span=2.0 from sweep: +4.25% cF1)
   loss_weights:
-    span: 1.0
+    span: 2.0
     pair: 1.0
     entity: 1.0
     attribute: 1.0

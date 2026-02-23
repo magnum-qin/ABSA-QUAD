@@ -199,7 +199,9 @@ class DimASQPModel(nn.Module):
         num_rethink_iterations: int = 1,
         va_min: float = 1.0,
         va_max: float = 9.0,
-        loss_weights: dict = None
+        loss_weights: dict = None,
+        entity_labels: list = None,
+        attribute_labels: list = None
     ):
         super().__init__()
 
@@ -213,6 +215,14 @@ class DimASQPModel(nn.Module):
         }
         self.num_entity_labels = num_entity_labels
         self.num_attribute_labels = num_attribute_labels
+        self.entity_labels = entity_labels or [
+            "RESTAURANT", "FOOD", "DRINKS", "AMBIENCE",
+            "SERVICE", "LOCATION", "NULL"
+        ]
+        self.attribute_labels = attribute_labels or [
+            "GENERAL", "PRICES", "QUALITY", "STYLE_OPTIONS",
+            "MISCELLANEOUS", "NULL"
+        ]
         
         # Encoder (force float32 to avoid fp16 gradient overflow)
         self.encoder = AutoModel.from_pretrained(encoder_name, dtype=torch.float32)
@@ -772,10 +782,8 @@ class DimASQPModel(nn.Module):
                 return_loss=False
             )
 
-        entity_labels = ["RESTAURANT", "FOOD", "DRINKS", "AMBIENCE",
-                        "SERVICE", "LOCATION", "NULL"]
-        attr_labels = ["GENERAL", "PRICES", "QUALITY", "STYLE_OPTIONS",
-                      "MISCELLANEOUS", "NULL"]
+        entity_labels = self.entity_labels
+        attr_labels = self.attribute_labels
 
         predictions = []
 
