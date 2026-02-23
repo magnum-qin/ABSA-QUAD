@@ -64,7 +64,8 @@ def generate_predictions(
             predictions = model.predict(
                 input_ids=input_ids,
                 attention_mask=attention_mask,
-                texts=texts
+                texts=texts,
+                offset_mapping=batch['offset_mapping']
             )
             
             # Format for submission

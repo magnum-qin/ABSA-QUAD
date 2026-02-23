@@ -1,3 +1,44 @@
 /.claude
 /.venv
-/training.log
+
+# 训练日志
+training.log
+*.log
+
+# 模型权重 (体积太大，不上传)
+*.pt
+*.pth
+*.bin
+*.ckpt
+checkpoints/
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# 数据集 (通常不上传，或单独管理)
+/data/
+
+# Jupyter Notebook 缓存
+.ipynb_checkpoints/
+
+# 环境变量
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.temp

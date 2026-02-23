@@ -38,6 +38,79 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+class EMA:
+    """Exponential Moving Average for model parameters"""
+
+    def __init__(self, model, decay=0.999):
+        self.model = model
+        self.decay = decay
+        self.shadow = {}
+        self.backup = {}
+        self._register()
+
+    def _register(self):
+        """Register model parameters for EMA"""
+        for name, param in self.model.named_parameters():
+            if param.requires_grad:
+                self.shadow[name] = param.data.clone()
+
+    def update(self):
+        """Update EMA parameters"""
+        for name, param in self.model.named_parameters():
+            if param.requires_grad:
+                new_average = (1.0 - self.decay) * param.data + self.decay * self.shadow[name]
+                self.shadow[name] = new_average.clone()
+
+    def apply_shadow(self):
+        """Apply EMA parameters to model (for evaluation)"""
+        for name, param in self.model.named_parameters():
+            if param.requires_grad:
+                self.backup[name] = param.data.clone()
+                param.data = self.shadow[name]
+
+    def restore(self):
+        """Restore original parameters (after evaluation)"""
+        for name, param in self.model.named_parameters():
+            if param.requires_grad:
+                param.data = self.backup[name]
+        self.backup = {}
+
+    def state_dict(self):
+        """Return EMA state for checkpointing"""
+        return {'shadow': self.shadow, 'decay': self.decay}
+
+    def load_state_dict(self, state_dict):
+        """Load EMA state from checkpoint"""
+        self.shadow = state_dict['shadow']
+        self.decay = state_dict['decay']
+
+
+class FGM:
+    """Fast Gradient Method for adversarial training"""
+
+    def __init__(self, model, epsilon=0.5, emb_name='word_embeddings'):
+        self.model = model
+        self.epsilon = epsilon
+        self.emb_name = emb_name
+        self.backup = {}
+
+    def attack(self):
+        for name, param in self.model.named_parameters():
+            if param.requires_grad and self.emb_name in name:
+                self.backup[name] = param.data.clone()
+                norm = torch.norm(param.grad)
+                if norm != 0 and not torch.isnan(norm):
+                    r_at = self.epsilon * param.grad / norm
+                    param.data.add_(r_at)
+
+    def restore(self):
+        for name, param in self.model.named_parameters():
+            if param.requires_grad and self.emb_name in name:
+                assert name in self.backup
+                param.data = self.backup[name]
+        self.backup = {}
+
+
 class Trainer:
     """
     Trainer for DimASQP Model
@@ -81,6 +154,20 @@ class Trainer:
         # Loss weights
         self.loss_weights = config['training']['loss_weights']
         
+        # FGM adversarial training
+        fgm_config = config['training'].get('fgm', {})
+        self.use_fgm = fgm_config.get('enabled', False)
+        if self.use_fgm:
+            self.fgm = FGM(model, epsilon=fgm_config.get('epsilon', 0.5))
+            logger.info(f"FGM adversarial training enabled (epsilon={self.fgm.epsilon})")
+
+        # EMA (Exponential Moving Average)
+        ema_config = config['training'].get('ema', {})
+        self.use_ema = ema_config.get('enabled', True)  # Default enabled
+        if self.use_ema:
+            self.ema = EMA(model, decay=ema_config.get('decay', 0.999))
+            logger.info(f"EMA enabled (decay={self.ema.decay})")
+
         # Training state
         self.best_metric = 0.0
         self.patience_counter = 0
@@ -128,20 +215,38 @@ class Trainer:
             
             # Weighted loss
             loss = outputs['loss']
-            
+
             # Backward pass
             self.optimizer.zero_grad()
             loss.backward()
-            
+
+            # FGM adversarial training
+            if self.use_fgm:
+                self.fgm.attack()
+                adv_outputs = self.model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    bio_labels=bio_labels,
+                    pair_labels=pair_labels,
+                    return_loss=True
+                )
+                adv_loss = adv_outputs['loss']
+                adv_loss.backward()
+                self.fgm.restore()
+
             # Gradient clipping
             torch.nn.utils.clip_grad_norm_(
                 self.model.parameters(),
                 self.config['training']['max_grad_norm']
             )
-            
+
             self.optimizer.step()
             self.scheduler.step()
-            
+
+            # Update EMA
+            if self.use_ema:
+                self.ema.update()
+
             # Update metrics
             total_loss += loss.item()
             for key in loss_components:
@@ -169,12 +274,16 @@ class Trainer:
     
     @torch.no_grad()
     def evaluate(self) -> dict:
-        """Evaluate on validation set"""
+        """Evaluate on validation set using EMA parameters"""
         self.model.eval()
-        
+
+        # Apply EMA parameters for evaluation
+        if self.use_ema:
+            self.ema.apply_shadow()
+
         evaluator = DimASQPEvaluator()
         total_loss = 0.0
-        
+
         for batch in tqdm(self.val_dataloader, desc="Evaluating"):
             input_ids = batch['input_ids'].to(self.device)
             attention_mask = batch['attention_mask'].to(self.device)
@@ -198,7 +307,8 @@ class Trainer:
             predictions = self.model.predict(
                 input_ids=input_ids,
                 attention_mask=attention_mask,
-                texts=texts
+                texts=texts,
+                offset_mapping=batch['offset_mapping']
             )
             
             # Convert gold labels to expected format
@@ -219,7 +329,11 @@ class Trainer:
         # Compute metrics
         metrics = evaluator.compute_all_metrics()
         metrics['val_loss'] = total_loss / len(self.val_dataloader)
-        
+
+        # Restore original parameters after evaluation
+        if self.use_ema:
+            self.ema.restore()
+
         return metrics
     
     def save_checkpoint(self, epoch: int, metrics: dict, is_best: bool = False):
@@ -232,6 +346,10 @@ class Trainer:
             'metrics': metrics,
             'config': self.config
         }
+
+        # Save EMA state
+        if self.use_ema:
+            checkpoint['ema_state_dict'] = self.ema.state_dict()
         
         # Save latest
         torch.save(checkpoint, self.save_dir / 'checkpoint_latest.pt')
@@ -262,14 +380,24 @@ class Trainer:
             logger.info(f"Val Exact F1: {val_metrics['exact_f1']:.4f}")
             logger.info(f"Val VA RMSE: {val_metrics['va_rmse']:.4f}")
             
-            # Check for improvement
-            is_best = val_metrics['continuous_f1'] > self.best_metric
-            if is_best:
-                self.best_metric = val_metrics['continuous_f1']
+            # Check for improvement: use cF1 as primary, val_loss as fallback
+            current_cf1 = val_metrics['continuous_f1']
+            current_loss = val_metrics['val_loss']
+            is_best = False
+            if current_cf1 > self.best_metric:
+                self.best_metric = current_cf1
                 self.patience_counter = 0
+                is_best = True
+            elif current_cf1 == 0 and (not hasattr(self, 'best_val_loss') or current_loss < self.best_val_loss):
+                # When cF1 is still 0, use val_loss to track improvement
+                self.patience_counter = 0
+                is_best = True
             else:
                 self.patience_counter += 1
-            
+            # Always track best val_loss
+            if not hasattr(self, 'best_val_loss') or current_loss < self.best_val_loss:
+                self.best_val_loss = current_loss
+
             # Save checkpoint
             self.save_checkpoint(epoch, val_metrics, is_best)
             
