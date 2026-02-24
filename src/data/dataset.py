@@ -181,24 +181,34 @@ class DimASQPDataset(Dataset):
         return -1, -1
     
     def _create_bio_labels(self, seq_len: int, spans: List[Tuple[int, int, str]]) -> List[int]:
-        """Create BIO labels for aspect and opinion spans"""
+        """Create BIO labels for aspect and opinion spans.
+
+        When both aspect and opinion are NULL they share the CLS anchor at
+        position 0.  Process opinions first so that aspect (B-ASP) overwrites
+        if both map to position 0, keeping CLS as the unambiguous NULL-aspect
+        signal.
+        """
         labels = [self.bio2id["O"]] * seq_len
-        
-        for start, end, span_type in spans:
-            if start < 0 or end < 0 or start >= seq_len or end >= seq_len:
-                continue
-            
-            if span_type == "aspect":
-                labels[start] = self.bio2id["B-ASP"]
-                for i in range(start + 1, end + 1):
-                    if i < seq_len:
-                        labels[i] = self.bio2id["I-ASP"]
-            elif span_type == "opinion":
-                labels[start] = self.bio2id["B-OPN"]
-                for i in range(start + 1, end + 1):
-                    if i < seq_len:
-                        labels[i] = self.bio2id["I-OPN"]
-        
+
+        # Process opinions before aspects so B-ASP wins at position 0
+        for span_type_order in ("opinion", "aspect"):
+            for start, end, span_type in spans:
+                if span_type != span_type_order:
+                    continue
+                if start < 0 or end < 0 or start >= seq_len or end >= seq_len:
+                    continue
+
+                if span_type == "aspect":
+                    labels[start] = self.bio2id["B-ASP"]
+                    for i in range(start + 1, end + 1):
+                        if i < seq_len:
+                            labels[i] = self.bio2id["I-ASP"]
+                else:
+                    labels[start] = self.bio2id["B-OPN"]
+                    for i in range(start + 1, end + 1):
+                        if i < seq_len:
+                            labels[i] = self.bio2id["I-OPN"]
+
         return labels
     
     def __len__(self):
@@ -234,12 +244,22 @@ class DimASQPDataset(Dataset):
         pair_labels = []  # (aspect_idx, opinion_idx, entity, attribute, valence, arousal)
 
         for quad in quadruplets:
-            aspect_pos = self._find_span_positions(
-                text, quad["aspect"], encoding, used_aspect_positions
-            )
-            opinion_pos = self._find_span_positions(
-                text, quad["opinion"], encoding, used_opinion_positions
-            )
+            # NULL aspect/opinion use CLS token (position 0) as a fixed anchor.
+            # CLS always has offset_mapping (0, 0), so _tokens_to_text returns
+            # "NULL" for any span at (0, 0).  When both are NULL they share the
+            # same anchor; _create_bio_labels ensures B-ASP wins at position 0.
+            if quad["aspect"].upper() == "NULL":
+                aspect_pos = (0, 0)
+            else:
+                aspect_pos = self._find_span_positions(
+                    text, quad["aspect"], encoding, used_aspect_positions
+                )
+            if quad["opinion"].upper() == "NULL":
+                opinion_pos = (0, 0)
+            else:
+                opinion_pos = self._find_span_positions(
+                    text, quad["opinion"], encoding, used_opinion_positions
+                )
 
             if aspect_pos[0] >= 0:
                 spans.append((aspect_pos[0], aspect_pos[1], "aspect"))

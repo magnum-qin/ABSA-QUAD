@@ -142,8 +142,12 @@ class Trainer:
             {'params': head_params, 'lr': head_lr}
         ], lr=encoder_lr, weight_decay=config['training']['weight_decay'])
         
-        # Scheduler
-        num_training_steps = len(train_dataloader) * config['training']['num_epochs']
+        # Gradient accumulation
+        self.grad_accum_steps = config['training'].get('gradient_accumulation_steps', 1)
+
+        # Scheduler (num_training_steps in units of optimizer updates, not batches)
+        updates_per_epoch = max(1, len(train_dataloader) // self.grad_accum_steps)
+        num_training_steps = updates_per_epoch * config['training']['num_epochs']
         num_warmup_steps = int(num_training_steps * config['training']['warmup_ratio'])
         self.num_warmup_steps = num_warmup_steps  # stored for FGM warmup guard
 
@@ -199,13 +203,17 @@ class Trainer:
             leave=True
         )
         
-        for batch in progress_bar:
+        self.optimizer.zero_grad()
+        for batch_idx, batch in enumerate(progress_bar):
             # Move to device
             input_ids = batch['input_ids'].to(self.device)
             attention_mask = batch['attention_mask'].to(self.device)
             bio_labels = batch['bio_labels'].to(self.device)
             pair_labels = batch['pair_labels']
-            
+
+            is_last_batch = (batch_idx + 1 == len(self.train_dataloader))
+            do_update = ((batch_idx + 1) % self.grad_accum_steps == 0) or is_last_batch
+
             # Forward pass
             outputs = self.model(
                 input_ids=input_ids,
@@ -214,16 +222,13 @@ class Trainer:
                 pair_labels=pair_labels,
                 return_loss=True
             )
-            
-            # Weighted loss
-            loss = outputs['loss']
 
-            # Backward pass
-            self.optimizer.zero_grad()
+            # Scale loss for accumulation
+            loss = outputs['loss'] / self.grad_accum_steps
             loss.backward()
 
             # FGM adversarial training (disabled during warmup to avoid early instability)
-            if self.use_fgm and self.global_step >= self.num_warmup_steps:
+            if self.use_fgm and self.global_step >= self.num_warmup_steps and do_update:
                 self.fgm.attack()
                 adv_outputs = self.model(
                     input_ids=input_ids,
@@ -232,34 +237,36 @@ class Trainer:
                     pair_labels=pair_labels,
                     return_loss=True
                 )
-                adv_loss = adv_outputs['loss']
+                adv_loss = adv_outputs['loss'] / self.grad_accum_steps
                 adv_loss.backward()
                 self.fgm.restore()
 
-            # Gradient clipping
-            torch.nn.utils.clip_grad_norm_(
-                self.model.parameters(),
-                self.config['training']['max_grad_norm']
-            )
+            if do_update:
+                # Gradient clipping
+                torch.nn.utils.clip_grad_norm_(
+                    self.model.parameters(),
+                    self.config['training']['max_grad_norm']
+                )
+                self.optimizer.step()
+                self.scheduler.step()
+                self.optimizer.zero_grad()
 
-            self.optimizer.step()
-            self.scheduler.step()
+                # Update EMA
+                if self.use_ema:
+                    self.ema.update()
 
-            # Update EMA
-            if self.use_ema:
-                self.ema.update()
+                self.global_step += 1
 
-            # Update metrics
-            total_loss += loss.item()
+            # Update metrics (use unscaled loss for logging)
+            unscaled_loss = loss.item() * self.grad_accum_steps
+            total_loss += unscaled_loss
             for key in loss_components:
                 if key in outputs:
                     loss_components[key] += outputs[key].item()
-            
-            self.global_step += 1
-            
+
             # Update progress bar
             progress_bar.set_postfix({
-                'loss': f"{loss.item():.4f}",
+                'loss': f"{unscaled_loss:.4f}",
                 'lr': f"{self.scheduler.get_last_lr()[0]:.2e}"
             })
         
