@@ -223,17 +223,23 @@ def main():
     device = args.device or config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
 
-    # Load tokenizer
-    print(f"Loading tokenizer: {config['model']['encoder_name']}")
-    tokenizer = AutoTokenizer.from_pretrained(config['model']['encoder_name'])
-
-    # Load model
+    # Load model FIRST so _merge_config_from_checkpoint can update
+    # encoder_name (e.g. mdeberta-v3-base for non-English) before tokenizer is created.
     if args.ensemble:
         print(f"Loading ensemble from: {args.checkpoint_dir}")
+        # Peek at one checkpoint to update config (labels, encoder) before building tokenizer
+        ckpt_paths = sorted(Path(args.checkpoint_dir).glob('checkpoint_epoch*.pt'))
+        if ckpt_paths:
+            peek_ckpt = torch.load(ckpt_paths[0], map_location='cpu', weights_only=False)
+            config = _merge_config_from_checkpoint(config, peek_ckpt)
         model = load_ensemble_model(args.checkpoint_dir, config, device)
     else:
         print(f"Loading model from: {args.checkpoint}")
         model = load_model(args.checkpoint, config, device)
+
+    # Load tokenizer AFTER model load so encoder_name is correct for this language
+    print(f"Loading tokenizer: {config['model']['encoder_name']}")
+    tokenizer = AutoTokenizer.from_pretrained(config['model']['encoder_name'])
     
     # Create test dataset
     print(f"Loading test data from: {args.test_file}")
