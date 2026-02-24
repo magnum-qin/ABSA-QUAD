@@ -216,12 +216,12 @@ class DimASQPModel(nn.Module):
         self.num_entity_labels = num_entity_labels
         self.num_attribute_labels = num_attribute_labels
         self.entity_labels = entity_labels or [
-            "RESTAURANT", "FOOD", "DRINKS", "AMBIENCE",
-            "SERVICE", "LOCATION", "NULL"
+            "AMBIENCE", "DRINKS", "FOOD", "LOCATION",
+            "RESTAURANT", "SERVICE", "NULL"
         ]
         self.attribute_labels = attribute_labels or [
-            "GENERAL", "PRICES", "QUALITY", "STYLE_OPTIONS",
-            "MISCELLANEOUS", "NULL"
+            "GENERAL", "MISCELLANEOUS", "PRICES", "QUALITY",
+            "STYLE_OPTIONS", "NULL"
         ]
         
         # Encoder (force float32 to avoid fp16 gradient overflow)

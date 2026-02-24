@@ -82,7 +82,7 @@ def collect_results(group_name: str) -> dict:
         return {"group": group_name, "cF1": 0.0, "exact_f1": 0.0, "va_rmse": 0.0, "error": True}
 
     import torch
-    ckpt = torch.load(ckpt_path, map_location="cpu")
+    ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     metrics = ckpt.get("metrics", {})
     return {
         "group": group_name,

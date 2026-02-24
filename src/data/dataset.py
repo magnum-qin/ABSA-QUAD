@@ -31,12 +31,12 @@ class DimASQPDataset(Dataset):
         self.tokenizer = tokenizer
         self.max_length = max_length
         self.entity_labels = entity_labels or [
-            "RESTAURANT", "FOOD", "DRINKS", "AMBIENCE",
-            "SERVICE", "LOCATION", "NULL"
+            "AMBIENCE", "DRINKS", "FOOD", "LOCATION",
+            "RESTAURANT", "SERVICE", "NULL"
         ]
         self.attribute_labels = attribute_labels or [
-            "GENERAL", "PRICES", "QUALITY", "STYLE_OPTIONS",
-            "MISCELLANEOUS", "NULL"
+            "GENERAL", "MISCELLANEOUS", "PRICES", "QUALITY",
+            "STYLE_OPTIONS", "NULL"
         ]
 
         # Build label mappings

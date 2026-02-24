@@ -10,21 +10,23 @@ Usage:
     python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml --num_epochs 5  # quick test
 """
 
-import os
 import sys
 import yaml
 import copy
 import json
+import tempfile
 import argparse
 import subprocess
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 
 # All 8 dataset configurations
 DATASETS = {
     "eng_restaurant": {
         "train": "data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl",
         "dev": "data/subtask_3/eng/eng_restaurant_dev_task3.jsonl",
+        "test": "data/subtask_3/eng/eng_restaurant_test_task3.jsonl",
         "entity_labels": [
             "AMBIENCE", "DRINKS", "FOOD", "LOCATION", "RESTAURANT", "SERVICE", "NULL"
         ],
@@ -36,6 +38,7 @@ DATASETS = {
     "eng_laptop": {
         "train": "data/subtask_3/eng/eng_laptop_train_alltasks.jsonl",
         "dev": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "test": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
         "entity_labels": [
             "BATTERY", "COMPANY", "CPU", "DISPLAY", "FANS_COOLING", "GRAPHICS",
             "HARD_DISK", "HARDWARE", "KEYBOARD", "LAPTOP", "MEMORY", "MOTHERBOARD",
@@ -51,6 +54,7 @@ DATASETS = {
     "jpn_hotel": {
         "train": "data/subtask_3/jpn/jpn_hotel_train_alltasks.jsonl",
         "dev": "data/subtask_3/jpn/jpn_hotel_dev_task3.jsonl",
+        "test": "data/subtask_3/jpn/jpn_hotel_test_task3.jsonl",
         "entity_labels": [
             "FACILITIES", "FOOD_DRINKS", "HOTEL", "LOCATION", "ROOMS",
             "ROOM_AMENITIES", "SERVICE", "NULL"
@@ -64,6 +68,7 @@ DATASETS = {
     "rus_restaurant": {
         "train": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
         "dev": "data/subtask_3/rus/rus_restaurant_dev_task3.jsonl",
+        "test": "data/subtask_3/rus/rus_restaurant_test_task3.jsonl",
         "entity_labels": [
             "AMBIENCE", "DRINKS", "FOOD", "LOCATION", "RESTAURANT", "SERVICE", "NULL"
         ],
@@ -75,6 +80,7 @@ DATASETS = {
     "tat_restaurant": {
         "train": "data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl",
         "dev": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+        "test": "data/subtask_3/tat/tat_restaurant_test_task3.jsonl",
         "entity_labels": [
             "AMBIENCE", "DRINKS", "FOOD", "LOCATION", "RESTAURANT", "SERVICE", "NULL"
         ],
@@ -86,6 +92,7 @@ DATASETS = {
     "ukr_restaurant": {
         "train": "data/subtask_3/ukr/ukr_restaurant_train_alltasks.jsonl",
         "dev": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "test": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
         "entity_labels": [
             "AMBIENCE", "DRINKS", "FOOD", "LOCATION", "RESTAURANT", "SERVICE", "NULL"
         ],
@@ -97,6 +104,7 @@ DATASETS = {
     "zho_restaurant": {
         "train": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
         "dev": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "test": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
         "entity_labels": [
             "AMBIENCE", "DRINKS", "FOOD", "LOCATION", "RESTAURANT", "SERVICE", "NULL"
         ],
@@ -108,6 +116,7 @@ DATASETS = {
     "zho_laptop": {
         "train": "data/subtask_3/zho/zho_laptop_train_alltasks.jsonl",
         "dev": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+        "test": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
         "entity_labels": [
             "BATTERY", "COMPANY", "CPU", "DISPLAY", "FANS_COOLING", "GRAPHICS",
             "HARD_DISK", "HARDWARE", "KEYBOARD", "LAPTOP", "MEMORY", "MOTHERBOARD",
@@ -124,7 +133,7 @@ DATASETS = {
 
 
 def build_config(base_config: dict, dataset_name: str, ds_info: dict,
-                 num_epochs: int = None) -> dict:
+                 num_epochs: Optional[int] = None) -> dict:
     """Build a training config for a specific dataset."""
     config = copy.deepcopy(base_config)
 
@@ -155,9 +164,12 @@ def build_config(base_config: dict, dataset_name: str, ds_info: dict,
 
 def run_training(config: dict, dataset_name: str) -> int:
     """Run training for a single dataset. Returns exit code."""
-    tmp_config_path = f"/tmp/train_{dataset_name}.yaml"
-    with open(tmp_config_path, 'w') as f:
-        yaml.dump(config, f, default_flow_style=False)
+    # Validate data files exist
+    for key in ['train_file', 'dev_file']:
+        fpath = config['data'][key]
+        if not Path(fpath).exists():
+            print(f"ERROR: {key} not found: {fpath}")
+            return 1
 
     print(f"\n{'='*60}")
     print(f"Training: {dataset_name}")
@@ -172,21 +184,29 @@ def run_training(config: dict, dataset_name: str) -> int:
     print(f"  Save:  {config['training']['save_dir']}")
     print(f"{'='*60}\n")
 
-    cmd = [sys.executable, "scripts/train.py", "--config", tmp_config_path]
-    result = subprocess.run(cmd, text=True)
+    # Use secure temp file instead of predictable /tmp path
+    with tempfile.NamedTemporaryFile(
+        mode='w', suffix='.yaml', prefix=f'train_{dataset_name}_', delete=False
+    ) as f:
+        yaml.dump(config, f, default_flow_style=False)
+        tmp_config_path = f.name
 
-    Path(tmp_config_path).unlink(missing_ok=True)
-    return result.returncode
+    try:
+        cmd = [sys.executable, "scripts/train.py", "--config", tmp_config_path]
+        result = subprocess.run(cmd, text=True)
+        return result.returncode
+    finally:
+        Path(tmp_config_path).unlink(missing_ok=True)
 
 
-def collect_results(dataset_name: str) -> dict:
+def collect_results(dataset_name: str) -> dict[str, object]:
     """Collect best metrics from a training run."""
     ckpt_path = Path(f"checkpoints/all_lang/{dataset_name}/checkpoint_best.pt")
     if not ckpt_path.exists():
         return {"dataset": dataset_name, "error": True}
 
     import torch
-    ckpt = torch.load(ckpt_path, map_location="cpu")
+    ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     metrics = ckpt.get("metrics", {})
     return {
         "dataset": dataset_name,
@@ -198,7 +218,7 @@ def collect_results(dataset_name: str) -> dict:
     }
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Train V3 on all languages/domains")
     parser.add_argument("--base_config", type=str, default="configs/config_rethink_v3.yaml",
                         help="Base V3 config file")

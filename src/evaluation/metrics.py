@@ -63,7 +63,7 @@ class DimASQPEvaluator:
     def _normalize_quad(self, quad: Dict) -> Tuple[str, str, str]:
         """Normalize quadruplet for categorical matching"""
         aspect = quad.get("Aspect", quad.get("aspect", "")).lower().strip()
-        category = quad.get("Category", quad.get("category", "")).upper().strip()
+        category = quad.get("Category", quad.get("category", "")).lower().strip()
         opinion = quad.get("Opinion", quad.get("opinion", "")).lower().strip()
         return (aspect, category, opinion)
     

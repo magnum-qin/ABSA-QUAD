@@ -30,20 +30,20 @@ data:
   
   # Entity and Attribute Labels (Restaurant Domain)
   entity_labels:
-    - "RESTAURANT"
-    - "FOOD"
-    - "DRINKS"
     - "AMBIENCE"
-    - "SERVICE"
+    - "DRINKS"
+    - "FOOD"
     - "LOCATION"
+    - "RESTAURANT"
+    - "SERVICE"
     - "NULL"
-  
+
   attribute_labels:
     - "GENERAL"
+    - "MISCELLANEOUS"
     - "PRICES"
     - "QUALITY"
     - "STYLE_OPTIONS"
-    - "MISCELLANEOUS"
     - "NULL"
 
 # Training Configuration

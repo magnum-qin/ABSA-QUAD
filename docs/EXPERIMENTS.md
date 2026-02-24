@@ -41,12 +41,20 @@
 
 ### 2.2 多语言数据
 
-| 语言 | 领域 | 状态 |
-|------|------|------|
-| English (eng) | Restaurant, Laptop | ✅ 已实验 |
-| Japanese (jpn) | Hotel | 待实验 |
-| Russian (rus) | Restaurant | 待实验 |
-| Chinese (zho) | TBD | 待实验 |
+| 语言 | 领域 | Entity 数 | Attribute 数 | Encoder |
+|------|------|-----------|-------------|---------|
+| English (eng) | Restaurant | 6+NULL | 5+NULL | deberta-v3-base |
+| English (eng) | Laptop | 23+NULL | 9+NULL | deberta-v3-base |
+| Japanese (jpn) | Hotel | 7+NULL | 8+NULL | mdeberta-v3-base |
+| Russian (rus) | Restaurant | 6+NULL | 5+NULL | mdeberta-v3-base |
+| Tatar (tat) | Restaurant | 6+NULL | 5+NULL | mdeberta-v3-base |
+| Ukrainian (ukr) | Restaurant | 6+NULL | 5+NULL | mdeberta-v3-base |
+| Chinese (zho) | Restaurant | 6+NULL | 5+NULL | mdeberta-v3-base |
+| Chinese (zho) | Laptop | 22+NULL | 8+NULL | mdeberta-v3-base |
+
+训练命令: `python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml`
+
+评测命令: `python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml`
 
 ---
 
@@ -137,7 +145,7 @@ training:
 
 **改进**: 降低学习率 + 强 FGM 对抗训练
 
-### 4.4 Rethink V3
+### 4.4 Rethink V3 (Final)
 
 **配置文件**: `configs/config_rethink_v3.yaml`
 
@@ -145,16 +153,37 @@ training:
 model:
   rethink:
     enabled: true
+    num_iterations: 2
 training:
-  learning_rate: 1.5e-5   # 回调学习率
+  encoder_lr: 1.5e-5
   head_lr: 7.5e-5
   num_epochs: 30
   fgm:
     enabled: true
     epsilon: 0.1          # 温和扰动
+  ema:
+    enabled: true
+    decay: 0.999          # EMA 平滑
+  loss_weights:
+    span: 2.0             # Span 损失加权 (sweep 得到)
+    pair: 1.0
+    entity: 1.0
+    attribute: 1.0
+    va: 1.0
+    consistency: 0.5
+  save_top_k: 3           # 保留最佳 3 个 checkpoint
 ```
 
-**改进**: 回调学习率 + 温和 FGM
+**V3 完整改进列表**:
+1. 温和 FGM (epsilon=0.1) + warmup guard
+2. EMA (decay=0.999) 稳定评估
+3. Label Smoothing (0.1) 防过拟合
+4. Span 位置修复 (字符级位置追踪)
+5. Hungarian 匹配 (最优 pred↔gold 对齐)
+6. 损失权重 sweep (span=2.0, +4.25% cF1)
+7. Top-K checkpointing + Weight Averaging Ensemble
+8. 多语言支持 (deberta-v3-base / mdeberta-v3-base)
+9. 标签参数化 (从 config 传入，支持不同领域标签集)
 
 ---
 
@@ -168,7 +197,8 @@ training:
 | Rethink V1 | 旧代码 | 0.4064 | 0.4490 | 1.3125 | 18 |
 | Rethink V2 | 旧代码 | 0.2326 | 0.2578 | 1.3601 | 7 |
 | V3 + Span修复 | 新代码 | 0.3836 | 0.4195 | 1.2208 | 11 |
-| **V3 + Span + Hungarian** | **新代码** | **0.4348** | **0.4748** | **1.1406** | **16** |
+| V3 + Span + Hungarian | 新代码 | 0.4348 | 0.4748 | 1.1406 | 16 |
+| **V3 + Loss Weight Sweep (span=2.0)** | **新代码** | **0.6278** | **-** | **-** | **-** |
 
 ### 5.2 关键修复说明
 
@@ -321,9 +351,9 @@ Pred: V=3.2, A=6.1 (预测偏中性)
 
 ### A. 完整配置对比
 
-| 参数 | Baseline | V1 | V2 | V3 |
+| 参数 | Baseline | V1 | V2 | V3 (Final) |
 |------|----------|----|----|-----|
-| encoder_name | deberta-v3-base | ← | ← | ← |
+| encoder_name | deberta-v3-base | ← | ← | ← (mdeberta for non-eng) |
 | use_rethink | false | true | true | true |
 | rethink_iterations | 1 | 2 | 2 | 2 |
 | encoder_lr | 2e-5 | 2e-5 | 1e-5 | 1.5e-5 |
@@ -332,21 +362,29 @@ Pred: V=3.2, A=6.1 (预测偏中性)
 | patience | 5 | 5 | 8 | 8 |
 | fgm_enabled | false | false | true | true |
 | fgm_epsilon | - | - | 0.5 | 0.1 |
+| ema_enabled | false | false | false | true |
+| ema_decay | - | - | - | 0.999 |
+| label_smoothing | 0 | 0 | 0 | 0.1 |
+| loss_weights.span | 1.0 | 1.0 | 1.0 | **2.0** |
+| loss_weights.consistency | 0.1 | 0.1 | 0.1 | 0.5 |
+| save_top_k | 1 | 1 | 1 | 3 |
+| hungarian_matching | false | false | false | true |
+| span_position_fix | false | false | false | true |
 
 ### B. 训练命令
 
 ```bash
-# Baseline
-python scripts/train.py --config configs/config_baseline.yaml
-
-# Rethink V1
-python scripts/train.py --config configs/config_rethink.yaml
-
-# Rethink V2
-python scripts/train.py --config configs/config_rethink_v2.yaml
-
-# Rethink V3 (最佳)
+# 单语言训练
 python scripts/train.py --config configs/config_rethink_v3.yaml
+
+# 全语言训练 (8 个数据集)
+python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml
+
+# 全语言评测
+python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml
+
+# 全语言 ensemble 评测
+python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml --ensemble
 ```
 
 ### C. 检查点使用

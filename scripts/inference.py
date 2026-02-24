@@ -3,7 +3,6 @@ Inference Script for DimASQP Model
 Generates predictions in SemEval-2026 submission format
 """
 
-import os
 import sys
 import json
 import yaml
@@ -53,10 +52,38 @@ def _apply_ema_weights(model: DimASQPModel, checkpoint: dict) -> bool:
     return False
 
 
+def _merge_config_from_checkpoint(config: dict, checkpoint: dict) -> dict:
+    """Merge saved config from checkpoint into user config.
+
+    Checkpoint's entity_labels/attribute_labels take priority to avoid
+    label index mismatch between training and inference.
+    """
+    saved_config = checkpoint.get('config', {})
+    saved_data = saved_config.get('data', {})
+    saved_model = saved_config.get('model', {})
+
+    # Restore encoder name (e.g. mdeberta-v3-base for non-English)
+    if saved_model.get('encoder_name'):
+        config['model']['encoder_name'] = saved_model['encoder_name']
+        print(f"  Using encoder from checkpoint: {saved_model['encoder_name']}")
+
+    if saved_data.get('entity_labels'):
+        config['data']['entity_labels'] = saved_data['entity_labels']
+        config['model']['num_entity_labels'] = len(saved_data['entity_labels'])
+        print(f"  Using entity_labels from checkpoint: {saved_data['entity_labels']}")
+    if saved_data.get('attribute_labels'):
+        config['data']['attribute_labels'] = saved_data['attribute_labels']
+        config['model']['num_attribute_labels'] = len(saved_data['attribute_labels'])
+        print(f"  Using attribute_labels from checkpoint: {saved_data['attribute_labels']}")
+
+    return config
+
+
 def load_model(checkpoint_path: str, config: dict, device: str) -> DimASQPModel:
     """Load trained model from checkpoint, preferring EMA shadow weights."""
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    config = _merge_config_from_checkpoint(config, checkpoint)
     model = _create_model(config)
-    checkpoint = torch.load(checkpoint_path, map_location=device)
 
     if _apply_ema_weights(model, checkpoint):
         print("  Loaded EMA shadow weights (used during validation)")
@@ -89,7 +116,7 @@ def load_ensemble_model(checkpoint_dir: str, config: dict, device: str) -> DimAS
     avg_state = None
     n = 0
     for path in ckpt_paths:
-        ckpt = torch.load(path, map_location=device)
+        ckpt = torch.load(path, map_location=device, weights_only=False)
         # Prefer EMA shadow weights
         ema_state = ckpt.get('ema_state_dict')
         if ema_state and 'shadow' in ema_state:
@@ -155,6 +182,7 @@ def generate_predictions(
 
 def save_predictions(predictions: list, output_path: str):
     """Save predictions in JSONL format"""
+    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         for pred in predictions:
             f.write(json.dumps(pred, ensure_ascii=False) + '\n')

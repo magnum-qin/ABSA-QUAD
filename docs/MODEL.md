@@ -281,9 +281,11 @@ aspect_repr [B, P, 768] + opinion_repr [B, P, 768]
 └─────────┘   └─────────┘   └─────────┘
 ```
 
-**Entity 标签**: RESTAURANT, FOOD, DRINKS, AMBIENCE, SERVICE, LOCATION, NULL
+**Entity 标签** (eng_restaurant, 字母序): AMBIENCE, DRINKS, FOOD, LOCATION, RESTAURANT, SERVICE, NULL
 
-**Attribute 标签**: GENERAL, PRICES, QUALITY, STYLE_OPTIONS, MISCELLANEOUS, NULL
+**Attribute 标签** (eng_restaurant, 字母序): GENERAL, MISCELLANEOUS, PRICES, QUALITY, STYLE_OPTIONS, NULL
+
+> 注意: 不同领域/语言有不同标签集，由 config 中 `data.entity_labels` / `data.attribute_labels` 指定。
 
 ### 4.4 V-A 回归器 (VARegressor)
 
@@ -436,10 +438,12 @@ def _compute_span_iou(self, span1, span2):
 
 ### 5.2 损失函数
 
-**总损失**:
+**总损失** (V3):
 ```
-L_total = L_bio + L_entity + L_attribute + L_va + 0.1 * L_consistency
+L_total = 2.0 * L_span + 1.0 * L_entity + 1.0 * L_attribute + 1.0 * L_va + 0.5 * L_consistency
 ```
+
+> V3 通过 loss weight sweep 确定 span=2.0 为最优权重（cF1 +4.25%）。
 
 | 损失项 | 公式 | 作用 |
 |--------|------|------|
@@ -492,6 +496,35 @@ class FGM:
 3. 前向传播 → 计算 adv_loss → 反向传播
 4. FGM restore (恢复 embedding)
 5. 梯度更新
+```
+
+### 5.4 EMA (Exponential Moving Average)
+
+维护模型参数的指数移动平均，用于评估和推理：
+
+```python
+shadow[name] = decay * shadow[name] + (1 - decay) * param.data
+# decay = 0.999
+```
+
+评估时使用 shadow 参数替代原始参数，推理时优先加载 EMA 权重。
+
+### 5.5 Label Smoothing
+
+分类损失使用 label_smoothing=0.1，将 one-hot 标签平滑为：
+
+```
+y_smooth = (1 - 0.1) * y_onehot + 0.1 / num_classes
+```
+
+防止模型对分类过度自信。
+
+### 5.6 Top-K Checkpointing + Weight Averaging
+
+训练时保留 cF1 最高的 K 个 checkpoint (默认 K=3)。推理时可对这 K 个 checkpoint 的权重取平均 (ensemble)：
+
+```bash
+python scripts/inference.py --ensemble --checkpoint_dir checkpoints/all_lang/eng_restaurant
 ```
 
 ---

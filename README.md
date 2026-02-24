@@ -33,22 +33,24 @@ pip install -r requirements.txt
 # Train
 python scripts/train.py --config configs/config_rethink_v3.yaml
 
-# Inference (single checkpoint, auto-loads EMA weights)
-python scripts/inference.py \
-    --checkpoint checkpoints/rethink_v3/checkpoint_best.pt \
-    --config configs/config_rethink_v3.yaml \
-    --test_file data/subtask_3/eng/eng_restaurant_test_task3.jsonl \
-    --output predictions.jsonl
+# Train all 8 language/domain datasets
+python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml
 
-# Inference (ensemble: weight-average top-k checkpoints)
-python scripts/inference.py \
-    --ensemble --checkpoint_dir checkpoints/rethink_v3 \
-    --config configs/config_rethink_v3.yaml \
-    --test_file data/subtask_3/eng/eng_restaurant_test_task3.jsonl \
-    --output predictions_ensemble.jsonl
+# Batch inference + evaluation (all datasets)
+python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml
 
-# Loss weights sweep (hyperparameter search)
-python scripts/sweep_loss_weights.py --config configs/config_rethink_v3.yaml
+# Single dataset inference
+python scripts/inference.py \
+    --checkpoint checkpoints/all_lang/eng_restaurant/checkpoint_best.pt \
+    --config configs/config_rethink_v3.yaml \
+    --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
+    --output predictions/eng_restaurant_pred.jsonl
+
+# Official evaluation
+python scripts/official_eval.py \
+    -p predictions/eng_restaurant_pred.jsonl \
+    -g data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
+    -t 3
 ```
 
 ## Architecture
@@ -76,6 +78,7 @@ Input → DeBERTa-v3 → [Span BIO, Pair Classifier, V-A Regressor]
 
 - [Model Architecture](docs/MODEL.md) - 详细架构说明
 - [Experiments](docs/EXPERIMENTS.md) - 实验记录与结果分析
+- [CLI Guide](docs/CLI_GUIDE.md) - 命令行操作指南（训练、推理、评测）
 - [AI Guide](README_AI.md) - AI 快速理解指南（架构、已实现功能、创新方向）
 
 ## Project Structure
@@ -97,7 +100,10 @@ Input → DeBERTa-v3 → [Span BIO, Pair Classifier, V-A Regressor]
 │       └── metrics.py          # 评估指标
 ├── scripts/
 │   ├── train.py
+│   ├── train_all_languages.py   # 全语言批量训练
 │   ├── inference.py             # 支持 EMA + ensemble
+│   ├── batch_eval.py            # 批量推理+评测
+│   ├── official_eval.py         # 官方评测脚本
 │   └── sweep_loss_weights.py    # loss权重自动搜索
 ├── docs/
 │   ├── MODEL.md
@@ -124,11 +130,78 @@ Input → DeBERTa-v3 → [Span BIO, Pair Classifier, V-A Regressor]
 
 ## Evaluation
 
-```python
-from src.evaluation.metrics import evaluate_predictions
-metrics = evaluate_predictions('predictions.jsonl', 'gold.jsonl')
-# {'continuous_f1': 0.43, 'exact_f1': 0.47, 'va_rmse': 1.14}
+### Step 1: Train (All Languages)
+
+```bash
+# Train all 8 datasets (eng/rus/tat/ukr/zho_restaurant, eng/zho_laptop, jpn_hotel)
+python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml
+
+# Train specific datasets only
+python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml \
+    --datasets eng_restaurant jpn_hotel
+
+# Quick test (fewer epochs)
+python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml \
+    --datasets eng_restaurant --num_epochs 3
 ```
+
+Checkpoints are saved to `checkpoints/all_lang/{dataset_name}/`.
+
+### Step 2: Generate Predictions
+
+```bash
+# Single dataset
+python scripts/inference.py \
+    --config configs/config_rethink_v3.yaml \
+    --checkpoint checkpoints/all_lang/eng_restaurant/checkpoint_best.pt \
+    --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
+    --output predictions/eng_restaurant_pred.jsonl
+
+# Ensemble (weight-average top-k checkpoints)
+python scripts/inference.py \
+    --ensemble --checkpoint_dir checkpoints/all_lang/eng_restaurant \
+    --config configs/config_rethink_v3.yaml \
+    --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
+    --output predictions/eng_restaurant_ensemble.jsonl
+```
+
+### Step 3: Official Evaluation
+
+Uses the [official DimABSA2026 evaluation script](https://github.com/DimABSA/DimABSA2026/tree/main/evaluation_script):
+
+```bash
+python scripts/official_eval.py \
+    -p predictions/eng_restaurant_pred.jsonl \
+    -g data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
+    -t 3
+```
+
+Output:
+```
+--- Evaluation Results ---
+True Positives (cTP): ...
+cPrecision: ...
+cRecall: ...
+cF1: ...
+```
+
+### Batch Evaluation (All Languages)
+
+```bash
+# All datasets
+python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml
+
+# Specific datasets
+python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml \
+    --datasets eng_restaurant jpn_hotel
+
+# With ensemble
+python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml --ensemble
+```
+
+Results are saved to `predictions/eval_results.json`.
+
+**Note:** Inference automatically loads `entity_labels` and `attribute_labels` from the checkpoint's saved config, so label order mismatch is handled automatically.
 
 ## Configuration
 
@@ -145,7 +218,7 @@ metrics = evaluate_predictions('predictions.jsonl', 'gold.jsonl')
 | fgm_epsilon | 0.1 | Adversarial perturbation strength |
 | ema_decay | 0.999 | EMA decay for evaluation |
 | save_top_k | 3 | Number of best checkpoints to retain |
-| loss_weights.bio | 1.0 | BIO span loss weight |
+| loss_weights.span | 2.0 | BIO span loss weight |
 | loss_weights.entity | 1.0 | Entity classification loss weight |
 | loss_weights.attribute | 1.0 | Attribute classification loss weight |
 | loss_weights.va | 1.0 | V-A regression loss weight |
