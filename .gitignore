@@ -2,7 +2,7 @@
 /.venv
 
 # 训练日志
-training.log
+logs/
 *.log
 
 # 模型权重 (体积太大，不上传)
@@ -28,6 +28,7 @@ __pycache__/
 # 环境变量
 .env
 .env.local
+.envrc
 
 # IDE
 .vscode/

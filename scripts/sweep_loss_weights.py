@@ -21,26 +21,32 @@ from pathlib import Path
 from datetime import datetime
 
 # Predefined weight groups
+# V4 current best: span=2.0, va=1.5, others=1.0, consistency=0.5
 WEIGHT_GROUPS = {
-    "baseline": {
-        "span": 1.0, "pair": 1.0, "entity": 1.0,
-        "attribute": 1.0, "va": 1.0, "consistency": 0.5
-    },
-    "span-focus": {
+    # --- V4 CRF sweep: vary span and va around current best ---
+    "s2.0-v1.5": {  # current best (baseline for this sweep)
         "span": 2.0, "pair": 1.0, "entity": 1.0,
-        "attribute": 1.0, "va": 1.0, "consistency": 0.5
+        "attribute": 1.0, "va": 1.5, "consistency": 0.5
     },
-    "va-boost": {
-        "span": 1.0, "pair": 1.0, "entity": 1.0,
+    "s2.5-v1.5": {
+        "span": 2.5, "pair": 1.0, "entity": 1.0,
+        "attribute": 1.0, "va": 1.5, "consistency": 0.5
+    },
+    "s3.0-v1.5": {
+        "span": 3.0, "pair": 1.0, "entity": 1.0,
+        "attribute": 1.0, "va": 1.5, "consistency": 0.5
+    },
+    "s2.0-v2.0": {
+        "span": 2.0, "pair": 1.0, "entity": 1.0,
         "attribute": 1.0, "va": 2.0, "consistency": 0.5
     },
-    "span+va": {
-        "span": 1.5, "pair": 1.0, "entity": 1.0,
-        "attribute": 1.0, "va": 1.5, "consistency": 0.3
+    "s2.5-v2.0": {
+        "span": 2.5, "pair": 1.0, "entity": 1.0,
+        "attribute": 1.0, "va": 2.0, "consistency": 0.5
     },
-    "pair-down": {
-        "span": 1.5, "pair": 0.5, "entity": 1.0,
-        "attribute": 1.0, "va": 1.5, "consistency": 0.3
+    "s2.0-v1.0": {
+        "span": 2.0, "pair": 1.0, "entity": 1.0,
+        "attribute": 1.0, "va": 1.0, "consistency": 0.5
     },
 }
 

@@ -24,12 +24,25 @@ Output: [(thai food, FOOD#QUALITY, delicious, 7.5#6.2),
 
 **Improvement over Baseline: +33.43% cF1**
 
+## Setup
+
+```bash
+# 安装 Miniforge (如未安装)
+# https://github.com/conda-forge/miniforge
+wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+bash Miniforge3-Linux-x86_64.sh
+
+# 一键创建环境 (自动安装 PyTorch CUDA 版 + 兼容性修复)
+bash scripts/setup_env.sh
+mamba activate absa
+
+# 验证
+python -c "import torch; print(f'PyTorch {torch.__version__}, CUDA {torch.cuda.is_available()}')"
+```
+
 ## Quick Start
 
 ```bash
-# Install
-pip install -r requirements.txt
-
 # Train
 python scripts/train.py --config configs/config_rethink_v3.yaml
 

@@ -1,0 +1,28 @@
+name: absa
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - tqdm>=4.65
+  - pyyaml>=6.0
+  - scipy>=1.10
+  - scikit-learn>=1.3
+  - numpy>=1.24
+  - pandas>=2.0
+  - matplotlib>=3.7
+  - seaborn>=0.12
+  - jupyter
+  - ipykernel
+  - black
+  - flake8
+  - isort
+  - pytest
+  - pip
+  - protobuf
+  - libstdcxx-ng
+  - pip:
+    - transformers>=4.35
+    - sentencepiece
+    - safetensors
+    - accelerate
+    - tiktoken

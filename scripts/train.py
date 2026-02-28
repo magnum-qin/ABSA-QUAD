@@ -28,12 +28,14 @@ from src.data.dataset import DimASQPDataset, create_dataloader, collate_fn
 from src.evaluation.metrics import DimASQPEvaluator
 
 # Setup logging
+log_dir = Path(__file__).parent.parent / 'logs'
+log_dir.mkdir(exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler('training.log')
+        logging.FileHandler(log_dir / 'training.log')
     ]
 )
 logger = logging.getLogger(__name__)
@@ -518,7 +520,9 @@ def main():
         va_max=config['model']['va_max'],
         loss_weights=config['training']['loss_weights'],
         entity_labels=entity_labels,
-        attribute_labels=attribute_labels
+        attribute_labels=attribute_labels,
+        category_embed_dim=config['model'].get('category_embed_dim', 0),
+        use_crf=config['model'].get('use_crf', False)
     )
     
     # Count parameters

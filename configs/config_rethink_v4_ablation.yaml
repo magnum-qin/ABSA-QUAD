@@ -1,9 +1,8 @@
-# DimASQP Rethink V4 Ablation: NULL Anchor only
-# Identical to V3 except:
-#   - NULL aspect/opinion use CLS anchor (0,0) in dataset.py [baked in, no flag needed]
+# DimASQP Rethink V4: NULL Anchor + CRF BIO Decoding
+# Changes vs V3:
+#   - NULL aspect/opinion use CLS anchor (0,0) in dataset.py
+#   - CRF layer for BIO sequence labeling (valid transition constraints)
 #   - va loss weight: 1.5 (up from 1.0)
-#   - save_top_k: 5
-# gradient_accumulation_steps: 1 (same effective steps as V3 for fair comparison)
 # SemEval-2026 Task 3: Dimensional Aspect Sentiment Quad Prediction
 
 model:
@@ -12,7 +11,8 @@ model:
   num_entity_labels: 7
   num_attribute_labels: 6
   dropout: 0.1
-  use_crf: false
+  use_crf: true
+  category_embed_dim: 0   # Module C disabled
 
   va_hidden_size: 256
   va_min: 1.0
@@ -75,7 +75,7 @@ training:
 
   patience: 8
 
-  save_dir: "checkpoints/rethink_v4_ablation"
+  save_dir: "checkpoints/rethink_v4_crf"
   save_top_k: 5
 
 evaluation:

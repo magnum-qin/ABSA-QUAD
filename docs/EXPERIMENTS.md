@@ -7,10 +7,11 @@
 1. [实验环境](#1-实验环境)
 2. [数据集](#2-数据集)
 3. [评估指标](#3-评估指标)
-4. [配置版本演进](#4-配置版本演进)
-5. [主要结果](#5-主要结果)
-6. [消融实验](#6-消融实验)
-7. [错误分析](#7-错误分析)
+4. [配置版本演进](#4-配置版本演进) (Baseline → V1 → V2 → V3 → V3-CRF(失败) → V4 Ensemble → V5 增强Ensemble)
+5. [V5 规划](#5-v5-规划) (数据增强✅ → 表征优化 → LLM 融合)
+6. [主要结果](#6-主要结果)
+7. [消融实验](#7-消融实验)
+8. [错误分析](#8-错误分析)
 
 ---
 
@@ -145,7 +146,7 @@ training:
 
 **改进**: 降低学习率 + 强 FGM 对抗训练
 
-### 4.4 Rethink V3 (Final)
+### 4.4 Rethink V3 (Current Best)
 
 **配置文件**: `configs/config_rethink_v3.yaml`
 
@@ -185,11 +186,211 @@ training:
 8. 多语言支持 (deberta-v3-base / mdeberta-v3-base)
 9. 标签参数化 (从 config 传入，支持不同领域标签集)
 
+### 4.5 Rethink V4 (CRF + NULL Anchor — 已回退)
+
+**配置文件**: `configs/config_rethink_v4_ablation.yaml`
+
+```yaml
+model:
+  use_crf: true             # 新增 Linear-Chain CRF 解码
+  rethink:
+    enabled: true
+    num_iterations: 2
+training:
+  encoder_lr: 1.5e-5
+  head_lr: 7.5e-5
+  num_epochs: 30
+  loss_weights:
+    span: 2.0
+    pair: 1.0
+    entity: 1.0
+    attribute: 1.0
+    va: 1.5               # 提高 VA 权重
+    consistency: 0.5
+```
+
+**V3-CRF 改动**（实验性，已回退）:
+1. 新增 `src/models/crf.py`，Linear-Chain CRF 替代 Softmax BIO 解码
+2. CRF 硬约束转移矩阵（禁止 O→I 等非法转移）
+3. NULL Anchor token 处理隐式 aspect/opinion
+4. 数据预处理支持 NULL span 的 BIO 标注
+
+**V3-CRF 实验结果**: 所有优化均未超越 V3 基线
+
+| # | 实验 | 配置 | cF1 | vs V3 | 结论 |
+|---|------|------|-----|-------|------|
+| 核心 | CRF + NULL Anchor | use_crf=true | 0.6249 | -0.3% | 失败，CRF 额外参数增加过拟合 |
+| #1 | CRF Loss Clamp | clamp(max=20.0) | 0.6177 | -1.0% | 失败，抑制有效梯度信号 |
+| #3 | Loss Weight Sweep | 6 组 (span/va) | 最高 0.6271 | -0.1% | 确认 span=2.0, va=1.5 最优 |
+| #7 | VA Smooth L1 | F.huber_loss | — | — | 已有，无需改动 |
+| #9 | DeBERTa-v3-large | 304M params | 0.5539 | -7.4% | 失败，2284 条数据量不足 |
+| #11 | Pair Threshold | 0.05~0.50 sweep | 均 0.6264 | 0% | 确认 0.3 最优，输出高度极化 |
+| #12 | Multi-Seed Ensemble | 5-seed 投票 | **0.6415** | **+1.4%** | ✅ 成功，cP=0.689, cR=0.600 |
+
+**Loss Weight Sweep 详细结果**:
+
+| Group | span | va | cF1 |
+|-------|------|----|-----|
+| **s2.0-v1.5 (原始)** | 2.0 | 1.5 | **0.6312** |
+| s2.5-v2.0 | 2.5 | 2.0 | 0.6271 |
+| s2.5-v1.5 | 2.5 | 1.5 | 0.6262 |
+| s2.0-v2.0 | 2.0 | 2.0 | 0.6150 |
+| s3.0-v1.5 | 3.0 | 1.5 | 0.6143 |
+| s2.0-v1.0 | 2.0 | 1.0 | 0.6068 |
+
+**V3-CRF 核心结论**:
+- CRF 在小数据集（2284 条）上无效，BIO 标注本身简单，CRF 引入的转移矩阵参数增加过拟合
+- DeBERTa-v3-large 严重过拟合，304M 参数需要远超 2284 条的数据量
+- 超参已充分搜索，V3 配置已是当前数据量下的最优
+- **最终决策：回退到 V3 架构**，在推理策略（Ensemble）和数据层面寻求突破
+
 ---
 
-## 5. 主要结果
+## 5. V4 Ensemble & V5 规划
 
-### 5.1 代码修复前后对比
+### 5.1 V4: Multi-Seed Ensemble（✅ 已完成）
+
+- 5 个不同随机种子（42, 123, 456, 789, 1024）训练同一 V3 架构
+- 推理时多数投票（≥3/5 模型一致才保留）+ VA 均值
+- **实际 cF1：0.6415**（cPrecision=0.6894，cRecall=0.5998），**+1.4% vs V3 单模型**
+
+**各 seed 单模型结果：**
+
+| Seed | 最佳 cF1 | Best Epoch |
+|------|---------|-----------|
+| 42   | 0.6232  | 30        |
+| 123  | 0.6292  | 21        |
+| 456  | 0.6234  | 30        |
+| 789  | 0.6286  | 23        |
+| 1024 | 0.6319  | 29        |
+| **平均** | **0.6273** | — |
+| **Ensemble (vote≥3)** | **0.6415** | — |
+
+```bash
+# 训练
+python scripts/train_multi_seed.py --config configs/config_rethink_v3.yaml
+
+# 推理
+python scripts/inference.py --multi_seed_ensemble \
+  --seed_dirs checkpoints/ensemble_seed42 checkpoints/ensemble_seed123 \
+    checkpoints/ensemble_seed456 checkpoints/ensemble_seed789 \
+    checkpoints/ensemble_seed1024 \
+  --config configs/config_rethink_v3.yaml \
+  --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
+  --output predictions/ensemble_pred.jsonl
+```
+
+### 5.2 V5: 回译增强 + Multi-Seed Ensemble（✅ 已完成）
+
+基于 SIGHAN 2024 冠军方案（HITSZ-HLT）和 CCIIPLab 第 2 名方案分析，V5 聚焦：**数据 > 表征 > 融合**。
+
+#### Phase 1: 数据增强（✅ 已完成）
+
+**D1 回译增强**（英→de/fr/zh→英）：
+- 工具：HuggingFace MarianMT（Helsinki-NLP/opus-mt）
+- 脚本：`scripts/augment_data.py`
+- span 重定位：精确匹配 + fuzzy 匹配（SequenceMatcher ratio ≥ 0.8）
+
+| 语言 | 保留率 | 新增样本 |
+|------|--------|---------|
+| DE (德语) | 82.0% | 1,874 |
+| FR (法语) | 76.0% | 1,735 |
+| ZH (中文) | 53.1% | 1,213 |
+| **合计** | — | **4,822** |
+| **原始 + 增强** | — | **7,106 (3.11x)** |
+
+**V5 各 seed 训练结果**（增强数据 7106 条）：
+
+| Seed | 最佳 cF1 | Best Epoch |
+|------|---------|-----------|
+| 42   | 0.6474  | 28        |
+| 123  | 0.6417  | 24        |
+| 456  | 0.6410  | 15        |
+| 789  | 0.6356  | 26        |
+| 1024 | 0.6332  | 21        |
+| **平均** | **0.6398** | — |
+| **Ensemble (vote≥3)** | **0.6530** | — |
+
+**实际 cF1：0.6530**（cPrecision=0.7049，cRecall=0.6082），**+4.0% vs V3 单模型**
+
+```bash
+# 增强数据生成
+python scripts/augment_data.py \
+  --input data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl \
+  --output data/subtask_3/eng/eng_restaurant_train_augmented.jsonl \
+  --langs de fr zh
+
+# 多seed训练
+python scripts/train_multi_seed.py \
+  --config configs/config_rethink_v3.yaml \
+  --train_file data/subtask_3/eng/eng_restaurant_train_augmented.jsonl \
+  --save_prefix aug_ensemble_seed
+
+# Ensemble推理
+python scripts/inference.py --multi_seed_ensemble \
+  --seed_dirs checkpoints/aug_ensemble_seed42 checkpoints/aug_ensemble_seed123 \
+    checkpoints/aug_ensemble_seed456 checkpoints/aug_ensemble_seed789 \
+    checkpoints/aug_ensemble_seed1024 \
+  --config configs/config_rethink_v3.yaml \
+  --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
+  --output predictions/aug_ensemble_pred.jsonl
+```
+
+#### Phase 2: 数据增强（待完成）
+
+| 方案 | 方法 | 预期提升 |
+|------|------|----------|
+| D2 同义词替换 | 替换 aspect/opinion 词（WordNet/nlpaug） | +1~2% |
+| D3 LLM 伪标注 | GPT/Qwen 对未标注评论生成伪标签 | +2~4% |
+| D4 跨语言数据 | 利用中文/日文等数据做多语言联合训练 | +1~2% |
+
+#### Phase 2: 表征增强
+
+| 方案 | 方法 | 参考 | 预期提升 |
+|------|------|------|----------|
+| R1 VA 对比学习 | InfoNCE loss 校准 VA 空间 | CCIIPLab (SIGHAN 第 2 名) | +1~2% |
+| R2 领域自适应预训练 | 餐厅评论语料 MLM 继续预训练 | HITSZ-HLT | +1~2% |
+| R3 Biaffine Attention | 替代拼接配对方式 | STBA | +0.5~1% |
+
+#### Phase 3: LLM 融合
+
+| 方案 | 方法 | 参考 | 预期提升 |
+|------|------|------|----------|
+| F1 BERT + LLM 混合 | LLM 生成 quad 候选，与 BERT 结果融合 | HITSZ-HLT (SIGHAN 冠军) | +2~4% |
+| F2 双层 Ensemble | 每个 seed 内 top-k 权重平均 + seed 间投票 | — | +0.5~1% |
+
+### 5.3 目标里程碑
+
+| 阶段 | 实际/预期 cF1 | 对比 V3 基线 | 状态 |
+|------|-------------|-------------|------|
+| V3 单模型 | 0.6278 | 基线 | ✅ |
+| V4 Ensemble (原始数据) | 0.6415 | +2.2% | ✅ |
+| V5 增强单模型 | 0.6474 | +3.1% | ✅ |
+| **V5 增强 Ensemble** | **0.6530** | **+4.0%** | **✅ 完成** |
+| V5 Phase 2 表征优化 | 0.67~0.69 | +6~7% | 待开始 |
+| V5 Phase 3 LLM 融合 | 0.70+ | +7%+ | 待开始 |
+
+---
+
+## 6. 主要结果
+
+### 6.1 版本演进总览
+
+| 版本 | 关键改动 | cF1 | Δ cF1 | 状态 |
+|------|----------|-----|-------|------|
+| Baseline | DeBERTa-v3-base, 无 Rethink | 0.2935 | — | 已废弃 |
+| Rethink V1 | + Rethink 模块 | 0.4064 | +11.3% | 已废弃 |
+| Rethink V2 | + 强 FGM (epsilon=0.5) | 0.2326 | -17.4% | 已废弃 |
+| V3 + Span Fix | + 字符级位置追踪 | 0.3836 | +15.1% | 已废弃 |
+| V3 + Hungarian | + 最优配对匹配 | 0.4348 | +5.1% | 已废弃 |
+| **V3 Final** | **+ EMA + FGM(0.1) + span=2.0** | **0.6278** | **+19.3%** | 单模型最佳 |
+| V3-CRF (实验) | + CRF + NULL Anchor | 0.6249 | -0.3% | 已回退 |
+| V3-CRF + Large | DeBERTa-v3-large | 0.5539 | -7.4% | 已回退 |
+| V4 Ensemble | 5-seed 投票, 原始数据 | 0.6415 | +2.2% | ✅ |
+| V5 增强单模型 | 回译增强 (3.1x数据), 单模型 | 0.6474 | +3.1% | ✅ |
+| **V5 增强 Ensemble** | **回译增强 + 5-seed 投票** | **0.6530** | **+4.0%** | **✅ 当前最佳** |
+
+### 6.2 代码修复前后对比
 
 | 版本 | 代码版本 | cF1 | Exact F1 | VA RMSE | Best Epoch |
 |------|----------|-----|----------|---------|------------|
@@ -200,7 +401,7 @@ training:
 | V3 + Span + Hungarian | 新代码 | 0.4348 | 0.4748 | 1.1406 | 16 |
 | **V3 + Loss Weight Sweep (span=2.0)** | **新代码** | **0.6278** | **-** | **-** | **-** |
 
-### 5.2 关键修复说明
+### 6.3 关键修复说明
 
 #### (1) Span 匹配修复
 
@@ -235,7 +436,7 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 
 **修复效果**: cF1 +5.12% (0.4348 vs 0.3836)
 
-### 5.3 训练曲线 (V3 + 所有修复)
+### 6.4 训练曲线 (V3 + 所有修复)
 
 | Epoch | cF1 | Exact F1 | VA RMSE |
 |-------|-----|----------|---------|
@@ -249,9 +450,9 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 
 ---
 
-## 6. 消融实验
+## 7. 消融实验
 
-### 6.1 模块消融
+### 7.1 模块消融
 
 | 配置 | Rethink | Hungarian | FGM | cF1 | Δ cF1 |
 |------|---------|-----------|-----|-----|-------|
@@ -260,7 +461,7 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 | +Span Fix | ✓ | ✗ | ✓ | 0.3836 | +9.01% |
 | +Hungarian | ✓ | ✓ | ✓ | **0.4348** | **+14.13%** |
 
-### 6.2 Rethink 迭代次数
+### 7.2 Rethink 迭代次数
 
 | 迭代次数 | cF1 | 说明 |
 |----------|-----|------|
@@ -269,7 +470,7 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 | 2 | **0.4348** | 最佳 |
 | 3 | 0.4201 | 略有下降 |
 
-### 6.3 FGM epsilon 参数
+### 7.3 FGM epsilon 参数
 
 | epsilon | cF1 | 说明 |
 |---------|-----|------|
@@ -278,7 +479,7 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 | 0.3 | 0.3912 | 扰动过强 |
 | 0.5 | 0.2326 | V2 配置 (训练不稳定) |
 
-### 6.4 学习率影响
+### 7.4 学习率影响
 
 | Encoder LR | Head LR | cF1 |
 |------------|---------|-----|
@@ -289,9 +490,22 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 
 ---
 
-## 7. 错误分析
+### 7.5 V4 实验消融
 
-### 7.1 错误类型分布
+| 实验 | 改动 | cF1 | vs V3 |
+|------|------|-----|-------|
+| V3 基线 | — | **0.6278** | — |
+| + CRF + NULL | use_crf=true | 0.6249 | -0.3% |
+| + CRF Loss Clamp | clamp(max=20.0) | 0.6177 | -1.0% |
+| + DeBERTa-large | 304M params | 0.5539 | -7.4% |
+| Loss Sweep (best) | span=2.5, va=2.0 | 0.6271 | -0.1% |
+| Pair Threshold | 0.05~0.50 全范围 | 0.6264 | 0% |
+
+---
+
+## 8. 错误分析
+
+### 8.1 错误类型分布
 
 基于 Dev Set 200 样本的分析：
 
@@ -303,7 +517,7 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 | 多检 (FP) | 15% | 非情感词误判为 opinion |
 | V-A 偏差大 | 5% | 强烈情感词 V-A 预测偏中性 |
 
-### 7.2 典型错误案例
+### 8.2 典型错误案例
 
 #### Case 1: Span 边界模糊
 
@@ -336,7 +550,7 @@ Pred: V=3.2, A=6.1 (预测偏中性)
 问题: 极端情感的 V-A 预测偏保守
 ```
 
-### 7.3 改进方向
+### 8.3 改进方向
 
 | 问题 | 建议方案 | 优先级 |
 |------|----------|--------|

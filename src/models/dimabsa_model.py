@@ -13,23 +13,26 @@ import numpy as np
 
 from .va_module import VARegressor, VAEmbedding
 from .feature_rethink import FeatureLevelRethink, ConsistencyLoss
+from .crf import CRF
 
 
 class SpanExtractor(nn.Module):
     """
-    Extracts aspect and opinion spans using BIO tagging
+    Extracts aspect and opinion spans using BIO tagging, optionally with CRF.
     """
-    
+
     def __init__(
         self,
         hidden_dim: int = 768,
         num_labels: int = 5,  # O, B-ASP, I-ASP, B-OPN, I-OPN
-        dropout: float = 0.1
+        dropout: float = 0.1,
+        use_crf: bool = False
     ):
         super().__init__()
-        
+
         self.num_labels = num_labels
-        
+        self.use_crf = use_crf
+
         self.classifier = nn.Sequential(
             nn.Dropout(dropout),
             nn.Linear(hidden_dim, hidden_dim // 2),
@@ -37,12 +40,15 @@ class SpanExtractor(nn.Module):
             nn.Dropout(dropout),
             nn.Linear(hidden_dim // 2, num_labels)
         )
-    
+
+        if use_crf:
+            self.crf = CRF(num_tags=num_labels)
+
     def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
         """
         Args:
             hidden_states: [batch_size, seq_len, hidden_dim]
-            
+
         Returns:
             logits: [batch_size, seq_len, num_labels]
         """
@@ -54,12 +60,16 @@ class SpanExtractor(nn.Module):
         attention_mask: torch.Tensor
     ) -> List[List[Tuple[int, int, str]]]:
         """
-        Extract span positions from BIO predictions
-        
+        Extract span positions from BIO predictions.
+        Uses Viterbi decoding when CRF is enabled, argmax otherwise.
+
         Returns:
             List of spans for each sample: [(start, end, type), ...]
         """
-        predictions = torch.argmax(logits, dim=-1)  # [B, L]
+        if self.use_crf:
+            predictions = self.crf.decode(logits, attention_mask.float())
+        else:
+            predictions = torch.argmax(logits, dim=-1)  # [B, L]
         batch_spans = []
         
         # Label mapping
@@ -201,10 +211,13 @@ class DimASQPModel(nn.Module):
         va_max: float = 9.0,
         loss_weights: dict = None,
         entity_labels: list = None,
-        attribute_labels: list = None
+        attribute_labels: list = None,
+        category_embed_dim: int = 0,
+        use_crf: bool = False
     ):
         super().__init__()
 
+        self.use_crf = use_crf
         self.use_rethink = use_rethink
         assert num_rethink_iterations >= 1, "num_rethink_iterations must be >= 1"
         self.num_rethink_iterations = num_rethink_iterations
@@ -233,7 +246,8 @@ class DimASQPModel(nn.Module):
         self.span_extractor = SpanExtractor(
             hidden_dim=self.hidden_dim,
             num_labels=num_bio_labels,
-            dropout=dropout
+            dropout=dropout,
+            use_crf=use_crf
         )
         
         self.pair_classifier = PairClassifier(
@@ -243,12 +257,16 @@ class DimASQPModel(nn.Module):
             dropout=dropout
         )
         
+        self.category_embed_dim = category_embed_dim
         self.va_regressor = VARegressor(
             input_dim=self.hidden_dim * 2,
             hidden_dim=va_hidden_dim,
             dropout=dropout,
             va_min=va_min,
-            va_max=va_max
+            va_max=va_max,
+            num_entity_labels=num_entity_labels,
+            num_attribute_labels=num_attribute_labels,
+            category_embed_dim=category_embed_dim
         )
         
         # Stage 2: Feature-level Rethink
@@ -266,7 +284,8 @@ class DimASQPModel(nn.Module):
             self.span_extractor_stage2 = SpanExtractor(
                 hidden_dim=self.hidden_dim,
                 num_labels=num_bio_labels,
-                dropout=dropout
+                dropout=dropout,
+                use_crf=use_crf
             )
             
             self.pair_classifier_stage2 = PairClassifier(
@@ -281,7 +300,10 @@ class DimASQPModel(nn.Module):
                 hidden_dim=va_hidden_dim,
                 dropout=dropout,
                 va_min=va_min,
-                va_max=va_max
+                va_max=va_max,
+                num_entity_labels=num_entity_labels,
+                num_attribute_labels=num_attribute_labels,
+                category_embed_dim=category_embed_dim
             )
             
             # Consistency loss
@@ -388,9 +410,11 @@ class DimASQPModel(nn.Module):
         entity_probs_s1 = F.softmax(entity_logits_s1, dim=-1)
         attr_probs_s1 = F.softmax(attr_logits_s1, dim=-1)
         
-        # V-A regression
+        # V-A regression (category-conditioned when category_embed_dim > 0)
         pair_repr_s1 = torch.cat([aspect_repr, opinion_repr], dim=-1)
-        valence_s1, arousal_s1 = self.va_regressor(pair_repr_s1)
+        entity_idx_s1 = entity_logits_s1.argmax(dim=-1) if self.category_embed_dim > 0 else None
+        attr_idx_s1 = attr_logits_s1.argmax(dim=-1) if self.category_embed_dim > 0 else None
+        valence_s1, arousal_s1 = self.va_regressor(pair_repr_s1, entity_idx_s1, attr_idx_s1)
         
         outputs = {
             "bio_logits": bio_logits_s1,
@@ -445,7 +469,9 @@ class DimASQPModel(nn.Module):
                 attr_probs_s2 = F.softmax(attr_logits_s2, dim=-1)
 
                 pair_repr_s2 = torch.cat([aspect_repr_s2, opinion_repr_s2], dim=-1)
-                valence_s2, arousal_s2 = self.va_regressor_stage2(pair_repr_s2)
+                entity_idx_s2 = entity_logits_s2.argmax(dim=-1) if self.category_embed_dim > 0 else None
+                attr_idx_s2 = attr_logits_s2.argmax(dim=-1) if self.category_embed_dim > 0 else None
+                valence_s2, arousal_s2 = self.va_regressor_stage2(pair_repr_s2, entity_idx_s2, attr_idx_s2)
 
                 # Feed this iteration's outputs into the next
                 cur_hidden = refined_hidden
@@ -602,11 +628,16 @@ class DimASQPModel(nn.Module):
 
         device = bio_logits.device
 
-        # BIO span loss (only on non-padded tokens) with label smoothing
-        active_mask = attention_mask.view(-1) == 1
-        active_logits = bio_logits.view(-1, self.num_bio_labels)[active_mask]
-        active_labels = bio_labels.view(-1)[active_mask]
-        bio_loss = F.cross_entropy(active_logits, active_labels, label_smoothing=0.1)
+        # BIO span loss
+        if self.use_crf:
+            # CRF computes full-sequence negative log-likelihood
+            span_extractor = self.span_extractor_stage2 if self.use_rethink else self.span_extractor
+            bio_loss = span_extractor.crf(bio_logits, bio_labels, attention_mask.float())
+        else:
+            active_mask = attention_mask.view(-1) == 1
+            active_logits = bio_logits.view(-1, self.num_bio_labels)[active_mask]
+            active_labels = bio_labels.view(-1)[active_mask]
+            bio_loss = F.cross_entropy(active_logits, active_labels, label_smoothing=0.1)
 
         # Pair classification and V-A losses with Hungarian matching
         pair_loss = torch.tensor(0.0, device=device)
@@ -727,8 +758,13 @@ class DimASQPModel(nn.Module):
 
         # Consistency loss for Rethink (detach s1 to stabilize)
         if self.use_rethink and "bio_logits_s1" in outputs:
-            active_logits_s1 = outputs["bio_logits_s1"].view(-1, self.num_bio_labels)[active_mask]
-            bio_loss_s1 = F.cross_entropy(active_logits_s1, active_labels)
+            if self.use_crf:
+                bio_loss_s1 = self.span_extractor.crf(
+                    outputs["bio_logits_s1"], bio_labels, attention_mask.float()
+                )
+            else:
+                active_logits_s1 = outputs["bio_logits_s1"].view(-1, self.num_bio_labels)[active_mask]
+                bio_loss_s1 = F.cross_entropy(active_logits_s1, active_labels)
             consistency_loss = self.consistency_loss(bio_loss_s1.detach(), bio_loss)
             total_loss = total_loss + lw['consistency'] * consistency_loss
         else:
@@ -760,7 +796,8 @@ class DimASQPModel(nn.Module):
         input_ids: torch.Tensor,
         attention_mask: torch.Tensor,
         texts: List[str],
-        offset_mapping: torch.Tensor = None
+        offset_mapping: torch.Tensor = None,
+        pair_threshold: float = 0.3
     ) -> List[List[Dict]]:
         """
         Generate predictions in SemEval output format
@@ -795,6 +832,8 @@ class DimASQPModel(nn.Module):
             opinions = [s for s in spans if s[2] == "opinion"]
 
             pair_idx = 0
+            # Track best prediction per key to deduplicate
+            seen_keys = {}  # key -> (quad_dict, confidence)
             for asp_start, asp_end, _ in aspects:
                 for opn_start, opn_end, _ in opinions:
                     if outputs["pair_mask"][b, pair_idx] < 0.5:
@@ -806,7 +845,7 @@ class DimASQPModel(nn.Module):
                     pair_valid = torch.argmax(pair_logits).item()
                     # Also check confidence - skip low confidence predictions
                     pair_prob = torch.softmax(pair_logits, dim=-1)
-                    if pair_valid == 0 or pair_prob[1] < 0.3:  # Invalid or low confidence
+                    if pair_valid == 0 or pair_prob[1] < pair_threshold:
                         pair_idx += 1
                         continue
 
@@ -824,15 +863,22 @@ class DimASQPModel(nn.Module):
                         aspect_text = "NULL"
                         opinion_text = "NULL"
 
-                    quads.append({
+                    quad = {
                         "Aspect": aspect_text,
                         "Category": f"{entity_labels[entity_idx]}#{attr_labels[attr_idx]}",
                         "Opinion": opinion_text,
                         "VA": f"{valence:.2f}#{arousal:.2f}"
-                    })
+                    }
+
+                    # Deduplicate: keep highest-confidence prediction per key
+                    key = (aspect_text, opinion_text, quad["Category"])
+                    conf = pair_prob[1].item()
+                    if key not in seen_keys or conf > seen_keys[key][1]:
+                        seen_keys[key] = (quad, conf)
 
                     pair_idx += 1
 
+            quads = [v[0] for v in seen_keys.values()]
             predictions.append(quads)
 
         return predictions

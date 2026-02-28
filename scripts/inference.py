@@ -1,6 +1,11 @@
 """
 Inference Script for DimASQP Model
 Generates predictions in SemEval-2026 submission format
+
+Supports:
+  - Single model inference (--checkpoint)
+  - Weight-averaging ensemble of top-k checkpoints (--ensemble --checkpoint_dir)
+  - Multi-seed voting ensemble (--multi_seed_ensemble --seed_dirs)
 """
 
 import sys
@@ -8,6 +13,7 @@ import json
 import yaml
 import argparse
 from pathlib import Path
+from collections import defaultdict
 from tqdm import tqdm
 
 import torch
@@ -36,7 +42,9 @@ def _create_model(config: dict) -> DimASQPModel:
         va_max=config['model']['va_max'],
         loss_weights=config['training'].get('loss_weights'),
         entity_labels=config['data'].get('entity_labels'),
-        attribute_labels=config['data'].get('attribute_labels')
+        attribute_labels=config['data'].get('attribute_labels'),
+        category_embed_dim=config['model'].get('category_embed_dim', 0),
+        use_crf=config['model'].get('use_crf', False)
     )
 
 
@@ -150,7 +158,8 @@ def load_ensemble_model(checkpoint_dir: str, config: dict, device: str) -> DimAS
 def generate_predictions(
     model: DimASQPModel,
     dataloader: DataLoader,
-    device: str
+    device: str,
+    pair_threshold: float = 0.3
 ) -> list:
     """Generate predictions for all samples"""
     all_predictions = []
@@ -167,7 +176,8 @@ def generate_predictions(
                 input_ids=input_ids,
                 attention_mask=attention_mask,
                 texts=texts,
-                offset_mapping=batch['offset_mapping']
+                offset_mapping=batch['offset_mapping'],
+                pair_threshold=pair_threshold
             )
             
             # Format for submission
@@ -178,6 +188,80 @@ def generate_predictions(
                 })
     
     return all_predictions
+
+
+def multi_seed_ensemble_predictions(
+    seed_dirs: list,
+    config: dict,
+    dataloader: DataLoader,
+    device: str,
+    pair_threshold: float = 0.3,
+    vote_threshold: int = None
+) -> list:
+    """Run inference with multiple seed models and merge via majority voting.
+
+    For each sample:
+      - Each model independently generates quads
+      - Quads with same (Aspect, Category, Opinion) key are grouped
+      - Only quads appearing in >= vote_threshold models are kept
+      - VA values are averaged across models that predicted the quad
+
+    Args:
+        seed_dirs: list of checkpoint directories (one per seed)
+        config: base config dict
+        dataloader: test dataloader
+        device: device string
+        pair_threshold: pair confidence threshold
+        vote_threshold: minimum votes to keep a quad (default: majority)
+
+    Returns:
+        Merged predictions list
+    """
+    n_models = len(seed_dirs)
+    if vote_threshold is None:
+        vote_threshold = (n_models // 2) + 1  # majority
+    print(f"Multi-seed ensemble: {n_models} models, vote_threshold={vote_threshold}")
+
+    # Collect predictions from each model
+    all_model_preds = []
+    for i, seed_dir in enumerate(seed_dirs):
+        ckpt_path = Path(seed_dir) / "checkpoint_best.pt"
+        print(f"\n--- Model {i+1}/{n_models}: {ckpt_path} ---")
+        model = load_model(str(ckpt_path), config.copy(), device)
+        preds = generate_predictions(model, dataloader, device, pair_threshold)
+        all_model_preds.append(preds)
+        # Free GPU memory
+        del model
+        torch.cuda.empty_cache()
+
+    # Merge predictions by voting
+    n_samples = len(all_model_preds[0])
+    merged = []
+    for idx in range(n_samples):
+        sample_id = all_model_preds[0][idx]["ID"]
+        # Group quads by key
+        quad_votes = defaultdict(list)  # key -> list of (valence, arousal)
+        for model_preds in all_model_preds:
+            for quad in model_preds[idx]["Quadruplet"]:
+                key = (quad["Aspect"], quad["Category"], quad["Opinion"])
+                va_parts = quad["VA"].split("#")
+                quad_votes[key].append((float(va_parts[0]), float(va_parts[1])))
+
+        # Filter by vote threshold and average VA
+        final_quads = []
+        for (aspect, category, opinion), va_list in quad_votes.items():
+            if len(va_list) >= vote_threshold:
+                avg_v = sum(v for v, a in va_list) / len(va_list)
+                avg_a = sum(a for v, a in va_list) / len(va_list)
+                final_quads.append({
+                    "Aspect": aspect,
+                    "Category": category,
+                    "Opinion": opinion,
+                    "VA": f"{avg_v:.2f}#{avg_a:.2f}"
+                })
+        merged.append({"ID": sample_id, "Quadruplet": final_quads})
+
+    return merged
 
 
 def save_predictions(predictions: list, output_path: str):
@@ -198,6 +282,12 @@ def main():
                        help='Use weight-averaging ensemble of top-k checkpoints')
     parser.add_argument('--checkpoint_dir', type=str, default=None,
                        help='Directory containing top-k checkpoints (for --ensemble)')
+    parser.add_argument('--multi_seed_ensemble', action='store_true',
+                       help='Use multi-seed voting ensemble')
+    parser.add_argument('--seed_dirs', nargs='+', default=None,
+                       help='Checkpoint directories for each seed (for --multi_seed_ensemble)')
+    parser.add_argument('--vote_threshold', type=int, default=None,
+                       help='Min votes to keep a quad (default: majority)')
     parser.add_argument('--config', type=str, default='configs/config.yaml',
                        help='Path to config file')
     parser.add_argument('--test_file', type=str, required=True,
@@ -208,12 +298,16 @@ def main():
                        help='Batch size for inference')
     parser.add_argument('--device', type=str, default=None,
                        help='Device to use')
+    parser.add_argument('--pair_threshold', type=float, default=0.3,
+                       help='Pair validity confidence threshold (default: 0.3)')
     args = parser.parse_args()
 
-    if not args.ensemble and not args.checkpoint:
-        parser.error("--checkpoint is required when not using --ensemble")
+    if not args.ensemble and not args.multi_seed_ensemble and not args.checkpoint:
+        parser.error("--checkpoint is required when not using --ensemble or --multi_seed_ensemble")
     if args.ensemble and not args.checkpoint_dir:
         parser.error("--checkpoint_dir is required when using --ensemble")
+    if args.multi_seed_ensemble and not args.seed_dirs:
+        parser.error("--seed_dirs is required when using --multi_seed_ensemble")
 
     # Load config
     with open(args.config, 'r') as f:
@@ -223,48 +317,64 @@ def main():
     device = args.device or config.get('device', 'cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
 
-    # Load model FIRST so _merge_config_from_checkpoint can update
-    # encoder_name (e.g. mdeberta-v3-base for non-English) before tokenizer is created.
-    if args.ensemble:
-        print(f"Loading ensemble from: {args.checkpoint_dir}")
-        # Peek at one checkpoint to update config (labels, encoder) before building tokenizer
-        ckpt_paths = sorted(Path(args.checkpoint_dir).glob('checkpoint_epoch*.pt'))
-        if ckpt_paths:
-            peek_ckpt = torch.load(ckpt_paths[0], map_location='cpu', weights_only=False)
-            config = _merge_config_from_checkpoint(config, peek_ckpt)
-        model = load_ensemble_model(args.checkpoint_dir, config, device)
-    else:
-        print(f"Loading model from: {args.checkpoint}")
-        model = load_model(args.checkpoint, config, device)
+    if args.multi_seed_ensemble:
+        # Multi-seed voting ensemble: load tokenizer first, then iterate models
+        print(f"Loading tokenizer: {config['model']['encoder_name']}")
+        tokenizer = AutoTokenizer.from_pretrained(config['model']['encoder_name'])
 
-    # Load tokenizer AFTER model load so encoder_name is correct for this language
-    print(f"Loading tokenizer: {config['model']['encoder_name']}")
-    tokenizer = AutoTokenizer.from_pretrained(config['model']['encoder_name'])
-    
-    # Create test dataset
-    print(f"Loading test data from: {args.test_file}")
-    test_dataset = DimASQPDataset(
-        data_path=args.test_file,
-        tokenizer=tokenizer,
-        max_length=config['data']['max_seq_length']
-    )
-    
-    test_dataloader = DataLoader(
-        test_dataset,
-        batch_size=args.batch_size,
-        shuffle=False,
-        collate_fn=collate_fn,
-        num_workers=4
-    )
-    
-    print(f"Test samples: {len(test_dataset)}")
-    
-    # Generate predictions
-    predictions = generate_predictions(model, test_dataloader, device)
-    
+        print(f"Loading test data from: {args.test_file}")
+        test_dataset = DimASQPDataset(
+            data_path=args.test_file,
+            tokenizer=tokenizer,
+            max_length=config['data']['max_seq_length']
+        )
+        test_dataloader = DataLoader(
+            test_dataset, batch_size=args.batch_size, shuffle=False,
+            collate_fn=collate_fn, num_workers=4
+        )
+        print(f"Test samples: {len(test_dataset)}")
+
+        predictions = multi_seed_ensemble_predictions(
+            seed_dirs=args.seed_dirs,
+            config=config,
+            dataloader=test_dataloader,
+            device=device,
+            pair_threshold=args.pair_threshold,
+            vote_threshold=args.vote_threshold
+        )
+    else:
+        # Single model or weight-averaging ensemble
+        if args.ensemble:
+            print(f"Loading ensemble from: {args.checkpoint_dir}")
+            ckpt_paths = sorted(Path(args.checkpoint_dir).glob('checkpoint_epoch*.pt'))
+            if ckpt_paths:
+                peek_ckpt = torch.load(ckpt_paths[0], map_location='cpu', weights_only=False)
+                config = _merge_config_from_checkpoint(config, peek_ckpt)
+            model = load_ensemble_model(args.checkpoint_dir, config, device)
+        else:
+            print(f"Loading model from: {args.checkpoint}")
+            model = load_model(args.checkpoint, config, device)
+
+        print(f"Loading tokenizer: {config['model']['encoder_name']}")
+        tokenizer = AutoTokenizer.from_pretrained(config['model']['encoder_name'])
+
+        print(f"Loading test data from: {args.test_file}")
+        test_dataset = DimASQPDataset(
+            data_path=args.test_file,
+            tokenizer=tokenizer,
+            max_length=config['data']['max_seq_length']
+        )
+        test_dataloader = DataLoader(
+            test_dataset, batch_size=args.batch_size, shuffle=False,
+            collate_fn=collate_fn, num_workers=4
+        )
+        print(f"Test samples: {len(test_dataset)}")
+
+        predictions = generate_predictions(model, test_dataloader, device, pair_threshold=args.pair_threshold)
+
     # Save predictions
     save_predictions(predictions, args.output)
-    
+
     # Print sample predictions
     print("\n📋 Sample predictions:")
     for i, pred in enumerate(predictions[:3]):

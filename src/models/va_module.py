@@ -12,29 +12,45 @@ from typing import Tuple, Optional
 class VARegressor(nn.Module):
     """
     Valence-Arousal Regression Head
-    
+
     Predicts continuous values:
     - Valence: [1, 9] (positive/negative sentiment)
     - Arousal: [1, 9] (intensity/excitement level)
+
+    When category_embed_dim > 0, entity/attribute embeddings are
+    concatenated with the pair representation before the shared layer,
+    enabling category-aware VA predictions (e.g. PRICES tends negative).
     """
-    
+
     def __init__(
         self,
         input_dim: int = 768,
         hidden_dim: int = 256,
         dropout: float = 0.1,
         va_min: float = 1.0,
-        va_max: float = 9.0
+        va_max: float = 9.0,
+        num_entity_labels: int = 0,
+        num_attribute_labels: int = 0,
+        category_embed_dim: int = 0
     ):
         super().__init__()
-        
+
         self.va_min = va_min
         self.va_max = va_max
         self.va_range = va_max - va_min  # 8.0
-        
+        self.category_embed_dim = category_embed_dim
+
+        # Category conditioning: learnable embeddings for entity and attribute
+        if category_embed_dim > 0 and num_entity_labels > 0:
+            self.entity_embed = nn.Embedding(num_entity_labels, category_embed_dim)
+            self.attr_embed = nn.Embedding(num_attribute_labels, category_embed_dim)
+            shared_input_dim = input_dim + 2 * category_embed_dim
+        else:
+            shared_input_dim = input_dim
+
         # Shared feature extraction
         self.shared_layer = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
+            nn.Linear(shared_input_dim, hidden_dim),
             nn.GELU(),
             nn.Dropout(dropout),
             nn.LayerNorm(hidden_dim)
@@ -55,15 +71,30 @@ class VARegressor(nn.Module):
             nn.Linear(hidden_dim // 2, 1)
         )
     
-    def forward(self, pair_representation: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(
+        self,
+        pair_representation: torch.Tensor,
+        entity_idx: Optional[torch.Tensor] = None,
+        attr_idx: Optional[torch.Tensor] = None
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Args:
             pair_representation: [batch_size, num_pairs, input_dim]
-            
+            entity_idx: [batch_size, num_pairs] predicted entity indices (optional)
+            attr_idx:   [batch_size, num_pairs] predicted attribute indices (optional)
+
         Returns:
             valence: [batch_size, num_pairs] in range [1, 9]
             arousal: [batch_size, num_pairs] in range [1, 9]
         """
+        # Concatenate category embeddings when available
+        if self.category_embed_dim > 0 and entity_idx is not None:
+            cat_emb = torch.cat([
+                self.entity_embed(entity_idx),
+                self.attr_embed(attr_idx)
+            ], dim=-1)
+            pair_representation = torch.cat([pair_representation, cat_emb], dim=-1)
+
         # Shared features
         shared_feat = self.shared_layer(pair_representation)
         
