@@ -25,31 +25,57 @@ from transformers import MarianMTModel, MarianTokenizer
 
 
 # --- Constants ---
-VALID_ENTITIES = {"AMBIENCE", "DRINKS", "FOOD", "LOCATION", "RESTAURANT", "SERVICE", "NULL"}
-VALID_ATTRIBUTES = {"GENERAL", "MISCELLANEOUS", "PRICES", "QUALITY", "STYLE_OPTIONS", "NULL"}
-VALID_CATEGORIES = {
-    f"{e}#{a}" for e in VALID_ENTITIES - {"NULL"} for a in VALID_ATTRIBUTES - {"NULL"}
-}
 VA_MIN, VA_MAX = 1.0, 9.0
 
-# MarianMT model names for each pivot language
-MARIAN_MODELS = {
-    "de": ("Helsinki-NLP/opus-mt-en-de", "Helsinki-NLP/opus-mt-de-en"),
-    "fr": ("Helsinki-NLP/opus-mt-en-fr", "Helsinki-NLP/opus-mt-fr-en"),
-    "zh": ("Helsinki-NLP/opus-mt-en-zh", "Helsinki-NLP/opus-mt-zh-en"),
-    "ru": ("Helsinki-NLP/opus-mt-en-ru", "Helsinki-NLP/opus-mt-ru-en"),
-    "ja": ("Helsinki-NLP/opus-mt-en-jap", "Helsinki-NLP/opus-mt-jap-en"),
+# MarianMT model names: source_lang -> {pivot_lang: (fwd_model, bwd_model)}
+# fwd = source->pivot, bwd = pivot->source
+MARIAN_MODELS_BY_SOURCE = {
+    "en": {
+        "de": ("Helsinki-NLP/opus-mt-en-de", "Helsinki-NLP/opus-mt-de-en"),
+        "fr": ("Helsinki-NLP/opus-mt-en-fr", "Helsinki-NLP/opus-mt-fr-en"),
+        "zh": ("Helsinki-NLP/opus-mt-en-zh", "Helsinki-NLP/opus-mt-zh-en"),
+        "ru": ("Helsinki-NLP/opus-mt-en-ru", "Helsinki-NLP/opus-mt-ru-en"),
+    },
+    "ja": {
+        "en": ("Helsinki-NLP/opus-mt-jap-en", "Helsinki-NLP/opus-mt-en-jap"),
+    },
+    "zh": {
+        "en": ("Helsinki-NLP/opus-mt-zh-en", "Helsinki-NLP/opus-mt-en-zh"),
+    },
+    "ru": {
+        "en": ("Helsinki-NLP/opus-mt-ru-en", "Helsinki-NLP/opus-mt-en-ru"),
+    },
+    "uk": {
+        "en": ("Helsinki-NLP/opus-mt-uk-en", "Helsinki-NLP/opus-mt-en-uk"),
+    },
+    "tat": {
+        # Turkic language group model with >>tat<< tag
+        "en": ("Helsinki-NLP/opus-mt-trk-en", "Helsinki-NLP/opus-mt-en-trk"),
+    },
 }
+
+# Legacy alias for backward compatibility
+MARIAN_MODELS = MARIAN_MODELS_BY_SOURCE["en"]
 
 
 # --- Validation ---
 
-def validate_quad(text: str, quad: dict) -> bool:
+def build_valid_categories(samples: List[dict]) -> set:
+    """Build valid category set from training data."""
+    cats = set()
+    for s in samples:
+        for q in s.get("Quadruplet", []):
+            cats.add(q["Category"])
+    return cats
+
+
+def validate_quad(text: str, quad: dict, valid_categories: set = None) -> bool:
     """Validate a single quadruplet against the text."""
     # Check category
-    cat = quad.get("Category", "")
-    if cat not in VALID_CATEGORIES:
-        return False
+    if valid_categories:
+        cat = quad.get("Category", "")
+        if cat not in valid_categories:
+            return False
 
     # Check VA
     try:
@@ -69,11 +95,11 @@ def validate_quad(text: str, quad: dict) -> bool:
     return True
 
 
-def validate_sample(sample: dict) -> Tuple[bool, dict]:
+def validate_sample(sample: dict, valid_categories: set = None) -> Tuple[bool, dict]:
     """Validate sample, remove invalid quads. Returns (is_valid, cleaned)."""
     text = sample.get("Text", "")
     quads = sample.get("Quadruplet", [])
-    valid_quads = [q for q in quads if validate_quad(text, q)]
+    valid_quads = [q for q in quads if validate_quad(text, q, valid_categories)]
     if not valid_quads:
         return False, sample
     cleaned = copy.deepcopy(sample)
@@ -96,18 +122,22 @@ class BackTranslationAugmenter:
     """Back-translate via pivot languages to generate paraphrases."""
 
     def __init__(self, pivot_langs: List[str], device: str = "cuda",
-                 batch_size: int = 32, fuzzy_threshold: float = 0.8):
+                 batch_size: int = 32, fuzzy_threshold: float = 0.8,
+                 source_lang: str = "en", lang_tags: dict = None):
         self.pivot_langs = pivot_langs
         self.device = device
         self.batch_size = batch_size
         self.fuzzy_threshold = fuzzy_threshold
+        self.source_lang = source_lang
+        self.lang_tags = lang_tags or {}  # e.g. {"fwd": ">>tat<<", "bwd": None}
         self.translators = {}
 
+        models = MARIAN_MODELS_BY_SOURCE.get(source_lang, {})
         for lang in pivot_langs:
-            if lang not in MARIAN_MODELS:
-                print(f"WARNING: No MarianMT model for '{lang}', skipping")
+            if lang not in models:
+                print(f"WARNING: No MarianMT model for '{source_lang}'->{lang}, skipping")
                 continue
-            fwd_name, bwd_name = MARIAN_MODELS[lang]
+            fwd_name, bwd_name = models[lang]
             print(f"Loading MarianMT for {lang}...")
             print(f"  Forward: {fwd_name}")
             print(f"  Backward: {bwd_name}")
@@ -118,11 +148,14 @@ class BackTranslationAugmenter:
             self.translators[lang] = (fwd_model, fwd_tok, bwd_model, bwd_tok)
             print(f"  Loaded {lang} models")
 
-    def _translate_batch(self, texts: List[str], model, tokenizer) -> List[str]:
-        """Translate a batch of texts."""
+    def _translate_batch(self, texts: List[str], model, tokenizer,
+                         lang_tag: str = None) -> List[str]:
+        """Translate a batch of texts. Optionally prepend a language tag."""
         results = []
         for i in range(0, len(texts), self.batch_size):
             batch = texts[i:i + self.batch_size]
+            if lang_tag:
+                batch = [f"{lang_tag} {t}" for t in batch]
             inputs = tokenizer(batch, return_tensors="pt", padding=True,
                                truncation=True, max_length=512).to(self.device)
             with torch.no_grad():
@@ -132,12 +165,14 @@ class BackTranslationAugmenter:
         return results
 
     def back_translate_batch(self, texts: List[str], pivot_lang: str) -> List[str]:
-        """en -> pivot -> en for a batch of texts."""
+        """source -> pivot -> source for a batch of texts."""
         fwd_model, fwd_tok, bwd_model, bwd_tok = self.translators[pivot_lang]
-        # Forward: en -> pivot
-        pivot_texts = self._translate_batch(texts, fwd_model, fwd_tok)
-        # Backward: pivot -> en
-        back_texts = self._translate_batch(pivot_texts, bwd_model, bwd_tok)
+        fwd_tag = self.lang_tags.get("fwd")
+        bwd_tag = self.lang_tags.get("bwd")
+        # Forward: source -> pivot
+        pivot_texts = self._translate_batch(texts, fwd_model, fwd_tok, lang_tag=fwd_tag)
+        # Backward: pivot -> source
+        back_texts = self._translate_batch(pivot_texts, bwd_model, bwd_tok, lang_tag=bwd_tag)
         return back_texts
 
     def _find_span_in_text(self, span: str, text: str) -> Optional[str]:
@@ -194,7 +229,8 @@ class BackTranslationAugmenter:
         return relocated
 
     def augment_dataset(self, samples: List[dict],
-                        original_texts: set) -> List[dict]:
+                        original_texts: set,
+                        valid_categories: set = None) -> List[dict]:
         """Generate augmented samples for all pivot languages."""
         augmented = []
 
@@ -246,7 +282,7 @@ class BackTranslationAugmenter:
                 }
 
                 # Final validation
-                is_valid, cleaned = validate_sample(aug_sample)
+                is_valid, cleaned = validate_sample(aug_sample, valid_categories)
                 if is_valid:
                     augmented.append(cleaned)
                     n_kept += 1
@@ -313,6 +349,10 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--no_merge", action="store_true",
                         help="Output augmented only, don't merge with original")
+    parser.add_argument("--source_lang", type=str, default="en",
+                        help="Source language code (default: en)")
+    parser.add_argument("--bwd_lang_tag", type=str, default=None,
+                        help="Language tag for backward translation (e.g. >>tat<< for Tatar)")
     args = parser.parse_args()
 
     # Set seed
@@ -333,16 +373,26 @@ def main():
     samples = load_jsonl(args.input)
     print(f"Loaded {len(samples)} samples")
     original_texts = {s["Text"] for s in samples}
+    valid_categories = build_valid_categories(samples)
+    print(f"Valid categories: {len(valid_categories)}")
     print_category_distribution(samples, "Original")
+
+    # Build language tags
+    lang_tags = {}
+    if args.bwd_lang_tag:
+        lang_tags["bwd"] = args.bwd_lang_tag
 
     # Run back-translation
     augmenter = BackTranslationAugmenter(
         pivot_langs=args.langs,
         device=device,
         batch_size=args.batch_size,
-        fuzzy_threshold=args.fuzzy_threshold
+        fuzzy_threshold=args.fuzzy_threshold,
+        source_lang=args.source_lang,
+        lang_tags=lang_tags,
     )
-    augmented = augmenter.augment_dataset(samples, original_texts)
+    augmented = augmenter.augment_dataset(samples, original_texts,
+                                          valid_categories=valid_categories)
     print(f"\nTotal augmented samples: {len(augmented)}")
     print_category_distribution(augmented, "Augmented")
 

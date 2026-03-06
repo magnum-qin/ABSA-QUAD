@@ -196,7 +196,8 @@ def multi_seed_ensemble_predictions(
     dataloader: DataLoader,
     device: str,
     pair_threshold: float = 0.3,
-    vote_threshold: int = None
+    vote_threshold: int = None,
+    dual_layer: bool = False
 ) -> list:
     """Run inference with multiple seed models and merge via majority voting.
 
@@ -225,9 +226,24 @@ def multi_seed_ensemble_predictions(
     # Collect predictions from each model
     all_model_preds = []
     for i, seed_dir in enumerate(seed_dirs):
-        ckpt_path = Path(seed_dir) / "checkpoint_best.pt"
-        print(f"\n--- Model {i+1}/{n_models}: {ckpt_path} ---")
-        model = load_model(str(ckpt_path), config.copy(), device)
+        if dual_layer:
+            # Dual-layer: average top-k checkpoints within each seed
+            print(f"\n--- Model {i+1}/{n_models}: {seed_dir} (dual-layer) ---")
+            epoch_ckpts = sorted(Path(seed_dir).glob('checkpoint_epoch*.pt'))
+            if epoch_ckpts:
+                # Peek first checkpoint to merge config
+                peek_ckpt = torch.load(epoch_ckpts[0], map_location='cpu', weights_only=False)
+                seed_config = _merge_config_from_checkpoint(config.copy(), peek_ckpt)
+                model = load_ensemble_model(seed_dir, seed_config, device)
+            else:
+                # Fallback to best checkpoint
+                print(f"  No epoch checkpoints, falling back to checkpoint_best.pt")
+                ckpt_path = Path(seed_dir) / "checkpoint_best.pt"
+                model = load_model(str(ckpt_path), config.copy(), device)
+        else:
+            ckpt_path = Path(seed_dir) / "checkpoint_best.pt"
+            print(f"\n--- Model {i+1}/{n_models}: {ckpt_path} ---")
+            model = load_model(str(ckpt_path), config.copy(), device)
         preds = generate_predictions(model, dataloader, device, pair_threshold)
         all_model_preds.append(preds)
         # Free GPU memory
@@ -288,6 +304,8 @@ def main():
                        help='Checkpoint directories for each seed (for --multi_seed_ensemble)')
     parser.add_argument('--vote_threshold', type=int, default=None,
                        help='Min votes to keep a quad (default: majority)')
+    parser.add_argument('--dual_layer', action='store_true',
+                       help='Dual-layer ensemble: top-k weight avg within seed + voting across seeds')
     parser.add_argument('--config', type=str, default='configs/config.yaml',
                        help='Path to config file')
     parser.add_argument('--test_file', type=str, required=True,
@@ -340,7 +358,8 @@ def main():
             dataloader=test_dataloader,
             device=device,
             pair_threshold=args.pair_threshold,
-            vote_threshold=args.vote_threshold
+            vote_threshold=args.vote_threshold,
+            dual_layer=args.dual_layer
         )
     else:
         # Single model or weight-averaging ensemble
