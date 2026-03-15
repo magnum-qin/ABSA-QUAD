@@ -58,7 +58,7 @@ LANG_CONFIGS = [
         "dev_file": "data/subtask_3/rus/rus_restaurant_dev_task3.jsonl",
         "encoder": "microsoft/mdeberta-v3-base",
         "source_lang": "ru",
-        "pivot_langs": ["en"],
+        "pivot_langs": ["en", "uk"],
         "lang_tags": {},
     },
     {
@@ -76,7 +76,7 @@ LANG_CONFIGS = [
         "dev_file": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
         "encoder": "microsoft/mdeberta-v3-base",
         "source_lang": "uk",
-        "pivot_langs": ["en"],
+        "pivot_langs": ["en", "ru"],
         "lang_tags": {},
     },
     {
@@ -113,14 +113,14 @@ def run_cmd(cmd: list, desc: str = "", timeout: int = None) -> int:
     return result.returncode
 
 
-def step1_augment(lang_cfg: dict) -> str:
+def step1_augment(lang_cfg: dict, force: bool = False) -> str:
     """Run back-translation augmentation. Returns augmented file path."""
     name = lang_cfg["name"]
     train_file = lang_cfg["train_file"]
     inp = Path(train_file)
     output = str(inp.parent / f"{inp.stem}_augmented{inp.suffix}")
 
-    if Path(output).exists():
+    if Path(output).exists() and not force:
         with open(output) as f:
             n = sum(1 for _ in f)
         print(f"  [{name}] Augmented data already exists: {output} ({n} samples), skipping")
@@ -147,10 +147,13 @@ def step1_augment(lang_cfg: dict) -> str:
 
 
 def step2_train_multi_seed(lang_cfg: dict, base_config: dict,
-                            augmented_file: str) -> str:
+                            augmented_file: str,
+                            pretrained_checkpoint: str = None,
+                            save_prefix: str = None) -> str:
     """Train 5 seeds. Returns save_prefix."""
     name = lang_cfg["name"]
-    save_prefix = f"v5_{name}_seed"
+    if save_prefix is None:
+        save_prefix = f"v5_{name}_seed"
 
     # Check if already trained
     all_done = True
@@ -207,6 +210,9 @@ def step2_train_multi_seed(lang_cfg: dict, base_config: dict,
         "--save_prefix", save_prefix,
         "--train_file", augmented_file,
     ]
+    if pretrained_checkpoint:
+        cmd.extend(["--pretrained_checkpoint", pretrained_checkpoint])
+        print(f"  [{name}] Transfer learning from: {pretrained_checkpoint}")
 
     rc = run_cmd(cmd, f"Training 5 seeds for {name}")
     if rc != 0:
@@ -315,12 +321,28 @@ def main():
                         help="Only run these languages")
     parser.add_argument("--skip_augment", action="store_true",
                         help="Skip augmentation step entirely")
+    parser.add_argument("--force_augment", action="store_true",
+                        help="Force re-run augmentation even if output exists")
     parser.add_argument("--skip_train", action="store_true",
                         help="Skip training step entirely")
+    parser.add_argument("--transfer", action="store_true",
+                        help="Use cross-lingual transfer from English checkpoints")
     args = parser.parse_args()
 
     with open(args.config) as f:
         base_config = yaml.safe_load(f)
+
+    # Cross-lingual transfer: map target language -> source checkpoint
+    # All non-English use mdeberta-v3-base, so can transfer between them.
+    # Use zho_restaurant (largest data, 6050 samples) as source for restaurant domain,
+    # zho_laptop as source for laptop domain.
+    TRANSFER_SOURCE = {
+        "rus_restaurant": "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
+        "tat_restaurant": "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
+        "ukr_restaurant": "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
+        "jpn_hotel":      "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
+        "zho_laptop":     "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
+    }
 
     langs = LANG_CONFIGS
     if args.only:
@@ -344,13 +366,26 @@ def main():
             aug_file = lang_cfg["train_file"]
             print(f"  Skipping augmentation, using original: {aug_file}")
         else:
-            aug_file = step1_augment(lang_cfg)
+            aug_file = step1_augment(lang_cfg, force=args.force_augment)
         print(f"  Training file: {aug_file}")
 
         # Step 2: Multi-seed training
         save_prefix = f"v5_{name}_seed"
+        if args.transfer:
+            save_prefix = f"v6_transfer_{name}_seed"
+
         if not args.skip_train:
-            save_prefix = step2_train_multi_seed(lang_cfg, base_config, aug_file)
+            # Resolve pretrained checkpoint for transfer learning
+            pretrained_ckpt = None
+            if args.transfer and name in TRANSFER_SOURCE:
+                ckpt_path = TRANSFER_SOURCE[name]
+                if Path(ckpt_path).exists():
+                    pretrained_ckpt = ckpt_path
+                else:
+                    print(f"  WARNING: Transfer source not found: {ckpt_path}, training from scratch")
+            save_prefix = step2_train_multi_seed(lang_cfg, base_config, aug_file,
+                                                  pretrained_checkpoint=pretrained_ckpt,
+                                                  save_prefix=save_prefix)
 
         # Step 3: Ensemble inference
         pred_file = step3_ensemble_inference(lang_cfg, save_prefix, base_config)

@@ -336,7 +336,12 @@ def main():
     print(f"Using device: {device}")
 
     if args.multi_seed_ensemble:
-        # Multi-seed voting ensemble: load tokenizer first, then iterate models
+        # Multi-seed voting ensemble: peek first checkpoint to get correct encoder_name
+        first_ckpt_path = Path(args.seed_dirs[0]) / "checkpoint_best.pt"
+        first_ckpt = torch.load(first_ckpt_path, map_location='cpu', weights_only=False)
+        config = _merge_config_from_checkpoint(config, first_ckpt)
+        del first_ckpt
+
         print(f"Loading tokenizer: {config['model']['encoder_name']}")
         tokenizer = AutoTokenizer.from_pretrained(config['model']['encoder_name'])
 

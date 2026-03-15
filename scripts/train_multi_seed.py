@@ -22,7 +22,8 @@ DEFAULT_SEEDS = [42, 123, 456, 789, 1024]
 
 
 def run_training(config_path: str, seed: int, base_config: dict,
-                 save_prefix: str = "ensemble_seed", train_file: str = None):
+                 save_prefix: str = "ensemble_seed", train_file: str = None,
+                 pretrained_checkpoint: str = None):
     """Run a single training with the given seed."""
     config = copy.deepcopy(base_config)
     config['seed'] = seed
@@ -41,6 +42,8 @@ def run_training(config_path: str, seed: int, base_config: dict,
     print(f"{'='*60}\n")
 
     cmd = [sys.executable, "scripts/train.py", "--config", tmp_config_path]
+    if pretrained_checkpoint:
+        cmd.extend(["--pretrained_checkpoint", pretrained_checkpoint])
     # Ensure LD_LIBRARY_PATH includes conda lib (for libstdc++ compatibility)
     env = os.environ.copy()
     conda_prefix = os.environ.get('CONDA_PREFIX', '')
@@ -81,6 +84,8 @@ def main():
                         help="Override training data file in config")
     parser.add_argument("--save_prefix", type=str, default="ensemble_seed",
                         help="Checkpoint directory prefix (default: ensemble_seed)")
+    parser.add_argument("--pretrained_checkpoint", type=str, default=None,
+                        help="Pretrained checkpoint for cross-lingual transfer")
     args = parser.parse_args()
 
     with open(args.config, 'r') as f:
@@ -94,13 +99,16 @@ def main():
 
     if args.train_file:
         print(f"Train file override: {args.train_file}")
+    if args.pretrained_checkpoint:
+        print(f"Pretrained checkpoint: {args.pretrained_checkpoint}")
     print(f"Save prefix: {args.save_prefix}")
 
     # Run each seed
     for seed in seeds:
         returncode = run_training(args.config, seed, base_config,
                                   save_prefix=args.save_prefix,
-                                  train_file=args.train_file)
+                                  train_file=args.train_file,
+                                  pretrained_checkpoint=args.pretrained_checkpoint)
         if returncode != 0:
             print(f"WARNING: seed={seed} exited with code {returncode}")
 

@@ -44,9 +44,11 @@ MARIAN_MODELS_BY_SOURCE = {
     },
     "ru": {
         "en": ("Helsinki-NLP/opus-mt-ru-en", "Helsinki-NLP/opus-mt-en-ru"),
+        "uk": ("Helsinki-NLP/opus-mt-ru-uk", "Helsinki-NLP/opus-mt-uk-ru"),
     },
     "uk": {
         "en": ("Helsinki-NLP/opus-mt-uk-en", "Helsinki-NLP/opus-mt-en-uk"),
+        "ru": ("Helsinki-NLP/opus-mt-uk-ru", "Helsinki-NLP/opus-mt-ru-uk"),
     },
     "tat": {
         # Turkic language group model with >>tat<< tag

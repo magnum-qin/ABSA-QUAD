@@ -3,7 +3,8 @@
 set -e
 
 echo "=== Creating conda environment ==="
-mamba env create -f environment.yml --force
+mamba env remove -n absa -y 2>/dev/null || true
+mamba env create -f environment.yml
 
 echo "=== Activating environment ==="
 eval "$(mamba shell hook --shell bash)"

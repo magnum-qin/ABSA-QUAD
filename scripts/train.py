@@ -7,7 +7,6 @@ import os
 import sys
 import yaml
 import json
-import heapq
 import argparse
 import logging
 from datetime import datetime
@@ -349,42 +348,26 @@ class Trainer:
     
     def save_checkpoint(self, epoch: int, metrics: dict, is_best: bool = False):
         """Save model checkpoint"""
+        # Save model with EMA shadow applied (for inference)
+        # Apply EMA shadow to get the actual weights used during evaluation
+        if self.use_ema:
+            self.ema.apply_shadow()
+
         checkpoint = {
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
-            'optimizer_state_dict': self.optimizer.state_dict(),
-            'scheduler_state_dict': self.scheduler.state_dict(),
             'metrics': {k: float(v) for k, v in metrics.items()},
             'config': self.config
         }
 
-        # Save EMA state
+        # Restore original weights after saving
         if self.use_ema:
-            checkpoint['ema_state_dict'] = self.ema.state_dict()
+            self.ema.restore()
 
-        # Save latest
-        torch.save(checkpoint, self.save_dir / 'checkpoint_latest.pt')
-
-        # Save best
+        # Save best only (skip latest and top-k to save disk space)
         if is_best:
             torch.save(checkpoint, self.save_dir / 'checkpoint_best.pt')
             logger.info(f"✅ Saved new best model with cF1: {metrics['continuous_f1']:.4f}")
-
-        # Save top-k: keep the best save_top_k checkpoints by cF1
-        current_cf1 = metrics.get('continuous_f1', 0.0)
-        if current_cf1 > 0:
-            epoch_path = self.save_dir / f'checkpoint_epoch{epoch:03d}.pt'
-            if len(self.top_k_checkpoints) < self.save_top_k:
-                torch.save(checkpoint, epoch_path)
-                heapq.heappush(self.top_k_checkpoints, (current_cf1, epoch, str(epoch_path)))
-                logger.info(f"Top-{self.save_top_k} saved: epoch {epoch}, cF1={current_cf1:.4f}")
-            elif current_cf1 > self.top_k_checkpoints[0][0]:
-                _, old_epoch, old_path = heapq.heappop(self.top_k_checkpoints)
-                Path(old_path).unlink(missing_ok=True)
-                torch.save(checkpoint, epoch_path)
-                heapq.heappush(self.top_k_checkpoints, (current_cf1, epoch, str(epoch_path)))
-                logger.info(f"Top-{self.save_top_k} updated: epoch {epoch} "
-                            f"(cF1={current_cf1:.4f}) replaced epoch {old_epoch}")
     
     def train(self):
         """Main training loop"""
@@ -448,6 +431,8 @@ def main():
                        help='Override validation file path')
     parser.add_argument('--device', type=str, default=None,
                        help='Device to use (cuda/cpu)')
+    parser.add_argument('--pretrained_checkpoint', type=str, default=None,
+                       help='Pretrained checkpoint for cross-lingual transfer (loads encoder weights)')
     args = parser.parse_args()
     
     # Load config
@@ -525,6 +510,24 @@ def main():
         use_crf=config['model'].get('use_crf', False)
     )
     
+    # Load pretrained checkpoint for cross-lingual transfer
+    if args.pretrained_checkpoint:
+        logger.info(f"Loading pretrained checkpoint for transfer: {args.pretrained_checkpoint}")
+        ckpt = torch.load(args.pretrained_checkpoint, map_location='cpu', weights_only=False)
+        pretrained_state = ckpt.get('ema_state_dict', {}).get('shadow', None)
+        if pretrained_state is None:
+            pretrained_state = ckpt['model_state_dict']
+
+        # Load encoder weights (shared across languages)
+        encoder_loaded = 0
+        model_state = model.state_dict()
+        for key, value in pretrained_state.items():
+            if key.startswith('encoder.') and key in model_state and model_state[key].shape == value.shape:
+                model_state[key] = value
+                encoder_loaded += 1
+        model.load_state_dict(model_state)
+        logger.info(f"  Loaded {encoder_loaded} encoder parameters from pretrained checkpoint")
+
     # Count parameters
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
