@@ -244,7 +244,14 @@ def step3_ensemble_inference(lang_cfg: dict, save_prefix: str,
     with open(tmp_config, 'w') as f:
         yaml.dump(config, f, default_flow_style=False)
 
-    vote_threshold = (len(existing) // 2) + 1
+    # Per-language vote threshold (tuned from ablation on dev set)
+    VOTE_THRESHOLDS = {
+        "jpn_hotel":      2,  # vote≥2 + MeCab=0.3323 > vote≥4+MeCab=0.3312
+        "rus_restaurant": 5,  # vote=5: 0.4826 vs vote=3: 0.4542 (+2.84%)
+        "tat_restaurant": 4,  # vote=4: 0.4630 vs vote=3: 0.4471 (+1.59%)
+        "ukr_restaurant": 5,  # vote=5: 0.4706 vs vote=3: 0.4575 (+1.31%)
+    }
+    vote_threshold = VOTE_THRESHOLDS.get(name, (len(existing) // 2) + 1)
 
     cmd = [
         sys.executable, "scripts/inference.py",

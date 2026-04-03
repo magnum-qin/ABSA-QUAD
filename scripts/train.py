@@ -348,7 +348,6 @@ class Trainer:
     
     def save_checkpoint(self, epoch: int, metrics: dict, is_best: bool = False):
         """Save model checkpoint"""
-        # Save model with EMA shadow applied (for inference)
         # Apply EMA shadow to get the actual weights used during evaluation
         if self.use_ema:
             self.ema.apply_shadow()
@@ -356,6 +355,8 @@ class Trainer:
         checkpoint = {
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+            'scheduler_state_dict': self.scheduler.state_dict(),
             'metrics': {k: float(v) for k, v in metrics.items()},
             'config': self.config
         }
@@ -364,10 +365,29 @@ class Trainer:
         if self.use_ema:
             self.ema.restore()
 
-        # Save best only (skip latest and top-k to save disk space)
+        # Save latest checkpoint (for resume)
+        torch.save(checkpoint, self.save_dir / 'checkpoint_latest.pt')
+
+        # Save best checkpoint
         if is_best:
             torch.save(checkpoint, self.save_dir / 'checkpoint_best.pt')
             logger.info(f"✅ Saved new best model with cF1: {metrics['continuous_f1']:.4f}")
+
+        # Save top-k checkpoints
+        import heapq
+        cf1 = metrics.get('continuous_f1', 0)
+        ckpt_path = self.save_dir / f'checkpoint_epoch{epoch}.pt'
+        if len(self.top_k_checkpoints) < self.save_top_k:
+            torch.save(checkpoint, ckpt_path)
+            heapq.heappush(self.top_k_checkpoints, (cf1, epoch, str(ckpt_path)))
+            logger.info(f"Top-{self.save_top_k} saved: epoch {epoch} (cF1={cf1:.4f})")
+        elif cf1 > self.top_k_checkpoints[0][0]:
+            # Remove worst checkpoint
+            _, old_epoch, old_path = heapq.heapreplace(self.top_k_checkpoints, (cf1, epoch, str(ckpt_path)))
+            if Path(old_path).exists():
+                Path(old_path).unlink()
+            torch.save(checkpoint, ckpt_path)
+            logger.info(f"Top-{self.save_top_k} updated: epoch {epoch} (cF1={cf1:.4f}) replaced epoch {old_epoch}")
     
     def train(self):
         """Main training loop"""

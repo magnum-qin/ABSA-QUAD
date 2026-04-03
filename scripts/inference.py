@@ -269,6 +269,9 @@ def multi_seed_ensemble_predictions(
             if len(va_list) >= vote_threshold:
                 avg_v = sum(v for v, a in va_list) / len(va_list)
                 avg_a = sum(a for v, a in va_list) / len(va_list)
+                # Clip to valid range [1, 9] per official evaluation spec
+                avg_v = max(1.0, min(9.0, avg_v))
+                avg_a = max(1.0, min(9.0, avg_a))
                 final_quads.append({
                     "Aspect": aspect,
                     "Category": category,

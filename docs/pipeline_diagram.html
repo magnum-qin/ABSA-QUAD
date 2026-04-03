@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DimASQP Pipeline</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f0f4f8;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+  }
+
+  .pipeline {
+    width: 960px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 48px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 20px;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 36px;
+  }
+
+  /* ── Row layout ── */
+  .row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  /* ── Arrow ── */
+  .arrow-down {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 36px;
+    justify-content: center;
+    color: #6c757d;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .arrow-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    color: #6c757d;
+    font-size: 20px;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* ── Base box ── */
+  .box {
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  /* Color palette */
+  .blue   { background: #dbeafe; border: 1.5px solid #93c5fd; color: #1e40af; }
+  .green  { background: #dcfce7; border: 1.5px solid #86efac; color: #166534; }
+  .purple { background: #ede9fe; border: 1.5px solid #c4b5fd; color: #5b21b6; }
+  .orange { background: #ffedd5; border: 1.5px solid #fdba74; color: #9a3412; }
+  .teal   { background: #ccfbf1; border: 1.5px solid #5eead4; color: #0f766e; }
+  .gray   { background: #f1f5f9; border: 1.5px solid #cbd5e1; color: #334155; }
+  .red    { background: #fee2e2; border: 1.5px solid #fca5a5; color: #991b1b; }
+
+  .box-title {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.08);
+  }
+
+  .item {
+    font-size: 12px;
+    margin: 3px 0 3px 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    margin-top: 6px;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  code {
+    font-family: 'Consolas', monospace;
+    font-size: 11px;
+    background: rgba(0,0,0,0.06);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  /* ── Step label ── */
+  .step-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  /* ── Section wrappers ── */
+  .section {
+    margin-bottom: 0;
+  }
+
+  /* ── Rethink loop box ── */
+  .rethink-wrap {
+    position: relative;
+    border: 2px dashed #c4b5fd;
+    border-radius: 12px;
+    padding: 14px 16px 10px;
+    margin: 4px 0;
+  }
+
+  .rethink-label {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: #fff;
+    padding: 0 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #7c3aed;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Stage columns ── */
+  .stages {
+    display: flex;
+    gap: 12px;
+    margin: 8px 0;
+  }
+
+  .stage {
+    flex: 1;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #fafafa;
+  }
+
+  .stage-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .module {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    margin: 5px 0;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  .m-span   { background: #dbeafe; color: #1e40af; }
+  .m-pair   { background: #dcfce7; color: #166534; }
+  .m-va     { background: #ffedd5; color: #9a3412; }
+
+  /* ── Ensemble vote grid ── */
+  .vote-grid {
+    display: flex;
+    gap: 6px;
+    margin: 6px 0;
+    flex-wrap: wrap;
+  }
+
+  .seed-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: #ede9fe;
+    color: #5b21b6;
+    border: 1px solid #c4b5fd;
+  }
+
+  /* ── Result table ── */
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    padding: 3px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .result-row:last-child { border-bottom: none; }
+
+  .win  { color: #166534; font-weight: 700; }
+  .lose { color: #991b1b; }
+
+  hr.divider {
+    border: none;
+    border-top: 1.5px dashed #e2e8f0;
+    margin: 10px 0;
+  }
+
+  .center { text-align: center; }
+
+  .feedback-arrow {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 11px;
+    color: #7c3aed;
+    gap: 4px;
+    margin: 2px 0 4px;
+    padding-right: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="pipeline">
+
+  <h1>DimASQP Full Processing Pipeline</h1>
+  <p class="subtitle">SemEval-2026 Task 3 — Dimensional Aspect Sentiment Quad Prediction</p>
+
+  <!-- ════════════════════════════════ STEP 1 ════════════════════════════════ -->
+  <div class="step-label">Step 1 — Data Augmentation</div>
+  <div class="row">
+    <div class="box blue" style="flex:1">
+      <div class="box-title">Raw Training Data <span class="badge">JSONL</span></div>
+      <div class="item"><span class="dot"></span><span>English: back-translation EN→ZH→EN, <strong>3-4× data</strong></span></div>
+      <div class="item"><span class="dot"></span><span>Non-English: limited augmentation (pivot translation mostly failed)</span></div>
+      <div class="item"><span class="dot"></span><span>Output: <code>augmented_train.jsonl</code></span></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓</div>
+
+  <!-- ════════════════════════════════ STEP 2 ════════════════════════════════ -->
+  <div class="step-label">Step 2 — Multi-Seed Training  (seeds: 42 · 123 · 456 · 789 · 1024)</div>
+
+  <div class="row" style="gap:12px; align-items:stretch">
+
+    <!-- Left: Encoder + Transfer -->
+    <div style="flex:1; display:flex; flex-direction:column; gap:8px">
+      <div class="box teal">
+        <div class="box-title">Encoder</div>
+        <div class="item"><span class="dot"></span><span>English → <code>deberta-v3-base</code></span></div>
+        <div class="item"><span class="dot"></span><span>Non-English → <code>mdeberta-v3-base</code></span></div>
+      </div>
+      <div class="box purple">
+        <div class="box-title">V6 Cross-lingual Transfer</div>
+        <div class="item"><span class="dot"></span><span>Source: <code>zho_restaurant_seed1024</code></span></div>
+        <div class="item"><span class="dot"></span><span>Encoder weights → rus / tat / ukr / jpn / zho_laptop</span></div>
+      </div>
+      <div class="box gray">
+        <div class="box-title">FGM Adversarial Training</div>
+        <div class="item"><span class="dot"></span><span>Perturb word embeddings, ε = 0.1</span></div>
+        <div class="item"><span class="dot"></span><span>Improves robustness & generalization</span></div>
+      </div>
+    </div>
+
+    <!-- Right: Rethink architecture -->
+    <div style="flex:2">
+      <div class="rethink-wrap">
+        <span class="rethink-label">RETHINK MODULE  ×2 iterations</span>
+
+        <div class="stages">
+          <div class="stage">
+            <div class="stage-title">Stage 1 — Initial Prediction</div>
+            <div class="module m-span">📌 Span Extractor</div>
+            <div class="module m-pair">🔗 Pair Classifier</div>
+            <div class="module m-va">📊 VA Regressor</div>
+          </div>
+          <div style="display:flex;align-items:center;color:#7c3aed;font-size:18px;padding:0 2px">→</div>
+          <div class="stage">
+            <div class="stage-title">Stage 2 — Re-Prediction</div>
+            <div class="module m-span">📌 Span Extractor</div>
+            <div class="module m-pair">🔗 Pair Classifier</div>
+            <div class="module m-va">📊 VA Regressor</div>
+          </div>
+        </div>
+
+        <div class="feedback-arrow">
+          ↺ Stage 1 predictions concatenated with encoder features → refined context for Stage 2
+        </div>
+      </div>
+
+      <div style="margin-top:8px" class="box gray">
+        <div class="box-title">EMA + Checkpoint Saving</div>
+        <div class="item"><span class="dot"></span><span>EMA decay = 0.999 — smoothed weights saved to <code>checkpoint_best.pt</code></span></div>
+        <div class="item"><span class="dot"></span><span>Early stopping: patience = 8, monitor dev cF1</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓</div>
+
+  <!-- ════════════════════════════════ STEP 3 ════════════════════════════════ -->
+  <div class="step-label">Step 3 — Dual-Layer Ensemble Inference</div>
+  <div class="row" style="gap:12px; align-items:stretch">
+
+    <div class="box purple" style="flex:1">
+      <div class="box-title">Layer 1 — Intra-seed</div>
+      <div class="item"><span class="dot"></span><span>Top-3 checkpoints per seed averaged</span></div>
+      <div class="item"><span class="dot"></span><span>Reduces variance within each seed</span></div>
+    </div>
+
+    <div class="arrow-right">→</div>
+
+    <div class="box purple" style="flex:2">
+      <div class="box-title">Layer 2 — Cross-seed Voting</div>
+      <div class="vote-grid">
+        <span class="seed-chip">seed 42</span>
+        <span class="seed-chip">seed 123</span>
+        <span class="seed-chip">seed 456</span>
+        <span class="seed-chip">seed 789</span>
+        <span class="seed-chip">seed 1024</span>
+      </div>
+      <div style="font-size:11.5px; margin-top:6px">
+        Keep quad if <strong>votes ≥ threshold</strong> · VA = mean of agreeing models · clip to [1, 9]
+      </div>
+      <hr class="divider">
+      <div style="font-size:11px; display:flex; gap:16px; flex-wrap:wrap">
+        <span><strong>jpn</strong> = 2</span>
+        <span><strong>tat</strong> = 4</span>
+        <span><strong>rus</strong> = 5</span>
+        <span><strong>ukr</strong> = 5</span>
+        <span><strong>eng / zho</strong> = 3</span>
+      </div>
+    </div>
+
+    <div class="arrow-right">→</div>
+
+    <div class="box teal" style="flex:1">
+      <div class="box-title">Japanese Post-process</div>
+      <div class="item"><span class="dot"></span><span>MeCab morphological analysis</span></div>
+      <div class="item"><span class="dot"></span><span>Trim trailing particles / auxiliaries from span boundaries</span></div>
+      <div class="item"><span class="dot"></span><span>+3.2% cF1 for jpn</span></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓</div>
+
+  <!-- ════════════════════════════════ STEP 4 ════════════════════════════════ -->
+  <div class="step-label">Step 4 — Official Evaluation (cF1)</div>
+  <div class="row" style="gap:12px; align-items:stretch">
+
+    <div class="box gray" style="flex:1.2">
+      <div class="box-title">Continuous F1 Formula</div>
+      <div style="font-size:11.5px; margin-top:4px; line-height:2">
+        <code>cTP = 1 − dist(VA_pred, VA_gold) / √128</code><br>
+        <code>dist = √((V_p−V_g)² + (A_p−A_g)²)</code><br>
+        <code>cF1 = 2·cP·cR / (cP + cR)</code>
+      </div>
+      <div class="item" style="margin-top:6px"><span class="dot"></span><span>Match: Aspect + Category + Opinion must be exact</span></div>
+      <div class="item"><span class="dot"></span><span>VA distance penalizes imprecise emotion scores</span></div>
+    </div>
+
+    <div class="arrow-right">→</div>
+
+    <div class="box green" style="flex:1.8">
+      <div class="box-title">V6 Results vs. Best Baseline</div>
+      <div class="result-row"><span>eng_restaurant</span><span class="win">0.6554 ↑ +15% vs Llama-3.3 70B</span></div>
+      <div class="result-row"><span>eng_laptop</span><span class="win">0.3304 ↑ +8% vs Llama-3.3 70B</span></div>
+      <div class="result-row"><span>rus_restaurant</span><span class="win">0.4826 ↑ +17% vs Llama-3.3 70B</span></div>
+      <div class="result-row"><span>tat_restaurant</span><span class="win">0.4630 ↑ +25% vs Llama-3.3 70B</span></div>
+      <div class="result-row"><span>ukr_restaurant</span><span class="win">0.4706 ↑ +16% vs Llama-3.3 70B</span></div>
+      <div class="result-row"><span>zho_restaurant</span><span class="win">0.4745 ↑ +8% vs Llama-3.3 70B</span></div>
+      <div class="result-row"><span>zho_laptop</span><span class="win">0.3526 ↑ +0.5% vs Llama-3.3 70B</span></div>
+      <div class="result-row"><span>jpn_hotel</span><span class="lose">0.3312 ↓ −8% vs GPT-OSS 120B</span></div>
+      <hr class="divider">
+      <div class="result-row"><span><strong>Average</strong></span><span class="win"><strong>0.4397 — 7/8 beat all baselines</strong></span></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
