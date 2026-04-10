@@ -716,12 +716,14 @@ class DimASQPModel(nn.Module):
                         label_smoothing=0.1
                     )
 
-                    # V-A regression loss
+                    # V-A regression loss (separate weights for valence/arousal)
                     v_target = torch.tensor([gold["valence"]], device=device, dtype=torch.float)
                     a_target = torch.tensor([gold["arousal"]], device=device, dtype=torch.float)
 
-                    va_loss += F.huber_loss(valence_b[p_idx:p_idx+1], v_target)
-                    va_loss += F.huber_loss(arousal_b[p_idx:p_idx+1], a_target)
+                    lw_v = self.loss_weights.get('va_valence', 1.0)
+                    lw_a = self.loss_weights.get('va_arousal', 1.0)
+                    va_loss += lw_v * F.huber_loss(valence_b[p_idx:p_idx+1], v_target)
+                    va_loss += lw_a * F.huber_loss(arousal_b[p_idx:p_idx+1], a_target)
 
                     num_matched_pairs += 1
                     actually_matched_pred_set.add(int(p_idx))

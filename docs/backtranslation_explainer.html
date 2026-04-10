@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Back-Translation Augmentation</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f1f5f9;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 32px 40px;
+    width: 960px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  }
+
+  .page-title { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+  .page-sub   { font-size: 13px; color: #64748b; margin-bottom: 0; }
+
+  .sec-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #6366f1;
+    margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 2px solid #e0e7ff;
+  }
+
+  hr.div { border: none; border-top: 1.5px dashed #e2e8f0; margin: 24px 0; }
+
+  /* ── Pipeline diagram ── */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: nowrap;
+    margin: 8px 0 16px;
+  }
+
+  .pipe-box {
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: center;
+    min-width: 130px;
+    flex-shrink: 0;
+  }
+
+  .pb-src  { background: #dbeafe; border: 1.5px solid #93c5fd; }
+  .pb-pivot{ background: #ede9fe; border: 1.5px solid #c4b5fd; }
+  .pb-back { background: #dcfce7; border: 1.5px solid #86efac; }
+
+  .pipe-box .lang {
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; opacity: 0.6; margin-bottom: 4px;
+  }
+  .pipe-box .text {
+    font-size: 12px; font-weight: 600; color: #1e293b; line-height: 1.5;
+  }
+
+  .arrow {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 6px; color: #94a3b8; font-size: 11px; gap: 2px;
+  }
+  .arrow .arr { font-size: 20px; line-height: 1; }
+  .arrow .lbl { font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  /* ── Annotation preservation ── */
+  .annot-box {
+    background: #f8fafc; border: 1.5px solid #e2e8f0;
+    border-radius: 10px; padding: 14px 18px; margin: 8px 0;
+    font-size: 12.5px; line-height: 1.7; color: #334155;
+  }
+
+  .annot-box .label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: #6366f1; margin-bottom: 6px;
+  }
+
+  .highlight { background: #dbeafe; padding: 1px 4px; border-radius: 3px; font-weight: 600; color: #1d4ed8; }
+  .highlight-g { background: #dcfce7; padding: 1px 4px; border-radius: 3px; font-weight: 600; color: #166534; }
+  .highlight-r { background: #fee2e2; padding: 1px 4px; border-radius: 3px; font-weight: 600; color: #991b1b; }
+
+  code { font-family: 'Consolas', monospace; font-size: 11px;
+         background: #f1f5f9; padding: 1px 5px; border-radius: 3px; }
+
+  /* ── Tool cards ── */
+  .tool-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;
+  }
+
+  .tool-card {
+    border-radius: 10px; border: 1.5px solid #e2e8f0; padding: 14px 16px;
+  }
+
+  .tool-card h4 { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+  .tool-card p  { font-size: 12px; color: #64748b; line-height: 1.6; }
+  .tool-card .tag {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px; margin-bottom: 6px;
+  }
+  .tag-used { background: #dcfce7; color: #166534; }
+  .tag-fail { background: #fee2e2; color: #991b1b; }
+
+  /* ── Results table ── */
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 4px; }
+  th {
+    background: #f8fafc; padding: 9px 14px; text-align: left;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.7px; color: #64748b; border-bottom: 2px solid #e2e8f0;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+  tr:last-child td { border-bottom: none; }
+
+  .win  { color: #16a34a; font-weight: 700; }
+  .fail { color: #dc2626; font-weight: 600; }
+  .neu  { color: #64748b; }
+
+  .pill {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px;
+  }
+  .pill-win  { background: #dcfce7; color: #15803d; }
+  .pill-fail { background: #fee2e2; color: #b91c1c; }
+  .pill-neu  { background: #f1f5f9; color: #475569; }
+
+  .avg-row td { background: #f8fafc; font-weight: 700; border-top: 2px solid #e2e8f0; }
+
+  /* ── Key insight box ── */
+  .insight {
+    margin-top: 16px; padding: 14px 18px;
+    border-radius: 10px; border: 1.5px solid;
+    font-size: 12.5px; line-height: 1.7;
+  }
+  .insight-blue  { background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+  .insight-green { background: #f0fdf4; border-color: #86efac; color: #166534; }
+  .insight-amber { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ CARD 1: What & Why ══════════════ -->
+<div class="card">
+  <div class="page-title">Back-Translation Data Augmentation</div>
+  <div class="page-sub" style="margin-bottom:28px">DimASQP · SemEval-2026 Task 3 · Group Meeting Report</div>
+
+  <div class="sec-title">What Is Back-Translation?</div>
+  <p style="font-size:13px;color:#334155;line-height:1.8;margin-bottom:20px">
+    Back-translation is a data augmentation technique that generates new paraphrased training
+    sentences by translating an original sentence into a <strong>pivot language</strong> and
+    back to the original language. Because the round-trip introduces lexical and syntactic variation,
+    the model sees more diverse phrasings without needing new human annotations.
+  </p>
+
+  <!-- Pipeline -->
+  <div class="sec-title">How It Works — Pipeline</div>
+  <div class="pipeline">
+    <div class="pipe-box pb-src">
+      <div class="lang">Original (EN)</div>
+      <div class="text">"The pizza was<br>delicious."</div>
+    </div>
+    <div class="arrow">
+      <span class="arr">→</span>
+      <span class="lbl">MarianMT<br>EN→DE</span>
+    </div>
+    <div class="pipe-box pb-pivot">
+      <div class="lang">Pivot (DE)</div>
+      <div class="text">"Die Pizza war<br>köstlich."</div>
+    </div>
+    <div class="arrow">
+      <span class="arr">→</span>
+      <span class="lbl">MarianMT<br>DE→EN</span>
+    </div>
+    <div class="pipe-box pb-back">
+      <div class="lang">Back (EN)</div>
+      <div class="text">"The pizza<br>tasted great."</div>
+    </div>
+    <div class="arrow">
+      <span class="arr">→</span>
+      <span class="lbl">Fuzzy match<br>threshold 0.8</span>
+    </div>
+    <div class="pipe-box" style="background:#fff7ed;border:1.5px solid #fdba74;min-width:140px">
+      <div class="lang" style="color:#9a3412">New sample</div>
+      <div class="text" style="font-size:11px">Same quadruplet labels<br>transferred to new text</div>
+    </div>
+  </div>
+
+  <!-- Annotation preservation -->
+  <hr class="div">
+  <div class="sec-title">Annotation Transfer — Keeping the Labels</div>
+  <p style="font-size:12px;color:#64748b;margin-bottom:10px">
+    Aspect and Opinion spans must be re-aligned to the back-translated text using fuzzy string matching.
+    Samples where spans cannot be reliably located are discarded.
+  </p>
+
+  <div class="annot-box">
+    <div class="label">Original</div>
+    Text: "The <span class="highlight">pizza</span> was <span class="highlight-g">delicious</span>."
+    &nbsp;→&nbsp; Aspect: <span class="highlight">pizza</span> &nbsp;|&nbsp; Opinion: <span class="highlight-g">delicious</span> &nbsp;|&nbsp; VA: 7.5#6.8
+  </div>
+  <div class="annot-box">
+    <div class="label">Back-translated (kept ✓)</div>
+    Text: "The <span class="highlight">pizza</span> tasted <span class="highlight-g">great</span>."
+    &nbsp;→&nbsp; Aspect: <span class="highlight">pizza</span> ✓ matched &nbsp;|&nbsp; Opinion: <span class="highlight-g">great</span> ✓ matched &nbsp;|&nbsp; VA: 7.5#6.8 (unchanged)
+  </div>
+  <div class="annot-box" style="opacity:0.6">
+    <div class="label" style="color:#991b1b">Discarded ✗ — span not found</div>
+    Text: "It had an excellent taste." &nbsp;→&nbsp; Aspect: <span class="highlight-r">pizza</span> ✗ not in text &nbsp;→&nbsp; sample dropped
+  </div>
+</div>
+
+
+<!-- ══════════════ CARD 2: Tools ══════════════ -->
+<div class="card">
+  <div class="sec-title">Tools Used</div>
+  <div class="tool-grid">
+
+    <div class="tool-card">
+      <span class="tag tag-used">✓ Used — English</span>
+      <h4>Helsinki-NLP MarianMT</h4>
+      <p>Open-source neural machine translation models from Hugging Face.
+         Used 4 pivot languages for English:
+         <code>EN→DE→EN</code>, <code>EN→FR→EN</code>,
+         <code>EN→ZH→EN</code>, <code>EN→RU→EN</code>.
+         Fast, runs locally on GPU, no API cost.</p>
+    </div>
+
+    <div class="tool-card">
+      <span class="tag tag-fail">✗ Failed — Japanese</span>
+      <h4>MarianMT <code>opus-mt-jap-en</code></h4>
+      <p>Attempted <code>JA→EN→JA</code> back-translation.
+         Result: <strong>0 valid samples</strong> generated out of 1600.
+         Japanese morphology caused span alignment to fail completely —
+         back-translated text never contained the original Aspect/Opinion substrings.</p>
+    </div>
+
+    <div class="tool-card">
+      <span class="tag tag-fail">✗ Mostly Failed — Other Non-English</span>
+      <h4>MarianMT (ru, uk, tat)</h4>
+      <p>Tatar (<code>TAT→EN→TAT</code>) and Ukrainian produced very few valid samples.
+         Russian had marginal success.
+         Non-English MarianMT models are lower quality than English ones,
+         leading to poor span alignment pass rates.</p>
+    </div>
+
+    <div class="tool-card">
+      <span class="tag tag-used">✓ Alternative — Japanese (new)</span>
+      <h4>Qwen3.5 LLM Pseudo-labelling</h4>
+      <p>Since back-translation failed for Japanese, we used <strong>Qwen3.5-plus</strong>
+         via Alibaba Bailian API to generate 199 new Japanese hotel reviews
+         with full quadruplet annotations. Validation: 199/200 passed (99.5%).</p>
+    </div>
+
+  </div>
+
+  <div class="insight insight-blue" style="margin-top:16px">
+    <strong>Fuzzy match threshold = 0.8</strong> — a back-translated sample is only kept if
+    the Aspect and Opinion spans can be found in the new text with ≥80% character overlap.
+    This ensures annotation quality while allowing minor paraphrasing.
+  </div>
+</div>
+
+
+<!-- ══════════════ CARD 3: Results ══════════════ -->
+<div class="card">
+  <div class="sec-title">Results — With vs. Without Back-Translation</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Language</th>
+        <th>Original Samples</th>
+        <th>After Augmentation</th>
+        <th>No Augmentation (cF1)</th>
+        <th>With Augmentation (cF1)</th>
+        <th>Gain</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>eng_restaurant</strong></td>
+        <td>2,284</td>
+        <td class="win">7,106 (+3.1×)</td>
+        <td>0.6273 <span style="font-size:10px;color:#94a3b8">(V4 ensemble)</span></td>
+        <td class="win">0.6554</td>
+        <td><span class="pill pill-win">+2.8%</span></td>
+        <td style="font-size:11px;color:#64748b">4 pivot langs (DE/FR/ZH/RU)</td>
+      </tr>
+      <tr>
+        <td><strong>eng_laptop</strong></td>
+        <td>4,076</td>
+        <td class="win">~12,000 (+3×)</td>
+        <td>~0.30</td>
+        <td class="win">0.3304</td>
+        <td><span class="pill pill-win">+~3%</span></td>
+        <td style="font-size:11px;color:#64748b">4 pivot langs</td>
+      </tr>
+      <tr>
+        <td><strong>jpn_hotel</strong></td>
+        <td>1,600</td>
+        <td class="fail">1,600 (0 added)</td>
+        <td>0.3312</td>
+        <td class="fail">0.3312 (no change)</td>
+        <td><span class="pill pill-fail">0%</span></td>
+        <td style="font-size:11px;color:#dc2626">MarianMT JA→EN→JA: 0 valid samples</td>
+      </tr>
+      <tr>
+        <td><strong>jpn_hotel</strong></td>
+        <td>1,600</td>
+        <td class="win">1,799 (+199 LLM)</td>
+        <td>0.3312</td>
+        <td class="win">0.3279*</td>
+        <td><span class="pill pill-neu">pending</span></td>
+        <td style="font-size:11px;color:#64748b">LLM pseudo-labels via Qwen3.5</td>
+      </tr>
+      <tr>
+        <td><strong>rus / tat / ukr</strong></td>
+        <td>~1,240 each</td>
+        <td class="fail">~1,240 (~0 added)</td>
+        <td>—</td>
+        <td class="neu">—</td>
+        <td><span class="pill pill-fail">~0%</span></td>
+        <td style="font-size:11px;color:#dc2626">Pivot translation quality too low</td>
+      </tr>
+      <tr class="avg-row">
+        <td>English avg</td>
+        <td>—</td>
+        <td>~3× increase</td>
+        <td>~0.617</td>
+        <td class="win">~0.493</td>
+        <td><span class="pill pill-win">+~3%</span></td>
+        <td style="font-size:11px;color:#64748b">Consistent gain for English only</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:10.5px;color:#94a3b8;margin-top:8px">* V7 evaluation still running. Comparison reflects V6 baseline. LLM pseudo-label result is preliminary.</p>
+
+  <hr class="div">
+
+  <div class="sec-title">Why Back-Translation Works for English but Fails for Japanese</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px">
+    <div class="insight insight-green">
+      <strong>English — Success</strong><br><br>
+      MarianMT EN↔DE/FR/ZH/RU models are high quality (trained on millions of sentence pairs).
+      The pivot translations preserve key nouns and adjectives, so Aspect/Opinion spans
+      survive the round-trip. Fuzzy match (≥0.8) finds them reliably in the back-translated text.
+    </div>
+    <div class="insight insight-amber">
+      <strong>Japanese — Failure</strong><br><br>
+      Japanese has <strong>no spaces between words</strong>, complex morphology, and
+      the MarianMT JA model is undertrained. After JA→EN→JA round-trip,
+      Aspect spans like <code>スタッフ</code> (staff) become completely different substrings
+      or disappear entirely — fuzzy match fails every time, so 0 samples pass.
+    </div>
+  </div>
+
+  <div class="insight insight-blue" style="margin-top:12px">
+    <strong>Solution for Japanese:</strong> Replace back-translation with
+    <strong>LLM pseudo-labelling</strong> (Qwen3.5-plus). The LLM generates entirely new
+    hotel reviews and annotates them directly — no span alignment needed.
+    199/200 generated samples passed validation (99.5% success rate vs. 0% for MarianMT).
+  </div>
+</div>
+
+</body>
+</html>

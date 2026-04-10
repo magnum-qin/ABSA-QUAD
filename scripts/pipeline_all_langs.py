@@ -149,6 +149,7 @@ def step1_augment(lang_cfg: dict, force: bool = False) -> str:
 def step2_train_multi_seed(lang_cfg: dict, base_config: dict,
                             augmented_file: str,
                             pretrained_checkpoint: str = None,
+                            pretrained_checkpoints: list = None,
                             save_prefix: str = None) -> str:
     """Train 5 seeds. Returns save_prefix."""
     name = lang_cfg["name"]
@@ -210,7 +211,10 @@ def step2_train_multi_seed(lang_cfg: dict, base_config: dict,
         "--save_prefix", save_prefix,
         "--train_file", augmented_file,
     ]
-    if pretrained_checkpoint:
+    if pretrained_checkpoints:
+        cmd.extend(["--pretrained_checkpoints"] + pretrained_checkpoints)
+        print(f"  [{name}] Multi-source transfer from: {pretrained_checkpoints}")
+    elif pretrained_checkpoint:
         cmd.extend(["--pretrained_checkpoint", pretrained_checkpoint])
         print(f"  [{name}] Transfer learning from: {pretrained_checkpoint}")
 
@@ -276,6 +280,28 @@ def step3_ensemble_inference(lang_cfg: dict, save_prefix: str,
     return pred_file
 
 
+def step3b_mecab_postprocess(lang_cfg: dict, pred_file: str) -> str:
+    """Apply MeCab post-processing for Japanese. Returns new pred file path."""
+    name = lang_cfg["name"]
+    if name != "jpn_hotel":
+        return pred_file
+    if not pred_file or not Path(pred_file).exists():
+        return pred_file
+
+    out_file = pred_file.replace(".jsonl", "_mecab.jsonl")
+    cmd = [
+        sys.executable, "scripts/postprocess_jpn.py",
+        "--input", pred_file,
+        "--gold", lang_cfg["dev_file"],
+        "--output", out_file,
+    ]
+    rc = run_cmd(cmd, "MeCab post-processing for jpn_hotel")
+    if rc != 0:
+        print(f"  WARNING: MeCab post-processing failed, using raw predictions")
+        return pred_file
+    return out_file
+
+
 def step4_eval(lang_cfg: dict, pred_file: str) -> dict:
     """Run official evaluation. Returns metrics dict."""
     name = lang_cfg["name"]
@@ -333,22 +359,29 @@ def main():
     parser.add_argument("--skip_train", action="store_true",
                         help="Skip training step entirely")
     parser.add_argument("--transfer", action="store_true",
-                        help="Use cross-lingual transfer from English checkpoints")
+                        help="Use cross-lingual transfer from zho_restaurant checkpoint")
+    parser.add_argument("--multi_transfer", action="store_true",
+                        help="Use multi-source transfer for jpn (eng + zho averaged)")
     args = parser.parse_args()
 
     with open(args.config) as f:
         base_config = yaml.safe_load(f)
 
-    # Cross-lingual transfer: map target language -> source checkpoint
-    # All non-English use mdeberta-v3-base, so can transfer between them.
-    # Use zho_restaurant (largest data, 6050 samples) as source for restaurant domain,
-    # zho_laptop as source for laptop domain.
+    # Single-source transfer: zho_restaurant → non-English languages (V6)
     TRANSFER_SOURCE = {
         "rus_restaurant": "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
         "tat_restaurant": "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
         "ukr_restaurant": "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
         "jpn_hotel":      "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
         "zho_laptop":     "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
+    }
+
+    # Multi-source transfer: eng + zho → jpn (V7, averages encoder weights)
+    MULTI_TRANSFER_SOURCE = {
+        "jpn_hotel": [
+            "checkpoints/v5_eng_restaurant_seed1024/checkpoint_best.pt",
+            "checkpoints/v5_zho_restaurant_seed1024/checkpoint_best.pt",
+        ],
     }
 
     langs = LANG_CONFIGS
@@ -382,20 +415,35 @@ def main():
             save_prefix = f"v6_transfer_{name}_seed"
 
         if not args.skip_train:
-            # Resolve pretrained checkpoint for transfer learning
+            # Resolve pretrained checkpoint(s) for transfer learning
             pretrained_ckpt = None
-            if args.transfer and name in TRANSFER_SOURCE:
+            pretrained_ckpts = None
+
+            if args.multi_transfer and name in MULTI_TRANSFER_SOURCE:
+                ckpt_paths = MULTI_TRANSFER_SOURCE[name]
+                existing_ckpts = [p for p in ckpt_paths if Path(p).exists()]
+                if existing_ckpts:
+                    pretrained_ckpts = existing_ckpts
+                    save_prefix = f"v7_multitransfer_{name}_seed"
+                else:
+                    print(f"  WARNING: Multi-transfer sources not found for {name}, training from scratch")
+            elif args.transfer and name in TRANSFER_SOURCE:
                 ckpt_path = TRANSFER_SOURCE[name]
                 if Path(ckpt_path).exists():
                     pretrained_ckpt = ckpt_path
                 else:
                     print(f"  WARNING: Transfer source not found: {ckpt_path}, training from scratch")
+
             save_prefix = step2_train_multi_seed(lang_cfg, base_config, aug_file,
                                                   pretrained_checkpoint=pretrained_ckpt,
+                                                  pretrained_checkpoints=pretrained_ckpts,
                                                   save_prefix=save_prefix)
 
         # Step 3: Ensemble inference
         pred_file = step3_ensemble_inference(lang_cfg, save_prefix, base_config)
+
+        # Step 3b: MeCab post-processing (jpn_hotel only)
+        pred_file = step3b_mecab_postprocess(lang_cfg, pred_file)
 
         # Step 4: Evaluation
         metrics = step4_eval(lang_cfg, pred_file)

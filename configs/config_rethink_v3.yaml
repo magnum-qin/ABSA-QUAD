@@ -73,6 +73,8 @@ training:
     entity: 1.0
     attribute: 1.0
     va: 1.0
+    va_valence: 1.0   # separate valence weight (Valence PCC ~0.74~0.94)
+    va_arousal: 2.0   # upweighted arousal (Arousal PCC ~0.51~0.82, weaker)
     consistency: 0.5
 
   # Early stopping

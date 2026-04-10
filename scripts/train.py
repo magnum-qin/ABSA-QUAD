@@ -453,6 +453,8 @@ def main():
                        help='Device to use (cuda/cpu)')
     parser.add_argument('--pretrained_checkpoint', type=str, default=None,
                        help='Pretrained checkpoint for cross-lingual transfer (loads encoder weights)')
+    parser.add_argument('--pretrained_checkpoints', type=str, nargs='+', default=None,
+                       help='Multiple pretrained checkpoints for multi-source transfer (encoder weights averaged)')
     args = parser.parse_args()
     
     # Load config
@@ -530,23 +532,38 @@ def main():
         use_crf=config['model'].get('use_crf', False)
     )
     
-    # Load pretrained checkpoint for cross-lingual transfer
-    if args.pretrained_checkpoint:
-        logger.info(f"Loading pretrained checkpoint for transfer: {args.pretrained_checkpoint}")
-        ckpt = torch.load(args.pretrained_checkpoint, map_location='cpu', weights_only=False)
-        pretrained_state = ckpt.get('ema_state_dict', {}).get('shadow', None)
-        if pretrained_state is None:
-            pretrained_state = ckpt['model_state_dict']
+    # Load pretrained checkpoint(s) for cross-lingual transfer
+    ckpt_paths = []
+    if args.pretrained_checkpoints:
+        ckpt_paths = args.pretrained_checkpoints
+    elif args.pretrained_checkpoint:
+        ckpt_paths = [args.pretrained_checkpoint]
 
-        # Load encoder weights (shared across languages)
-        encoder_loaded = 0
+    if ckpt_paths:
+        logger.info(f"Loading {len(ckpt_paths)} pretrained checkpoint(s) for transfer")
         model_state = model.state_dict()
-        for key, value in pretrained_state.items():
-            if key.startswith('encoder.') and key in model_state and model_state[key].shape == value.shape:
-                model_state[key] = value
+        encoder_keys = [k for k in model_state if k.startswith('encoder.')]
+
+        # Collect encoder weights from all sources
+        all_encoder_states = []
+        for ckpt_path in ckpt_paths:
+            logger.info(f"  Source: {ckpt_path}")
+            ckpt = torch.load(ckpt_path, map_location='cpu', weights_only=False)
+            pretrained_state = ckpt.get('ema_state_dict', {}).get('shadow', None)
+            if pretrained_state is None:
+                pretrained_state = ckpt['model_state_dict']
+            all_encoder_states.append(pretrained_state)
+
+        # Average encoder weights across all sources
+        encoder_loaded = 0
+        for key in encoder_keys:
+            matching = [s[key] for s in all_encoder_states if key in s and s[key].shape == model_state[key].shape]
+            if matching:
+                model_state[key] = torch.stack(matching).mean(dim=0)
                 encoder_loaded += 1
+
         model.load_state_dict(model_state)
-        logger.info(f"  Loaded {encoder_loaded} encoder parameters from pretrained checkpoint")
+        logger.info(f"  Loaded & averaged {encoder_loaded} encoder parameters from {len(ckpt_paths)} source(s)")
 
     # Count parameters
     total_params = sum(p.numel() for p in model.parameters())
