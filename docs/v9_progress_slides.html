@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>DimASQP - Weekly Progress (V6→V9)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1e1e2e;
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding: 48px 24px;
+  }
+  .slide {
+    width: 960px;
+    min-height: 540px;
+    border-radius: 16px;
+    padding: 44px 52px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide-number {
+    position: absolute;
+    bottom: 18px;
+    right: 26px;
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.35;
+    letter-spacing: 1px;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  h1 { font-size: 34px; font-weight: 700; line-height: 1.25; margin-bottom: 18px; }
+  h2 { font-size: 24px; font-weight: 700; margin-bottom: 22px; }
+  h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  p, li { font-size: 14.5px; line-height: 1.55; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 6px; }
+
+  /* Slide 1: Title */
+  .s1 {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #0f172a 100%);
+    color: #fff;
+    justify-content: center;
+  }
+  .s1 .tag { color: #a5b4fc; border: 1px solid #4f46e5; }
+  .s1 h1 { font-size: 44px; }
+  .s1 .sub { font-size: 17px; color: #c7d2fe; margin-top: 12px; opacity: 0.85; }
+  .s1 .meta { margin-top: 36px; color: #818cf8; font-size: 13px; }
+
+  /* Slide 2: Results */
+  .s2 {
+    background: linear-gradient(135deg, #0c4a6e 0%, #0f172a 100%);
+    color: #e5f3ff;
+  }
+  .s2 .tag { color: #7dd3fc; border: 1px solid #0284c7; }
+  .tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 10px 0 16px;
+  }
+  .tbl th, .tbl td {
+    padding: 9px 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .tbl th {
+    background: rgba(255,255,255,0.06);
+    font-weight: 700;
+    color: #bae6fd;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .tbl .best { background: rgba(34, 197, 94, 0.18); font-weight: 700; color: #bbf7d0; }
+  .tbl .worst { color: #fda4af; }
+  .tbl .current { background: rgba(250, 204, 21, 0.12); font-weight: 600; }
+  .arrow { color: #94a3b8; }
+  .up { color: #4ade80; font-weight: 700; }
+  .down { color: #fb7185; font-weight: 700; }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-top: 12px;
+  }
+  .card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 16px 20px;
+    border-left: 3px solid #38bdf8;
+  }
+  .card.good { border-left-color: #4ade80; }
+  .card.bad { border-left-color: #fb7185; }
+
+  /* Slide 3: Current work V9 */
+  .s3 {
+    background: linear-gradient(135deg, #1e293b 0%, #312e81 100%);
+    color: #f1f5f9;
+  }
+  .s3 .tag { color: #fbbf24; border: 1px solid #d97706; }
+  .flow {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 14px 0 18px;
+    flex-wrap: wrap;
+  }
+  .flow .box {
+    background: rgba(255,255,255,0.08);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    border: 1px solid rgba(255,255,255,0.15);
+    min-width: 100px;
+    text-align: center;
+  }
+  .flow .box.highlight { background: #d97706; border-color: #fbbf24; color: #fff; font-weight: 600; }
+  .flow .arrow-h { color: #64748b; font-size: 18px; }
+  .progressbar {
+    background: rgba(255,255,255,0.1);
+    height: 22px;
+    border-radius: 11px;
+    overflow: hidden;
+    margin: 10px 0;
+    position: relative;
+  }
+  .progressbar .fill {
+    height: 100%;
+    width: 13.6%;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .progressbar .label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .example {
+    background: rgba(0,0,0,0.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 12.5px;
+  }
+  .example .orig { color: #94a3b8; margin-bottom: 4px; }
+  .example .para { color: #fbbf24; }
+  .example .keep { color: #4ade80; font-weight: 700; }
+
+  /* Slide 4: Plan */
+  .s4 {
+    background: linear-gradient(135deg, #0f172a 0%, #052e16 100%);
+    color: #ecfdf5;
+  }
+  .s4 .tag { color: #86efac; border: 1px solid #16a34a; }
+  .roadmap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 60px 1fr 100px;
+    gap: 14px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    align-items: center;
+  }
+  .step .num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #16a34a;
+    color: #fff;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step .num.pending { background: #64748b; }
+  .step .num.blocked { background: #dc2626; }
+  .step .title { font-weight: 700; font-size: 15px; }
+  .step .desc { font-size: 12.5px; color: #cbd5e1; margin-top: 3px; }
+  .step .eta { font-size: 11px; color: #86efac; text-align: right; font-weight: 600; }
+
+  .feedback-tags {
+    display: flex;
+    gap: 8px;
+    margin: 4px 0 12px;
+    flex-wrap: wrap;
+  }
+  .ftag {
+    background: rgba(134, 239, 172, 0.15);
+    color: #bbf7d0;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(134, 239, 172, 0.3);
+  }
+  .ftag.rejected { background: rgba(251, 113, 133, 0.15); color: #fda4af; border-color: rgba(251, 113, 133, 0.3); }
+</style>
+</head>
+<body>
+
+<!-- ════════════  SLIDE 1: Title & Summary  ════════════ -->
+<div class="slide s1">
+  <span class="tag">Weekly Progress Report</span>
+  <h1>DimASQP: Japanese Augmentation<br>Experiments V6 → V9</h1>
+  <p class="sub">SemEval-2026 Task 3 · Dimensional Aspect Sentiment Quad Prediction</p>
+  <p class="meta">Reporter: Zihao Lv · Focus: jpn_hotel dev cF1 improvement</p>
+
+  <div style="margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+    <div style="background:rgba(34,197,94,0.15); padding:16px; border-radius:10px; border-left:3px solid #4ade80;">
+      <div style="font-size:11px; color:#86efac; font-weight:700; letter-spacing:1px;">V6 · BEST</div>
+      <div style="font-size:22px; font-weight:800; margin-top:6px;">0.3312</div>
+      <div style="font-size:11px; color:#bbf7d0;">Transfer + MeCab</div>
+    </div>
+    <div style="background:rgba(251,113,133,0.1); padding:16px; border-radius:10px; border-left:3px solid #fb7185;">
+      <div style="font-size:11px; color:#fda4af; font-weight:700; letter-spacing:1px;">V7</div>
+      <div style="font-size:22px; font-weight:800; margin-top:6px;">0.3279</div>
+      <div style="font-size:11px; color:#fecaca;">Multi-source -0.33%</div>
+    </div>
+    <div style="background:rgba(251,113,133,0.1); padding:16px; border-radius:10px; border-left:3px solid #fb7185;">
+      <div style="font-size:11px; color:#fda4af; font-weight:700; letter-spacing:1px;">V8</div>
+      <div style="font-size:22px; font-weight:800; margin-top:6px;">0.3202</div>
+      <div style="font-size:11px; color:#fecaca;">LLM pseudo -1.10%</div>
+    </div>
+    <div style="background:rgba(250,204,21,0.15); padding:16px; border-radius:10px; border-left:3px solid #fbbf24;">
+      <div style="font-size:11px; color:#fde68a; font-weight:700; letter-spacing:1px;">V9 · RUNNING</div>
+      <div style="font-size:22px; font-weight:800; margin-top:6px;">—</div>
+      <div style="font-size:11px; color:#fef3c7;">Paraphrase + label-keep</div>
+    </div>
+  </div>
+
+  <div class="slide-number">1 / 4</div>
+</div>
+
+
+<!-- ════════════  SLIDE 2: Results Table & What Worked  ════════════ -->
+<div class="slide s2">
+  <span class="tag">Results — jpn_hotel dev cF1</span>
+  <h2>V6 仍是最优 · V7/V8 均略有回退</h2>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Version</th>
+        <th>Method</th>
+        <th>Data</th>
+        <th>cF1</th>
+        <th>Δ vs V6</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="best">
+        <td>V6</td>
+        <td>zho → jpn transfer + MeCab + vote=2</td>
+        <td>1600 orig</td>
+        <td>0.3312</td>
+        <td>baseline</td>
+      </tr>
+      <tr>
+        <td>V7</td>
+        <td>(eng + zho) multi-source transfer</td>
+        <td>1600 orig</td>
+        <td>0.3279</td>
+        <td><span class="down">-0.33%</span></td>
+      </tr>
+      <tr>
+        <td>V8</td>
+        <td>+ 199 Qwen3.5 pseudo-labeled samples</td>
+        <td>1799</td>
+        <td>0.3202</td>
+        <td><span class="down">-1.10%</span></td>
+      </tr>
+      <tr class="current">
+        <td>V9</td>
+        <td>+ paraphrase with <b>label preservation</b></td>
+        <td>~4800 (running)</td>
+        <td>—</td>
+        <td>TBD</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="split" style="margin-top: 8px;">
+    <div class="card good">
+      <h3 style="color:#4ade80;">✅ Confirmed Gains (all integrated in V6)</h3>
+      <ul>
+        <li><b>Transfer learning</b> (zho_restaurant → jpn): warm starts encoder</li>
+        <li><b>MeCab post-processing</b>: trims Japanese particle boundaries, +0.5%</li>
+        <li><b>Vote threshold = 2</b> (tuned per language on dev set)</li>
+        <li><b>VA clip [1, 9]</b> + <b>Arousal loss weight × 2</b></li>
+      </ul>
+    </div>
+    <div class="card bad">
+      <h3 style="color:#fb7185;">❌ Did Not Work</h3>
+      <ul>
+        <li><b>V7 multi-source</b>: averaging eng + zho encoders dilutes jpn-relevant features</li>
+        <li><b>V8 LLM pseudo</b>: noise from both text and labels; 199 synthetic ≠ 1600 gold</li>
+        <li><b>MarianMT JA↔EN back-translation</b>: near-identical output, 0 useful samples</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide-number">2 / 4</div>
+</div>
+
+
+<!-- ════════════  SLIDE 3: Current Work — V9 Paraphrase  ════════════ -->
+<div class="slide s3">
+  <span class="tag">In Progress — V9</span>
+  <h2>Paraphrase with Label Preservation (Qwen 3.6-flash)</h2>
+
+  <p style="margin-bottom: 10px;">
+    <b>核心思路</b>：复用 gold 标签 → 只改写文本 → 硬约束 aspect/opinion 子串必须保留
+  </p>
+
+  <div class="flow">
+    <div class="box">Gold sample<br>(1600)</div>
+    <div class="arrow-h">→</div>
+    <div class="box">Extract<br>preserve phrases</div>
+    <div class="arrow-h">→</div>
+    <div class="box highlight">Qwen3.6 paraphrase<br>× 2 variants</div>
+    <div class="arrow-h">→</div>
+    <div class="box">Validate substring<br>& diff ratio</div>
+    <div class="arrow-h">→</div>
+    <div class="box">Reuse gold<br>Quadruplet</div>
+  </div>
+
+  <div class="split" style="margin-top: 6px;">
+    <div class="card">
+      <h3 style="color:#fbbf24;">Pilot (10 源样本)</h3>
+      <p style="margin-bottom:4px;">生成 20 paraphrases · <b style="color:#4ade80;">100% 通过率</b></p>
+      <div class="example">
+        <div class="orig">ORIG: スタッフも<span class="keep">親切</span>でまた近いうちに伺いますね</div>
+        <div class="para">PARA: <span class="keep">スタッフ</span>がみなさん<span class="keep">親切</span>で、近いうちにもう一度お邪魔します</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:#fbbf24;">Full Run 进度</h3>
+      <div class="progressbar">
+        <div class="fill"></div>
+        <div class="label">218 / 1600 (13.6%)</div>
+      </div>
+      <p style="font-size:12.5px; line-height:1.6;">
+        • 已生成 437 / 预计 ~3200 条<br>
+        • 速率：194 src/hr（比 pilot 慢，API 限流）<br>
+        • ETA：剩余 ~7 小时<br>
+        • 输出实时 flush，支持 resume
+      </p>
+    </div>
+  </div>
+
+  <div style="background:rgba(250,204,21,0.08); padding:10px 14px; border-radius:8px; margin-top:10px; border-left: 3px solid #fbbf24;">
+    <p style="font-size:12.5px; color:#fef3c7;">
+      <b>⚠ 已识别风险：</b> 约束仅保证子串保留，无法检测"情感漂移"。
+      例如 pilot 中 <i>"おかずが増えた気がします"</i>（不确定）→ <i>"食べ応え十分でした"</i>（肯定）
+      通过了子串检查但语义已偏。 <b>→ 计划引入 COMET 做语义过滤（下一页）。</b>
+    </p>
+  </div>
+
+  <div class="slide-number">3 / 4</div>
+</div>
+
+
+<!-- ════════════  SLIDE 4: Next Steps + Group Feedback  ════════════ -->
+<div class="slide s4">
+  <span class="tag">Next Steps + 组会反馈落地</span>
+  <h2>后续计划 (2–3 周)</h2>
+
+  <div style="margin-bottom: 14px;">
+    <h3 style="color:#86efac; font-size:14px;">上周组会建议采纳状态</h3>
+    <div class="feedback-tags">
+      <span class="ftag">✅ COMET 语义过滤 — 采纳 (步骤 2)</span>
+      <span class="ftag">⏳ Gemini Translate — 备选 (V9 若失败)</span>
+      <span class="ftag rejected">✗ CaboCha / ChaSen — 与 MeCab 重叠</span>
+      <span class="ftag">✅ Paraphrase — 已在做</span>
+    </div>
+  </div>
+
+  <div class="roadmap">
+
+    <div class="step">
+      <div class="num">1</div>
+      <div>
+        <div class="title">V9 Paraphrase 完成 + 训练评测</div>
+        <div class="desc">合并 1600 原始 + ~3200 paraphrase → v9_paraphrase_jpn_hotel 5-seed → dev eval</div>
+      </div>
+      <div class="eta">~24h</div>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <div>
+        <div class="title">COMET 语义过滤 (组会建议)</div>
+        <div class="desc">Unbabel/wmt22-comet-da 评分 → 阈值 >0.75 → 训练 V9-filtered，对比 V9 全量</div>
+      </div>
+      <div class="eta">~8h</div>
+    </div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <div>
+        <div class="title">补训英语 (eng_restaurant + eng_laptop)</div>
+        <div class="desc">目前全 8 语言表缺英语。5 seeds × 2 langs，augmentation + train 需 ~50h 连续运行</div>
+      </div>
+      <div class="eta">~50h</div>
+    </div>
+
+    <div class="step">
+      <div class="num pending">4</div>
+      <div>
+        <div class="title">Test-set 推理 + 正式提交</div>
+        <div class="desc">所有模型对 test 集做 ensemble 推理，打包提交 SemEval-2026</div>
+      </div>
+      <div class="eta">~2h</div>
+    </div>
+
+    <div class="step">
+      <div class="num pending">5</div>
+      <div>
+        <div class="title">论文撰写（方法 + 消融表）</div>
+        <div class="desc">Architecture, transfer ablation, vote tuning, MeCab, paraphrase + COMET, failed exps</div>
+      </div>
+      <div class="eta">~1 周</div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:14px; background:rgba(255,255,255,0.05); padding:10px 14px; border-radius:8px; font-size:12.5px;">
+    <b style="color:#86efac;">关键不确定性：</b> V9 若不提升 → 走 Plan B (Gemini translate 回译)；
+    若提升 → 作为主要贡献写入论文 Section 4.3。
+  </div>
+
+  <div class="slide-number">4 / 4</div>
+</div>
+
+</body>
+</html>
