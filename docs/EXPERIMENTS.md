@@ -8,10 +8,23 @@
 2. [数据集](#2-数据集)
 3. [评估指标](#3-评估指标)
 4. [配置版本演进](#4-配置版本演进) (Baseline → V1 → V2 → V3 → V3-CRF(失败) → V4 Ensemble → V5 增强Ensemble)
-5. [V5 规划](#5-v5-规划) (数据增强✅ → 表征优化 → LLM 融合)
+5. [V5 ~ V10 规划与结果](#5-v4-ensemble--v5-规划) (含 V6 迁移、V7 多源、V8 全合成、V9-V10 paraphrase、COMET 过滤)
 6. [主要结果](#6-主要结果)
 7. [消融实验](#7-消融实验)
 8. [错误分析](#8-错误分析)
+
+### V6 → V10 一览（jpn_hotel dev cF1）
+
+| 版本 | 方法 | LLM | cF1 | Δ vs V6 |
+|------|------|-----|------|---------|
+| **V6** ⭐ | zho transfer + MeCab + vote=2 | — | **0.3312** | baseline |
+| V7 | multi-source transfer (eng+zho) | — | 0.3279 | −0.33% |
+| V8 | +199 全合成（文本+标签）| Qwen3.5-plus | 0.3202 | −1.10% |
+| V9 | +2699 paraphrase（标签复用）| tongyi-xiaomi | 0.3227 | −0.85% |
+| **V10** | **+2957 paraphrase（标签复用，并发）** | **DeepSeek V4 Pro** | **0.3299** | **−0.13%** |
+| ✗ COMET | 用 wmt22-comet-da 过滤 V10 paraphrase | — | 取消 | 不适用本任务 |
+
+**核心结论**：V6 的迁移学习+MeCab 仍是 jpn_hotel 的最佳配置。LLM 数据增强方向 V10 已接近持平 V6（差 0.13%），但未反超。COMET 过滤被证实不适合 jpn paraphrase 质量评估。
 
 ---
 
@@ -506,8 +519,172 @@ python scripts/inference.py --multi_seed_ensemble --dual_layer \
 | V5 增强 Ensemble (eng_rest) | 0.6554 | +4.4% | ✅ |
 | V5 全语言 Ensemble (8 lang avg) | 0.4052 | 超越所有官方 baseline | ✅ |
 | **V6 迁移学习 + MeCab (8 lang avg)** | **0.4397** | **7/8 超越所有 baseline** | **✅ 当前最佳** |
-| V7 Phase 2 表征优化 | 0.45~0.47 | +3~5% | 待开始 |
-| V8 Phase 3 LLM 融合 | 0.50+ | +5%+ | 待开始 |
+| V7 多源迁移（jpn）| 0.3279 | jpn 单语言 −0.33% | ❌ 失败 |
+| V8 LLM 全合成（jpn）| 0.3202 | jpn 单语言 −1.10% | ❌ 失败 |
+| V9 paraphrase tongyi（jpn）| 0.3227 | jpn 单语言 −0.85% | ❌ 失败 |
+| **V10 paraphrase DeepSeek（jpn）** | **0.3299** | **jpn 单语言 −0.13%** | ⚠ 接近持平 |
+
+---
+
+### 5.7 V7：多源迁移（jpn）（❌ 已尝试，未提升）
+
+**动机**：V6 用 zho_restaurant → jpn 单源迁移取得 0.3312。假设两个源（eng+zho）平均 encoder 权重能提供更丰富的初始化。
+
+**实现**：[scripts/train.py](scripts/train.py) 新增 `--pretrained_checkpoints`（复数）参数，对多个 source 的 encoder 取参数平均。
+
+```python
+for key in encoder_keys:
+    matching = [s[key] for s in all_encoder_states if key in s and s[key].shape == model_state[key].shape]
+    if matching:
+        model_state[key] = torch.stack(matching).mean(dim=0)
+```
+
+**结果**：cF1 = **0.3279** ↓ 0.33%（vs V6）
+
+**失败原因分析**：
+- eng_restaurant 和 zho_restaurant 的 encoder 在不同语言上学到不同的子空间
+- 简单平均可能稀释了每个 source 的语言特定特征
+- 推理时还出现 "using raw weights" 警告，提示 EMA 权重保存可能存在问题（待排查）
+
+---
+
+### 5.8 V8：LLM 全合成数据（jpn）（❌ 已尝试，未提升）
+
+**动机**：用 LLM 完整生成新句子+四元组标注，扩充训练数据。
+
+**实现**：[scripts/generate_pseudo_labels.py](scripts/generate_pseudo_labels.py) 调用 Qwen3.5-plus 生成 200 条日语酒店评论及其四元组标注，自动过滤无效样本得 199 条。
+
+合并到训练集：1600（原始）+ 199（伪标注） = 1799 条。
+
+**结果**：cF1 = **0.3202** ↓ 1.10%（vs V6）
+
+**失败原因分析**：
+- **双层噪声**：LLM 既要造句子又要造标签，两边都可能错
+- 199 条合成数据 vs 1600 条 gold 比例失衡（11%）但仍引入显著噪声
+- VA 标注风格偏差：LLM 输出值集中在 5.0-7.0 区间，缺少极端情感
+
+---
+
+### 5.9 V9：Paraphrase + 标签复用（tongyi 模型）（❌ 部分提升 V8，仍未达 V6）
+
+**核心思路**：解决 V8 的双层噪声问题 → **复用 gold 标签**，只让 LLM 改写文本，硬约束 aspect/opinion 子串必须在 paraphrase 中逐字保留。
+
+**实现**：[scripts/paraphrase_with_labels.py](scripts/paraphrase_with_labels.py)
+- 输入：每个原样本的 (Text, 所有非 NULL aspect/opinion 短语)
+- LLM 输出：N 个 paraphrase 候选
+- 过滤：① 所有保留短语必须在新文本中 ② 与原文相似度 <0.85（避免 trivial 改写）
+
+**Pipeline 流程**
+
+```
+Gold sample (1600) → 提取保留短语 → LLM paraphrase × 2 variants
+  → 子串验证 + 相似度验证 → 复用 gold quadruplet
+```
+
+**模型选择**：原计划用 qwen3.6-flash-2026-04-16，跑了 348 条后 free tier 耗尽，自动 fallback 到 `tongyi-xiaomi-analysis-pro` 完成剩余。
+
+**统计**：
+- 接受率 81.1%
+- 覆盖源样本 1497 / 1600（93.6%）
+- Paraphrase 总数 2699
+- 训练集 4299 条
+
+**结果**：cF1 = **0.3227** ↓ 0.85%（vs V6）
+
+**失败原因分析（关键）**：
+
+Pilot 时已发现 tongyi 输出的"语义漂移"问题：
+
+| 原文 | tongyi paraphrase | 问题 |
+|------|------------------|------|
+| 「おかずが増えた**気がします**」（不确定）| 「**食べ応え十分でした**」（强肯定）| ✗ 情感强度漂移 |
+| 「ちょっぴり残念だった…寂しかった」 | + 添加「館内の雰囲気も少し寂しかった」 | ✗ 扩句引入新内容 |
+
+子串保留过滤器**检测不出语义漂移**，需要更强的 LLM 或语义级过滤器。
+
+---
+
+### 5.10 V10：Paraphrase + DeepSeek V4 Pro（⚠ 接近持平 V6）
+
+**改进**：用更强的 LLM `deepseek-v4-pro` 替代 tongyi，并加并发（8 workers）加速。
+
+**实现亮点**：
+- 模型链 fallback：`deepseek-v4-pro → deepseek-chat → qwen3.6-flash → tongyi → ...`，配额耗尽自动切换
+- 并发：`ThreadPoolExecutor(max_workers=8)`，速率从 0.04 src/s 提升到 0.30 src/s（7.5x）
+- Resume 机制：基于 SourceID 自动跳过已完成样本
+
+**统计**：
+| 指标 | V9 (tongyi) | **V10 (DeepSeek)** | Δ |
+|------|-------------|--------------------|---|
+| 接受率 | 81.1% | **93.8%** | +12.7pp |
+| 覆盖源样本 | 1497 (93.6%) | **1561 (97.6%)** | +4pp |
+| Paraphrase 总数 | 2699 | **2957** | +258 |
+
+**Paraphrase 质量对比**（Sample 3 是 V9 翻车案例）：
+
+| 原文 | V9 (tongyi) | V10 (DeepSeek) |
+|------|-------------|----------------|
+| 「おかずが増えた**気がします**」 | ❌「食べ応え十分でした」 | ✅「おかずが増えた**ように思います**」 |
+
+V10 完美保留不确定语气。
+
+**单 seed 完整对比（jpn dev）**：
+
+| Seed | V9 | **V10** | Δ |
+|------|-----|---------|---|
+| 42   | 0.2772 | **0.2798** | +0.26pp |
+| 123  | 0.2794 | **0.2841** | +0.47pp |
+| 456  | 0.2783 | **0.2858** | +0.75pp |
+| 789  | 0.2860 | 0.2751 | −1.09pp |
+| 1024 | 0.2744 | **0.2842** | +0.98pp |
+| **Avg** | 0.2791 | **0.2818** | **+0.27pp** |
+
+**Ensemble 结果**（vote=2 + MeCab）：cF1 = **0.3299**（cP=0.3197 / cR=0.3408）↓ 0.13%（vs V6 0.3312）
+
+V10 几乎追平 V6，但仍未反超。差距 0.13% 在统计噪声范围内。
+
+---
+
+### 5.11 COMET-Kiwi 语义过滤实验（❌ 不适合本任务）
+
+**动机**：组会建议用 [Unbabel COMET](https://github.com/Unbabel/COMET) 给每条 paraphrase 打语义相似度分数，丢弃漂移样本。
+
+**实施**：
+- 模型：`Unbabel/wmt22-comet-da`（开源，reference-based；wmt22-cometkiwi-da 是 gated）
+- 输入构造：src=original, mt=paraphrase, ref=original（让模型评估 paraphrase 与原文的语义距离）
+- 评分：[scripts/comet_filter_paraphrases.py](scripts/comet_filter_paraphrases.py)
+
+**得分分布**（2957 条 V10 paraphrase）：
+
+| 百分位 | COMET |
+|--------|-------|
+| min | 0.654 |
+| 10% | 0.924 |
+| 25% | 0.942 |
+| median | ~0.96 |
+| 75% | 0.968 |
+| 90% | 0.975 |
+| **mean** | **0.951** |
+
+**关键发现：COMET 给"低多样性 trivial 改写"高分，给"有内容增益的 paraphrase"低分**。
+
+低分样本（bottom 5）实际质量分析：
+
+| COMET | 实际情况 |
+|-------|---------|
+| 0.654 | 原文是英语（数据集脏数据，非 paraphrase 问题） |
+| 0.672 | 「食べきれない…全て頂きました」→「ボリューム…全部平らげました」**意思一致**，COMET 误判 |
+| 0.695 | 原文仅「たかい」，paraphrase 添加「宿泊費が」上下文 — 对 ABSA 训练**反而更好** |
+| 0.719 | 「手際が悪くイライラした」→「手ぎわが悪くずっとイライラしていた」**完全等价** |
+
+高分样本（top 5）全是琐碎词序调整或同义词替换。
+
+**结论**：COMET 不适合本任务的语义过滤。原因：
+1. DeepSeek paraphrase 已无显著语义漂移（V9 的"気がします → 十分でした"问题在 V10 不复存在）
+2. COMET 对"内容扩展"和"多样性改写"评分偏低，但这些样本对训练有益
+3. 真正应丢弃的是数据集中混入的英语原文（数据清洗问题）
+
+V11 COMET 过滤实验**取消**。
 
 ---
 
@@ -531,6 +708,10 @@ python scripts/inference.py --multi_seed_ensemble --dual_layer \
 | V5 双层 Ensemble | 回译增强 + 5-seed dual-layer | 0.6554 | +4.4% | ✅ |
 | V5 全语言 Ensemble | 8 语言增强 + dual-layer (avg cF1) | 0.4052 | 超越所有官方 baseline | ✅ |
 | **V6 迁移学习 + MeCab** | **跨语言 transfer + 日语后处理 (avg cF1)** | **0.4397** | **7/8 超越所有 baseline** | **✅ 当前最佳** |
+| V7 多源迁移 (jpn) | eng+zho encoder 平均 | 0.3279 | jpn −0.33% vs V6 | ❌ |
+| V8 LLM 全合成 (jpn) | +199 Qwen3.5 伪标注 | 0.3202 | jpn −1.10% vs V6 | ❌ |
+| V9 paraphrase tongyi (jpn) | +2699 标签复用改写 | 0.3227 | jpn −0.85% vs V6 | ❌ |
+| V10 paraphrase DeepSeek (jpn) | +2957 高质量改写（多并发）| 0.3299 | jpn −0.13% vs V6 | ⚠ 接近持平 |
 
 ### 6.2 代码修复前后对比
 
