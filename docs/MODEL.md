@@ -297,30 +297,38 @@ aspect_repr [B, P, 768] + opinion_repr [B, P, 768]
 ```
 pair_repr [B, P, 1536]
          ↓
-    Shared MLP
+    Shared layer
     Linear(1536 → 256)
     GELU + Dropout
+    LayerNorm                       ← 注意：源码末尾有 LN
          ↓
     shared_features [B, P, 256]
          │
-    ┌────┴────┐
-    ▼         ▼
-┌───────┐ ┌───────┐
-│Valence│ │Arousal│
-│ Head  │ │ Head  │
-│Linear │ │Linear │
-│(256→1)│ │(256→1)│
-└───┬───┘ └───┬───┘
-    ↓         ↓
-  Clamp     Clamp
- [1.0,9.0] [1.0,9.0]
+    ┌────┴─────┐
+    ▼          ▼
+┌─────────┐ ┌─────────┐
+│ Valence │ │ Arousal │
+│  Head   │ │  Head   │
+│ Lin 256 │ │ Lin 256 │
+│   →128  │ │   →128  │             ← 实际是两层 MLP，不是单层
+│  GELU + │ │  GELU + │
+│ Dropout │ │ Dropout │
+│ Lin 128 │ │ Lin 128 │
+│   → 1   │ │   → 1   │
+└────┬────┘ └────┬────┘
+     ↓           ↓
+  σ(·)·8+1   σ(·)·8+1               ← sigmoid 缩放（不是 clamp）
+   ∈[1,9]     ∈[1,9]
 ```
 
-**输出范围限制**:
+**输出范围限制**（由 sigmoid 直接保证，不使用 clamp）:
 ```python
-valence = torch.clamp(valence, min=self.va_min, max=self.va_max)
-arousal = torch.clamp(arousal, min=self.va_min, max=self.va_max)
+# va_module.py:106-107
+valence = torch.sigmoid(valence_logits) * self.va_range + self.va_min  # va_range=8
+arousal = torch.sigmoid(arousal_logits) * self.va_range + self.va_min
 ```
+
+> 文档历史版本曾写成 `clamp([1,9])`，与源码不符；实际通过 `sigmoid(x)·8+1` 平滑映射到 `[1, 9]`，避免边界处梯度截断。
 
 ### 4.5 Feature-level Rethink 模块
 
@@ -334,23 +342,32 @@ arousal = torch.clamp(arousal, min=self.va_min, max=self.va_max)
 
 ```python
 class LabelEmbeddingModule:
-    # BIO 标签嵌入
+    # BIO 标签嵌入（token-level，参与 token_fusion）
     self.bio_embedding = nn.Embedding(5, 64)  # 5 BIO labels → 64d
 
-    # Entity/Attribute 嵌入
-    self.entity_embedding = nn.Embedding(7, 64)
+    # Pair-level 嵌入（pair_valid / entity / attribute）
+    self.pair_embedding      = nn.Embedding(2, 64)  # valid / invalid
+    self.entity_embedding    = nn.Embedding(7, 64)
     self.attribute_embedding = nn.Embedding(6, 64)
 
     # V-A 值投影
     self.va_projector = nn.Linear(2, 64)
 
+    # Fusion 层
+    self.token_fusion = nn.Linear(hidden_dim + 64, hidden_dim)         # ✓ 生效
+    self.pair_fusion  = nn.Linear(pair_dim + 64*4, hidden_dim)         # ⚠ 已定义但未使用
+
     def embed_bio_labels(self, bio_probs):
         """软嵌入: 使用概率加权"""
-        # bio_probs: [B, L, 5]
-        # bio_embedding.weight: [5, 64]
+        # bio_probs: [B, L, 5]   bio_embedding.weight: [5, 64]
         return torch.matmul(bio_probs, self.bio_embedding.weight)
         # 输出: [B, L, 64]
 ```
+
+> ⚠ 实现注意：`forward()` 中虽然计算了 `fused_pair = pair_fusion([pair_repr; entity_emb; attribute_emb; pair_emb; va_emb])`，
+> 但返回给上层 (`DimASQPModel`) 后**未被任何 stage-2 head 使用**。
+> 实际生效的 Rethink 路径只有 token-level 融合（§4.5.2 → §4.5.3 → §4.5.4）。
+> 论文中应仅描述 token-level 融合分支以与代码一致。
 
 #### 4.5.2 Feature Fusion
 

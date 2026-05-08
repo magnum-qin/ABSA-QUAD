@@ -119,8 +119,10 @@ Input Text
 
 #### VARegressor (`va_module.py:12`)
 - 输入: pair_repr `[B, num_pairs, 1536]`
-- 结构: Linear(1536→256) + GELU + LayerNorm → 分两个独立 head 预测 V 和 A
-- 输出激活: `sigmoid(x) * 8 + 1`，范围约束到 [1, 9]
+- 共享层: `Linear(1536→256) → GELU → Dropout → LayerNorm`
+- 每个 head（valence/arousal 各一）: `Linear(256→128) → GELU → Dropout → Linear(128→1)`
+  （**两层 MLP，不是单层** —— 文档历史版本曾误写成单层）
+- 输出激活: `sigmoid(x) * 8 + 1`，范围约束到 [1, 9]（不使用 clamp）
 - 损失: Huber Loss (delta=1.0)
 
 #### VAEmbedding (`va_module.py:168`)
@@ -128,9 +130,10 @@ Input Text
 - 离散化为 18 个 bin（0.5 间隔），用于 Rethink 模块的软嵌入输入
 
 #### FeatureLevelRethink (`feature_rethink.py:135`)
-- 核心: LabelEmbeddingModule → Self-Attention → FFN → Gated Fusion
-- 将 Stage1 的所有预测（BIO probs, pair probs, entity probs, attr probs, V, A）
-  编码为 soft label embeddings，融合进 hidden_states 中
+- 核心: LabelEmbeddingModule → token_fusion → Self-Attention → FFN → Gated Fusion
+- LabelEmbedding 包含 5 个分支：bio / pair_valid / entity / attribute（4 个 `nn.Embedding` 软嵌入）+ va（`Linear(2→64)` 投影）
+- **生效路径**: `Concat([H, bio_emb])` → `Linear(832→768)` → MHA(8 heads) + LN+Residual → FFN(768→3072→768) + LN+Residual → Gated `g·H' + (1-g)·H`
+- **未生效分支** ⚠: `pair_fusion` 在 `forward()` 中计算并返回 `fused_pair`，但上层 `DimASQPModel` 未使用 —— pair 级别的 entity/attribute/pair_valid/va soft-emb 实际上没进入 stage-2 推理路径
 
 #### ConsistencyLoss (`feature_rethink.py:257`)
 - `max(0, loss_stage2 - loss_stage1 + margin)` — 鼓励 Stage2 比 Stage1 更好
