@@ -77,7 +77,12 @@ def is_quota_error(err_msg: str) -> bool:
     return any(p.lower() in msg for p in QUOTA_ERROR_PATTERNS)
 
 
-SYSTEM_PROMPT = """あなたは日本語のホテルレビューを言い換える専門アシスタントです。元のレビューの意味と感情を保ちつつ、自然な日本語で書き直してください。
+# ─────────────────────────────────────────────────────────────────────────────
+# Language-aware system prompts. Each entry: (language_name, domain, prompt).
+# All prompts share the same JSON output contract: {"paraphrases": ["...", ...]}
+# ─────────────────────────────────────────────────────────────────────────────
+LANGUAGE_PROMPTS = {
+    "jpn": """あなたは日本語のホテルレビューを言い換える専門アシスタントです。元のレビューの意味と感情を保ちつつ、自然な日本語で書き直してください。
 
 厳守すべきルール:
 1. 入力の PRESERVE_PHRASES にあるすべての文字列を、出力テキストに必ず**そのまま**（部分文字列として）含めること。省略・変形・スペース挿入・漢字変換の変更は禁止。
@@ -86,18 +91,99 @@ SYSTEM_PROMPT = """あなたは日本語のホテルレビューを言い換え�
 4. 自然で流暢な日本語を書くこと。
 5. 出力は JSON のみ。フォーマット: {"paraphrases": ["...", "..."]}
 6. 元のテキストと完全に同一の出力は避けること。
-"""
+""",
+    "zho": """你是一个中文评论改写专家。请保持原评论的含义和情感不变,用自然流畅的中文重新表达。
+
+必须遵守的规则:
+1. PRESERVE_PHRASES 中的所有字符串必须**逐字**(作为子字符串)出现在输出中,禁止省略、变形、增删空格或更换汉字。
+2. 其他部分可以调整语序、替换同义词、改变句式等。
+3. 必须保持原文的意思一致,情感极性和强度也要保留。
+4. 用自然流畅的中文表达。
+5. 仅输出 JSON, 格式: {"paraphrases": ["...", "..."]}
+6. 避免输出与原文完全相同的句子。
+""",
+    "rus": """Вы — эксперт по перефразированию русских отзывов о ресторанах. Перефразируйте отзыв, сохраняя смысл и эмоциональную окраску.
+
+Строгие правила:
+1. Все строки из PRESERVE_PHRASES должны **дословно** (как подстроки) присутствовать в выводе. Запрещены пропуски, изменения, добавление пробелов или замена символов.
+2. Остальные части можно перестраивать: менять порядок слов, заменять синонимами, менять структуру предложения.
+3. Сохраняйте исходный смысл, полярность и интенсивность эмоций.
+4. Пишите естественным, беглым русским языком.
+5. Возвращайте ТОЛЬКО JSON в формате: {"paraphrases": ["...", "..."]}
+6. Избегайте вывода, идентичного исходному тексту.
+""",
+    "ukr": """Ви — експерт із перефразування українських відгуків про ресторани. Перефразуйте відгук, зберігаючи зміст і емоційне забарвлення.
+
+Суворі правила:
+1. Усі рядки з PRESERVE_PHRASES мають **дослівно** (як підрядки) бути присутні у виводі. Заборонено пропуски, зміни, додавання пробілів або заміну символів.
+2. Інші частини можна перебудовувати: міняти порядок слів, заміняти синонімами, змінювати структуру речення.
+3. Зберігайте вихідний зміст, полярність та інтенсивність емоцій.
+4. Пишіть природною, плавною українською мовою.
+5. Повертайте ТІЛЬКИ JSON у форматі: {"paraphrases": ["...", "..."]}
+6. Уникайте виводу, ідентичного оригінальному тексту.
+""",
+    "tat": """You are a Tatar restaurant-review paraphraser. Rewrite the review in natural, fluent Tatar while preserving meaning and emotional polarity.
+
+Strict rules:
+1. Every string in PRESERVE_PHRASES MUST appear verbatim (as a substring) in the output. No omissions, modifications, added spaces, or character substitutions.
+2. Other parts may be reordered, paraphrased with synonyms, or restructured.
+3. Preserve the original meaning, sentiment polarity and intensity.
+4. Write natural, fluent Tatar (NOT Russian).
+5. Return JSON ONLY in format: {"paraphrases": ["...", "..."]}
+6. Avoid outputs identical to the original text.
+""",
+    "eng": """You are an expert paraphraser of English reviews. Rewrite the review while preserving its meaning and emotional polarity.
+
+Strict rules:
+1. Every string in PRESERVE_PHRASES MUST appear verbatim (as a substring) in the output. No omissions, modifications, added spaces, or character substitutions.
+2. Other parts may be reordered, paraphrased with synonyms, or restructured.
+3. Preserve the original meaning, sentiment polarity and intensity.
+4. Write natural, fluent English.
+5. Return JSON ONLY in format: {"paraphrases": ["...", "..."]}
+6. Avoid outputs identical to the original text.
+""",
+}
+
+LANGUAGE_USER_TEMPLATE = {
+    "jpn": ("原文:\n{text}\n\nPRESERVE_PHRASES: {phrases}\n\n"
+            "上記の原文を言い換えた新しい日本語テキストを {n} 件、"
+            "PRESERVE_PHRASES のすべての文字列を部分文字列として必ず含めたうえで生成してください。"
+            "JSON のみを返してください: {{\"paraphrases\": [...]}}"),
+    "zho": ("原文:\n{text}\n\nPRESERVE_PHRASES: {phrases}\n\n"
+            "请将上述原文改写为 {n} 个新的中文句子,"
+            "PRESERVE_PHRASES 中的所有字符串必须作为子字符串包含在内。"
+            "仅返回 JSON: {{\"paraphrases\": [...]}}"),
+    "rus": ("Оригинал:\n{text}\n\nPRESERVE_PHRASES: {phrases}\n\n"
+            "Перефразируйте оригинал в {n} новых русских вариантах, "
+            "обязательно включая все строки из PRESERVE_PHRASES как подстроки. "
+            "Возвращайте ТОЛЬКО JSON: {{\"paraphrases\": [...]}}"),
+    "ukr": ("Оригінал:\n{text}\n\nPRESERVE_PHRASES: {phrases}\n\n"
+            "Перефразуйте оригінал у {n} нових українських варіантах, "
+            "обов'язково включаючи всі рядки з PRESERVE_PHRASES як підрядки. "
+            "Повертайте ТІЛЬКИ JSON: {{\"paraphrases\": [...]}}"),
+    "tat": ("Original:\n{text}\n\nPRESERVE_PHRASES: {phrases}\n\n"
+            "Paraphrase the original into {n} new Tatar sentences, "
+            "MUST include every string from PRESERVE_PHRASES as a substring. "
+            "Return JSON ONLY: {{\"paraphrases\": [...]}}"),
+    "eng": ("Original:\n{text}\n\nPRESERVE_PHRASES: {phrases}\n\n"
+            "Paraphrase the original into {n} new English sentences, "
+            "MUST include every string from PRESERVE_PHRASES as a substring. "
+            "Return JSON ONLY: {{\"paraphrases\": [...]}}"),
+}
 
 
-def build_prompt(text: str, preserve_phrases: list, n_variants: int) -> str:
+def get_system_prompt(language: str) -> str:
+    if language not in LANGUAGE_PROMPTS:
+        raise ValueError(f"Unsupported language: {language}. "
+                         f"Available: {sorted(LANGUAGE_PROMPTS.keys())}")
+    return LANGUAGE_PROMPTS[language]
+
+
+def build_prompt(text: str, preserve_phrases: list, n_variants: int,
+                 language: str = "jpn") -> str:
     phrases_json = json.dumps(preserve_phrases, ensure_ascii=False)
-    return (
-        f"原文:\n{text}\n\n"
-        f"PRESERVE_PHRASES: {phrases_json}\n\n"
-        f"上記の原文を言い換えた新しい日本語テキストを {n_variants} 件、"
-        f"PRESERVE_PHRASES のすべての文字列を部分文字列として必ず含めたうえで生成してください。"
-        f"JSON のみを返してください: {{\"paraphrases\": [...]}}"
-    )
+    template = LANGUAGE_USER_TEMPLATE[language]
+    return template.format(text=text, phrases=phrases_json, n=n_variants)
 
 
 def collect_preserve_phrases(sample: dict) -> list:
@@ -138,7 +224,8 @@ def validate_paraphrase(new_text: str, preserve_phrases: list,
 _rotation_index = 0
 
 
-def _call_one_model(prompt: str, api_keys: dict, model: str) -> tuple:
+def _call_one_model(prompt: str, api_keys: dict, model: str,
+                    system_prompt: str) -> tuple:
     """Single attempt at one model. api_keys is a {provider: key} dict.
     Returns (paraphrases, err_msg or None)."""
     from openai import OpenAI
@@ -151,11 +238,13 @@ def _call_one_model(prompt: str, api_keys: dict, model: str) -> tuple:
         response = client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
             temperature=0.8,
             max_tokens=1900,  # tongyi-xiaomi-analysis-pro caps at 2000
+            # NOTE: Cyrillic/CJK uses ~2-3x more tokens than Latin per char.
+            # 1900 is a tight ceiling for languages with multi-byte scripts.
         )
         raw = response.choices[0].message.content.strip()
 
@@ -181,7 +270,8 @@ def _call_one_model(prompt: str, api_keys: dict, model: str) -> tuple:
         return [], str(e)
 
 
-def call_qwen(prompt: str, api_keys: dict, _ignored: str = None) -> list:
+def call_qwen(prompt: str, api_keys: dict, system_prompt: str,
+              _ignored: str = None) -> list:
     """
     Call LLM with automatic model rotation on quota exhaustion.
     Supports cross-provider fallback (DeepSeek → DashScope → ...).
@@ -201,7 +291,7 @@ def call_qwen(prompt: str, api_keys: dict, _ignored: str = None) -> list:
         model = FALLBACK_MODELS[_rotation_index]
 
         for attempt in range(3):
-            paraphrases, err = _call_one_model(prompt, api_keys, model)
+            paraphrases, err = _call_one_model(prompt, api_keys, model, system_prompt)
             if err is None:
                 return paraphrases  # success (possibly empty)
 
@@ -260,6 +350,9 @@ def main():
                         help="Skip samples whose only quads are NULL/NULL")
     parser.add_argument("--workers", type=int, default=8,
                         help="Concurrent API workers (1 = sequential)")
+    parser.add_argument("--language", default="jpn",
+                        choices=sorted(LANGUAGE_PROMPTS.keys()),
+                        help="Source language code for choosing the system prompt")
     args = parser.parse_args()
 
     # If user-specified model isn't already in the chain, prepend it as primary
@@ -312,12 +405,15 @@ def main():
         pending.append((src_id, sample, preserve))
     print(f"Pending: {len(pending)} samples (workers={args.workers})")
 
+    system_prompt = get_system_prompt(args.language)
+    print(f"Language: {args.language} (system prompt loaded, {len(system_prompt)} chars)")
+
     # Per-sample worker function
     def process_sample(item):
         src_id, sample, preserve = item
         text = sample["Text"].strip()
-        prompt = build_prompt(text, preserve, args.n_variants)
-        paraphrases = call_qwen(prompt, api_keys, args.model)
+        prompt = build_prompt(text, preserve, args.n_variants, language=args.language)
+        paraphrases = call_qwen(prompt, api_keys, system_prompt, args.model)
         accepted = []
         n_rej = 0
         for p in paraphrases:
