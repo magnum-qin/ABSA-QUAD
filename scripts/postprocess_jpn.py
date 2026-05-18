@@ -24,6 +24,16 @@ import MeCab
 CONTENT_POS = {'名詞', '動詞', '形容詞', '副詞', '連体詞', '形状詞'}
 FILLER_POS = {'助詞', '助動詞', '補助記号', '空白', '記号'}
 
+# v2: STRICT whitelist of true intensifiers (not all adverbs).
+# These are degree/manner modifiers that typically belong inside opinion span.
+INTENSIFIER_WHITELIST = {
+    'とても', '非常に', '大変', 'かなり', '本当に', 'すごく', 'すこく',
+    'めっちゃ', '結構', 'すごい', '物凄く', 'ものすごく',
+    'ちょっと', '少し', 'やや', 'まあまあ', 'まあ',
+    '全然', '全く', 'まったく', 'まじで',
+    '最高に', '最も',
+}
+
 
 def get_morphemes(tagger, text):
     """Get list of morpheme dicts with surface, pos, start, end."""
@@ -92,6 +102,48 @@ def align_span(text, span, morphemes):
     return aligned
 
 
+def expand_opinion_with_adverb(opinion, text, morphemes):
+    """v2: extend opinion span leftward to include a preceding adverb/intensifier.
+
+    Pattern: 副詞 (adverb) directly preceding the opinion → merge.
+    E.g. "親切" → "とても親切" when text contains "とても親切".
+
+    Only fires when the adverb is IMMEDIATELY before the opinion (or separated
+    only by particles which themselves precede the opinion).
+    """
+    if opinion in ('NULL', '', None):
+        return opinion
+    pos = text.find(opinion)
+    if pos == -1:
+        return opinion
+
+    # Find the morpheme starting exactly at `pos`
+    start_morph_idx = None
+    for i, m in enumerate(morphemes):
+        if m['start'] == pos:
+            start_morph_idx = i
+            break
+    if start_morph_idx is None or start_morph_idx == 0:
+        return opinion
+
+    # Walk backwards: skip 助詞 (particles like の/が) until we hit something
+    look_back = start_morph_idx - 1
+    while look_back >= 0 and morphemes[look_back]['pos'] == '助詞':
+        look_back -= 1
+    if look_back < 0:
+        return opinion
+
+    # Only expand if the previous morpheme is in the strict intensifier whitelist
+    prev = morphemes[look_back]
+    if prev['surface'] not in INTENSIFIER_WHITELIST:
+        return opinion
+
+    # Build extended span from adverb to end of opinion
+    new_start = prev['start']
+    new_end = pos + len(opinion)
+    return text[new_start:new_end]
+
+
 def is_content_span(span, text, morphemes):
     """Check if a span contains at least one content morpheme."""
     if span in ('NULL', '', None):
@@ -110,7 +162,8 @@ def is_content_span(span, text, morphemes):
     return False
 
 
-def postprocess_predictions(predictions, gold_data, tagger):
+def postprocess_predictions(predictions, gold_data, tagger,
+                             expand_opinion_adverb: bool = False):
     """Apply MeCab-based post-processing to predictions."""
     gold_map = {g['ID']: g['Text'] for g in gold_data}
 
@@ -134,6 +187,10 @@ def postprocess_predictions(predictions, gold_data, tagger):
             # Align spans to morpheme boundaries
             new_aspect = align_span(text, aspect, morphemes)
             new_opinion = align_span(text, opinion, morphemes)
+
+            # v2: extend opinion to include preceding adverb (とても/かなり/...)
+            if expand_opinion_adverb:
+                new_opinion = expand_opinion_with_adverb(new_opinion, text, morphemes)
 
             if new_aspect != aspect or new_opinion != opinion:
                 stats['aligned'] += 1
@@ -163,6 +220,9 @@ def main():
     parser.add_argument('--input', required=True, help='Input predictions JSONL')
     parser.add_argument('--gold', required=True, help='Gold data JSONL (for text)')
     parser.add_argument('--output', required=True, help='Output processed JSONL')
+    parser.add_argument('--expand_opinion_adverb', action='store_true',
+                        help='v2: extend opinion to include preceding adverb '
+                             '(e.g. "親切" → "とても親切")')
     args = parser.parse_args()
 
     tagger = MeCab.Tagger()
@@ -172,7 +232,8 @@ def main():
     with open(args.gold) as f:
         gold_data = [json.loads(l) for l in f]
 
-    processed, stats = postprocess_predictions(predictions, gold_data, tagger)
+    processed, stats = postprocess_predictions(predictions, gold_data, tagger,
+                                                expand_opinion_adverb=args.expand_opinion_adverb)
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     with open(args.output, 'w', encoding='utf-8') as f:

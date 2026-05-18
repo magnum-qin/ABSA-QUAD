@@ -197,7 +197,8 @@ def multi_seed_ensemble_predictions(
     device: str,
     pair_threshold: float = 0.3,
     vote_threshold: int = None,
-    dual_layer: bool = False
+    dual_layer: bool = False,
+    span_topk_threshold: float = 0.0
 ) -> list:
     """Run inference with multiple seed models and merge via majority voting.
 
@@ -244,6 +245,11 @@ def multi_seed_ensemble_predictions(
             ckpt_path = Path(seed_dir) / "checkpoint_best.pt"
             print(f"\n--- Model {i+1}/{n_models}: {ckpt_path} ---")
             model = load_model(str(ckpt_path), config.copy(), device)
+        # Apply top-k span threshold if requested
+        if span_topk_threshold > 0:
+            model.span_extractor.topk_threshold = span_topk_threshold
+            if hasattr(model, 'span_extractor_stage2'):
+                model.span_extractor_stage2.topk_threshold = span_topk_threshold
         preds = generate_predictions(model, dataloader, device, pair_threshold)
         all_model_preds.append(preds)
         # Free GPU memory
@@ -321,6 +327,9 @@ def main():
                        help='Device to use')
     parser.add_argument('--pair_threshold', type=float, default=0.3,
                        help='Pair validity confidence threshold (default: 0.3)')
+    parser.add_argument('--span_topk_threshold', type=float, default=0.0,
+                       help='If > 0, also accept B-ASP/B-OPN spans with prob >= threshold '
+                            '(beyond argmax). Improves recall. Try 0.15-0.30. Default 0 (disabled).')
     args = parser.parse_args()
 
     if not args.ensemble and not args.multi_seed_ensemble and not args.checkpoint:
@@ -367,7 +376,8 @@ def main():
             device=device,
             pair_threshold=args.pair_threshold,
             vote_threshold=args.vote_threshold,
-            dual_layer=args.dual_layer
+            dual_layer=args.dual_layer,
+            span_topk_threshold=args.span_topk_threshold
         )
     else:
         # Single model or weight-averaging ensemble

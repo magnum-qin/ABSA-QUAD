@@ -63,6 +63,10 @@ class SpanExtractor(nn.Module):
         Extract span positions from BIO predictions.
         Uses Viterbi decoding when CRF is enabled, argmax otherwise.
 
+        When `self.topk_threshold > 0` (set by inference), additional candidate
+        spans are appended for positions where B-ASP / B-OPN have probability
+        >= threshold even if argmax predicted O. This improves recall.
+
         Returns:
             List of spans for each sample: [(start, end, type), ...]
         """
@@ -70,6 +74,13 @@ class SpanExtractor(nn.Module):
             predictions = self.crf.decode(logits, attention_mask.float())
         else:
             predictions = torch.argmax(logits, dim=-1)  # [B, L]
+
+        # Compute softmax probabilities for top-k augmentation
+        topk_threshold = getattr(self, "topk_threshold", 0.0)
+        probs = None
+        if topk_threshold > 0 and not self.use_crf:
+            probs = F.softmax(logits, dim=-1)  # [B, L, num_labels]
+
         batch_spans = []
         
         # Label mapping
@@ -109,9 +120,51 @@ class SpanExtractor(nn.Module):
             # Don't forget the last span
             if current_span is not None:
                 spans.append(current_span)
-            
+
+            # ─── Top-k augmentation: add candidate spans missed by argmax ───
+            if probs is not None:
+                seq_len_b = int(attention_mask[b].sum().item())
+                p = probs[b, :seq_len_b]           # [L_b, 5]
+                argmax_b = predictions[b, :seq_len_b]
+
+                # Track positions already covered by argmax spans to avoid dupes
+                covered = set()
+                for s, e, _ in spans:
+                    for pos in range(s, e + 1):
+                        covered.add(pos)
+
+                # Find positions where B-ASP or B-OPN has prob >= threshold
+                # but argmax disagreed (predicted O or I-*)
+                b_asp_idx = label_names.index("B-ASP")  # 1
+                b_opn_idx = label_names.index("B-OPN")  # 3
+                i_asp_idx = label_names.index("I-ASP")  # 2
+                i_opn_idx = label_names.index("I-OPN")  # 4
+
+                for start_pos in range(seq_len_b):
+                    if start_pos in covered:
+                        continue
+                    for b_idx, span_type, i_idx in [
+                        (b_asp_idx, "aspect", i_asp_idx),
+                        (b_opn_idx, "opinion", i_opn_idx),
+                    ]:
+                        if p[start_pos, b_idx].item() < topk_threshold:
+                            continue
+                        # Extend span greedily while I-* prob is highest among I/O
+                        end_pos = start_pos
+                        for next_pos in range(start_pos + 1, seq_len_b):
+                            # Stop if I-* prob is below half the start threshold
+                            if p[next_pos, i_idx].item() >= topk_threshold * 0.5:
+                                end_pos = next_pos
+                            else:
+                                break
+                        # Only add if span doesn't overlap a covered position
+                        if not any(pos in covered for pos in range(start_pos, end_pos + 1)):
+                            spans.append((start_pos, end_pos, span_type))
+                            for pos in range(start_pos, end_pos + 1):
+                                covered.add(pos)
+
             batch_spans.append(spans)
-        
+
         return batch_spans
 
 
