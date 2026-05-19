@@ -42,6 +42,51 @@ def fmt_va(v, a):
     return f"{max(1.0, min(9.0, v)):.2f}#{max(1.0, min(9.0, a)):.2f}"
 
 
+def smart_union(v15_quads, llm_quads, mode: str = 'overlap_any'):
+    """Add only LLM quads that share something with a V15 quad in same sample.
+
+    mode='overlap_any': LLM quad kept if its aspect OR opinion matches any V15
+        quad's aspect OR opinion (string equality after stripping).
+    mode='overlap_opinion': stricter — only if opinion matches some V15 opinion.
+    mode='overlap_aspect': only if aspect matches some V15 aspect.
+    """
+    v15_aspects = {q['Aspect'].strip() for q in v15_quads if q.get('Aspect')}
+    v15_opinions = {q['Opinion'].strip() for q in v15_quads if q.get('Opinion')}
+
+    v15_keys = {(q['Aspect'], q['Category'], q['Opinion']): parse_va(q['VA']) for q in v15_quads}
+    kept = dict(v15_keys)  # start with all V15
+
+    for q in llm_quads:
+        asp = q.get('Aspect', '').strip()
+        opn = q.get('Opinion', '').strip()
+        key = (q['Aspect'], q['Category'], q['Opinion'])
+        if key in kept:
+            # Already there → average VA
+            old_v, old_a = kept[key]
+            new_v, new_a = parse_va(q['VA'])
+            kept[key] = ((old_v + new_v) / 2, (old_a + new_a) / 2)
+            continue
+        # Filter LLM additions by overlap requirement
+        if mode == 'overlap_any':
+            if asp not in v15_aspects and opn not in v15_opinions:
+                continue
+        elif mode == 'overlap_opinion':
+            if opn not in v15_opinions:
+                continue
+        elif mode == 'overlap_aspect':
+            if asp not in v15_aspects:
+                continue
+        elif mode == 'overlap_both':
+            if asp not in v15_aspects or opn not in v15_opinions:
+                continue
+        kept[key] = parse_va(q['VA'])
+
+    merged = []
+    for (asp, cat, opn), (v, a) in kept.items():
+        merged.append({'Aspect': asp, 'Category': cat, 'Opinion': opn, 'VA': fmt_va(v, a)})
+    return merged
+
+
 def merge_one(v15_quads, llm_quads, strategy: str):
     # Index by (aspect, category, opinion) key
     v15_keys = {(q['Aspect'], q['Category'], q['Opinion']): parse_va(q['VA']) for q in v15_quads}
@@ -81,7 +126,8 @@ def main():
     parser.add_argument('--llm_pred', required=True)
     parser.add_argument('--output', required=True)
     parser.add_argument('--strategy', default='union',
-                        choices=['union', 'intersection', 'llm_only', 'v15_only'])
+                        choices=['union', 'intersection', 'llm_only', 'v15_only',
+                                 'smart_any', 'smart_opinion', 'smart_aspect', 'smart_both'])
     parser.add_argument('--llm_max_per_sample', type=int, default=None,
                         help='Cap LLM quads per sample (drops noisy excess). None=unlimited.')
     args = parser.parse_args()
@@ -104,7 +150,11 @@ def main():
         llm_q = llm.get(sid, [])
         if args.llm_max_per_sample is not None:
             llm_q = llm_q[:args.llm_max_per_sample]
-        merged = merge_one(v15_q, llm_q, args.strategy)
+        if args.strategy.startswith('smart_'):
+            mode = 'overlap_' + args.strategy.split('_', 1)[1]
+            merged = smart_union(v15_q, llm_q, mode=mode)
+        else:
+            merged = merge_one(v15_q, llm_q, args.strategy)
         n_merged += len(merged)
         out.append({'ID': sid, 'Quadruplet': merged})
 

@@ -93,7 +93,7 @@ def call_deepseek(prompt, sys_prompt, api_key, model='deepseek-v4-pro'):
                     {'role': 'user', 'content': prompt},
                 ],
                 temperature=0.2,  # low temp for extraction stability
-                max_tokens=1500,
+                max_tokens=4096,
             )
             raw = resp.choices[0].message.content.strip()
             # Parse JSON

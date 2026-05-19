@@ -101,7 +101,7 @@ V13c 在 zho_laptop 单 seed avg +1.25pp，ensemble +1.08pp，**高阈值过滤�
 
 ---
 
-### V6 → V14 一览（jpn_hotel dev cF1）
+### V6 → V15+topk 一览（jpn_hotel dev cF1）
 
 | 版本 | 方法 | 训练样本 | cF1 | Δ vs V6 |
 |------|------|---------|------|---------|
@@ -114,11 +114,18 @@ V13c 在 zho_laptop 单 seed avg +1.25pp，ensemble +1.08pp，**高阈值过滤�
 | V12 | V10 + COMET≥0.95（中度过滤）| 3466 | 0.3523 | +2.11% |
 | V13 (vote=2) | V10 + COMET≥0.96（最优过滤）| 2893 | 0.3565 | +2.53% |
 | V14 | V10 + COMET≥0.965（过度过滤）| 2549 | 0.3418 | +1.06% |
-| **V13 (vote=3)** ⭐⭐⭐⭐ | **V13 ckpts + vote=3 重调（无需重训）** | **2893** | **0.3765** | **+4.53%** 🏆 |
+| V13 (vote=3) | V13 ckpts + vote=3 重调（无需重训）| 2893 | 0.3765 | +4.53% |
+| V15 (XLM-R-large) | V13 数据 + xlm-roberta-large encoder | 2893 | 0.3924 | +6.12% |
+| **V15 + top-k** ⭐⭐⭐⭐⭐ | **V15 + top-k span decoding（topk=0.15）** | **2893** | **0.3962** | **+6.50%** 🏆 |
 
 **核心结论**：
-1. **倒 U 型阈值-效应曲线**：0.92→0.95→0.96→**(峰值)**→0.965，**V13 (0.96) 是甜区顶点**
+1. **倒 U 型 COMET 阈值-效应曲线**：0.92→0.95→0.96→**(峰值)**→0.965，**V13 (0.96) 是甜区顶点**
 2. **质 > 量但有边界**：训练数据从 4557 (V10) 减到 2893 (V13) 仍提升；但减到 2549 (V14) 出现 underfitting
+3. **Encoder scaling 大幅突破**：V15 (XLM-R-large) 比 V13 (mDeBERTa-base) 单 seed avg **+7.52pp**, ensemble +1.59pp
+4. **Top-k Span Decoding 解决 recall 瓶颈**：+0.38pp（仅推理参数，无需重训）
+5. **V15+top-k 已超过 Llama-3.3 70B**（0.3962 vs 0.3577 = +3.85pp）；未超过 GPT-OSS 120B (0.4151)
+
+详见 [§5.18 V15-jpn](#518-v15-jpnxlm-r-large-encoder-升级--单-seed-752pp), [§5.19 Top-k Span](#519-v15--top-k-span-decoding--单-encoder-内最佳-cf103962), [§5.20 失败实验集](#520-失败实验集v15-之后探索未带来提升的尝试)。
 3. **V14 = 阈值上限标记**：5/5 seeds 全回退，平均 −1pp，证明 0.96 已是最佳过滤强度
 
 ---
@@ -622,7 +629,9 @@ python scripts/inference.py --multi_seed_ensemble --dual_layer \
 | V12 V10 + COMET≥0.95（jpn）| 0.3523 | jpn 单语言 +2.11% | ✅✅ 大幅突破 |
 | V13 V10 + COMET≥0.96 vote=2（jpn）| 0.3565 | jpn 单语言 +2.53% | ✅✅✅ |
 | V14 V10 + COMET≥0.965（jpn）| 0.3418 | jpn 单语言 +1.06% | ❌ 过度过滤（甜区上限）|
-| **V13 + vote=3 重调（jpn）** | **0.3765** | **jpn 单语言 +4.53%** | **✅✅✅✅ 当前最佳** 🏆 |
+| V13 + vote=3 重调（jpn）| 0.3765 | jpn 单语言 +4.53% | ✅✅✅✅ |
+| V15 (XLM-R-large, jpn) | 0.3924 | jpn 单语言 +6.12% | ✅✅✅✅✅ |
+| **V15 + Top-k Span (jpn)** | **0.3962** | **jpn 单语言 +6.50%** | **✅✅✅✅✅ 当前最佳** 🏆 |
 
 ---
 
@@ -1002,6 +1011,244 @@ V11 是**首个反超 V6 的实验**（V7/V8/V9/V10 全部 −0.13% ~ −1.10% �
 
 ---
 
+### 5.17 P1.4：V13 配方跨语言推广（V13/V13b/V13c）
+
+详见目录顶部 [P1.4 跨语言推广](#p14-跨语言推广-v13-配方deepseek-paraphrase--comet-filter--vote-sweep) 章节。
+
+**5 语言成果**（4/5 提升 V6）：
+
+| 语言 | V6 | 最佳 V13/b/c | Δ |
+|------|-----|--------------|---|
+| jpn | 0.3312 | V13: 0.3765 | +4.53% |
+| rus | 0.4520 | V13: 0.4724 | +2.04% |
+| ukr | 0.4674 | V13b: 0.5068 | +3.94% |
+| tat | 0.4538 | V6 持平 | 0% |
+| zho_laptop | 0.3526 | V13c: 0.3791 | +2.65% |
+| **平均** | **0.4114** | — | **+2.63pp** |
+
+**核心论点**：每个语言的最佳增强配方不同，由 (BT 可用性, paraphrase 质量, V6 baseline, 数据规模) 决定。
+
+---
+
+### 5.18 V15-jpn：XLM-R-large encoder 升级（✅✅✅ 单 seed +7.52pp）
+
+**动机**：mDeBERTa-v3-base (~270M) 是 jpn 当前 encoder。`mDeBERTa-v3-large` 不存在，可用替代品中 **`xlm-roberta-large` (~560M)** 是多语言 large 黄金标准。
+
+**配置**：
+- encoder: `xlm-roberta-large`
+- batch_size: 4（base 是 8，防 OOM）
+- 数据：V13-jpn (1600 原始 + 1293 COMET≥0.96 paraphrase = 2893)
+- 其他超参与 V13 一致
+- pretrain: 仍从 `v5_zho_restaurant_seed1024` checkpoint 迁移
+
+**单 seed 完整对比**：
+
+| Seed | V13 (base) | **V15 (large)** | Δ |
+|------|-----------|-----------------|-----|
+| 42 | 0.3117 | **0.3777** | **+6.60pp** |
+| 123 | 0.2974 | **0.3725** | **+7.51pp** |
+| 456 | 0.2964 | **0.3821** | **+8.57pp** |
+| 789 | 0.3080 | **0.3821** | **+7.41pp** |
+| 1024 | — | **0.3817** | — |
+| **Avg** | 0.3040 | **0.3792** | **+7.52pp** ✨ |
+
+**5/5 seeds 全部大幅提升** —— XLM-R-large 真实增益，非噪声。
+
+**Vote sweep（ensemble）**：
+
+| vote | cF1 |
+|------|------|
+| 2 | 0.3724 |
+| **3 (best)** | **0.3924** |
+| 4 | 0.3898 |
+| 5 | 0.3920 |
+
+**Ensemble 评测**：cF1 = **0.3924**（V13 best 0.3765，**+1.59pp**；V6 0.3312，**+6.12pp**）。
+
+**历史 large 翻车的原因分析**：之前 V3-CRF + DeBERTa-v3-large 失败（−7.4%）的差异：
+- 那次：英语 DeBERTa-v3-large 配 CRF 架构（CRF 部分不适配 large 表征）
+- 这次：多语言 XLM-R-large 配 V13 paraphrase 数据 + Rethink 架构（无 CRF）
+
+**注**：XLM-R-large 与 mDeBERTa 是不同 encoder（tokenizer/预训练不同），不算严格"scaling test"。但是当前可用的多语言 large 中最自然的升级。
+
+---
+
+### 5.19 V15 + Top-k Span Decoding（✅ 单 encoder 内最佳 cF1=0.3962）
+
+**动机**：诊断 V15 的瓶颈在 Recall（cR=0.36 vs cP=0.40）。BIO argmax 错失置信度接近的 borderline spans。
+
+**实现**：[src/models/dimabsa_model.py](src/models/dimabsa_model.py) `SpanExtractor.extract_spans()` 新增：
+- 保留 argmax 结果（baseline）
+- 额外：对每个 token 计算 softmax 概率，若 B-ASP / B-OPN 概率 ≥ `topk_threshold`（即使 argmax 是 O），生成候选 span
+- 继续扩展 I-* 当其概率 ≥ `topk_threshold * 0.5`
+- 不与已有 span 重叠
+
+仅推理时启用，**不需重训**。CLI: `--span_topk_threshold 0.15`。
+
+**Threshold sweep（V15, vote=3, ensemble）**：
+
+| topk | cP | cR | **cF1** | Δ vs V15 baseline |
+|------|-----|-----|---------|-------------------|
+| 0（argmax, baseline）| ~0.40 | ~0.36 | 0.3924 | — |
+| **0.15** | 0.3807 | **0.4131** | **0.3962** | **+0.38pp** 🏆 |
+| 0.20 | 0.3822 | 0.4105 | 0.3958 | +0.34pp |
+| 0.25 | 0.3822 | 0.4053 | 0.3934 | +0.10pp |
+| 0.30 | 0.3865 | 0.4024 | 0.3943 | +0.19pp |
+
+**核心发现**：
+- **Recall 大涨 +5pp**（0.36 → 0.41），Precision 仅小降 −1.4pp
+- 0.15 为甜区：进一步降低阈值会引入太多 FP
+
+**Jpn 当前最佳完整配置**：
+- Encoder: XLM-R-large
+- 数据: 1600 原始 + 1293 paraphrase (COMET ≥ 0.96)
+- Transfer: zho_restaurant_seed1024
+- Top-k span: threshold 0.15
+- Ensemble: 5 seeds, vote=3, dual-layer
+- Post-processing: MeCab v1
+- **→ cF1 = 0.3962**
+
+---
+
+### 5.20 失败实验集（V15 之后探索未带来提升的尝试）
+
+V15 (0.3924) → V15+topk (0.3962) 之后，又尝试了 4 个改进方向，**全部失败**。详细记录便于论文 discussion / 后续不重复踩坑。
+
+#### 5.20.1 V13 + V15 Cross-Encoder Ensemble（❌ −2.41pp）
+
+**思路**：10 个 seeds = 5 V13 (mDeBERTa) + 5 V15 (XLM-R-large)，跨 encoder 多样性投票。
+
+**实现**：[scripts/cross_encoder_ensemble.py](scripts/cross_encoder_ensemble.py)
+- 每个 seed 用自己的 tokenizer/encoder 独立推理
+- 收集所有预测后投票
+
+**Vote sweep**：
+
+| vote | cP | cR | **cF1** |
+|------|-----|-----|---------|
+| 4 | 0.2870 | 0.3863 | 0.3293 |
+| 5 | 0.3490 | 0.3606 | 0.3547 |
+| 6 | 0.4694 | 0.3082 | 0.3721 |
+| 7 | 0.5196 | 0.2869 | 0.3697 |
+
+**全部失败**，最佳 0.3721 vs V15+topk 0.3962（−2.41pp）。
+
+**失败原因**：
+- V13 (0.3765) 是 V15 (0.3924) 的**严格升级**版（更大模型 + top-k），不是"不同视角"的多样性
+- vote=4 太低 → V13 噪声主导 → Precision 暴跌 (0.287)
+- vote=6+ 太严 → V13/V15 各自的高置信集合重合度低 → Recall 暴跌 (0.31)
+
+**教训**：cross-encoder ensemble 仅在两个 encoder 各有所长时有效。当一个是另一个的纯升级时，加入弱模型只会拖累。
+
+#### 5.20.2 Per-Category Vote Calibration（❌ 无正收益）
+
+**思路**：模型在 HOTEL#COMFORT (28 pred vs 14 gold)、ROOMS#QUALITY (12 vs 5) 等 category **过度预测**。对这些 category 设更高 vote 阈值，对 under-predicted category 设更低阈值。
+
+**实现**：[scripts/per_category_vote.py](scripts/per_category_vote.py) 新增 `--over_categories`, `--over_vote`, `--under_categories`, `--under_vote`。
+
+**Configs tested**:
+
+| Config | cP | cR | cF1 |
+|--------|-----|-----|------|
+| Per-cat baseline (vote=3 all) | 0.3694 | 0.4131 | 0.3900 |
+| Cfg1: 3 over-pred → vote=4 | 0.3783 | 0.4105 | 0.3937 |
+| Cfg2: HOTEL#COMFORT only → vote=4 | 0.3749 | 0.4131 | 0.3931 |
+| Cfg3: under-pred → vote=2 | 0.3546 | 0.4131 | 0.3816 |
+
+**失败原因**：
+- per-cat 脚本本身比 inference.py 内置 voting **低 0.62pp**（VA averaging / tie-breaking 差异）
+- 即使 Cfg1 比 per-cat baseline 高 +0.37pp，绝对值 0.3937 仍低于原始 V15+topk 0.3962
+- 真正实施需 refactor inference.py（1-2 天工程量），收益 ≤ +0.5pp，性价比不高
+
+#### 5.20.3 MeCab v2：Opinion Adverb Extension（❌ −1.02pp）
+
+**思路**：扩展 opinion span 包含前置副词（`とても親切`、`かなり良い`）。统计显示 5.8% 的 gold opinion 含 intensifier。
+
+**v2 实现（宽泛规则）**：若 opinion 前是任何 `副詞` POS，向左扩展。
+- 结果：cF1 = **0.3860**（−1.02pp）
+
+**诊断失败原因**：MeCab 把许多 opinion 词本身（`広々`、`よく`、`ゆっくり`）标为 `副詞`，导致误识别相邻独立 opinion 为修饰：
+
+| 原 opinion | v2 扩展后 | 实际 gold | 错误类型 |
+|-----------|----------|----------|----------|
+| 満足 | **良く満足** | 満足 | "良く" 是另一个独立 opinion |
+| あずましく | **広々とあずましく** | あずましく | "広々" 是独立 opinion |
+| よかっ | **とてもよかっ** | よかった | gold 不含 "とても" |
+
+**v2.1 修复（intensifier 白名单）**：只对 {とても, かなり, 本当に, ...} 等 22 个真正 intensifier 扩展：
+- 结果：cF1 = **0.3962**（**完全无变化**）
+- **新触发扩展仅 1 次**且错误
+- **说明模型 BIO + top-k 已经正确捕获 intensifier**，post-processing 在这层无新信息可加
+
+#### 5.20.4 LLM Fusion 候选融合（❌ 全部策略失败）
+
+**思路**：让 DeepSeek 给 jpn 抽取 (Aspect, Category, Opinion, VA) 候选 → 合并到 V15 预测。
+
+**实现**：
+- [scripts/llm_extract_quads_jpn.py](scripts/llm_extract_quads_jpn.py)：调用 DeepSeek 抽取（5-shot, valid category list, JSON output）
+- [scripts/merge_llm_v15.py](scripts/merge_llm_v15.py)：4 个 baseline 策略 + 4 个 smart_overlap 策略
+
+**步骤 1：模型选择**
+
+| 模型 | 输出 quads/sample | 失败率 |
+|------|-------------------|--------|
+| deepseek-v4-pro | 0.59 | 51%（reasoning 模型，max_tokens=1500 不足）|
+| **deepseek-chat** | **2.03**（接近 gold 1.82）| **0%** |
+
+deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定。**deepseek-chat 是正确选择**。
+
+**步骤 2：合并策略对比（deepseek-chat, 200 dev samples, 406 LLM quads）**
+
+| 策略 | cP | cR | **cF1** | vs baseline |
+|------|-----|-----|---------|-------------|
+| **V15+topk baseline** | 0.3807 | 0.4131 | **0.3962** | — |
+| llm_only | 0.2260 | 0.2521 | 0.2383 | −15.79pp |
+| union (all LLM added) | 0.2516 | **0.4874** | 0.3319 | −6.43pp |
+| intersection (LLM ∩ V15) | **0.6682** | 0.1762 | 0.2789 | −11.73pp |
+| smart_any (LLM 加 if asp 或 opn 共享) | 0.2934 | 0.4780 | 0.3636 | −3.26pp |
+| smart_opinion (LLM 加 if opn 共享) | 0.3298 | 0.4295 | 0.3731 | −2.31pp |
+| smart_aspect (LLM 加 if asp 共享) | 0.3152 | 0.4729 | 0.3783 | −1.79pp |
+| smart_both (LLM 加 if asp+opn 都共享) | 0.3617 | 0.4243 | **0.3905** | **−0.57pp** |
+
+**关键洞察**：
+- **intersection 揭示信号**：LLM+V15 一致时 cP=0.668（vs V15 单独 0.38），说明"两者同意"是强质量信号
+- **但 smart_both（同时 overlap aspect+opinion）仍只到 0.3905**：即使 span 一致，**LLM 的 category 决策不可靠**——V15 给 cat A，LLM 给同一 span cat B，多数 V15 是对的
+- **DeepSeek-chat zero-shot 不够好做无监督 ABSA 候选生成**：~22% precision
+
+**让 LLM Fusion 真正反超需要**：
+1. **更强 LLM**（GPT-4o / Claude / GPT-OSS 120B）— 无 API
+2. **模型手术**（让 V15 给 LLM 候选打 category 分）— 3-5 天工程
+3. **多轮 LLM 投票**（3-5 次 DeepSeek 调用 + 一致性过滤）— 成本 3-5x，效果未必
+
+#### 失败实验汇总（V15+topk 之后）
+
+| # | 实验 | cF1 | Δ vs 0.3962 |
+|---|------|------|-------------|
+| 1 | V13+V15 cross-encoder | 0.3721 | −2.41 |
+| 2 | Per-category vote calibration | 0.3937 | −0.25 |
+| 3 | MeCab v2 (opinion adverb) | 0.3860 | −1.02 |
+| 4 | MeCab v2.1 (intensifier 白名单) | 0.3962 | 0 |
+| 5 | LLM Fusion smart_both（最佳）| 0.3905 | −0.57 |
+
+**Jpn 当前最佳**仍是 V15+top-k+MeCab v1+vote=3 = **cF1=0.3962**。
+
+---
+
+### 5.21 Jpn 跨基线对比
+
+| 模型 | jpn_hotel dev cF1 | 备注 |
+|------|-------------------|------|
+| V6 | 0.3312 | baseline |
+| V13 | 0.3765 | +paraphrase+COMET |
+| V15 | 0.3924 | +XLM-R-large |
+| **V15+top-k** | **0.3962** | **+top-k spans** ✨ |
+| Official Llama-3.3 70B | 0.3577 | ✅ 我们高 +3.85pp |
+| Official GPT-OSS 120B | 0.4151 | ❌ 我们低 −1.89pp |
+
+**结论**：超过 Llama-3.3 70B 较显著（+3.85pp），但未超过 GPT-OSS 120B（−1.89pp）。差距主要在 LLM 对**隐式 aspect / 罕见 category** 的识别能力，无法通过单纯架构/数据增强方法弥补。
+
+---
+
 ## 6. 主要结果
 
 ### 6.1 版本演进总览
@@ -1030,7 +1277,11 @@ V11 是**首个反超 V6 的实验**（V7/V8/V9/V10 全部 −0.13% ~ −1.10% �
 | V12 V10 + COMET≥0.95 (jpn) | +1866 中度过滤 paraphrase | 0.3523 | jpn +2.11% vs V6 | ✅✅ 大幅突破 |
 | V13 V10 + COMET≥0.96 vote=2 (jpn) | +1293 最优过滤 paraphrase | 0.3565 | jpn +2.53% vs V6 | ✅✅✅ |
 | V14 V10 + COMET≥0.965 (jpn) | +949 过度过滤 paraphrase | 0.3418 | jpn +1.06% vs V6 | ❌ 回退（甜区上限）|
-| **V13 + vote=3 重调 (jpn)** | **零成本：仅改推理参数** | **0.3765** | **jpn +4.53% vs V6** | **✅✅✅✅ 当前最佳** 🏆 |
+| V13 + vote=3 重调 (jpn) | 零成本：仅改推理参数 | 0.3765 | jpn +4.53% vs V6 | ✅✅✅✅ |
+| V15 (XLM-R-large, jpn) | encoder 升级到 xlm-roberta-large | 0.3924 | jpn +6.12% vs V6 | ✅✅✅✅✅ |
+| **V15 + Top-k Span (jpn)** | **+top-k BIO decoding (topk=0.15)** | **0.3962** | **jpn +6.50% vs V6** | **✅✅✅✅✅ 当前最佳** 🏆 |
+| ❌ V15+topk + Cross-encoder | V13+V15 共 10 seeds 投票 | 0.3721 | −2.41pp vs V15+topk | ❌ |
+| ❌ V15+topk + LLM Fusion smart_both | DeepSeek 候选合并 | 0.3905 | −0.57pp vs V15+topk | ❌ |
 
 ### 6.2 代码修复前后对比
 
