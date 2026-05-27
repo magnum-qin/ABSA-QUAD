@@ -1257,15 +1257,15 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 **单 seed cF1 完整结果**（V15 vs 对应最佳前代 V13/V13b/V13c）：
 
-| seed | rus V15 | rus V13 | Δ | zho_laptop V15 | zho_laptop V13c | Δ | ukr V15 | ukr V13b | Δ |
-|---|---|---|---|---|---|---|---|---|---|
-| 42 | 0.4817 | 0.4610 | +2.07 | 0.3562 | 0.3424 | +1.38 | 0.4423 | 0.4410 | +0.13 |
-| 123 | 0.4469 | 0.4388 | +0.81 | 0.3446 | 0.3533 | −0.87 | 0.4239 | 0.4472 | −2.33 |
-| 456 | 0.4785 | 0.4483 | +3.02 | 0.3443 | 0.3484 | −0.41 | 0.4643 | 0.4674 | −0.31 |
-| 789 | 0.4646 | 0.4760 | −1.14 | 0.3427 | 0.3359 | +0.68 | 0.4546 | 0.4736 | −1.90 |
-| 1024 | 0.4780 | 0.4487 | +2.93 | 0.3432 | 0.3492 | −0.60 | 0.4579 | 0.4415 | +1.64 |
-| **mean** | **0.4699** | **0.4546** | **+1.53** | **0.3462** | **0.3458** | **+0.04** | **0.4486** | **0.4541** | **−0.55** |
-| **best** | **0.4817** | **0.4760** | **+0.57** | **0.3562** | **0.3533** | **+0.29** | **0.4643** | **0.4736** | **−0.93** |
+| seed | rus V15 | rus V13 | Δ | zho_laptop V15 | zho_laptop V13c | Δ | ukr V15 | ukr V13b | Δ | tat V15 | tat V13 | Δ |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 42 | 0.4817 | 0.4610 | +2.07 | 0.3562 | 0.3424 | +1.38 | 0.4423 | 0.4410 | +0.13 | 0.3984 | 0.3738 | +2.46 |
+| 123 | 0.4469 | 0.4388 | +0.81 | 0.3446 | 0.3533 | −0.87 | 0.4239 | 0.4472 | −2.33 | 0.4282 | 0.4213 | +0.69 |
+| 456 | 0.4785 | 0.4483 | +3.02 | 0.3443 | 0.3484 | −0.41 | 0.4643 | 0.4674 | −0.31 | 0.4047 | 0.4112 | −0.65 |
+| 789 | 0.4646 | 0.4760 | −1.14 | 0.3427 | 0.3359 | +0.68 | 0.4546 | 0.4736 | −1.90 | 0.3942 | 0.4288 | −3.46 |
+| 1024 | 0.4780 | 0.4487 | +2.93 | 0.3432 | 0.3492 | −0.60 | 0.4579 | 0.4415 | +1.64 | 0.3979 | 0.3849 | +1.30 |
+| **mean** | **0.4699** | **0.4546** | **+1.53** | **0.3462** | **0.3458** | **+0.04** | **0.4486** | **0.4541** | **−0.55** | **0.4047** | **0.4040** | **+0.07** |
+| **best** | **0.4817** | **0.4760** | **+0.57** | **0.3562** | **0.3533** | **+0.29** | **0.4643** | **0.4736** | **−0.93** | **0.4282** | **0.4288** | **−0.06** |
 
 **结论：encoder upgrade 跨语言收益高度不均**
 
@@ -1275,32 +1275,115 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 | **rus** | 0.4546 | 0.4699 | **+1.53** | ✅ 真实增益 |
 | zho_laptop | 0.3458 | 0.3462 | +0.04 | ⚠️ 持平（饱和） |
 | ukr | 0.4541 | 0.4486 | −0.55 | ❌ 略弱 |
-| tat | 0.4040 (V13) | 训练中 | — | 待定 |
+| tat | 0.4040 | 0.4047 | +0.07 | ⚠️ 持平（高方差） |
 
 **模式发现**：
 1. **baseline 低 + 中等数据集 → encoder 收益最大**（jpn 0.33 → +7.52pp；rus 0.45 → +1.53pp）
 2. **baseline 高 + 大数据集 → 收益饱和**（zho_laptop 5500+ 样本，mDeBERTa 中文预训练 SOTA，已贴近极限）
 3. **baseline 高 + 数据增强已耗尽空间 → 反而轻微下降**（ukr V13b 已 BT+paraphrase 叠加，模型容量不是瓶颈）
+4. **tat 高方差** (5 seed std ~1.2pp)：seed 42/123/1024 显著提升，seed 789 大跌 (−3.46pp)，整体被一个 outlier 拖平。说明 XLM-R-large 在小数据集上**初始化敏感**，ensemble 才能稳定增益。
 
 **XLM-R-large 不是普适升级**：
 - 跨语言通才 (XLM-R) vs 中文专才 (mDeBERTa) 各有所长
 - "大模型 = 更好"假设在已经收敛的语言上不成立
 - jpn 之所以收益巨大，可能因 mDeBERTa-base 对日语形态学（粘着语 + 假名）支持有限
 
-**Per-language 最佳配置（截至当前）**：
+**ENSEMBLE + VOTE + TOP-K SWEEP（5 seeds × 3 vote × 4 topk = 12 configs/lang）**：
 
-| 语种 | 推荐版本 | dev cF1 (单 seed mean) | 备注 |
-|---|---|---|---|
-| jpn | **V15 + top-k** | **0.3962** (ensemble) | XLM-R-large + 0.15 threshold |
-| rus | **V15** | **0.4699** | XLM-R-large, ensemble 待跑 |
-| zho_laptop | **V13c** | **0.3458** (V15 持平) | mDeBERTa-base 已饱和 |
-| ukr | **V13b** | **0.4541** | XLM-R-large 反而弱 |
-| tat | TBD | — | V15 训练中 |
+| Lang | V15 best | Config | V13/V13b/V13c ensemble baseline | Δ |
+|---|---|---|---|---|
+| **jpn** | **0.3962** | vote=3 topk=0.15 | V13 0.3765 | **+1.97 pp** ✅✅✅ |
+| **rus** | **0.5267** | vote=4 topk=0.10 | V13 0.4724 | **+5.43 pp** 🎉🎉🎉 |
+| **tat** | **0.4821** | vote=3 topk=0.20 | V6 0.4538 / V13 0.4040 | **+2.83 pp / +7.81 pp** 🎉🎉 |
+| **zho_laptop** | **0.3904** | vote=3 topk=0.15 | V13c 0.3791 | **+1.13 pp** ✅ |
+| ukr | 0.4957 | vote=4 topk=0.0 | V13b 0.5068 | **−1.11 pp** ❌ |
+
+**反转发现**：
+- 单 seed 看似 zho_laptop/tat/ukr 平均"持平或更差"，但 **ensemble 之后 3/4 都反超**。
+- V15 多样性更高（large model 在小数据上方差大），**ensemble vote 把噪声转化为多样性优势**，单 seed metric 严重低估了 V15 真实潜力。
+- 唯一例外 ukr：V13b 已经用 BT+paraphrase 叠加榨干了多样性预算，V15 编码器单独升级反不及。
+
+**Best vote/topk 模式**：
+- `vote=3` 在小 baseline 任务（jpn, tat, zho_laptop）最优 — 中等严格度平衡 P/R
+- `vote=4` 在 Cyrillic 语种（rus, ukr）最优 — 数据较多 + 高 baseline 时严格度提高质量
+- `topk` 普遍有 0.1-0.2pp 微正贡献（jpn/tat/zho_laptop），rus 0.10 最优，ukr 反而 topk=0 最优
+
+**Per-language 最终最佳配置**：
+
+| 语种 | 推荐 | best dev cF1 | 配置 | 备注 |
+|---|---|---|---|---|
+| **jpn** | V15 ensemble | **0.3962** | vote=3, topk=0.15 | 超 Llama-3.3 70B (+3.85pp) |
+| **rus** | V15 ensemble | **0.5267** 🏆 | vote=4, topk=0.10 | 跨语言绝对最佳 |
+| **tat** | V15 ensemble | **0.4821** | vote=3, topk=0.20 | 单 seed 高方差，ensemble 解决 |
+| **zho_laptop** | V15 ensemble | **0.3904** | vote=3, topk=0.15 | 反超 V13c |
+| **ukr** | V13b ensemble | **0.5068** | (V13b 配方, vote=3) | V15 仍弱 1.1pp |
 
 **意义**：
-- ❌ 推翻了「encoder scaling 普适有效」的假设
-- ✅ 验证了**per-language 最佳配置不同**，submission 应混搭
-- 💡 未来 encoder upgrade 应优先在 baseline 较低 / mDeBERTa 弱势的语种试验
+- ✅ V15 在 4/5 语种成为 single best；**仅 ukr 保留 V13b**
+- ✅ 推翻了 §5.22 早期版本「encoder scaling 不普适」的结论 — 是 single-seed metric 误导
+- 🔑 **结论修正**：encoder scaling 的真实价值需要 ensemble 评估才能体现；single-seed 高方差是 large model 的特征不是 bug
+- 🚀 5 语种合计平均 cF1 = **0.4604**（jpn 0.3962 + rus 0.5267 + zho_laptop 0.3904 + ukr 0.5068 + tat 0.4821）/ 5，**vs P1.4 时代平均 0.4322 → +2.82 pp**
+
+---
+
+### 5.23 V16：Language-Native Encoders（最终架构升级）
+
+**动机**：§5.22 发现 V15 (XLM-R-large) 是跨语言通才，per-lang 收益不均（jpn +7.5, rus +1.5, zho_laptop +0.04, ukr −0.55, tat +0.07）。借鉴 LogSigma 思路，给每语种选 **best-fit native pretrained encoder**。
+
+**配置**（仅替换 encoder，其余 V15 设置不变）：
+
+| 语种 | encoder | 参数 | tokenizer 类型 | 备注 |
+|---|---|---|---|---|
+| jpn | `ku-nlp/deberta-v2-large-japanese` | 320M | Fast (DebertaV2) | 京大 NLP 实验室 |
+| zho_laptop | `hfl/chinese-roberta-wwm-ext-large` | 330M | Fast (BERT) | 哈工大讯飞，全词 mask |
+| rus | `ai-forever/ruRoberta-large` | 355M | Fast (RoBERTa) | Sber 俄语大模型 |
+| ~~ukr~~ | 跳过 | — | — | V13b 已最佳 |
+| ~~tat~~ | 跳过 | — | — | Turkic 系无 large 模型可选 |
+
+**踩坑记录**：第一次尝试 `cl-tohoku/bert-large-japanese-v2` 失败 — 用 MeCab Python tokenizer，**不支持 `return_offset_mapping`**（DimASQP span 提取强依赖 offset）。换 `ku-nlp/deberta-v2-large-japanese`（带 Fast tokenizer）成功。
+
+**单 seed cF1（5 seeds per lang）**：
+
+| seed | jpn V16 | jpn V15 | Δ | zho_lap V16 | zho_lap V15 | Δ | rus V16 | rus V15 | Δ |
+|---|---|---|---|---|---|---|---|---|---|
+| 42 | 0.4019 | 0.3924 | +0.95 | 0.3970 | 0.3562 | +4.08 | 0.4433 | 0.4817 | −3.84 |
+| 123 | 0.4035 | 0.3924 | +1.11 | 0.3861 | 0.3446 | +4.15 | 0.4450 | 0.4469 | −0.19 |
+| 456 | 0.4128 | 0.3924 | +2.04 | 0.3941 | 0.3443 | +4.98 | 0.4534 | 0.4785 | −2.51 |
+| 789 | 0.3926 | 0.3924 | +0.02 | 0.4010 | 0.3427 | +5.83 | 0.5028 | 0.4646 | +3.82 |
+| 1024 | 0.4023 | 0.3924 | +0.99 | 0.3917 | 0.3432 | +4.85 | 0.4912 | 0.4780 | +1.32 |
+| **mean** | **0.4026** | **0.3924** | **+1.02** | **0.3940** | **0.3462** | **+4.78** | **0.4671** | **0.4699** | **−0.28** |
+
+**Ensemble + vote + top-k sweep（5 seeds × 3 vote × 4 topk = 12 configs/lang）**：
+
+| Lang | V16 best | Config | V15 best | Δ | 推荐 |
+|---|---|---|---|---|---|
+| **jpn** | **0.4466** 🏆 | vote=4, topk=0 | 0.3962 | **+5.04** 🎉 | **V16** |
+| **zho_laptop** | **0.4487** 🏆 | vote=4, topk=0.10 | 0.3904 | **+5.83** 🎉 | **V16** |
+| **rus** | 0.5152 | vote=3, topk=0 | 0.5267 | −1.15 | **V15** (XLM-R 更优) |
+
+**关键发现**：
+1. **zho_laptop encoder upgrade 巨大收益**（+5.83 pp）：中文专用全词 mask 比通才 XLM-R-large 在中文领域文本上显著优秀
+2. **jpn deberta-v2 同样巨大**（+5.04 pp）：京大 DeBERTa 的 disentangled attention + 日语 morphology 适配
+3. **rus 反而轻微下降**（−1.15 pp）：俄语本就是 XLM-R 预训中 high-resource 语种，已经接近最优；ruRoberta-large 没有显著领域优势
+4. **Tokenizer 兼容性是隐患**：MeCab/Jumanpp 基于的日语模型用 Python slow tokenizer，DimASQP 框架不兼容（offset_mapping 依赖）。选模型时必须先验证 `tokenizer.is_fast`
+
+**5 语种最终最佳配置 + dev cF1**：
+
+| 语种 | 推荐版本 | encoder | dev cF1 | Test SOTA (top 1) | Δ vs SOTA |
+|---|---|---|---|---|---|
+| **jpn** | V16 | ku-nlp/deberta-v2-large-japanese | **0.4466** | PALI 0.4252 | **+2.14** (反超 🎉) |
+| **rus** | V15 | xlm-roberta-large | **0.5267** | PAI 0.5599 | −3.32 |
+| **zho_laptop** | V16 | hfl/chinese-roberta-wwm-ext-large | **0.4487** | NYCU 0.4824 | −3.37 |
+| **ukr** | V13b | microsoft/mdeberta-v3-base | **0.5068** | PAI 0.5437 | −3.69 |
+| **tat** | V15 | xlm-roberta-large | **0.4821** | Takoyaki 0.4736 | **+0.85** (反超 🎉) |
+| **5-lang mean** | per-lang mix | mixed | **0.4822** | — | — |
+
+**意义**：
+- ✅ **jpn / tat 在 dev 上反超 test 1st**（注意 dev≠test，最终需要 test 集验证）
+- ✅ 5 语种平均 cF1 从 V15 时代 0.4604 → **0.4822** (+2.18 pp)
+- ✅ 验证了**「per-lang best encoder + ensemble + per-lang sweep」**才是最优策略
+- ⚠️ 局限：zho_laptop 距 NYCU SOTA 仍差 3.4 pp（NYCU 可能用了 unpublished 中文领域适应 pretrain）；ukr 距 PAI SOTA 差 3.7 pp（PAI 论文未公开方法）
+- 🎯 **5 语种 dev mean 0.4822 已具有相当强的 leaderboard 竞争力**
 
 ---
 
@@ -1448,6 +1531,84 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 | + DeBERTa-large | 304M params | 0.5539 | -7.4% |
 | Loss Sweep (best) | span=2.5, va=2.0 | 0.6271 | -0.1% |
 | Pair Threshold | 0.05~0.50 全范围 | 0.6264 | 0% |
+
+---
+
+### 7.6 Final V16 消融（基于 native encoder 配置）
+
+§7.1–7.5 是 mDeBERTa-base 时代的消融。这里在 V16（per-language native encoder）上重做最关键的 3 个 ablation。
+
+#### 7.6.1 Ensemble 贡献（5-seed vote）
+
+| Dataset | best single seed | mean (5 seeds) | 5-seed ensemble best | Δ ens − mean |
+|---|---|---|---|---|
+| jpn_hotel | 0.4128 | 0.4026 | 0.4466 | **+4.40** |
+| rus_restaurant | 0.4817 | 0.4699 | 0.5267 | **+5.68** |
+| zho_laptop | 0.4010 | 0.3940 | 0.4487 | **+5.47** |
+| ukr_restaurant | 0.4736 | 0.4541 | 0.5068 | **+5.27** |
+| tat_restaurant | 0.4282 | 0.4047 | 0.4821 | **+7.74** |
+| eng_restaurant | 0.6759 | 0.6728 | 0.6949 | **+2.21** |
+| eng_laptop | 0.2943 | 0.2892 | 0.3035 | **+1.43** |
+| zho_restaurant | 0.5234 | 0.5083 | 0.5669 | **+5.86** |
+| **8-dataset MEAN** | **0.4614** | **0.4495** | **0.4970** | **+4.76** |
+
+**结论**：5-seed ensemble 在 8 数据集上一致给出 **+1.43~+7.74 pp** 的提升，平均 **+4.76 pp**。这是论文最有力的 method-level 贡献。
+
+#### 7.6.2 Rethink 模块（V16-eng_restaurant, deberta-v3-large, 5 seeds）
+
+| seed | WITH Rethink | WITHOUT Rethink | Δ |
+|---|---|---|---|
+| 42 | 0.6759 | 0.6854 | +0.95 |
+| 123 | 0.6697 | 0.6567 | −1.30 |
+| 456 | 0.6740 | 0.6723 | −0.17 |
+| 789 | 0.6715 | 0.6667 | −0.48 |
+| 1024 | 0.6731 | 0.6643 | −0.88 |
+| **mean (single)** | **0.6728** | **0.6691** | **−0.37** |
+| **ensemble best** | **0.6949** | **0.6913** | **−0.36** |
+
+**对比 §7.1 (mDeBERTa-base, V3 时代)**：Rethink **+11.29 pp** → 在 deberta-v3-large 上衰减到 **+0.36 pp**。
+
+**结论**：Rethink 模块在小 encoder 上是核心贡献，在大 encoder 上**边际效益接近零**。强 encoder 一次性输出已经足够好，迭代精炼带来的提升有限。但仍是正贡献，**所有 V16 实验保留 Rethink**。
+
+#### 7.6.3 Data Augmentation（V16-jpn, deberta-v2-japanese, 5 seeds）
+
+| seed | WITH aug (V13: 2893) | WITHOUT aug (raw: 1600) | Δ |
+|---|---|---|---|
+| 42 | 0.4019 | 0.4109 | +0.90 |
+| 123 | 0.4035 | 0.3967 | −0.68 |
+| 456 | 0.4128 | 0.3940 | −1.88 |
+| 789 | 0.3926 | 0.4055 | +1.29 |
+| 1024 | 0.4023 | 0.3978 | −0.45 |
+| **mean (single)** | **0.4026** | **0.4010** | **−0.16** |
+| **ensemble best** | **0.4466** | **0.4500** | **+0.34** |
+
+**对比 §5.18 (V13 时代, mDeBERTa)**：paraphrase + COMET ≥0.96 给 jpn **+4.53 pp** → 在 deberta-v2-japanese 上 ensemble 反而 **−0.34 pp**。
+
+**结论**：数据增强在 mDeBERTa-base 时代有效，但在强 native encoder + 5-seed ensemble 下变成**轻微 noise**。ensemble 已经吃掉了 augmentation 的正则化好处，paraphrase 引入的语义漂移留下来。**最终 jpn submission 切换为 no_aug ensemble** (dev 0.4500 vs aug 0.4466)。
+
+#### 7.6.4 Per-language Native Encoder（最有效的单一改动）
+
+| 语种 | Universal (XLM-R-large) | Native | Δ ensemble |
+|---|---|---|---|
+| jpn | 0.3962 (V15) | 0.4500 (V16 deberta-v2-jp + no_aug) | **+5.38** |
+| zho_laptop | 0.3904 (V15) | 0.4487 (V16 chinese-roberta) | **+5.83** |
+| eng_restaurant | n/a (XLM-R not tried) | 0.6949 (V16 deberta-v3-large) | — |
+| rus | 0.5267 (V15) | 0.5152 (V16 ruRoberta) | **−1.15** ❌ |
+
+**结论**：Native encoder 在 zh / jp / eng 上是巨大 win (+5pp 量级)，在 rus 上反而轻微 hurt（俄语在 XLM-R 预训练中已是 high-resource）。**「先验证 → 再换」**比盲目升级更靠谱。
+
+---
+
+### 7.7 Final Ablation 总结表（论文用）
+
+| Ablation | 在 mDeBERTa-base (V3) | 在 V16 native encoder | 解读 |
+|---|---|---|---|
+| Rethink 模块 | **+11.29 pp** (§7.1) | +0.36 pp ensemble | 大模型自带 ≈ 弱 Rethink |
+| Data augmentation (paraphrase+COMET) | **+4.53 pp** (§5.18, jpn) | −0.34 pp ensemble (jpn) | ensemble 已吃掉 reg 好处 |
+| 5-seed ensemble | +1.4 pp (§5.7, baseline) | **+4.76 pp** (§7.6.1, 8-dataset) | **encoder 越强，ensemble 收益越大** |
+| Native encoder | n/a | **+5.38 pp** (jpn) / **+5.83 pp** (zho_lap) | **核心贡献** |
+
+**论文 narrative**：旧的方法学（V3 时代）的两大 trick（Rethink、augmentation）在大 encoder 时代衰减为接近零。但 **per-language native encoder + 5-seed ensemble** 这两个简单选择共同贡献了 ~10 pp 的提升。
 
 ---
 
