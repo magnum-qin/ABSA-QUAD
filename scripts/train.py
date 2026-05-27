@@ -529,8 +529,11 @@ def main():
         entity_labels=entity_labels,
         attribute_labels=attribute_labels,
         category_embed_dim=config['model'].get('category_embed_dim', 0),
-        use_crf=config['model'].get('use_crf', False)
+        use_crf=config['model'].get('use_crf', False),
+        use_uml=config['model'].get('use_uml', False)
     )
+    if config['model'].get('use_uml', False):
+        logger.info("UML enabled: learning per-task log-sigma weighting (Kendall et al. 2018)")
     
     # Load pretrained checkpoint(s) for cross-lingual transfer
     ckpt_paths = []

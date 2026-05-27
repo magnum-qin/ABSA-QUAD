@@ -1234,6 +1234,53 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ---
 
+#### 5.20.5 Confidence-Weighted Ensemble（❌ 8-dataset mean −0.73pp）
+
+**思路**：5 seeds 投票时，强 seed 加权更大（weight = dev cF1）。
+**实现**：`scripts/confidence_weighted_ensemble.py`，threshold = vote_threshold × mean_weight（保持 vote=3 语义）。
+
+| Dataset | Uniform | CW | Δ |
+|---|---|---|---|
+| jpn | 0.4500 | 0.4335 | **−1.65** |
+| rus | 0.5267 | 0.5294 | +0.27 |
+| zho_laptop | 0.4487 | 0.4357 | **−1.30** |
+| ukr | 0.5068 | 0.5062 | −0.06 |
+| tat | 0.4821 | 0.4885 | +0.64 |
+| eng_restaurant | 0.6949 | 0.6927 | −0.22 |
+| eng_laptop | 0.3035 | 0.2975 | −0.60 |
+| zho_restaurant | 0.5669 | 0.5672 | +0.03 |
+| **MEAN** | **0.4974** | **0.4901** | **−0.73** |
+
+**为什么失败**：5 seeds 的 dev cF1 极接近（标准差 ≤ 0.015），权重差异不到 ±5%，weighting 信息差不足；但 threshold 在 weight 不均匀时**净变严**（弱 seeds 联合投票总权重 < threshold），损失 recall。
+
+**论文意义**：homogeneous ensemble（同 base + 同数据 + 不同 seed）的 CW 不适用；CW 应当用于 heterogeneous ensemble（不同 base 或不同 data，需重新调参）。
+
+---
+
+#### 5.20.6 Uncertainty-Weighted Multi-Task Loss / UML（❌ 不可靠）
+
+**思路**：借鉴 LogSigma (Subtask 1) — 学习 per-task log σ²，自动平衡 span/pair/entity/attr/va/consistency 6 个 loss。Loss = Σ (0.5 e^{-s_i} L_i + 0.5 s_i)。
+
+**实现**：在 `DimASQPModel` 加 `use_uml` flag + 6 个 `nn.Parameter` log_sigma；config 加 `model.use_uml: true`。代码改动 ~30 行。
+
+**Sanity check（seed 42 each）**：
+
+| Dataset | V16 (fixed weights span=2 va_arousal=2) | V17 (UML) | Δ |
+|---|---|---|---|
+| jpn (no_aug, deberta-v2-jp) | 0.4109 | 0.3892 | **−2.17** ❌ |
+| eng_restaurant (deberta-v3-large) | 0.6759 | 0.6772 | +0.13 ✅ marginal |
+
+**为什么失败**：
+1. V16 的 fixed weights（span=2.0, pair=1.0, ent=1.0, attr=1.0, va_arousal=2.0）是人工调过的强先验；UML 学到的 sigma 倾向"趋近均匀"，丢失任务结构 prior
+2. log_sigma 初始化 0 → 初始 weight = 0.5 vs V16 的 1-2，训练早期 effective LR 缩小 ~3 倍
+3. 正则项 +0.5 s_i 持续推 s_i ↓ → exp(-s_i) ↑ → loss 项放大；jpn 任务间方差大时容易陷入"VA loss 被压制"局部解
+
+**未扩展至 5 seeds**：seed 42 已证不稳定，1/2 dataset 显著负，不值得 ~12h 训练换 ±0.1 pp 的不确定收益。
+
+**论文意义**：UML 适用于**任务先验未知**的 multi-task 场景（如 LogSigma 在 Subtask 1 的 V/A 双回归任务上是 2 个对称任务）。但 DimASQP 的 6 个 loss 有强结构差异，人工权重 > 学习权重。
+
+---
+
 ### 5.21 Jpn 跨基线对比
 
 | 模型 | jpn_hotel dev cF1 | 备注 |

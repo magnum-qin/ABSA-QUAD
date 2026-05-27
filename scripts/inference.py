@@ -44,7 +44,8 @@ def _create_model(config: dict) -> DimASQPModel:
         entity_labels=config['data'].get('entity_labels'),
         attribute_labels=config['data'].get('attribute_labels'),
         category_embed_dim=config['model'].get('category_embed_dim', 0),
-        use_crf=config['model'].get('use_crf', False)
+        use_crf=config['model'].get('use_crf', False),
+        use_uml=config['model'].get('use_uml', False)
     )
 
 
@@ -74,6 +75,10 @@ def _merge_config_from_checkpoint(config: dict, checkpoint: dict) -> dict:
     if saved_model.get('encoder_name'):
         config['model']['encoder_name'] = saved_model['encoder_name']
         print(f"  Using encoder from checkpoint: {saved_model['encoder_name']}")
+
+    # Propagate use_uml so log_sigma parameters are created and loaded
+    if 'use_uml' in saved_model:
+        config['model']['use_uml'] = saved_model['use_uml']
 
     if saved_data.get('entity_labels'):
         config['data']['entity_labels'] = saved_data['entity_labels']

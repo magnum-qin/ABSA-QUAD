@@ -266,12 +266,14 @@ class DimASQPModel(nn.Module):
         entity_labels: list = None,
         attribute_labels: list = None,
         category_embed_dim: int = 0,
-        use_crf: bool = False
+        use_crf: bool = False,
+        use_uml: bool = False
     ):
         super().__init__()
 
         self.use_crf = use_crf
         self.use_rethink = use_rethink
+        self.use_uml = use_uml
         assert num_rethink_iterations >= 1, "num_rethink_iterations must be >= 1"
         self.num_rethink_iterations = num_rethink_iterations
         self.num_bio_labels = num_bio_labels
@@ -279,6 +281,17 @@ class DimASQPModel(nn.Module):
             'span': 1.0, 'pair': 1.0, 'entity': 1.0,
             'attribute': 1.0, 'va': 1.0, 'consistency': 0.5
         }
+
+        # UML (Uncertainty-Weighted Multi-task Loss, Kendall et al. 2018):
+        # learn per-task log(sigma^2). Loss = sum_i (0.5 * exp(-s_i) * L_i + 0.5 * s_i)
+        # where s_i = log(sigma_i^2). Initialize at log(1)=0 so initial weight ~ 0.5*L_i.
+        if use_uml:
+            self.log_sigma_span = nn.Parameter(torch.zeros(1))
+            self.log_sigma_pair = nn.Parameter(torch.zeros(1))
+            self.log_sigma_entity = nn.Parameter(torch.zeros(1))
+            self.log_sigma_attribute = nn.Parameter(torch.zeros(1))
+            self.log_sigma_va = nn.Parameter(torch.zeros(1))
+            self.log_sigma_consistency = nn.Parameter(torch.zeros(1))
         self.num_entity_labels = num_entity_labels
         self.num_attribute_labels = num_attribute_labels
         self.entity_labels = entity_labels or [
@@ -801,17 +814,7 @@ class DimASQPModel(nn.Module):
         va_loss = va_loss / num_matched_pairs
         pair_loss = pair_loss / max(num_pair_samples, 1)
 
-        # Total loss with configurable weights (Bug fix: apply loss_weights from config)
-        lw = self.loss_weights
-        total_loss = (
-            lw['span']      * bio_loss    +
-            lw['pair']      * pair_loss   +
-            lw['entity']    * entity_loss +
-            lw['attribute'] * attr_loss   +
-            lw['va']        * va_loss
-        )
-
-        # Consistency loss for Rethink (detach s1 to stabilize)
+        # Compute consistency first so UML can include it
         if self.use_rethink and "bio_logits_s1" in outputs:
             if self.use_crf:
                 bio_loss_s1 = self.span_extractor.crf(
@@ -821,9 +824,38 @@ class DimASQPModel(nn.Module):
                 active_logits_s1 = outputs["bio_logits_s1"].view(-1, self.num_bio_labels)[active_mask]
                 bio_loss_s1 = F.cross_entropy(active_logits_s1, active_labels)
             consistency_loss = self.consistency_loss(bio_loss_s1.detach(), bio_loss)
-            total_loss = total_loss + lw['consistency'] * consistency_loss
         else:
             consistency_loss = torch.tensor(0.0, device=device)
+
+        # Aggregate losses: either UML (learned uncertainty weighting) or fixed weights.
+        if self.use_uml:
+            # Kendall et al. 2018: L_total = sum_i (0.5 * exp(-s_i) * L_i + 0.5 * s_i)
+            # where s_i = log(sigma_i^2). The +0.5*s_i term is the regularization
+            # that prevents s_i from going to infinity (which would zero out L_i).
+            def uml_term(loss_val, log_sigma):
+                return 0.5 * torch.exp(-log_sigma) * loss_val + 0.5 * log_sigma
+
+            total_loss = (
+                uml_term(bio_loss,         self.log_sigma_span) +
+                uml_term(pair_loss,        self.log_sigma_pair) +
+                uml_term(entity_loss,      self.log_sigma_entity) +
+                uml_term(attr_loss,        self.log_sigma_attribute) +
+                uml_term(va_loss,          self.log_sigma_va)
+            )
+            if self.use_rethink and "bio_logits_s1" in outputs:
+                total_loss = total_loss + uml_term(consistency_loss, self.log_sigma_consistency)
+        else:
+            # Original: fixed loss_weights from config
+            lw = self.loss_weights
+            total_loss = (
+                lw['span']      * bio_loss    +
+                lw['pair']      * pair_loss   +
+                lw['entity']    * entity_loss +
+                lw['attribute'] * attr_loss   +
+                lw['va']        * va_loss
+            )
+            if self.use_rethink and "bio_logits_s1" in outputs:
+                total_loss = total_loss + lw['consistency'] * consistency_loss
 
         return {
             "loss": total_loss,
