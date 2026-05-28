@@ -1281,6 +1281,33 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ---
 
+#### 5.20.7 V18 eng_laptop Paraphrase Augmentation（❌ −2.73pp ensemble）
+
+**思路**：沿用 V13 配方（DeepSeek-chat paraphrase + COMET 过滤），尝试改善 eng_laptop 的小数据短板（4076 样本 × 24 entity 类）。
+
+**数据**：
+- DeepSeek-chat 生成 7504 paraphrases，92.1% acceptance
+- COMET wmt22-comet-da 评分，**英文 score 分布偏低**（median 0.8537 vs jpn ~0.92），所以阈值 0.96 仅留 19 条 ⇒ 改用 **0.85 阈值**保留 ~50% (3960 条) 与 V13 jpn 比例对齐
+- 最终 V13 train：4076 原 + 3960 paraphrase = **8036 样本**
+
+**5-seed 结果**（V16 baseline = no augmentation）：
+
+| seed | V18 (V13 aug) | V16 (no aug) | Δ |
+|---|---|---|---|
+| 42 | 0.2573 | 0.2943 | −3.70 |
+| 123 | 0.2565 | 0.2929 | −3.64 |
+| 456 | 0.2687 | 0.2887 | −2.00 |
+| 789 | 0.2616 | 0.2874 | −2.58 |
+| 1024 | 0.2697 | 0.2829 | −1.32 |
+| **mean** | **0.2628** | **0.2892** | **−2.65** |
+| **best ensemble** (vote=4 topk=0) | **0.2762** | **0.3035** | **−2.73** |
+
+**为什么失败**：与 §7.6.3 jpn no_aug 发现一致 — **强 native encoder + 大类别空间** 上 paraphrase 引入的 semantic drift 净负面。eng_laptop 的 24 entity × 10 attribute = 240 (cat, attr) 组合**对类别漂移高度敏感**：合成数据中即使 aspect/opinion 文字保留，paraphrase 重写可能让原本"LAPTOP#DESIGN_FEATURES"的句子读起来更像"LAPTOP#GENERAL"，混淆分类边界。
+
+**论文意义**：数据增强的边际效益不仅随 encoder 容量衰减（§7.6.3），还随**类别空间复杂度**反向放大噪声。eng_laptop 是这两个因素同时极端的 case。
+
+---
+
 ### 5.21 Jpn 跨基线对比
 
 | 模型 | jpn_hotel dev cF1 | 备注 |
