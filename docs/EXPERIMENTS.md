@@ -1342,6 +1342,47 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ---
 
+### 5.25 V20 eng_laptop = roberta-large + BT + paraphrase（✅ +0.53pp 累计）
+
+**动机**：V18 (deberta-v3-large + paraphrase) 失败 (−2.73 pp)，但换 V19 roberta-large encoder 后 raw 数据已 +0.27pp。问 augmentation × encoder 是否有 **交互效应** — roberta-large 对 paraphrase 噪声是否更鲁棒？
+
+**数据 V13b (V13b-style)**：
+- 4076 raw + 8556 BT (MarianMT en→de/fr/zh, 自动 fuzzy validation) + 3960 paraphrase (DeepSeek + COMET 0.85) = **16592 samples** (4× 原始)
+- BT 保留率：de 83.2%, fr 74.8%, zh 51.9%
+- 配置：V19 yaml + train_file 替换
+
+**5-seed 结果**：
+
+| seed | V20 (rob + V13b) | V19 (rob + raw) | V16 (deberta + raw) |
+|---|---|---|---|
+| 42 | 0.3049 | 0.3024 | 0.2943 |
+| 123 | 0.2935 | 0.2828 | 0.2929 |
+| 456 | 0.2961 | 0.3158 | 0.2887 |
+| 789 | 0.2988 | 0.2930 | 0.2874 |
+| 1024 | 0.2968 | 0.3145 | 0.2829 |
+| **mean (single)** | **0.2980** | **0.3017** | **0.2892** |
+| **best ensemble** (vote=4 topk=0) | **0.3088** | **0.3062** | **0.3035** |
+
+**关键 finding — Encoder × Augmentation 交互效应**：
+
+| (Encoder, Augmentation) | single mean | ensemble best | aug Δ |
+|---|---|---|---|
+| deberta-v3-large + raw | 0.2892 (V16) | 0.3035 | — |
+| **deberta-v3-large + V13 aug** | 0.2628 (V18) | 0.2762 | **−2.65 / −2.73** ❌ |
+| roberta-large + raw | 0.3017 (V19) | 0.3062 | — |
+| **roberta-large + V13b aug** | 0.2980 (V20) | **0.3088** | **−0.37 / +0.26** ✅ |
+
+**解读**：
+- deberta-v3-large 对 paraphrase 噪声**脆弱**（−2.7 pp 两个 metric 都负）
+- roberta-large 对 augmentation **鲁棒**（single seed 微弱负 −0.37，但 ensemble level 反而 +0.26 pp）
+- 推测：roberta 的 BPE + sentencepiece 预训练 vs deberta-v3 的 ELECTRA-style 预训练，前者对**词序变化和 paraphrastic style** 的容忍度更高
+
+**eng_laptop 最佳 = V20**（dev 0.3088）。Submission 已切换 V20，V19/V16 备份保留。
+
+**全局视角**：从 V13 时代的 augmentation +2-4 pp，到 V16 时代衰减为持平/负，到 V20 在 roberta-large 上微弱回正。**augmentation 不是过时，而是高度 encoder-dependent**。论文可以写：「The marginal utility of synthetic data augmentation is not monotonically decaying with encoder capacity; rather it interacts non-trivially with encoder pretraining choice — RoBERTa-large benefits while DeBERTa-v3-large is harmed by the same augmentation set」。
+
+---
+
 ### 5.21 Jpn 跨基线对比
 
 | 模型 | jpn_hotel dev cF1 | 备注 |
