@@ -1308,6 +1308,40 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ---
 
+### 5.24 V19 eng_laptop Encoder Sweep（✅ roberta-large +0.27pp ensemble）
+
+**动机**：V18 paraphrase 失败后，转向 encoder 替换 — 也许 deberta-v3-large 不是 English ABSA 的最佳 base。
+
+**3 个候选 smoke test (seed 42)**：
+
+| Encoder | 参数 | seed 42 cF1 | vs V16 (0.2943) |
+|---|---|---|---|
+| `roberta-large` | 355M | **0.3024** | **+0.81** ✅ |
+| `nghuyong/ernie-2.0-large-en` | 335M | 0.2948 | +0.05 持平 |
+| `microsoft/deberta-v2-xxlarge` | 1.5B | OOM ❌ | — (24 GB GPU 不够) |
+
+**roberta-large 扩到 5 seeds**：
+
+| seed | V19 (roberta-large) | V16 (deberta-v3-large) | Δ |
+|---|---|---|---|
+| 42 | 0.3024 | 0.2943 | +0.81 |
+| 123 | 0.2828 | 0.2929 | −1.01 |
+| 456 | 0.3158 | 0.2887 | +2.71 |
+| 789 | 0.2930 | 0.2874 | +0.56 |
+| 1024 | 0.3145 | 0.2829 | +3.16 |
+| **mean (single)** | **0.3017** | **0.2892** | **+1.25** |
+| **best ensemble** (vote=4 topk=0) | **0.3062** | **0.3035** | **+0.27** |
+
+**结论**：roberta-large 略优于 deberta-v3-large 在 eng_laptop 上。single-seed 收益 +1.25 pp 但 ensemble 收敛到 +0.27 pp（V16 ensemble 本来就强，新 encoder 多样性增益小）。
+
+**eng_laptop submission 从 V16 切换到 V19（dev 0.3035 → 0.3062）**。
+
+**遗憾**：deberta-v2-xxlarge (1.5B params) 因 GPU OOM 未测；理论上参数空间最适合 eng_laptop 的 24×10 类别 sparsity。需要 8-bit Adam / gradient checkpointing / batch=1 改造才能放下。
+
+**论文意义**：和 §5.23 中 rus/ukr 的 encoder swap 行为类似 — 当 baseline encoder 已经较强（deberta-v3-large），同尺度 alternative encoder（roberta-large）只能给微弱的 ensemble 增量。**多样性是 ensemble 的关键，但同源模型的多样性已被 5-seed 吃完**。要真正突破，需要 cross-architecture diversity（如 mixed mDeBERTa+XLM-R+RoBERTa），但 §5.20.1 cross-encoder ensemble 已证此方向也失败。eng_laptop 性能瓶颈是**数据 + 类别复杂度的固有 sparsity**，不是 encoder 选择。
+
+---
+
 ### 5.21 Jpn 跨基线对比
 
 | 模型 | jpn_hotel dev cF1 | 备注 |
