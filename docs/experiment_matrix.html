@@ -332,7 +332,7 @@
           <li>rus_restaurant: XLM-R-large with vote and top-k sweep.</li>
           <li>tat_restaurant: XLM-R-large with vote and top-k sweep.</li>
           <li>ukr_restaurant: V13b, BT plus paraphrase.</li>
-          <li>zho_restaurant: V16 ensemble result.</li>
+          <li>zho_restaurant: V16 Chinese RoBERTa 5-seed ensemble.</li>
           <li>zho_laptop: Chinese RoBERTa large with topk=0.10.</li>
         </ul>
       </div>
@@ -475,7 +475,7 @@ const bestRows = [
   ["rus_restaurant", "V15", "xlm-roberta-large", "vote=4, topk=0.10", 0.5267, "Below shared-task top: PAI 0.5599"],
   ["tat_restaurant", "V15", "xlm-roberta-large", "vote=3, topk=0.20", 0.4821, "Above shared-task top: Takoyaki 0.4736"],
   ["ukr_restaurant", "V13b", "microsoft/mdeberta-v3-base", "BT plus paraphrase, vote=3", 0.5068, "Below shared-task top: PAI 0.5437"],
-  ["zho_restaurant", "V16", "microsoft/deberta-v3-large", "5-seed ensemble", 0.5669, "Above shared-task top: NYCU 0.5521"],
+  ["zho_restaurant", "V16", "hfl/chinese-roberta-wwm-ext-large", "5-seed ensemble", 0.5669, "Above shared-task top: NYCU 0.5521"],
   ["zho_laptop", "V16", "hfl/chinese-roberta-wwm-ext-large", "vote=4, topk=0.10", 0.4487, "Below shared-task top: NYCU 0.4824"]
 ];
 
