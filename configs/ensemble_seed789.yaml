@@ -1,0 +1,74 @@
+data:
+  attribute_labels:
+  - CLEANLINESS
+  - COMFORT
+  - DESIGN_FEATURES
+  - GENERAL
+  - MISCELLANEOUS
+  - PRICE
+  - QUALITY
+  - STYLE_OPTIONS
+  - 'NULL'
+  dev_file: data/subtask_3/jpn/jpn_hotel_dev_task3.jsonl
+  entity_labels:
+  - FACILITIES
+  - FOOD_DRINKS
+  - HOTEL
+  - LOCATION
+  - ROOMS
+  - ROOM_AMENITIES
+  - SERVICE
+  - 'NULL'
+  max_seq_length: 256
+  test_file: data/subtask_3/jpn/jpn_hotel_test_task3.jsonl
+  train_file: data/subtask_3/jpn/jpn_hotel_train_augmented.jsonl
+device: cuda
+evaluation:
+  metrics:
+  - continuous_f1
+  - exact_f1
+  - va_rmse
+  - va_mae
+  va_tolerance: 0.5
+model:
+  dropout: 0.1
+  encoder_name: ku-nlp/deberta-v2-base-japanese
+  hidden_size: 768
+  num_attribute_labels: 9
+  num_entity_labels: 8
+  rethink:
+    enabled: true
+    label_embedding_dim: 64
+    num_iterations: 2
+  use_crf: false
+  va_hidden_size: 256
+  va_max: 9.0
+  va_min: 1.0
+seed: 789
+training:
+  batch_size: 8
+  ema:
+    decay: 0.999
+    enabled: true
+  encoder_lr: 1.5e-05
+  fgm:
+    enabled: true
+    epsilon: 0.1
+  head_lr: 7.5e-05
+  learning_rate: 1.5e-05
+  loss_weights:
+    attribute: 1.0
+    consistency: 0.5
+    entity: 1.0
+    pair: 1.0
+    span: 2.0
+    va: 1.0
+    va_arousal: 2.0
+    va_valence: 1.0
+  max_grad_norm: 1.0
+  num_epochs: 30
+  patience: 8
+  save_dir: checkpoints/ensemble_seed789
+  save_top_k: 3
+  warmup_ratio: 0.1
+  weight_decay: 0.01

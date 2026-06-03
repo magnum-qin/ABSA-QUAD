@@ -41,6 +41,7 @@ __pycache__/
 Thumbs.db
 
 # 临时文件
+/tmp
 *.tmp
 *.temp
 predictions/

@@ -1,0 +1,50 @@
+# V20 eng_laptop ablation: use one Rethink iteration
+model:
+  encoder_name: "roberta-large"
+  hidden_size: 768
+  num_entity_labels: 24
+  num_attribute_labels: 10
+  dropout: 0.1
+  use_crf: false
+  va_hidden_size: 256
+  va_min: 1.0
+  va_max: 9.0
+  rethink:
+    enabled: true
+    num_iterations: 1
+    label_embedding_dim: 64
+data:
+  train_file: "data/subtask_3/eng/eng_laptop_train_v13b.jsonl"
+  dev_file: "data/subtask_3/eng/eng_laptop_dev_task3.jsonl"
+  test_file: "data/subtask_3/eng/eng_laptop_test_task3.jsonl"
+  max_seq_length: 256
+  entity_labels: ["BATTERY", "COMPANY", "CPU", "DISPLAY", "FANS_COOLING", "GRAPHICS", "HARDWARE", "HARD_DISK", "KEYBOARD", "LAPTOP", "MEMORY", "MOTHERBOARD", "MOUSE", "MULTIMEDIA_DEVICES", "NULL", "OPTICAL_DRIVES", "OS", "OUT_OF_SCOPE", "PORTS", "POWER_SUPPLY", "SHIPPING", "SOFTWARE", "SUPPORT", "WARRANTY"]
+  attribute_labels: ["CONNECTIVITY", "DESIGN_FEATURES", "GENERAL", "MISCELLANEOUS", "NULL", "OPERATION_PERFORMANCE", "PORTABILITY", "PRICE", "QUALITY", "USABILITY"]
+training:
+  batch_size: 4
+  learning_rate: 1.5e-5
+  encoder_lr: 1.5e-5
+  head_lr: 7.5e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  num_epochs: 30
+  max_grad_norm: 1.0
+  fgm: {enabled: true, epsilon: 0.1}
+  ema: {enabled: true, decay: 0.999}
+  loss_weights:
+    span: 2.0
+    pair: 1.0
+    entity: 1.0
+    attribute: 1.0
+    va: 1.0
+    va_valence: 1.0
+    va_arousal: 2.0
+    consistency: 0.5
+  patience: 8
+  save_dir: "checkpoints/v20_rob_rethink_1iter_eng_laptop"
+  save_top_k: 3
+evaluation:
+  va_tolerance: 0.5
+  metrics: ["continuous_f1", "exact_f1", "va_rmse", "va_mae"]
+device: "cuda"
+seed: 42

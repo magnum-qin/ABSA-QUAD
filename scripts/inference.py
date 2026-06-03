@@ -102,7 +102,7 @@ def load_model(checkpoint_path: str, config: dict, device: str) -> DimASQPModel:
         print("  Loaded EMA shadow weights (used during validation)")
     else:
         model.load_state_dict(checkpoint['model_state_dict'])
-        print("  Loaded raw model weights (no EMA found)")
+        print("  Loaded raw (or legacy EMA) model weights (no explicit EMA dict found)")
 
     model.to(device)
     model.eval()
@@ -137,7 +137,7 @@ def load_ensemble_model(checkpoint_dir: str, config: dict, device: str) -> DimAS
             source = "EMA"
         else:
             state = ckpt['model_state_dict']
-            source = "raw"
+            source = "raw (or legacy EMA)"
         print(f"    {path.name}: using {source} weights")
 
         if avg_state is None:

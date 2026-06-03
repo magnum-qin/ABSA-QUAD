@@ -440,7 +440,7 @@ python scripts/inference.py --multi_seed_ensemble \
 
 双层 Ensemble = 每个 seed 内 top-3 checkpoint 权重平均 + 跨 seed 多数投票，cF1 **0.6554**，**+4.4% vs V3 单模型**
 
-**4 语言回译增强**（已生成，待重训）：
+**4 语言回译增强**（已生成，并完成重训）：
 
 | 语言 | 保留率 | 新增样本 |
 |------|--------|---------|
@@ -450,6 +450,11 @@ python scripts/inference.py --multi_seed_ensemble \
 | RU (俄语) | 62.8% | 1,434 |
 | **合计** | — | **6,256** |
 | **原始 + 增强** | — | **8,540 (3.74x)** |
+
+**V5.1 4语言增强 5-seed 结果**（增强数据 8540 条）：
+- **Ensemble (vote≥3)**: cF1 = **0.6788** (cP=0.7156, cR=0.6455)
+- **提升幅度**: 相比 3 语言增强 (0.6554) 提升 **+2.34 pp**；相比 V3 基线 (0.6278) 提升 **+5.10 pp**。
+- 结果说明：在 eng_restaurant 上，加入俄语 pivot 后的 4 语言回译增强优于 3 语言增强，继续扩大高质量训练样本仍有收益。
 
 **V5.1: 多 Pivot 增强（非英语语言）：**
 
@@ -494,7 +499,7 @@ python scripts/inference.py --multi_seed_ensemble --dual_layer \
 
 | 方案 | 方法 | 预期提升 |
 |------|------|----------|
-| 4语言增强重训 | 用 8540 样本（含 RU）重训 5-seed | +0.5~1% |
+| 4语言增强重训 | 用 8540 样本（含 RU）重训 5-seed | ✅ 已完成 (+3.57%, cF1 0.6788) |
 | D2 同义词替换 | 替换 aspect/opinion 词（WordNet/nlpaug） | +1~2% |
 | D3 LLM 伪标注 | GPT/Qwen 对未标注评论生成伪标签 | +2~4% |
 | D4 跨语言数据 | 利用中文/日文等数据做多语言联合训练 | +1~2% |
@@ -619,6 +624,7 @@ python scripts/inference.py --multi_seed_ensemble --dual_layer \
 | V3 单模型 (eng_rest) | 0.6278 | 基线 | ✅ |
 | V4 Ensemble (eng_rest) | 0.6415 | +2.2% | ✅ |
 | V5 增强 Ensemble (eng_rest) | 0.6554 | +4.4% | ✅ |
+| V5.1 4语言增强 Ensemble (eng_rest) | **0.6788** | **+10.1%** | ✅ |
 | V5 全语言 Ensemble (8 lang avg) | 0.4052 | 超越所有官方 baseline | ✅ |
 | **V6 迁移学习 + MeCab (8 lang avg)** | **0.4397** | **7/8 超越所有 baseline** | **✅ 当前最佳** |
 | V7 多源迁移（jpn）| 0.3279 | jpn 单语言 −0.33% | ❌ 失败 |
@@ -1377,9 +1383,73 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 - roberta-large 对 augmentation **鲁棒**（single seed 微弱负 −0.37，但 ensemble level 反而 +0.26 pp）
 - 推测：roberta 的 BPE + sentencepiece 预训练 vs deberta-v3 的 ELECTRA-style 预训练，前者对**词序变化和 paraphrastic style** 的容忍度更高
 
-**eng_laptop 最佳 = V20**（dev 0.3088）。Submission 已切换 V20，V19/V16 备份保留。
+**V20 是 V16/V19/V20 后续系列中的最佳**（dev 0.3088），但仍低于早期 V5/V6 BT dual-layer ensemble 的 0.3304。若按全历史 dev cF1 最大值选择，eng_laptop 仍应保留 V5/V6 结果；V20 主要作为 encoder × augmentation 交互效应的证据。
 
 **全局视角**：从 V13 时代的 augmentation +2-4 pp，到 V16 时代衰减为持平/负，到 V20 在 roberta-large 上微弱回正。**augmentation 不是过时，而是高度 encoder-dependent**。论文可以写：「The marginal utility of synthetic data augmentation is not monotonically decaying with encoder capacity; rather it interacts non-trivially with encoder pretraining choice — RoBERTa-large benefits while DeBERTa-v3-large is harmed by the same augmentation set」。
+
+---
+
+### 5.26 V21 jpn_hotel DeepSeek 增强 + 分布式 5-seed + LLM 后处理（❌ 未超过 V16 no_aug）
+
+**动机**：V16 no_aug 已把 jpn_hotel 提到 0.4500，但 §7.6.3 也说明强 native encoder 下 paraphrase augmentation 可能变成轻微噪声。Gemini 进一步尝试更激进的 DeepSeek 增强、跨节点并行 5-seed 训练，以及 LLM 后处理纠错，验证是否还能突破 V16 no_aug 上限。
+
+**配置**：
+- 数据：在原始 jpn_hotel 训练集基础上加入 **939 条 DeepSeek V4 Pro 生成增强样本**。
+- 训练：seed = 42 / 123 / 456 / 789 / 1024，分布到 RTX 4090 节点并行训练。
+- 融合：`inference.py --multi_seed_ensemble` 做 5-seed logit-level ensemble。
+- 后处理：`llm_post_correction.py` 两版对比。V1 让 LLM zero-shot 直接纠错；V2 改成 Draft-Revision，只把模型预测作为草稿交给 LLM，要求仅在明显不合理时修正 category，并清洗日语 aspect/opinion 边界。
+
+**结果**：
+
+| 方案 | cF1 | Exact F1 | vs V16 no_aug 0.4500 | 结论 |
+|---|---:|---:|---:|---|
+| 最佳单 seed（789） | 0.4003 | 0.4230 | −4.97 pp | 单模型仍明显低于 V16 no_aug ensemble |
+| 5-seed logit ensemble | 0.4315 | 0.4007 | −1.85 pp | ensemble 有效，但未超过 V16 no_aug |
+| 5-seed + LLM V1 zero-shot correction | 0.2919 | — | −15.81 pp | LLM 脱离模型先验会严重破坏 category |
+| 5-seed + LLM V2 Draft-Revision | **0.4318** | **0.4010** | −1.82 pp | 只带来 +0.03 pp，收益可忽略 |
+
+**结论**：
+1. 分布式 5-seed ensemble 仍然有效：从最佳单 seed 0.4003 提到 0.4315。
+2. LLM 后处理必须保留模型先验；zero-shot category correction 会把强模型预测改坏。
+3. Draft-Revision 能避免灾难性下降，但只提升 0.0003，不能弥补增强数据带来的噪声。
+4. **V21 不采用**。jpn_hotel 仍保留 V16 no_aug ensemble（0.4500）作为当前最佳。
+
+---
+
+### 5.27 V22 多语种 DeepSeek 增强与大模型重跑（❌ 未替换现有最佳）
+
+**动机**：在 V21 之后，把同一套“增强数据 + 5-seed ensemble”思路推广到 rus_restaurant / ukr_restaurant，并对 eng_laptop 做无增强大模型重跑，检查是否存在被前期实验低估的后期收益。
+
+**配置**：
+- `rus_restaurant`：mDeBERTa-base + DeepSeek 增强 + 5-seed ensemble。
+- `ukr_restaurant`：mDeBERTa-base + DeepSeek 增强 + 5-seed ensemble。
+- `eng_laptop`：DeBERTa-v3-large + raw data + 5-seed ensemble（无增强）。
+
+**结果**：
+
+| Dataset | V22 方案 | V22 cF1 | 当前采用最佳 | Δ vs 当前最佳 | 结论 |
+|---|---|---:|---:|---:|---|
+| ukr_restaurant | mDeBERTa-base + DeepSeek aug | 0.5063 | **0.5068** (V13b) | −0.05 pp | 接近持平，但未超过 V13b |
+| rus_restaurant | mDeBERTa-base + DeepSeek aug | 0.4696 | **0.5267** (V15) | −5.71 pp | 明显低于 XLM-R-large V15 |
+| eng_laptop | DeBERTa-v3-large + raw | 0.3056 | **0.3304** (V5/V6 BT) | −2.48 pp | 高于 V16 raw 0.3035，但低于历史最佳 |
+
+**rus_restaurant 训练日志补充**（`pipeline_rus.log`，mDeBERTa-base + DeepSeek aug）：
+
+| Seed | cF1 | Exact F1 | VA RMSE | Best Epoch |
+|---:|---:|---:|---:|---:|
+| 42 | 0.4067 | 0.4561 | 1.3721 | 26 |
+| 123 | 0.4380 | 0.4893 | 1.3323 | 20 |
+| 456 | 0.3509 | 0.3913 | 1.3403 | 9 |
+| 789 | 0.3664 | 0.4123 | 1.4275 | 18 |
+| 1024 | 0.3639 | 0.4087 | 1.3970 | 30 |
+| **mean** | **0.3852** | - | - | - |
+
+该日志只覆盖单 seed 训练摘要，后续 ensemble 推理命令因参数传递错误中断；V22 表中 `rus_restaurant` 的 0.4696 来自后续已完成 ensemble 结果。
+
+**结论**：
+- `ukr_restaurant` 的 DeepSeek 增强几乎复现 V13b，但没有超过 0.5068，说明 V13b 的 BT+paraphrase 组合已接近当前数据配方上限。
+- `rus_restaurant` 回退到 mDeBERTa-base 后明显弱于 V15 XLM-R-large，说明 encoder scaling 比额外 DeepSeek 增强更关键。
+- `eng_laptop` raw large 重跑略高于 V16 0.3035，但低于 V19/V20，也低于 V5/V6 的 0.3304；不替换最终配置。
 
 ---
 
@@ -1569,6 +1639,8 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 | **V15 + Top-k Span (jpn)** | **+top-k BIO decoding (topk=0.15)** | **0.3962** | **jpn +6.50% vs V6** | **✅✅✅✅✅ 当前最佳** 🏆 |
 | ❌ V15+topk + Cross-encoder | V13+V15 共 10 seeds 投票 | 0.3721 | −2.41pp vs V15+topk | ❌ |
 | ❌ V15+topk + LLM Fusion smart_both | DeepSeek 候选合并 | 0.3905 | −0.57pp vs V15+topk | ❌ |
+| ❌ V21 jpn DeepSeek aug + LLM correction | +939 DeepSeek aug + 5-seed + Draft-Revision | 0.4318 | −1.82pp vs V16 no_aug 0.4500 | ❌ 未采用 |
+| ❌ V22 rus/ukr/eng_laptop reruns | DeepSeek aug 或 raw large 5-seed | 最高 0.5063 (ukr) | 均未超过当前采用最佳 | ❌ 未替换 |
 
 ### 6.2 代码修复前后对比
 
@@ -1748,7 +1820,32 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 
 ---
 
-### 7.7 Final Ablation 总结表（论文用）
+### 7.7 V21/V22 补充消融（Gemini 后续实验）
+
+#### 7.7.1 LLM 后处理纠错（jpn_hotel）
+
+| 方案 | 输入先验 | cF1 | Δ vs 5-seed ensemble | 结论 |
+|---|---|---:|---:|---|
+| 5-seed logit ensemble | 模型融合输出 | **0.4315** | — | 基准 |
+| LLM V1 zero-shot correction | 不保留 category 先验 | 0.2919 | −13.96 pp | 大幅破坏预测 |
+| LLM V2 Draft-Revision | 保留模型草稿，仅做保守修正 | 0.4318 | +0.03 pp | 安全但收益极小 |
+
+**结论**：LLM 适合做保守的边界清洗，不适合替代模型做 category 决策。Draft-Revision 是正确方向，但当前收益只有 +0.0003，论文中应作为负面/边界实验，而不是主方法贡献。
+
+#### 7.7.2 DeepSeek 增强在不同语言上的边际收益
+
+| Dataset | DeepSeek 增强方案 | cF1 | 对照最佳 | Δ | 结论 |
+|---|---|---:|---:|---:|---|
+| jpn_hotel | DeepSeek aug + 5-seed | 0.4318 | 0.4500 (V16 no_aug) | −1.82 pp | 强 native encoder 下增强仍为噪声 |
+| ukr_restaurant | DeepSeek aug + 5-seed | 0.5063 | 0.5068 (V13b) | −0.05 pp | 近似持平，未超越 |
+| rus_restaurant | DeepSeek aug + 5-seed | 0.4696 | 0.5267 (V15) | −5.71 pp | encoder 选择比新增增强更关键 |
+| eng_laptop | raw large rerun | 0.3056 | 0.3304 (V5/V6 BT) | −2.48 pp | 未恢复历史最佳 |
+
+**结论**：DeepSeek 增强不是可迁移的稳定增益。它在不同语言上的效果受 encoder、类别空间、原始数据规模和已有增强配方共同制约；后续应优先做 per-language 验证，而不是默认扩展。
+
+---
+
+### 7.8 Final Ablation 总结表（论文用）
 
 | Ablation | 在 mDeBERTa-base (V3) | 在 V16 native encoder | 解读 |
 |---|---|---|---|

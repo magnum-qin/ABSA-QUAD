@@ -38,6 +38,8 @@ MARIAN_MODELS_BY_SOURCE = {
     },
     "ja": {
         "en": ("Helsinki-NLP/opus-mt-jap-en", "Helsinki-NLP/opus-mt-en-jap"),
+        "zh": ("Helsinki-NLP/opus-mt-ja-zh", "Helsinki-NLP/opus-mt-zh-ja"),
+        "ko": ("Helsinki-NLP/opus-mt-ja-ko", "Helsinki-NLP/opus-mt-ko-ja"),
     },
     "zh": {
         "en": ("Helsinki-NLP/opus-mt-zh-en", "Helsinki-NLP/opus-mt-en-zh"),

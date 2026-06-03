@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DimASQP Experiment Matrix</title>
+<style>
+  :root {
+    --bg: #f4f7fb;
+    --surface: #ffffff;
+    --soft: #f8fafc;
+    --text: #111827;
+    --muted: #64748b;
+    --border: #dbe3ef;
+    --accent: #2563eb;
+    --good: #e8f7ef;
+    --bad: #fff1f1;
+    --shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+    line-height: 1.5;
+  }
+
+  .page {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 32px 24px 56px;
+  }
+
+  header, section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+  }
+
+  header {
+    padding: 28px 32px;
+    background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
+  }
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    line-height: 1.2;
+    letter-spacing: 0;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.3;
+  }
+
+  h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+  }
+
+  .subtitle, .note {
+    margin: 7px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .subtitle {
+    max-width: 980px;
+    font-size: 15px;
+  }
+
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 22px;
+  }
+
+  .kpi {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+
+  .kpi strong {
+    display: block;
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .kpi span {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  section {
+    margin-top: 24px;
+    overflow: hidden;
+  }
+
+  .section-head {
+    padding: 20px 24px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border-bottom: 1px solid var(--border);
+    padding: 10px 12px;
+    vertical-align: top;
+    text-align: left;
+    font-size: 13px;
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #edf4ff;
+    color: #1e3a8a;
+    font-weight: 700;
+  }
+
+  code {
+    font-family: Consolas, "SFMono-Regular", monospace;
+    font-size: 12px;
+  }
+
+  .row-title {
+    min-width: 210px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .method {
+    min-width: 250px;
+    color: #334155;
+  }
+
+  .score {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+
+  .delta {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .pos { background: var(--good); }
+  .neg { background: var(--bad); }
+  .best { background: #dff8ee; }
+  .rank-1 { background: #bfdbfe; }
+  .rank-2 { background: #dbeafe; }
+  .rank-3 { background: #eff6ff; }
+  .na { color: #94a3b8; }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    padding: 2px 8px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .tag.official {
+    border-color: #bbf7d0;
+    background: #ecfdf5;
+    color: #047857;
+  }
+
+  .tag.published {
+    border-color: #fed7aa;
+    background: #fff7ed;
+    color: #c2410c;
+  }
+
+  .tag.ours {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  .rank-label {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    color: #475569;
+    white-space: nowrap;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    color: #475569;
+    font-size: 12px;
+  }
+
+  .legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .swatch {
+    width: 16px;
+    height: 12px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 18px;
+    padding: 20px 24px 24px;
+  }
+
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--soft);
+    padding: 16px;
+  }
+
+  .panel ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  .panel li {
+    margin: 6px 0;
+    color: #334155;
+    font-size: 13px;
+  }
+
+  .sources {
+    padding: 18px 24px 24px;
+    color: #334155;
+    font-size: 13px;
+  }
+
+  .sources a { color: #1d4ed8; }
+
+  @media (max-width: 900px) {
+    .page { padding: 18px 12px 36px; }
+    header { padding: 22px 18px; }
+    h1 { font-size: 24px; }
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .summary-grid { grid-template-columns: 1fr; padding: 16px; }
+    .section-head { padding: 18px 16px 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>DimASQP Experiment Matrix</h1>
+    <p class="subtitle">Columns are the eight Track A Subtask 3 datasets. Rows are the main experiment versions from <code>docs/EXPERIMENTS.md</code>. Each cell shows dev cF1 and the change from the nearest key baseline when available.</p>
+    <div class="kpis">
+      <div class="kpi"><strong>0.5008</strong><span>Final 8-dataset mean dev cF1</span></div>
+      <div class="kpi"><strong>+6.11 pp</strong><span>Gain over V6 mean 0.4397</span></div>
+      <div class="kpi"><strong>8/8</strong><span>Final setup beats the 2601.23022 baselines</span></div>
+      <div class="kpi"><strong>+4.76 pp</strong><span>Mean gain from 5-seed ensemble</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-head">
+      <h2>Version Matrix</h2>
+      <p class="note">Blank cells mean the version was not fully recorded for that dataset. Delta values are percentage points.</p>
+    </div>
+    <div class="table-wrap">
+      <table id="matrix-table"></table>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Final Best Setup</h2>
+      <p class="note">The final system is a per-dataset mix rather than one global version.</p>
+    </div>
+    <div class="table-wrap">
+      <table id="best-table"></table>
+    </div>
+    <div class="summary-grid">
+      <div class="panel">
+        <h3>Main takeaways</h3>
+        <ul>
+          <li>V5 adds back-translation and dual-layer ensembling, raising the 8-dataset mean to 0.4052.</li>
+          <li>V6 transfer learning and Japanese MeCab post-processing raise the mean to 0.4397, mostly through jpn, rus, tat, and ukr.</li>
+          <li>V13 variants show that augmentation must be language-specific: paraphrase helps jpn/rus, BT plus paraphrase helps ukr, and V6 remains best for tat at that stage.</li>
+          <li>V15 XLM-R-large is strong for rus, tat, and jpn. V16 native encoders are the largest single gain for jpn and zho_laptop, but regress on rus and eng_laptop.</li>
+          <li>Five-seed ensembling gives a positive gain on all eight datasets, with a mean gain of +4.76 pp.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Best configuration summary</h3>
+        <ul>
+          <li>eng_restaurant: DeBERTa-v3-large plus 5-seed ensemble.</li>
+          <li>eng_laptop: V5/V6 DeBERTa-v3-base, back-translation, dual-layer 5-seed ensemble.</li>
+          <li>jpn_hotel: Japanese DeBERTa-v2-large, no augmentation, vote=4.</li>
+          <li>rus_restaurant: XLM-R-large with vote and top-k sweep.</li>
+          <li>tat_restaurant: XLM-R-large with vote and top-k sweep.</li>
+          <li>ukr_restaurant: V13b, BT plus paraphrase.</li>
+          <li>zho_restaurant: V16 ensemble result.</li>
+          <li>zho_laptop: Chinese RoBERTa large with topk=0.10.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Baseline and Published-System Comparison</h2>
+      <p class="note">Official baselines from arXiv:2601.23022 and third-party published systems from arXiv:2604.07066 are marked separately. Ranking colors are computed per dataset column across all rows in this table.</p>
+      <div class="legend">
+        <span><i class="swatch rank-1"></i>Rank 1</span>
+        <span><i class="swatch rank-2"></i>Rank 2</span>
+        <span><i class="swatch rank-3"></i>Rank 3</span>
+        <span><span class="tag official">official baseline</span></span>
+        <span><span class="tag published">third-party system</span></span>
+        <span><span class="tag ours">ours</span></span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="external-table"></table>
+    </div>
+    <div class="sources">
+      <strong>Sources:</strong>
+      <a href="https://arxiv.org/abs/2601.23022">DimABSA dataset paper, arXiv:2601.23022</a>
+      for the official baseline models and benchmark context;
+      <a href="https://arxiv.org/abs/2604.07066">SemEval-2026 Task 3 overview, arXiv:2604.07066</a>
+      for shared-task published-system leaderboard scores;
+      <a href="https://arxiv.org/abs/2603.04933">AILS-NTUA</a>,
+      <a href="https://arxiv.org/abs/2603.07766">QuadAI</a>, and
+      <a href="https://arxiv.org/abs/2603.24896">LogSigma</a>
+      as examples of related published system papers. Project numbers come from <code>docs/EXPERIMENTS.md</code>.
+    </div>
+  </section>
+</div>
+
+<script>
+const datasets = [
+  ["eng_restaurant", "Eng Rest"],
+  ["eng_laptop", "Eng Lap"],
+  ["jpn_hotel", "Jpn Hotel"],
+  ["rus_restaurant", "Rus Rest"],
+  ["tat_restaurant", "Tat Rest"],
+  ["ukr_restaurant", "Ukr Rest"],
+  ["zho_restaurant", "Zho Rest"],
+  ["zho_laptop", "Zho Lap"]
+];
+
+const matrixRows = [
+  {
+    version: "Baseline to V3",
+    method: "Early eng_restaurant tuning: Rethink, FGM, EMA, span fix, Hungarian matching, and loss-weight sweep.",
+    scores: {eng_restaurant: 0.6278},
+    note: "V3 Final is 0.6278. Early Baseline=0.2935, V1=0.4064, V2=0.2326."
+  },
+  {
+    version: "V4 Ensemble",
+    method: "Five-seed voting on the V3 architecture with original data.",
+    scores: {eng_restaurant: 0.6415},
+    prev: {eng_restaurant: 0.6278},
+    note: "+1.37 pp over V3 single model."
+  },
+  {
+    version: "V5 Full-Language Aug",
+    method: "Back-translation plus five-seed dual-layer ensemble across all eight datasets.",
+    scores: {
+      eng_restaurant: 0.6554, eng_laptop: 0.3304, jpn_hotel: 0.2660, rus_restaurant: 0.3633,
+      tat_restaurant: 0.3979, ukr_restaurant: 0.3984, zho_restaurant: 0.4745, zho_laptop: 0.3554
+    },
+    baseline: {eng_restaurant: 0.6162, eng_laptop: 0.2591, jpn_hotel: 0.2489, rus_restaurant: 0.3305, tat_restaurant: 0.3786, ukr_restaurant: 0.3079, zho_restaurant: 0.4366, zho_laptop: 0.3190},
+    note: "Mean 0.4052. +4.31 pp over the full-language V3 baseline."
+  },
+  {
+    version: "V6 Transfer + MeCab",
+    method: "zho_restaurant source transfer, tokenizer and EMA fixes, and MeCab span post-processing for Japanese.",
+    scores: {
+      eng_restaurant: 0.6554, eng_laptop: 0.3304, jpn_hotel: 0.3312, rus_restaurant: 0.4520,
+      tat_restaurant: 0.4538, ukr_restaurant: 0.4674, zho_restaurant: 0.4745, zho_laptop: 0.3526
+    },
+    prev: {
+      eng_restaurant: 0.6554, eng_laptop: 0.3304, jpn_hotel: 0.2660, rus_restaurant: 0.3633,
+      tat_restaurant: 0.3979, ukr_restaurant: 0.3984, zho_restaurant: 0.4745, zho_laptop: 0.3554
+    },
+    note: "Mean 0.4397. +3.45 pp over V5."
+  },
+  {
+    version: "V7 to V10 JPN Trials",
+    method: "Multi-source transfer, full LLM synthesis, Tongyi paraphrase, and DeepSeek paraphrase. None beats V6.",
+    scores: {jpn_hotel: 0.3299},
+    prev: {jpn_hotel: 0.3312},
+    note: "Shown value is V10. V7=0.3279, V8=0.3202, V9=0.3227."
+  },
+  {
+    version: "V11 to V14 COMET Filter",
+    method: "DeepSeek paraphrase plus COMET threshold sweep. The useful range peaks near 0.96 for Japanese.",
+    scores: {jpn_hotel: 0.3565},
+    prev: {jpn_hotel: 0.3312},
+    note: "V11=0.3317, V12=0.3523, V13=0.3565, V14=0.3418."
+  },
+  {
+    version: "V13 / V13b / V13c",
+    method: "Cross-language augmentation recipes: V13 paraphrase, V13b BT plus paraphrase, V13c stricter COMET.",
+    scores: {jpn_hotel: 0.3765, rus_restaurant: 0.4724, tat_restaurant: 0.4538, ukr_restaurant: 0.5068, zho_laptop: 0.3791},
+    prev: {jpn_hotel: 0.3312, rus_restaurant: 0.4520, tat_restaurant: 0.4538, ukr_restaurant: 0.4674, zho_laptop: 0.3526},
+    note: "Five-language mean moves from 0.4114 to 0.4377. tat keeps V6."
+  },
+  {
+    version: "V15 XLM-R-large",
+    method: "Switch to xlm-roberta-large, then run ensemble, vote, and top-k sweeps.",
+    scores: {jpn_hotel: 0.3962, rus_restaurant: 0.5267, tat_restaurant: 0.4821, ukr_restaurant: 0.4957, zho_laptop: 0.3904},
+    prev: {jpn_hotel: 0.3765, rus_restaurant: 0.4724, tat_restaurant: 0.4538, ukr_restaurant: 0.5068, zho_laptop: 0.3791},
+    note: "Strong for rus, tat, and jpn. ukr remains below V13b."
+  },
+  {
+    version: "V16 Native Encoders",
+    method: "Use language-native encoders. jpn and zho_laptop improve sharply; rus falls back to V15. The jpn no-augmentation ablation is recorded in the final row.",
+    scores: {eng_restaurant: 0.6949, eng_laptop: 0.3035, jpn_hotel: 0.4466, rus_restaurant: 0.5152, zho_restaurant: 0.5669, zho_laptop: 0.4487},
+    prev: {jpn_hotel: 0.3962, rus_restaurant: 0.5267, zho_laptop: 0.3904},
+    note: "The row shows native-encoder V16 results. Final jpn switches to no_aug 0.4500; final rus uses V15."
+  },
+  {
+    version: "Final Per-Dataset Mix",
+    method: "Use the best validated setup for each dataset: V5/V6 BT for eng_laptop, native encoder, XLM-R, V13b, and five-seed ensemble as appropriate.",
+    scores: {
+      eng_restaurant: 0.6949, eng_laptop: 0.3304, jpn_hotel: 0.4500, rus_restaurant: 0.5267,
+      tat_restaurant: 0.4821, ukr_restaurant: 0.5068, zho_restaurant: 0.5669, zho_laptop: 0.4487
+    },
+    prev: {
+      eng_restaurant: 0.6554, eng_laptop: 0.3304, jpn_hotel: 0.3312, rus_restaurant: 0.4520,
+      tat_restaurant: 0.4538, ukr_restaurant: 0.4674, zho_restaurant: 0.4745, zho_laptop: 0.3526
+    },
+    note: "Mean 0.5008. +6.11 pp over V6."
+  }
+];
+
+const bestRows = [
+  ["eng_restaurant", "V16", "microsoft/deberta-v3-large", "5-seed ensemble", 0.6949, "Above shared-task top: Takoyaki 0.6514"],
+  ["eng_laptop", "V5/V6", "microsoft/deberta-v3-base", "BT augmentation, dual-layer 5-seed ensemble", 0.3304, "Numeric max in EXPERIMENTS; later V20 is 0.3088. Below shared-task top: Takoyaki 0.4227"],
+  ["jpn_hotel", "V16 no_aug", "ku-nlp/deberta-v2-large-japanese", "vote=4, topk=0", 0.4500, "Above shared-task top: PALI 0.4252"],
+  ["rus_restaurant", "V15", "xlm-roberta-large", "vote=4, topk=0.10", 0.5267, "Below shared-task top: PAI 0.5599"],
+  ["tat_restaurant", "V15", "xlm-roberta-large", "vote=3, topk=0.20", 0.4821, "Above shared-task top: Takoyaki 0.4736"],
+  ["ukr_restaurant", "V13b", "microsoft/mdeberta-v3-base", "BT plus paraphrase, vote=3", 0.5068, "Below shared-task top: PAI 0.5437"],
+  ["zho_restaurant", "V16", "microsoft/deberta-v3-large", "5-seed ensemble", 0.5669, "Above shared-task top: NYCU 0.5521"],
+  ["zho_laptop", "V16", "hfl/chinese-roberta-wwm-ext-large", "vote=4, topk=0.10", 0.4487, "Below shared-task top: NYCU 0.4824"]
+];
+
+const externalRows = [
+  {
+    name: "Our final per-dataset mix",
+    type: "ours",
+    group: "ours",
+    scores: {eng_restaurant: 0.6949, eng_laptop: 0.3304, jpn_hotel: 0.4500, rus_restaurant: 0.5267, tat_restaurant: 0.4821, ukr_restaurant: 0.5068, zho_restaurant: 0.5669, zho_laptop: 0.4487}
+  },
+  {
+    name: "Llama-3.3 70B",
+    type: "official baseline (2601.23022)",
+    group: "official",
+    scores: {eng_restaurant: 0.5048, eng_laptop: 0.2483, jpn_hotel: 0.3577, rus_restaurant: 0.4118, tat_restaurant: 0.3702, ukr_restaurant: 0.4070, zho_restaurant: 0.4391, zho_laptop: 0.3506}
+  },
+  {
+    name: "GPT-OSS 120B",
+    type: "official baseline (2601.23022)",
+    group: "official",
+    scores: {eng_restaurant: 0.5013, eng_laptop: 0.2411, jpn_hotel: 0.4151, rus_restaurant: 0.3683, tat_restaurant: 0.3094, ukr_restaurant: 0.3663, zho_restaurant: 0.4249, zho_laptop: 0.3551}
+  },
+  {
+    name: "GPT-5 mini zero-shot",
+    type: "official baseline (2601.23022)",
+    group: "official",
+    scores: {eng_restaurant: 0.4036, eng_laptop: 0.2304, jpn_hotel: 0.0907, rus_restaurant: 0.2508, tat_restaurant: 0.1974, ukr_restaurant: 0.2465, zho_restaurant: 0.2481, zho_laptop: 0.1356}
+  },
+  {
+    name: "Kimi K2 zero-shot",
+    type: "official baseline (2601.23022)",
+    group: "official",
+    scores: {eng_restaurant: 0.3740, eng_laptop: 0.2805, jpn_hotel: 0.1309, rus_restaurant: 0.2656, tat_restaurant: 0.2310, ukr_restaurant: 0.2974, zho_restaurant: 0.2975, zho_laptop: 0.1569}
+  },
+  {
+    name: "PALI",
+    type: "third-party system (2604.07066)",
+    group: "published",
+    scores: {eng_restaurant: 0.6395, eng_laptop: 0.3793, jpn_hotel: 0.4252, rus_restaurant: 0.5496, tat_restaurant: 0.4443, ukr_restaurant: 0.5307, zho_restaurant: 0.5357, zho_laptop: 0.4319}
+  },
+  {
+    name: "PAI",
+    type: "third-party system (2604.07066)",
+    group: "published",
+    scores: {eng_laptop: 0.3758, rus_restaurant: 0.5599, tat_restaurant: 0.4523, ukr_restaurant: 0.5437, zho_restaurant: 0.5360, zho_laptop: 0.4316}
+  },
+  {
+    name: "NYCU",
+    type: "third-party system (2604.07066)",
+    group: "published",
+    scores: {zho_restaurant: 0.5521, zho_laptop: 0.4824}
+  },
+  {
+    name: "Takoyaki",
+    type: "third-party system (2604.07066)",
+    group: "published",
+    scores: {eng_restaurant: 0.6514, eng_laptop: 0.4227, jpn_hotel: 0.4086, rus_restaurant: 0.5130, tat_restaurant: 0.4736, ukr_restaurant: 0.5019, zho_restaurant: 0.4966, zho_laptop: 0.3745}
+  },
+  {
+    name: "ALPS-Lab",
+    type: "third-party system (2604.07066)",
+    group: "published",
+    scores: {eng_restaurant: 0.6202, eng_laptop: 0.3395, jpn_hotel: 0.3617, rus_restaurant: 0.5042, tat_restaurant: 0.4404, ukr_restaurant: 0.5163, zho_restaurant: 0.4853, zho_laptop: 0.3968}
+  },
+  {
+    name: "AILS-NTUA",
+    type: "third-party system (2604.07066)",
+    group: "published",
+    scores: {eng_restaurant: 0.5988, eng_laptop: 0.2694, jpn_hotel: 0.3747, rus_restaurant: 0.4369, tat_restaurant: 0.3306, ukr_restaurant: 0.4154, zho_restaurant: 0.4544, zho_laptop: 0.3703}
+  },
+  {
+    name: "Shared-task average",
+    type: "third-party average (2604.07066)",
+    group: "published",
+    scores: {eng_restaurant: 0.5398, eng_laptop: 0.2908, jpn_hotel: 0.3259, rus_restaurant: 0.4526, tat_restaurant: 0.3581, ukr_restaurant: 0.4446, zho_restaurant: 0.4728, zho_laptop: 0.3602}
+  }
+];
+
+function fmt(n) {
+  return typeof n === "number" ? n.toFixed(4) : "-";
+}
+
+function avg(scores) {
+  const vals = datasets.map(([key]) => scores[key]).filter(v => typeof v === "number");
+  if (!vals.length) return null;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
+function cell(score, base) {
+  if (typeof score !== "number") return '<span class="na">-</span>';
+  let delta = "";
+  if (typeof base === "number") {
+    const d = (score - base) * 100;
+    const sign = d > 0 ? "+" : "";
+    delta = `<span class="delta">${sign}${d.toFixed(2)} pp</span>`;
+  }
+  return `<span class="score">${fmt(score)}</span>${delta}`;
+}
+
+function renderMatrix() {
+  const header = `<thead><tr><th>Version</th><th>Change</th>${datasets.map(([, label]) => `<th>${label}</th>`).join("")}<th>Mean / note</th></tr></thead>`;
+  const body = matrixRows.map(row => {
+    const scoreAvg = avg(row.scores);
+    const baseMap = row.prev || row.baseline || {};
+    return `<tr>
+      <td class="row-title">${row.version}</td>
+      <td class="method">${row.method}</td>
+      ${datasets.map(([key]) => {
+        const hasDelta = typeof row.scores[key] === "number" && typeof baseMap[key] === "number";
+        const cls = hasDelta ? (row.scores[key] - baseMap[key] >= 0.00005 ? "pos" : "neg") : "";
+        return `<td class="${cls}">${cell(row.scores[key], baseMap[key])}</td>`;
+      }).join("")}
+      <td class="method"><span class="score">${scoreAvg ? fmt(scoreAvg) : "-"}</span><span class="delta">${row.note}</span></td>
+    </tr>`;
+  }).join("");
+  document.getElementById("matrix-table").innerHTML = header + `<tbody>${body}</tbody>`;
+}
+
+function renderBest() {
+  const header = `<thead><tr><th>Dataset</th><th>Version</th><th>Encoder</th><th>Strategy</th><th>dev cF1</th><th>Shared-task top comparison</th></tr></thead>`;
+  const body = bestRows.map(row => `<tr>
+    <td class="row-title">${row[0]}</td>
+    <td><span class="tag">${row[1]}</span></td>
+    <td><code>${row[2]}</code></td>
+    <td>${row[3]}</td>
+    <td class="best"><span class="score">${fmt(row[4])}</span></td>
+    <td>${row[5]}</td>
+  </tr>`).join("");
+  const mean = bestRows.reduce((sum, r) => sum + r[4], 0) / bestRows.length;
+  document.getElementById("best-table").innerHTML = header + `<tbody>${body}<tr><td class="row-title">8-dataset mean</td><td colspan="3">Final mixed setup</td><td class="best"><span class="score">${fmt(mean)}</span></td><td>Gain over V6 mean 0.4397: +${((mean - 0.4397) * 100).toFixed(2)} pp</td></tr></tbody>`;
+}
+
+function renderExternal() {
+  const ranks = {};
+  datasets.forEach(([key]) => {
+    const sorted = externalRows
+      .map((row, index) => ({ index, value: row.scores[key] }))
+      .filter(item => typeof item.value === "number")
+      .sort((a, b) => b.value - a.value);
+    let currentRank = 0;
+    let lastValue = null;
+    sorted.forEach((item, i) => {
+      if (lastValue === null || item.value !== lastValue) currentRank = i + 1;
+      lastValue = item.value;
+      ranks[`${item.index}:${key}`] = currentRank;
+    });
+  });
+  const header = `<thead><tr><th>System</th><th>Source type</th>${datasets.map(([, label]) => `<th>${label}</th>`).join("")}<th>Mean</th></tr></thead>`;
+  const body = externalRows.map((row, rowIndex) => {
+    const rowAvg = avg(row.scores);
+    const tagClass = row.group === "official" ? "official" : row.group === "published" ? "published" : "ours";
+    return `<tr>
+      <td class="row-title">${row.name}</td>
+      <td><span class="tag ${tagClass}">${row.type}</span></td>
+      ${datasets.map(([key]) => {
+        const s = row.scores[key];
+        const rank = ranks[`${rowIndex}:${key}`];
+        const cls = rank && rank <= 3 ? `rank-${rank}` : "";
+        const rankLabel = rank ? `<span class="rank-label">Rank ${rank}</span>` : "";
+        return `<td class="${cls}">${cell(s)}${rankLabel}</td>`;
+      }).join("")}
+      <td><span class="score">${fmt(rowAvg)}</span></td>
+    </tr>`;
+  }).join("");
+  document.getElementById("external-table").innerHTML = header + `<tbody>${body}</tbody>`;
+}
+
+renderMatrix();
+renderBest();
+renderExternal();
+</script>
+</body>
+</html>

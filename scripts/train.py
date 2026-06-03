@@ -348,10 +348,6 @@ class Trainer:
     
     def save_checkpoint(self, epoch: int, metrics: dict, is_best: bool = False):
         """Save model checkpoint"""
-        # Apply EMA shadow to get the actual weights used during evaluation
-        if self.use_ema:
-            self.ema.apply_shadow()
-
         checkpoint = {
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
@@ -361,9 +357,8 @@ class Trainer:
             'config': self.config
         }
 
-        # Restore original weights after saving
         if self.use_ema:
-            self.ema.restore()
+            checkpoint['ema_state_dict'] = self.ema.state_dict()
 
         # Save latest checkpoint (for resume)
         torch.save(checkpoint, self.save_dir / 'checkpoint_latest.pt')
