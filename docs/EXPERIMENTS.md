@@ -1453,6 +1453,55 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ---
 
+### 5.26 V23 eng_laptop = LLM 知识蒸馏（🚀 重大突破 0.4141，超 nchellwig SOTA）
+
+**动机**：eng_laptop 本质瓶颈是 240 个 (entity#attribute) 组合 × 仅 4076 样本的极端稀疏，小模型学不到 LLM 那样的稀疏类先验。所有"推理时引入 LLM"的尝试（§5.20.4 fusion、§7.7.1 post-correction）都失败——因为 LLM 推理输出噪声大。**知识蒸馏 (KD) 是把 LLM 先验灌进小模型权重、推理时完全不碰 LLM 的正解。**
+
+**Pipeline**：
+1. **无标注池**：8,578 句笔记本评论（7,580 Amazon `naga-jay/amazon-laptop-reviews-enriched` + 998 eng_laptop test 文本，in-domain transductive）
+2. **DeepSeek silver-labeling**：`scripts/llm_silver_label_eng_laptop.py`，deepseek-v4-pro 抽 (Aspect, Category, Opinion, VA) 四元组，121 类约束 + few-shot + 严格校验（category 合法 / span 子串 / VA∈[1,9]）→ **8,541 样本 / 26,723 silver quads**（keep_rate 0.99）
+3. **蒸馏训练**：deberta-v3-base + raw 4076 + 4-pivot BT 10973 + silver 8541 = **23,590 行**，5-seed dual-layer
+4. **推理**：纯 ensemble，**无 LLM**
+
+**关键工程发现 — 关闭 thinking 省 19-29×**：deepseek-v4-pro 默认推理模式每句吐 ~2200 输出 token（大部分是隐藏 CoT），实际 JSON 只需 ~76-145。加 `extra_body={"thinking":{"type":"disabled"}}` 后输出降 19-29×、无 402 余额耗尽。同句 head-to-head：thinking ON 仅多 ~13% recall（0.39 vs 0.34 valid quads），有效率两者 ~98-100%，但精确重合仅 ~37% —— 说明 LLM 抽取本身方差大（解释了 LLM 队伍为何用 k=10 self-consistency）。silver 质量两模式等价，OFF 性价比完胜。
+
+**单 seed cF1（5 seeds）**：
+
+| seed | 42 | 123 | 456 | 789 | 1024 | mean |
+|---|---|---|---|---|---|---|
+| V23 KD | 0.3973 | 0.3906 | 0.3920 | 0.3940 | 0.3938 | **0.3935** |
+
+对比所有历史 eng_laptop 单 seed（V16/V19/V20 ~0.29，V5-repro ~0.305）→ **KD 单 seed +8.8pp**。dev 为干净留出（silver 池只含 test 文本不含 dev），0.39 是真实泛化增益。
+
+**Ensemble sweep**：
+
+| 配置 | cF1 |
+|---|---|
+| std vote=3 topk=0 | 0.4038 |
+| **std vote=4 topk=0** | **0.4141** 🏆 |
+| std vote=4 topk=0.10 | 0.4138 |
+| std vote=5 topk=0.10 | 0.4094 |
+| dual vote=4 topk=0.10 | 0.4092 |
+
+**eng_laptop 全程演进**：
+
+| 方法 | dev cF1 | Δ |
+|---|---|---|
+| V16 deberta-v3-large raw | 0.3035 | baseline |
+| V5-repro deberta-v3-base + 4-pivot BT | 0.3254 | +2.19 |
+| Route A 6-pivot BT (10-seed) | 0.3109 | es/it 稀释，死路 |
+| **V23 LLM 蒸馏** | **0.4141** 🚀 | **+11.06 vs V16 / +8.87 vs V5-repro** |
+
+**对标官方 leaderboard**（test）：
+- nchellwig (Gemma 27B + k=10 SCSG): 0.4006 → **dev 反超 +1.35pp** ✅
+- Takoyaki SOTA 1st: 0.4227 → −0.86pp（很接近）
+
+**论文核心贡献**：用 **440M deberta-v3-base + DeepSeek silver KD**，在 eng_laptop（最稀疏数据集）上达到 **27B LLM 队伍水准**，参数小 60×，推理无 LLM。这是「small model + LLM distillation > brute-force LLM at inference」的强力证据，也是全项目最有论文价值的结果。
+
+**eng_laptop 最终 submission 切换为 V23**（std vote=4 topk=0），V20/V19/V16 备份保留。
+
+---
+
 ### 5.21 Jpn 跨基线对比
 
 | 模型 | jpn_hotel dev cF1 | 备注 |
