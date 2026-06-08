@@ -1453,7 +1453,7 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ---
 
-### 5.26 V23 eng_laptop = LLM 知识蒸馏（🚀 重大突破 0.4141，超 nchellwig SOTA）
+### 5.28 V23 eng_laptop = LLM 知识蒸馏（🚀 重大突破 0.4141，超 nchellwig SOTA）
 
 **动机**：eng_laptop 本质瓶颈是 240 个 (entity#attribute) 组合 × 仅 4076 样本的极端稀疏，小模型学不到 LLM 那样的稀疏类先验。所有"推理时引入 LLM"的尝试（§5.20.4 fusion、§7.7.1 post-correction）都失败——因为 LLM 推理输出噪声大。**知识蒸馏 (KD) 是把 LLM 先验灌进小模型权重、推理时完全不碰 LLM 的正解。**
 
@@ -1499,6 +1499,48 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 **论文核心贡献**：用 **440M deberta-v3-base + DeepSeek silver KD**，在 eng_laptop（最稀疏数据集）上达到 **27B LLM 队伍水准**，参数小 60×，推理无 LLM。这是「small model + LLM distillation > brute-force LLM at inference」的强力证据，也是全项目最有论文价值的结果。
 
 **eng_laptop 最终 submission 切换为 V23**（std vote=4 topk=0），V20/V19/V16 备份保留。
+
+---
+
+### 5.29 V23 KD 推广到 zho_laptop / rus / ukr（进行中：KD 非普适，依赖数据稀缺度）
+
+**动机**：eng_laptop KD +8.87pp 大获成功后，推广到其余 3 个未达 SOTA 的数据集（zho_laptop −3.4pp, rus −3.3pp, ukr −3.7pp）。
+
+**Pipeline 泛化**：
+- `scripts/llm_silver_label.py`（通用版，`--domain` + `--lang`，category 从各语种 train 自动构建）
+- `scripts/collect_unlabeled_multi.py`（多语种无标注采集）
+- 数据源：zho_laptop = `SetFit/amazon_reviews_multi_zh`（笔记本关键词过滤）；rus = `d0rj/geo-reviews-dataset-2023`（Yandex，restaurant rubric 过滤，直接下 parquet 绕过 streaming segfault）；ukr = 无外部语料
+
+**Silver 产量**（thinking-off, keep_rate 0.98-0.99）：
+
+| 数据集 | 无标注池 | silver 样本 | silver quads | gold 基线 |
+|---|---|---|---|---|
+| zho_laptop | 7,415 | 5,156 | 17,133 | v13c 5,534 |
+| rus | 8,630 | 8,364 | 38,396 | v13 1,766 |
+| ukr | — | — | — | v13b 2,967 |
+
+**初步结果（zho_laptop, 2/5 seeds）—— KD 在此数据集无效**：
+
+| seed | zho_laptop V23 KD | V16（对照）|
+|---|---|---|
+| 42 | 0.3783 | ~0.39 |
+| 123 | 0.3763 | ~0.39 |
+
+zho_laptop KD 单 seed **比 V16 低 ~1.3pp**，与 eng_laptop（+10pp）相反。
+
+**核心发现 — KD 的有效性取决于数据稀缺度**：
+
+| 数据集 | gold 量 | V16/base 单 seed | KD 单 seed | KD 效果 |
+|---|---|---|---|---|
+| eng_laptop | 4,076 (稀缺) | ~0.29 | ~0.39 | **+10pp** ✅ |
+| zho_laptop | 5,534 (充足) | ~0.39 | ~0.377 | **−1.3pp** ❌ |
+| rus | 1,766 (最稀缺) | ~0.47 | 训练中 | 待定（最可能受益）|
+
+**解读**：KD 注入 LLM 先验，但 silver label 噪声大于 gold。当 gold 数据**充足 + encoder 强**时（zho_laptop 已有 chinese-roberta-large + 5534 优质样本），silver 稀释信号反而有害；当 gold **稀缺**时（eng_laptop），silver 的新覆盖压倒噪声。rus gold 仅 1766（最稀缺），是 KD 推广的真正试金石——训练中。
+
+**结论（暂定）**：KD **不是普适增强**，是**数据稀缺数据集的特效药**。论文叙述：「LLM distillation yields large gains only on data-starved subsets (eng_laptop +8.9pp); on subsets with adequate gold + strong native encoders (zho_laptop), silver labels dilute rather than help.」
+
+> ⚠️ 本节进行中：zho_laptop 5-seed ensemble + rus KD 结果待补。ukr 因无外部语料，暂定 transductive-only 或跳过。
 
 ---
 
