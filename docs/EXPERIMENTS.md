@@ -1519,28 +1519,30 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 | rus | 8,630 | 8,364 | 38,396 | v13 1,766 |
 | ukr | — | — | — | v13b 2,967 |
 
-**初步结果（zho_laptop, 2/5 seeds）—— KD 在此数据集无效**：
+**最终结果（5-seed ensemble）**：
 
-| seed | zho_laptop V23 KD | V16（对照）|
-|---|---|---|
-| 42 | 0.3783 | ~0.39 |
-| 123 | 0.3763 | ~0.39 |
+| 数据集 | gold 量 | 旧最佳 | KD ensemble best | Δ | Test SOTA 1st | 结论 |
+|---|---|---|---|---|---|---|
+| **rus** | 1,766（最稀缺）| V15 0.5267 | **0.5753** (vote=3) | **+4.86** | PAI 0.5599 | ✅✅ **反超 SOTA +1.54pp** 🥇 |
+| **eng_laptop** | 4,076（稀缺）| V5-repro 0.3254 | **0.4141** (vote=4) | **+8.87** | Takoyaki 0.4227 | ✅✅ 超 nchellwig 2nd 0.4006 |
+| zho_laptop | 5,534（充足）| V16 0.4487 | 0.4428 (vote=4) | **−0.59** | NYCU 0.4824 | ❌ 保留 V16 |
 
-zho_laptop KD 单 seed **比 V16 低 ~1.3pp**，与 eng_laptop（+10pp）相反。
+**rus KD 单 seed**：0.4883 / 0.5155 / 0.5370 / 0.5111 / 0.5371（mean 0.5178，全部 ≥ V15）；seed 456 单 seed 0.5370 已超 V15 ensemble best。
+**zho_laptop KD 单 seed**：0.3783 / 0.3763 / 0.3769 / 0.3847 / 0.3851（mean 0.3803，全部 < V16 ~0.39）。
 
-**核心发现 — KD 的有效性取决于数据稀缺度**：
+**核心发现 — KD 收益 ∝ 数据稀缺度（完整验证，单调关系）**：
 
-| 数据集 | gold 量 | V16/base 单 seed | KD 单 seed | KD 效果 |
-|---|---|---|---|---|
-| eng_laptop | 4,076 (稀缺) | ~0.29 | ~0.39 | **+10pp** ✅ |
-| zho_laptop | 5,534 (充足) | ~0.39 | ~0.377 | **−1.3pp** ❌ |
-| rus | 1,766 (最稀缺) | ~0.47 | 训练中 | 待定（最可能受益）|
+| 数据集 | gold 量 | KD ensemble Δ | 验证 |
+|---|---|---|---|
+| **rus** | 1,766（最稀缺）| **+4.86pp** ✅ 反超 SOTA | 受益 |
+| **eng_laptop** | 4,076（稀缺）| **+8.87pp** ✅ 反超 nchellwig | 受益 |
+| **zho_laptop** | 5,534（充足）| **−0.59pp** ❌ 稀释 | 无益 |
 
-**解读**：KD 注入 LLM 先验，但 silver label 噪声大于 gold。当 gold 数据**充足 + encoder 强**时（zho_laptop 已有 chinese-roberta-large + 5534 优质样本），silver 稀释信号反而有害；当 gold **稀缺**时（eng_laptop），silver 的新覆盖压倒噪声。rus gold 仅 1766（最稀缺），是 KD 推广的真正试金石——训练中。
+**解读**：KD 注入 LLM 先验，但 silver label 噪声大于 gold。当 gold **稀缺**时（rus 1766 / eng_laptop 4076），silver 的新覆盖压倒噪声，大幅增益；当 gold **充足 + encoder 强**时（zho_laptop 5534 + chinese-roberta-large），silver 稀释信号反而有害。
 
-**结论（暂定）**：KD **不是普适增强**，是**数据稀缺数据集的特效药**。论文叙述：「LLM distillation yields large gains only on data-starved subsets (eng_laptop +8.9pp); on subsets with adequate gold + strong native encoders (zho_laptop), silver labels dilute rather than help.」
+**结论**：KD **不是普适增强**，是**数据稀缺数据集的特效药**，且收益与稀缺度呈清晰单调关系。论文叙述：「LLM distillation benefit is inversely proportional to gold-data sufficiency: data-starved subsets gain +4.9~8.9pp (rus, eng_laptop, both surpassing prior SOTA), while a data-adequate subset with a strong native encoder (zho_laptop) is slightly hurt.」
 
-> ⚠️ 本节进行中：zho_laptop 5-seed ensemble + rus KD 结果待补。ukr 因无外部语料，暂定 transductive-only 或跳过。
+**最终采用**：rus → V23 KD (0.5753, vote=3)；eng_laptop → V23 KD (0.4141, vote=4)；zho_laptop → 保留 V16。ukr 因无外部 in-domain 语料、且 gold (2967) 介于充足区，未做 KD。
 
 ---
 

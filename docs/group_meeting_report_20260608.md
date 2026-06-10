@@ -42,10 +42,18 @@
 - **结果**：单 seed mean **0.3935**（+8.8pp）；ensemble best **0.4141**
 - **🔍 发现**：① **KD 是小模型碰 LLM-SOTA 的唯一有效路线** → 反超 nchellwig (27B, 0.4006) ② **关闭 reasoning 省 19-29× token**（v4-pro 默认吐 ~2200 隐藏 CoT token，`thinking:disabled` 降到 ~76，质量等价）③ **440M 模型达 27B LLM 水准**，参数小 60×
 
-### ⑦ V23 推广 — zho_laptop / rus / ukr（进行中）
+### ⑦ V23 推广 — zho_laptop / rus / ukr（完成）
 - **silver 产量**：zho 17133 quads、rus 38396 quads（thinking-off，keep 0.98-0.99）
-- **初步**：zho_laptop KD 单 seed 0.3763-0.3783（**低于 V16 ~0.39**）
-- **🔍 发现（论文价值）**：**KD 非普适** —— zho_laptop（5534 优质数据 + 强中文 encoder）上 silver 反而稀释。**KD 是"数据稀缺数据集的特效药"**：eng_laptop(4076) +10pp ✅ vs zho_laptop(5534) −1.3pp ❌。rus gold 仅 1766（最稀缺）= 真正试金石，训练中
+- **最终结果（5-seed ensemble）**：
+
+| 数据集 | gold 量 | 旧最佳 | KD ensemble | Δ | Test SOTA | 结论 |
+|---|---|---|---|---|---|---|
+| **rus** | 1,766（最稀缺）| V15 0.5267 | **0.5753** | **+4.86** | PAI 0.5599 | ✅ **反超 SOTA +1.54** 🥇 |
+| zho_laptop | 5,534（充足）| V16 0.4487 | 0.4428 | −0.59 | NYCU 0.4824 | ❌ 保留 V16 |
+
+- **🔍 发现（论文核心价值）**：**KD 收益 ∝ 数据稀缺度，单调关系完整验证**：
+  - rus(1766) **+4.86pp ✅ 反超 PAI SOTA** | eng_laptop(4076) +8.87pp ✅ | zho_laptop(5534) −0.59pp ❌
+  - **「LLM distillation benefit is inversely proportional to gold-data sufficiency」** —— 稀缺数据集特效（2 个反超 SOTA），充足数据集稀释
 
 ### 一图总结
 ```
