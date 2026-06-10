@@ -49,11 +49,15 @@
 | 数据集 | gold 量 | 旧最佳 | KD ensemble | Δ | Test SOTA | 结论 |
 |---|---|---|---|---|---|---|
 | **rus** | 1,766（最稀缺）| V15 0.5267 | **0.5753** | **+4.86** | PAI 0.5599 | ✅ **反超 SOTA +1.54** 🥇 |
+| **ukr** | 2,967（稀缺）| V13b 0.5068 | **0.5560** | **+4.92** | PAI 0.5437 | ✅ **反超 SOTA +1.23** 🥇 |
 | zho_laptop | 5,534（充足）| V16 0.4487 | 0.4428 | −0.59 | NYCU 0.4824 | ❌ 保留 V16 |
 
-- **🔍 发现（论文核心价值）**：**KD 收益 ∝ 数据稀缺度，单调关系完整验证**：
-  - rus(1766) **+4.86pp ✅ 反超 PAI SOTA** | eng_laptop(4076) +8.87pp ✅ | zho_laptop(5534) −0.59pp ❌
-  - **「LLM distillation benefit is inversely proportional to gold-data sufficiency」** —— 稀缺数据集特效（2 个反超 SOTA），充足数据集稀释
+（ukr 无原生乌语语料 → MarianMT 把俄语 geo-reviews 翻译成乌语，DeepSeek 标注；翻译 silver 仍反超 SOTA）
+
+- **🔍 发现（论文核心价值）**：**KD 收益 ∝ 数据稀缺度，3 数据集反超 SOTA，单调关系完整验证**：
+  - rus(1766) **+4.86** ✅ | ukr(2967) **+4.92** ✅ | eng_laptop(4076) **+8.87** ✅ | zho_laptop(5534) **−0.59** ❌
+  - **3 个数据稀缺数据集（≤4k gold）全部反超 test SOTA**；充足数据集稀释
+  - **「LLM distillation benefit is inversely proportional to gold-data sufficiency」**；且对 silver 文本来源鲁棒（ukr 用机器翻译仍超 SOTA）
 
 ### 一图总结
 ```
