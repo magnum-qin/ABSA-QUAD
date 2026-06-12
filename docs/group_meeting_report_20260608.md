@@ -58,6 +58,7 @@
   - rus(1766) **+4.86** ✅ | ukr(2967) **+4.92** ✅ | eng_laptop(4076) **+8.87** ✅ | zho_laptop(5534) **−0.59** ❌
   - **3 个数据稀缺数据集（≤4k gold）全部反超 test SOTA**；充足数据集稀释
   - **「LLM distillation benefit is inversely proportional to gold-data sufficiency」**；且对 silver 文本来源鲁棒（ukr 用机器翻译仍超 SOTA）
+- **🔍 附加消融（native vs translated silver）**：DeepSeek 原生生成乌语评论 vs MarianMT 翻译 —— 原生 per-seed 质量更高（单 seed mean 0.4937 vs 0.4400，+5.4pp，无 translationese），但**机器翻译在 ensemble 险胜**（0.5560 vs 0.5446）：翻译版 silver 量更大 + seed 方差大 → ensemble 多样性收益更高。结论：**KD 的 silver 量+多样性 ≈ per-sample 质量**（ensemble 层面）
 
 ### 一图总结
 ```

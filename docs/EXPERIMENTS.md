@@ -1550,7 +1550,21 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 **最终采用**：rus → V23 KD (0.5753)；ukr → V23 KD (0.5560)；eng_laptop → V23 KD (0.4141)；zho_laptop → 保留 V16。**3 个数据集靠 KD 反超 test SOTA。**
 
-> 补充实验（进行中）：DeepSeek 直接生成原生乌语评论（替代 MarianMT 翻译）的 1-seed 对比，验证 translationese 是否限制了 ukr KD 上限。
+#### 5.29.1 消融：原生生成 silver vs 机器翻译 silver（ukr）
+
+**动机**：ukr 的 silver 来自 MarianMT 翻译的俄语评论，怀疑 translationese 限制上限。对照实验：用 DeepSeek 直接生成 3994 条**原生**乌语餐厅评论 → silver 标注（9255 quads）→ 同样 mdeberta 5-seed。
+
+| silver 来源 | silver 量 | 单 seed mean | 单 seed std | ensemble best (vote=3) |
+|---|---|---|---|---|
+| 机器翻译 (MarianMT, 6138) | 19,960 quads | 0.4400 | ~0.041（高方差）| **0.5560** 🏆 |
+| 原生生成 (DeepSeek, 3991) | 9,255 quads | **0.4937** | ~0.027（更稳）| 0.5446 |
+
+**🔍 反直觉发现 —— 单 seed native 赢，ensemble translated 赢**：
+- **per-sample 质量**：原生生成明显更高（单 seed +5.4pp，无 translationese，且用更少数据）
+- **ensemble**：机器翻译反而 +1.14pp。原因：① 翻译版单 seed 方差大 → seed 间多样性高，ensemble 投票收益大（"高方差+ensemble 救回"，同 eng_laptop）② 翻译版 silver 量更大（6138 vs 3991）→ 覆盖广，vote recall 高
+- **结论**：对 KD，**silver 的量+多样性 在 ensemble 层面 ≈ 甚至 > per-sample 质量**。论文叙述：「Native LLM-generated in-domain text yields higher per-seed silver quality (+5pp single-seed, no translationese), but machine-translated text's larger volume and higher seed-diversity win at ensemble level (+1.1pp).」
+
+**ukr 最终保留机器翻译版 V23 KD (0.5560)** —— ensemble 最优。
 
 ---
 
