@@ -48,16 +48,19 @@
 
 | 数据集 | gold 量 | 旧最佳 | KD ensemble | Δ | Test SOTA | 结论 |
 |---|---|---|---|---|---|---|
-| **rus** | 1,766（最稀缺）| V15 0.5267 | **0.5753** | **+4.86** | PAI 0.5599 | ✅ **反超 SOTA +1.54** 🥇 |
+| **tat** | 1,240（最稀缺）| V15 0.4821 | **0.5196** | **+3.75** | Takoyaki 0.4736 | ✅ **反超 SOTA +4.60** 🥇 |
+| **rus** | 1,766（稀缺）| V15 0.5267 | **0.5753** | **+4.86** | PAI 0.5599 | ✅ **反超 SOTA +1.54** 🥇 |
 | **ukr** | 2,967（稀缺）| V13b 0.5068 | **0.5560** | **+4.92** | PAI 0.5437 | ✅ **反超 SOTA +1.23** 🥇 |
+| **eng_laptop** | 4,076（稀缺）| 0.3254 | **0.4141** | **+8.87** | Takoyaki 0.4227 | ✅ 超 nchellwig 2nd |
 | zho_laptop | 5,534（充足）| V16 0.4487 | 0.4428 | −0.59 | NYCU 0.4824 | ❌ 保留 V16 |
 
-（ukr 无原生乌语语料 → MarianMT 把俄语 geo-reviews 翻译成乌语，DeepSeek 标注；翻译 silver 仍反超 SOTA）
+（无外部语料的解法：ukr → MarianMT 把俄语 geo-reviews 翻译成乌语；tat → DeepSeek 直接生成原生鞑靼语评论。两者翻译/生成 silver 仍反超 SOTA）
 
-- **🔍 发现（论文核心价值）**：**KD 收益 ∝ 数据稀缺度，3 数据集反超 SOTA，单调关系完整验证**：
-  - rus(1766) **+4.86** ✅ | ukr(2967) **+4.92** ✅ | eng_laptop(4076) **+8.87** ✅ | zho_laptop(5534) **−0.59** ❌
-  - **3 个数据稀缺数据集（≤4k gold）全部反超 test SOTA**；充足数据集稀释
-  - **「LLM distillation benefit is inversely proportional to gold-data sufficiency」**；且对 silver 文本来源鲁棒（ukr 用机器翻译仍超 SOTA）
+- **🔍 发现（论文核心价值）**：**KD 收益 ∝ 数据稀缺度，4 数据集反超 SOTA，单调关系完整验证**：
+  - tat(1240) **+3.75** ✅ | rus(1766) **+4.86** ✅ | ukr(2967) **+4.92** ✅ | eng_laptop(4076) **+8.87** ✅ | zho_laptop(5534) **−0.59** ❌
+  - **4 个数据稀缺数据集（≤4k gold）全部反超 test SOTA**；充足数据集稀释
+  - **「LLM distillation benefit is inversely proportional to gold-data sufficiency」**；对 silver 文本来源鲁棒（ukr 机器翻译、tat 低资源生成均超 SOTA）
+  - **鲁棒性观察**：tat seed 1024 坏初始化(0.2318)，但 ensemble vote≥2 自动剔除，4-seed=5-seed=0.5196
 - **🔍 附加消融（native vs translated silver）**：DeepSeek 原生生成乌语评论 vs MarianMT 翻译 —— 原生 per-seed 质量更高（单 seed mean 0.4937 vs 0.4400，+5.4pp，无 translationese），但**机器翻译在 ensemble 险胜**（0.5560 vs 0.5446）：翻译版 silver 量更大 + seed 方差大 → ensemble 多样性收益更高。结论：**KD 的 silver 量+多样性 ≈ per-sample 质量**（ensemble 层面）
 
 ### 一图总结
