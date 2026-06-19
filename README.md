@@ -96,7 +96,7 @@ OLLAMA_URL=http://localhost:11433 python scripts/gen_native_ollama.py \
 # C) distill 训练 = gold + 校验后的 silver → 同上 train_multi_seed + ensemble
 ```
 
-完整可复现脚本：`scripts/run_v23_silver_*.sh`（DeepSeek 臂）、`scripts/run_v23_qwen_*.sh`、`scripts/run_v23_qwen_kd_multi.sh`（本地 qwen 臂）。
+完整可复现脚本：`scripts/run_v23_<dataset>_deepseek.sh`（DeepSeek 臂）、`scripts/run_v23_<dataset>_qwen.sh` / `scripts/run_v23_multi_qwen.sh`（本地 qwen 臂）。命名规则见 [docs/NAMING.md](docs/NAMING.md)。
 
 ## Architecture
 
@@ -137,8 +137,8 @@ Input → 专用 Encoder → [Span BIO, Pair Classifier, V-A Regressor]
 │   ├── llm_silver_label.py       # KD silver-labeling（DeepSeek 云端）
 │   ├── llm_silver_label_ollama.py# KD silver-labeling（本地 ollama，think:false）
 │   ├── gen_native_ollama.py      # 本地 LLM 原生生成 in-domain 池（中/日/英…）
-│   ├── build_eng_v23_*.py        # 组装 distill 训练集
-│   └── run_v23_*.sh              # 各数据集 KD 全流程
+│   ├── build_v23_*.py            # 组装 distill 训练集
+│   └── run_v23_<dataset>_<teacher>.sh  # 各数据集 KD 全流程（命名见 docs/NAMING.md）
 ├── data/subtask_3/<lang>/        # 8 数据集 train/dev/test + silver/pool
 ├── submission/final/             # 各数据集 test 预测（*_backup.jsonl = 切换前版本）
 ├── submission/submission.zip     # 正式提交包

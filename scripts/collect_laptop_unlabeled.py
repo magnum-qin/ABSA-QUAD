@@ -4,7 +4,7 @@ Collect unlabeled English laptop-domain review text for LLM knowledge distillati
 Source: naga-jay/amazon-laptop-reviews-enriched (Amazon laptop reviews, parquet-native)
         + eng_laptop test set (in-domain transductive).
 
-Output: data/subtask_3/eng/eng_laptop_unlabeled_pool.jsonl
+Output: data/subtask_3/eng/eng_laptop_pool_v23.jsonl
   Each line: {"ID": "...", "Text": "..."}  (no labels; ready for LLM silver-labeling)
 """
 import json, re
@@ -15,7 +15,7 @@ LAPTOP_KW = re.compile(r'\b(laptop|notebook|keyboard|touchpad|trackpad|battery|s
                        r'macbook|thinkpad|bezel|backlit|trackpoint|resolution|boot|port|usb|wifi)\b', re.I)
 
 TARGET = 8000
-out_path = Path("data/subtask_3/eng/eng_laptop_unlabeled_pool.jsonl")
+out_path = Path("data/subtask_3/eng/eng_laptop_pool_v23.jsonl")
 pool = {}
 
 from datasets import load_dataset

@@ -141,7 +141,7 @@ OLLAMA_URL=http://localhost:11433 python scripts/gen_native_ollama.py \
 # (C) distill 训练 = gold + 校验后 silver → 回到 §2 train_multi_seed（--train_file 指向 distill 集）→ §3 推理
 ```
 
-一键全流程示例：`scripts/run_v23_silver_rus.sh`（DeepSeek）、`scripts/run_v23_qwen_kd_multi.sh`（本地 qwen 多数据集）、`scripts/run_v23_qwen_zho_laptop.sh`（含 silver 封顶）。
+一键全流程示例：`scripts/run_v23_rus_restaurant_deepseek.sh`（DeepSeek）、`scripts/run_v23_multi_qwen.sh`（本地 qwen 多数据集）、`scripts/run_v23_zho_laptop_qwen.sh`（含 silver 封顶）。
 
 KD 生效判据见 [EXPERIMENTS.md §5.29](EXPERIMENTS.md)：silver 须提供 gold 缺失的信息（gold 弱/类别稀疏，或 silver:gold<1 保持少数派）。
 
@@ -165,12 +165,12 @@ bash scripts/run_test_submission.sh
 
 | 数据集 | config | 方法 |
 |---|---|---|
-| eng_laptop | `pipeline_eng_laptop_v23_silver.yaml` | KD (DeepSeek) |
+| eng_laptop | `pipeline_eng_laptop_v23_deepseek.yaml` | KD (DeepSeek) |
 | eng_restaurant | `pipeline_eng_restaurant_v16.yaml` | baseline |
 | jpn_hotel | `pipeline_jpn_v16.yaml` | baseline |
-| rus_restaurant | `pipeline_rus_v23.yaml` | KD (DeepSeek) |
-| ukr_restaurant | `pipeline_ukr_v23.yaml` | KD (DeepSeek) |
-| tat_restaurant | `pipeline_tat_v23.yaml` | KD (DeepSeek) |
+| rus_restaurant | `pipeline_rus_restaurant_v23_deepseek.yaml` | KD (DeepSeek) |
+| ukr_restaurant | `pipeline_ukr_restaurant_v23_deepseek.yaml` | KD (DeepSeek) |
+| tat_restaurant | `pipeline_tat_restaurant_v23_deepseek.yaml` | KD (DeepSeek) |
 | zho_restaurant | `pipeline_zho_restaurant_v23_qwen.yaml` | KD (qwen3.6) |
 | zho_laptop | `pipeline_zho_laptop_v16.yaml` | baseline |
 

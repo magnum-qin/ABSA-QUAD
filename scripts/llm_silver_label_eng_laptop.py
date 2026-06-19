@@ -17,9 +17,9 @@ Resume-safe: re-running skips IDs already written. Failures recorded with _err.
 Usage:
     export DEEPSEEK_API_KEY=sk-...
     python scripts/llm_silver_label_eng_laptop.py \
-        --input data/subtask_3/eng/eng_laptop_unlabeled_pool.jsonl \
+        --input data/subtask_3/eng/eng_laptop_pool_v23.jsonl \
         --train_file data/subtask_3/eng/eng_laptop_train_alltasks.jsonl \
-        --output data/subtask_3/eng/eng_laptop_silver.jsonl \
+        --output data/subtask_3/eng/eng_laptop_silver_v23_deepseek.jsonl \
         --model deepseek-chat --workers 12 --n_shots 6
 """
 import os

@@ -20,9 +20,9 @@ DeepSeek script so the silver files are drop-in interchangeable.
 
 Usage:
     python scripts/llm_silver_label_ollama.py \
-        --input data/subtask_3/eng/eng_laptop_unlabeled_pool.jsonl \
+        --input data/subtask_3/eng/eng_laptop_pool_v23.jsonl \
         --train_file data/subtask_3/eng/eng_laptop_train_alltasks.jsonl \
-        --output data/subtask_3/eng/eng_laptop_silver_gemma.jsonl \
+        --output data/subtask_3/eng/eng_laptop_silver_v23_gemma.jsonl \
         --model "hf.co/unsloth/gemma-4-31B-it-qat-GGUF:UD-Q4_K_XL" \
         --domain laptop --workers 4 --n_shots 6
 """

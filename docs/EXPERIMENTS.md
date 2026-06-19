@@ -1604,7 +1604,7 @@ ensemble sweep 三者一致偏好高 vote：qwen vote=4(0.4094) > vote=3(0.4009)
 
 #### 5.29.3 KD 推广到剩余 3 个数据集（jpn_hotel / eng_restaurant / zho_restaurant，teacher=本地 qwen3.6）
 
-**动机**：把 KD 推广到尚未蒸馏的全部 3 个数据集。三者都**没有 in-domain 无标注语料**，用 qwen3.6 原生生成（中/日/英三语，质量经探针确认）~4000 条 + test 文本构成池，qwen3.6 silver 标注，各自 V16 专用 encoder 5-seed 训练。脚本：`scripts/gen_native_ollama.py`、`scripts/run_v23_qwen_kd_multi.sh`。
+**动机**：把 KD 推广到尚未蒸馏的全部 3 个数据集。三者都**没有 in-domain 无标注语料**，用 qwen3.6 原生生成（中/日/英三语，质量经探针确认）~4000 条 + test 文本构成池，qwen3.6 silver 标注，各自 V16 专用 encoder 5-seed 训练。脚本：`scripts/gen_native_ollama.py`、`scripts/run_v23_multi_qwen.sh`。
 
 | 数据集 | encoder | gold | silver | **silver:gold** | gold-only dev | qwen-KD ensemble | Δ | 类别数 |
 |---|---|---|---|---|---|---|---|---|
