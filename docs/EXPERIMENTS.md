@@ -1575,6 +1575,60 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ---
 
+#### 5.29.2 消融：teacher 选择对 KD 的影响 — 云端 DeepSeek vs 本地 Gemma-31B vs 本地 qwen3.6-36B（eng_laptop）
+
+**动机**：eng_laptop KD 用云端 DeepSeek 做 silver-labeling。teacher 能力对 KD 增益有多关键？换成**本地部署**的开源模型能否复现、甚至追平？这是 KD 范式可复现性 / 成本（云 API vs 自有 GPU）的关键问题。测三个 teacher：云端 `deepseek-v4-pro`、本地 `gemma-4-31B-it-qat`(Q4，ollama)、本地 `qwen3.6:latest`(36B Q4_K_M，ollama)。
+
+**严格对照设计**：同一组 **8578** 条 in-domain 笔记本评论（直接取 DeepSeek silver 文件的 ID+Text，逐字相同）；gold + 4-pivot BT 基座 **15049 行逐字不变**；同 config（deberta-v3-base + Rethink + 5-seed dual-layer ensemble，patience=8）。**唯一变量 = silver teacher**。
+
+**踩坑记录**：① gemma-4-QAT / qwen3.6 都是推理模型，CoT 走 `thinking` channel 导致 OpenAI-compat `content` 为空 → ollama native `/api/chat` 加 `think:false` 修复（qwen3-vl:4b 不支持该参数，弃用）；② 模型曾被 fallback 到 CPU → `num_gpu:99` 强制全量上 GPU；③ gemma 31B 用 `OLLAMA_NUM_PARALLEL=4` 并行（0.25→0.8 rows/s）；qwen3.6-36B 占 23.6/24.5GB 显存无法并行，单流 ~1.9s/样本；④ qwen3.6 对隐式 aspect 输出 JSON `null` 而非 `"NULL"` 字符串 → 脚本加 None→"NULL" 归一化。
+
+| teacher | 部署 | 规模 | silver 量 | quads/text | 单 seed mean | ensemble best (vote=4 topk=0) | vs 基线 | vs SOTA 0.4006 |
+|---|---|---|---|---|---|---|---|---|
+| 无 KD (V5-repro) | — | — | — | — | ~0.305 | 0.3254 | — | −7.52pp ❌ |
+| **Gemma-31B-Q4** | 本地 | 31B | 8538 / 24,049 | 2.82 | ~0.355 | **0.3764** (topk=0.20) | **+5.10pp** | **−2.42pp ❌** |
+| **qwen3.6:latest** | 本地 | 36B | 8426 / 23,541 | 2.79 | **0.3777** | **0.4094** | **+8.40pp** | **+0.88pp ✅** |
+| **DeepSeek-v4-pro** | 云端 | frontier | 8541 / 26,723 | 3.13 | ~0.39 | **0.4141** | **+8.87pp** | **+1.35pp ✅** |
+
+ensemble sweep 三者一致偏好高 vote：qwen vote=4(0.4094) > vote=3(0.4009) > vote=2(0.3631)；gemma vote=4(0.3764) > vote=3(0.3674) > vote=2(0.3517)。
+
+**🔍 核心发现 —— teacher 重要，但「云 vs 本地」不是决定因素，模型质量才是**：
+- **本地强模型可追平云端**：qwen3.6-36B (本地) ensemble **0.4094**，仅落后云端 DeepSeek **0.47pp**，回收了 **95%** 的 KD 收益（+8.40 / +8.87），且**反超 SOTA +0.88pp**。→ KD 不依赖付费云 API，一块 24GB 卡 + 开源 36B 即可复现超 SOTA 结果。
+- **本地模型之间差异巨大**：同为本地、qwen3.6 (0.4094) 比 gemma-31B-Q4 (0.3764) 高 **+3.3pp**，正好跨过 SOTA 分界线。「local vs cloud」是伪命题，真正的轴是 teacher 本身的标注质量。
+- **🔑 反直觉：决定 KD 的是 quad 正确性，不是召回/密度**：qwen silver 密度 **2.79** quads/text **低于** gemma 的 **2.82**，量更少，但 KD 高 +3.3pp。推翻了"silver 越多越好"的直觉 → teacher 抽的四元组**更准**（category / span / VA 更对）比**更多**更重要。DeepSeek 密度最高(3.13)且质量最好，是量质双优；qwen 是低量高质，gemma 是中量低质。
+- **论文叙述**：「Teacher quality, not cloud-vs-local deployment, governs KD: a local open-source 36B (qwen3.6) recovers 95% of the cloud frontier teacher's gain (+8.4 vs +8.9pp) and still surpasses SOTA (+0.9pp), while a weaker local 31B trails by 3.3pp and misses SOTA. Counter-intuitively the stronger teacher had *lower* silver density (2.79 vs 2.82 quads/text), showing that per-quad correctness — not recall — drives distillation quality.」
+
+**eng_laptop 提交不切换** —— 仍用 DeepSeek 臂 V23 KD (0.4141，三者最高)。Gemma/qwen 臂作 teacher-quality 消融证据。脚本：`scripts/llm_silver_label_ollama.py`、`scripts/build_eng_v23_{gemma,qwen}.py`、`scripts/run_v23_{gemma,qwen}_eng_laptop.sh`。
+
+---
+
+#### 5.29.3 KD 推广到剩余 3 个数据集（jpn_hotel / eng_restaurant / zho_restaurant，teacher=本地 qwen3.6）
+
+**动机**：把 KD 推广到尚未蒸馏的全部 3 个数据集。三者都**没有 in-domain 无标注语料**，用 qwen3.6 原生生成（中/日/英三语，质量经探针确认）~4000 条 + test 文本构成池，qwen3.6 silver 标注，各自 V16 专用 encoder 5-seed 训练。脚本：`scripts/gen_native_ollama.py`、`scripts/run_v23_qwen_kd_multi.sh`。
+
+| 数据集 | encoder | gold | silver | **silver:gold** | gold-only dev | qwen-KD ensemble | Δ | 类别数 |
+|---|---|---|---|---|---|---|---|---|
+| jpn_hotel | deberta-v2-large-japanese | 2893 | 4558 | 1.6 | 0.4466 | 0.4043 (v4 t0.10) | **−4.2pp ❌** | 44 |
+| eng_restaurant | deberta-v3-large | 2284 | 4884 | **2.1** | 0.6554 | 0.4043 (v3 t0.0) | **−25.1pp ❌❌** | 14 |
+| **zho_restaurant** | chinese-roberta-wwm-ext-large | **6050** | 4776 | **0.79** | 0.4745 | **0.5263** (v3 t0.0) | **+5.2pp ✅** | 12 |
+| zho_laptop（capped silver）| chinese-roberta-wwm-ext-large | 5534† | 2700 | **0.49** | 0.4487 | 0.4454 (v4 t0.10) | **−0.3pp ⚠️** | 113 |
+
+†zho_laptop base 用 V16 配方 v13c（5534，含 paraphrase aug）。zho-restaurant 细 sweep 确认稳健：整个 vote=3 行 0.5227–0.5263、vote=4 0.519，对 topk 不敏感（非单点过拟合）。
+
+**🔑 真正的统一判据 = silver 能否提供 gold 缺失的信息（修正"teacher 天花板"的中途误判）**：
+- 中途曾误以为"KD 模型收敛到 teacher 标注质量 ~0.40 天花板"，被 zho_restaurant 0.5263 推翻。真正机制是 **silver:gold 比例 × gold 质量/类别稀疏度**：
+  - **eng_laptop**（ratio 2.1 但 **+8pp**）：gold 弱(0.325)+240 类极稀疏 → silver 填补弱模型学不到的稀疏类先验。
+  - **zho_restaurant**（ratio **0.79** → **+5.2pp**）：gold 多(6050)使 silver 成少数派，不淹没 gold，只贡献 seed 多样性 → ensemble 抬升。**首个"数据较多却靠 silver 少数派多样性获益"的案例，与前 4 个"数据稀缺"机制不同。**
+  - **eng_restaurant**（ratio 2.1 + gold 强 0.655 + 14 类密集 → **−25pp**）：噪声 silver 2 倍碾压已很强的 clean gold，把学生拽向 silver 质量。灾难性负向端。
+  - **jpn_hotel**（ratio 1.6 + 强 native encoder + 44 类 → −4pp）：与 §5.20.7/§7.6.3 一致，强 native encoder 上合成数据净负面。
+  - **zho_laptop**（ratio **0.49** + 113 类稀疏 → −0.3pp ⚠️）：同时具备稀疏类 + silver 少数派两个有利条件，但 silver 砍得过狠（capped 2700，ratio 0.49）→ 多样性增益不足，ensemble 0.4454 刚好差强基线 0.4487 0.3pp。说明 **silver 少数派是必要而非充分——量太少则多样性不够**；甜区疑似在 ratio ≈ 0.7–0.9（zho_restaurant 0.79 成功）。→ 用 full silver (ratio 0.86) 重跑验证甜区（见下）。
+- **预测规则**：KD 有效 ⟺ ①gold 弱或类别极稀疏（silver 补信息）**或** ②silver 保持少数派**且量足够**（ratio ≈ 0.7–0.9，加多样性不淹没）。强 gold + 高 silver 比 → 灾难；silver 砍太狠（ratio≪0.7）→ 多样性不足。
+- **论文叙述**：「KD's benefit is governed by whether the silver supplies information the gold lacks: it helps a weak / sparse-category gold model (eng_laptop, +8.9pp) and a data-rich model where silver stays a minority adding only diversity (zho_restaurant ratio 0.79, +5.2pp), but catastrophically harms a strong dense-category model flooded with 2× noisy silver (eng_restaurant, −25pp).」
+
+**提交切换**：zho_restaurant 从 V16 (0.4745) → **qwen-KD vote=3 topk=0.0 (0.5263, +5.18pp)**，V16 留 `zho_restaurant_test_v16_backup.jsonl`。jpn_hotel / eng_restaurant **不切换**（KD 负向）。→ **第 5 个经 KD 改善的数据集**。
+
+---
+
 ### 5.21 Jpn 跨基线对比
 
 | 模型 | jpn_hotel dev cF1 | 备注 |

@@ -2,9 +2,7 @@
 
 SemEval-2026 Task 3: Dimensional Aspect Sentiment Quad Prediction
 
-## Overview
-
-从文本中提取情感四元组 `(Aspect, Category, Opinion, Valence#Arousal)`
+从文本中提取情感四元组 `(Aspect, Category, Opinion, Valence#Arousal)`，覆盖 8 个语言/领域数据集。
 
 ```
 Input:  "The thai food was delicious but delivery was terrible."
@@ -12,235 +10,178 @@ Output: [(thai food, FOOD#QUALITY, delicious, 7.5#6.2),
          (delivery, SERVICE#GENERAL, terrible, 2.1#7.0)]
 ```
 
-## Results
+## 方法概览
 
-| Model | cF1 | Exact F1 | VA RMSE | Best Epoch |
-|-------|-----|----------|---------|------------|
-| Baseline | 0.2935 | 0.3252 | 1.3200 | 7 |
-| + Rethink Module | 0.4064 | 0.4490 | 1.3125 | 18 |
-| + Span Fix + FGM + EMA | 0.3836 | 0.4195 | 1.2208 | 11 |
-| + Hungarian Matching | 0.4348 | 0.4748 | 1.1406 | 16 |
-| + Loss Weight Sweep (span=2.0) | **0.6278** | - | - | - |
+每个数据集使用**专用预训练 encoder + 5-seed 双层 ensemble**，部分数据稀缺的数据集额外用 **LLM 知识蒸馏 (KD)** 突破。
 
-**Improvement over Baseline: +33.43% cF1**
+- **专用 encoder**：按语言/领域选最优 encoder（见下表），而非单模型跑全部。
+- **双层 ensemble**：每个 seed 内 `save_top_k=3` 权重平均 → 跨 5 seed `vote_threshold` + `span_topk_threshold` 投票。
+- **LLM 知识蒸馏 (V23)**：LLM（云端 DeepSeek 或本地 qwen3.6）对 in-domain 无标注文本打 silver 标签 → 小模型在 gold+silver 上训练 → **推理时完全不用 LLM**。详见 [§5.28–5.29](docs/EXPERIMENTS.md)。
+
+## 当前结果（dev cF1，8 数据集提交配置）
+
+| 数据集 | encoder | 方法 | dev cF1 | test SOTA 对比 |
+|---|---|---|---|---|
+| eng_laptop | deberta-v3-base | **KD (DeepSeek)** | **0.4141** | ✅ 反超 nchellwig 0.4006 |
+| eng_restaurant | deberta-v3-large | V16 baseline | 0.6554 | ✅ 领先 |
+| jpn_hotel | ku-nlp/deberta-v2-large-japanese | V16 baseline | 0.4466 | ✅ 反超 PALI 0.4252 |
+| rus_restaurant | xlm-roberta-large | **KD (DeepSeek)** | **0.5753** | ✅ 反超 PAI 0.5599 |
+| ukr_restaurant | mdeberta-v3-base | **KD (DeepSeek)** | **0.5560** | ✅ 反超 PAI 0.5437 |
+| tat_restaurant | xlm-roberta-large | **KD (DeepSeek)** | **0.5196** | ✅ 反超 Takoyaki 0.4736 |
+| zho_restaurant | chinese-roberta-wwm-ext-large | **KD (qwen3.6)** | **0.5263** | ✅ 领先（基线 0.4745）|
+| zho_laptop | chinese-roberta-wwm-ext-large | V16 baseline | 0.4487 | ❌ 距 NYCU 0.4824 −3.4pp |
+
+**5/8 数据集采用 KD**（4 个 DeepSeek + 1 个本地 qwen3.6）。注意 dev≠test，最终以 test 集为准。
+
+### KD 何时有效（核心发现）
+
+KD 有效 ⟺ **silver 能提供 gold 缺失的信息**：
+- gold 弱 / 类别空间极稀疏 → silver 补充稀疏类先验（eng_laptop +8.9pp、rus/ukr/tat）；
+- 或 silver 保持少数派（silver:gold < 1）→ 只加 seed 多样性不淹没 gold（zho_restaurant +5.2pp）。
+
+反例：强 gold（eng_restaurant 0.655）被 2× 噪声 silver 碾压 → −25pp；强 native encoder（jpn）→ 净负面。完整消融见 [docs/EXPERIMENTS.md §5.29.1–5.29.3](docs/EXPERIMENTS.md)。
 
 ## Setup
 
 ```bash
-# 安装 Miniforge (如未安装)
-# https://github.com/conda-forge/miniforge
-wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
-bash Miniforge3-Linux-x86_64.sh
-
-# 一键创建环境 (自动安装 PyTorch CUDA 版 + 兼容性修复)
+# 安装 Miniforge（如未安装）：https://github.com/conda-forge/miniforge
 bash scripts/setup_env.sh
 mamba activate absa
-
-# 验证
 python -c "import torch; print(f'PyTorch {torch.__version__}, CUDA {torch.cuda.is_available()}')"
 ```
 
 ## Quick Start
 
+当前工作流以 **`train_multi_seed.py` + per-dataset pipeline config + 多 seed ensemble 推理**为准。
+
 ```bash
-# Train
-python scripts/train.py --config configs/config_rethink_v3.yaml
+# 1) 5-seed 训练（pipeline config 指定 encoder / 数据 / 超参）
+python scripts/train_multi_seed.py \
+    --config configs/pipeline_<dataset>_v16.yaml \
+    --seeds 42 123 456 789 1024 \
+    --save_prefix <dataset>_seed \
+    --train_file data/subtask_3/<lang>/<dataset>_train_alltasks.jsonl
 
-# Train all 8 language/domain datasets
-python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml
+# 2) 多 seed 双层 ensemble 推理（vote + topk）
+python scripts/inference.py --multi_seed_ensemble \
+    --seed_dirs checkpoints/<dataset>_seed42 ... checkpoints/<dataset>_seed1024 \
+    --config configs/pipeline_<dataset>_v16.yaml \
+    --test_file data/subtask_3/<lang>/<dataset>_dev_task3.jsonl \
+    --output predictions/<dataset>_pred.jsonl \
+    --vote_threshold 3 --span_topk_threshold 0.0 --batch_size 16
 
-# Batch inference + evaluation (all datasets)
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml
-
-# Single dataset inference
-python scripts/inference.py \
-    --checkpoint checkpoints/all_lang/eng_restaurant/checkpoint_best.pt \
-    --config configs/config_rethink_v3.yaml \
-    --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
-    --output predictions/eng_restaurant_pred.jsonl
-
-# Official evaluation
-python scripts/official_eval.py \
-    -p predictions/eng_restaurant_pred.jsonl \
-    -g data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
-    -t 3
+# 3) 官方评测
+python scripts/official_eval.py -p predictions/<dataset>_pred.jsonl \
+    -g data/subtask_3/<lang>/<dataset>_dev_task3.jsonl -t 3
 ```
+
+### 知识蒸馏 (KD) 流程
+
+```bash
+# A) silver-labeling（云端 DeepSeek）
+export DEEPSEEK_API_KEY=sk-...
+python scripts/llm_silver_label.py --input <pool>.jsonl \
+    --train_file <dataset>_train_alltasks.jsonl --output <dataset>_silver.jsonl \
+    --model deepseek-v4-pro --domain restaurant --n_shots 6
+
+# A') silver-labeling（本地 ollama，如 qwen3.6）— 自动关闭推理 channel (think:false)
+OLLAMA_URL=http://localhost:11433 python scripts/llm_silver_label_ollama.py \
+    --input <pool>.jsonl --train_file <dataset>_train_alltasks.jsonl \
+    --output <dataset>_silver_qwen.jsonl --model "qwen3.6:latest" --domain restaurant
+
+# B) 无 in-domain 语料时，本地 LLM 原生生成池（中/日/英等）
+OLLAMA_URL=http://localhost:11433 python scripts/gen_native_ollama.py \
+    --dataset zho_restaurant --n 4000 --output <pool>.jsonl --model "qwen3.6:latest"
+
+# C) distill 训练 = gold + 校验后的 silver → 同上 train_multi_seed + ensemble
+```
+
+完整可复现脚本：`scripts/run_v23_silver_*.sh`（DeepSeek 臂）、`scripts/run_v23_qwen_*.sh`、`scripts/run_v23_qwen_kd_multi.sh`（本地 qwen 臂）。
 
 ## Architecture
 
 ```
-Input → DeBERTa-v3 → [Span BIO, Pair Classifier, V-A Regressor]
+Input → 专用 Encoder → [Span BIO, Pair Classifier, V-A Regressor]
                               ↓
-                    Feature-level Rethink
+                    Feature-level Rethink (2-stage)
                               ↓
                     Refined Predictions
 ```
 
-**Key Components:**
-- **Span Extractor**: BIO tagging for aspect/opinion extraction (with position-aware duplicate handling)
-- **Pair Classifier**: Entity + Attribute classification with label smoothing (0.1)
-- **V-A Regressor**: Continuous valence-arousal prediction (1-9)
-- **Feature-level Rethink**: Iterative refinement mechanism (configurable iterations)
-- **Hungarian Matching**: Optimal pair alignment during training (+5.12% cF1 vs greedy)
-- **FGM**: Fast Gradient Method adversarial training, warmup-guarded to avoid early instability
-- **EMA**: Exponential Moving Average of model weights (decay=0.999)
-- **Loss Weights**: Per-task loss weighting (bio/entity/attribute/va/consistency) via config
-- **Top-K Checkpointing**: Min-heap based top-k checkpoint management for robust model selection
+- **Span Extractor**：BIO 标注抽取 aspect/opinion（位置感知去重）
+- **Pair Classifier**：Entity + Attribute 分类（label smoothing 0.1）
+- **V-A Regressor**：连续 valence-arousal 回归 (1–9)
+- **Feature-level Rethink**：迭代精化（可配置轮数）
+- **Hungarian Matching**：训练时最优配对对齐
+- **FGM / EMA**：对抗训练（warmup 保护）+ 权重 EMA (decay 0.999)
+- **双层 Ensemble**：seed 内 top-k 权重平均 + 跨 seed vote/topk 投票
 
-## Documentation
-
-- [Model Architecture](docs/MODEL.md) - 详细架构说明
-- [Experiments](docs/EXPERIMENTS.md) - 实验记录与结果分析
-- [CLI Guide](docs/CLI_GUIDE.md) - 命令行操作指南（训练、推理、评测）
-- [AI Guide](README_AI.md) - AI 快速理解指南（架构、已实现功能、创新方向）
+详见 [docs/MODEL.md](docs/MODEL.md)。
 
 ## Project Structure
 
 ```
-├── configs/              # 训练配置
-│   ├── config_baseline.yaml
-│   ├── config_rethink.yaml
-│   ├── config_rethink_v2.yaml
-│   └── config_rethink_v3.yaml
+├── configs/                     # pipeline_<dataset>_v*.yaml（per-dataset encoder/数据/超参）
 ├── src/
 │   ├── models/
-│   │   ├── dimabsa_model.py    # 主模型
-│   │   ├── va_module.py        # V-A回归模块
-│   │   └── feature_rethink.py  # Rethink模块
-│   ├── data/
-│   │   └── dataset.py          # 数据处理
-│   └── evaluation/
-│       └── metrics.py          # 评估指标
+│   │   ├── dimabsa_model.py      # 主模型
+│   │   ├── va_module.py          # V-A 回归
+│   │   ├── feature_rethink.py    # Rethink 模块
+│   │   └── crf.py                # （可选）CRF
+│   ├── data/dataset.py           # 数据处理（Quadruplet → BIO/pair/VA）
+│   └── evaluation/metrics.py     # 评估指标
 ├── scripts/
-│   ├── train.py
-│   ├── train_all_languages.py   # 全语言批量训练
-│   ├── inference.py             # 支持 EMA + ensemble
-│   ├── batch_eval.py            # 批量推理+评测
-│   ├── official_eval.py         # 官方评测脚本
-│   └── sweep_loss_weights.py    # loss权重自动搜索
-├── docs/
-│   ├── MODEL.md
-│   └── EXPERIMENTS.md
-└── checkpoints/
+│   ├── train_multi_seed.py       # 多 seed 训练（当前主入口）
+│   ├── inference.py              # 推理（--multi_seed_ensemble 双层投票）
+│   ├── official_eval.py          # 官方评测
+│   ├── llm_silver_label.py       # KD silver-labeling（DeepSeek 云端）
+│   ├── llm_silver_label_ollama.py# KD silver-labeling（本地 ollama，think:false）
+│   ├── gen_native_ollama.py      # 本地 LLM 原生生成 in-domain 池（中/日/英…）
+│   ├── build_eng_v23_*.py        # 组装 distill 训练集
+│   └── run_v23_*.sh              # 各数据集 KD 全流程
+├── data/subtask_3/<lang>/        # 8 数据集 train/dev/test + silver/pool
+├── submission/final/             # 各数据集 test 预测（*_backup.jsonl = 切换前版本）
+├── submission/submission.zip     # 正式提交包
+├── docs/EXPERIMENTS.md           # 完整实验记录（V4→V23，含 KD 消融）
+└── checkpoints/                  # 模型权重（save_top_k=3 × 5 seed）
 ```
 
 ## Data Format
 
-**Input (JSONL):**
-```json
-{"ID": "R001", "Text": "The food was great."}
-```
+**Input (JSONL):** `{"ID": "R001", "Text": "The food was great."}`
 
 **Output (JSONL):**
 ```json
-{
-  "ID": "R001",
-  "Quadruplet": [
-    {"Aspect": "food", "Category": "FOOD#QUALITY", "Opinion": "great", "VA": "7.50#6.00"}
-  ]
-}
+{"ID": "R001", "Quadruplet": [
+  {"Aspect": "food", "Category": "FOOD#QUALITY", "Opinion": "great", "VA": "7.50#6.00"}
+]}
 ```
 
-## Evaluation
+## Documentation
 
-### Step 1: Train (All Languages)
+- [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) — 完整实验记录与结果分析（含 KD 消融 §5.28–5.29，**最权威最新**）
+- [docs/MODEL.md](docs/MODEL.md) — 模型架构详解
+- [docs/CLI_GUIDE.md](docs/CLI_GUIDE.md) — 命令行操作指南
+- [README_AI.md](README_AI.md) — AI 快速理解指南
 
-```bash
-# Train all 8 datasets (eng/rus/tat/ukr/zho_restaurant, eng/zho_laptop, jpn_hotel)
-python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml
+## Key Configuration
 
-# Train specific datasets only
-python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml \
-    --datasets eng_restaurant jpn_hotel
-
-# Quick test (fewer epochs)
-python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml \
-    --datasets eng_restaurant --num_epochs 3
-```
-
-Checkpoints are saved to `checkpoints/all_lang/{dataset_name}/`.
-
-### Step 2: Generate Predictions
-
-```bash
-# Single dataset
-python scripts/inference.py \
-    --config configs/config_rethink_v3.yaml \
-    --checkpoint checkpoints/all_lang/eng_restaurant/checkpoint_best.pt \
-    --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
-    --output predictions/eng_restaurant_pred.jsonl
-
-# Ensemble (weight-average top-k checkpoints)
-python scripts/inference.py \
-    --ensemble --checkpoint_dir checkpoints/all_lang/eng_restaurant \
-    --config configs/config_rethink_v3.yaml \
-    --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
-    --output predictions/eng_restaurant_ensemble.jsonl
-```
-
-### Step 3: Official Evaluation
-
-Uses the [official DimABSA2026 evaluation script](https://github.com/DimABSA/DimABSA2026/tree/main/evaluation_script):
-
-```bash
-python scripts/official_eval.py \
-    -p predictions/eng_restaurant_pred.jsonl \
-    -g data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
-    -t 3
-```
-
-Output:
-```
---- Evaluation Results ---
-True Positives (cTP): ...
-cPrecision: ...
-cRecall: ...
-cF1: ...
-```
-
-### Batch Evaluation (All Languages)
-
-```bash
-# All datasets
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml
-
-# Specific datasets
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml \
-    --datasets eng_restaurant jpn_hotel
-
-# With ensemble
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml --ensemble
-```
-
-Results are saved to `predictions/eval_results.json`.
-
-**Note:** Inference automatically loads `entity_labels` and `attribute_labels` from the checkpoint's saved config, so label order mismatch is handled automatically.
-
-## Configuration
-
-| Parameter | Default (V3) | Description |
-|-----------|---------|-------------|
-| encoder_name | microsoft/deberta-v3-base | Pretrained encoder |
-| use_rethink | true | Enable Feature-level Rethink |
-| rethink_iterations | 2 | Number of iterative rethink passes |
-| batch_size | 8 | Training batch size |
-| encoder_lr | 1.5e-5 | Encoder learning rate |
-| head_lr | 7.5e-5 | Task head learning rate |
-| num_epochs | 30 | Max training epochs |
-| patience | 8 | Early stopping patience |
-| fgm_epsilon | 0.1 | Adversarial perturbation strength |
-| ema_decay | 0.999 | EMA decay for evaluation |
-| save_top_k | 3 | Number of best checkpoints to retain |
-| loss_weights.span | 2.0 | BIO span loss weight |
-| loss_weights.entity | 1.0 | Entity classification loss weight |
-| loss_weights.attribute | 1.0 | Attribute classification loss weight |
-| loss_weights.va | 1.0 | V-A regression loss weight |
-| loss_weights.consistency | 0.5 | Rethink consistency loss weight |
+| Parameter | 默认 | 说明 |
+|-----------|------|------|
+| encoder_name | per-dataset | 专用 encoder（见结果表）|
+| rethink.enabled / num_iterations | true / 2 | Feature-level Rethink |
+| batch_size | 4–8 | 训练 batch（large encoder 用 4）|
+| encoder_lr / head_lr | 1.5e-5 / 7.5e-5 | 分层学习率 |
+| num_epochs / patience | 30 / 8 | 最大 epoch / 早停 |
+| fgm.epsilon / ema.decay | 0.1 / 0.999 | 对抗扰动 / EMA |
+| save_top_k | 3 | seed 内保留的最优 checkpoint 数 |
+| loss_weights.span | 2.0 | BIO span loss 权重 |
+| vote_threshold / span_topk_threshold | 推理时扫 | 跨 seed 投票 / span top-k 阈值 |
 
 ## References
 
-- [SemEval-2026 Task 3](https://github.com/DimABSA/DimABSA2026)
-- [DeBERTa-v3](https://github.com/microsoft/DeBERTa)
+- [SemEval-2026 Task 3 (DimABSA2026)](https://github.com/DimABSA/DimABSA2026)
+- 官方评测脚本：[evaluation_script](https://github.com/DimABSA/DimABSA2026/tree/main/evaluation_script)
 
 ## License
 

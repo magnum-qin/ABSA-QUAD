@@ -286,6 +286,9 @@
   <header>
     <h1>DimASQP Experiment Matrix</h1>
     <p class="subtitle">Columns are the eight Track A Subtask 3 datasets. Rows are the main experiment versions from <code>docs/EXPERIMENTS.md</code>. Each cell shows dev cF1 and the change from the nearest key baseline when available.</p>
+    <p class="note" style="background:#fff3cd;border:1px solid #ffe69c;border-radius:6px;padding:10px 14px;color:#664d03;">
+      ⚠️ <strong>Snapshot as of V20 (2026-06-04).</strong> This matrix does <strong>not</strong> include the V21–V23 LLM knowledge-distillation results, which are the current strongest setups (5/8 datasets now use KD: eng_laptop 0.4141, rus 0.5753, ukr 0.5560, tat 0.5196, zho_restaurant 0.5263). For the authoritative, up-to-date record see <code>docs/EXPERIMENTS.md</code> §5.28–5.29 and the results table in <code>README.md</code>.
+    </p>
     <div class="kpis">
       <div class="kpi"><strong>0.5008</strong><span>Final 8-dataset mean dev cF1</span></div>
       <div class="kpi"><strong>+6.11 pp</strong><span>Gain over V6 mean 0.4397</span></div>

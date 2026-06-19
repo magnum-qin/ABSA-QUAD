@@ -1,14 +1,18 @@
 # 命令行操作指南
 
+> 反映**当前工作流**：per-dataset 专用 encoder + 5-seed 双层 ensemble + LLM 知识蒸馏 (KD)。
+> 权威结果见 [EXPERIMENTS.md](EXPERIMENTS.md)，总览见 [README.md](../README.md)。
+> （旧的 `train_all_languages.py` / `config_rethink_v3` 单模型流程已弃用。）
+
 ## 目录
 
 1. [环境准备](#1-环境准备)
-2. [单数据集训练](#2-单数据集训练)
-3. [全语言批量训练](#3-全语言批量训练)
-4. [推理（生成预测）](#4-推理生成预测)
-5. [评测](#5-评测)
-6. [批量评测](#6-批量评测)
-7. [Loss 权重搜索](#7-loss-权重搜索)
+2. [多 seed 训练](#2-多-seed-训练)
+3. [双层 ensemble 推理](#3-双层-ensemble-推理)
+4. [评测](#4-评测)
+5. [vote / topk 阈值扫描](#5-vote--topk-阈值扫描)
+6. [知识蒸馏 (KD) 流程](#6-知识蒸馏-kd-流程)
+7. [生成提交包](#7-生成提交包)
 8. [常用参数说明](#8-常用参数说明)
 
 ---
@@ -16,130 +20,68 @@
 ## 1. 环境准备
 
 ```bash
-pip install -r requirements.txt
+bash scripts/setup_env.sh
+mamba activate absa
+python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
-所需环境：Python 3.10+, PyTorch 2.0+, transformers, tqdm, pyyaml
+每个数据集的 encoder / 数据 / 超参由 `configs/pipeline_<dataset>_v*.yaml` 指定（见结果表）。
 
 ---
 
-## 2. 单数据集训练
+## 2. 多 seed 训练
 
-**脚本**: `scripts/train.py`
+**脚本**: `scripts/train_multi_seed.py` — 对一组 seed 依次训练，每 seed 内 `save_top_k=3` 权重平均。
 
 ```bash
-# 基本用法（使用 V3 配置）
-python scripts/train.py --config configs/config_rethink_v3.yaml
-
-# 指定数据文件（覆盖 config 中的路径）
-python scripts/train.py --config configs/config_rethink_v3.yaml \
-    --train_file data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl \
-    --val_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl
-
-# 指定 GPU
-python scripts/train.py --config configs/config_rethink_v3.yaml --device cuda:1
+python scripts/train_multi_seed.py \
+    --config configs/pipeline_eng_restaurant_v16.yaml \
+    --seeds 42 123 456 789 1024 \
+    --save_prefix eng_restaurant_seed \
+    --train_file data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl
 ```
 
-**参数**:
+| 参数 | 说明 |
+|------|------|
+| `--config` | pipeline config（指定 encoder/超参/数据路径） |
+| `--seeds` | 随机种子列表（默认 5 个）|
+| `--save_prefix` | checkpoint 目录前缀 → `checkpoints/<prefix><seed>` |
+| `--train_file` | 训练数据（覆盖 config 中路径，KD 时指向 distill 集）|
+| `--pretrained_checkpoint(s)` | （可选）迁移/继续训练的起点权重 |
 
-| 参数 | 默认值 | 说明 |
-|------|--------|------|
-| `--config` | `configs/config.yaml` | 配置文件路径 |
-| `--train_file` | config 中的值 | 训练数据路径（覆盖 config） |
-| `--val_file` | config 中的值 | 验证数据路径（覆盖 config） |
-| `--device` | auto | 设备（cuda/cpu） |
-
-**输出**:
-- 权重: `{save_dir}/checkpoint_best.pt`, `checkpoint_top2.pt`, `checkpoint_top3.pt`
-- 日志: `training.log`
+输出：`checkpoints/<prefix>{42,123,456,789,1024}/`（每个含 top-k 权重）。
 
 ---
 
-## 3. 全语言批量训练
+## 3. 双层 ensemble 推理
 
-**脚本**: `scripts/train_all_languages.py`
-
-支持的 8 个数据集:
-`eng_restaurant`, `eng_laptop`, `jpn_hotel`, `rus_restaurant`, `tat_restaurant`, `ukr_restaurant`, `zho_restaurant`, `zho_laptop`
+**脚本**: `scripts/inference.py --multi_seed_ensemble` — 跨 5 seed 投票 + span top-k 过滤。
 
 ```bash
-# 训练全部 8 个数据集
-python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml
-
-# 只训练指定数据集
-python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml \
-    --datasets eng_restaurant jpn_hotel
-
-# 快速测试（减少 epoch）
-python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml \
-    --datasets eng_restaurant --num_epochs 3
-```
-
-**参数**:
-
-| 参数 | 默认值 | 说明 |
-|------|--------|------|
-| `--base_config` | `configs/config_rethink_v3.yaml` | 基础配置文件 |
-| `--datasets` | 全部 8 个 | 指定要训练的数据集 |
-| `--num_epochs` | config 中的值 | 覆盖训练轮数 |
-
-**输出**:
-- 权重: `checkpoints/all_lang/{dataset_name}/checkpoint_best.pt`
-- 汇总: `checkpoints/all_lang/results.json`
-
-**说明**: 脚本自动处理每个数据集的标签集和编码器选择（英文用 `deberta-v3-base`，其他语言用 `mdeberta-v3-base`）。
-
----
-
-## 4. 推理（生成预测）
-
-**脚本**: `scripts/inference.py`
-
-```bash
-# 单模型推理
-python scripts/inference.py \
-    --checkpoint checkpoints/all_lang/eng_restaurant/checkpoint_best.pt \
-    --config configs/config_rethink_v3.yaml \
-    --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
-    --output predictions/eng_restaurant_pred.jsonl
-
-# Ensemble 推理（加权平均 top-k 权重）
-python scripts/inference.py \
-    --ensemble \
-    --checkpoint_dir checkpoints/all_lang/eng_restaurant \
-    --config configs/config_rethink_v3.yaml \
-    --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
-    --output predictions/eng_restaurant_ensemble.jsonl
-
-# 调整 batch_size（默认 32）
-python scripts/inference.py \
-    --checkpoint checkpoints/all_lang/eng_restaurant/checkpoint_best.pt \
-    --config configs/config_rethink_v3.yaml \
+SD=""; for s in 42 123 456 789 1024; do SD="$SD checkpoints/eng_restaurant_seed${s}"; done
+python scripts/inference.py --multi_seed_ensemble \
+    --seed_dirs $SD \
+    --config configs/pipeline_eng_restaurant_v16.yaml \
     --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
     --output predictions/eng_restaurant_pred.jsonl \
-    --batch_size 64
+    --vote_threshold 3 --span_topk_threshold 0.0 --batch_size 16
 ```
 
-**参数**:
+| 参数 | 说明 |
+|------|------|
+| `--multi_seed_ensemble` | 启用多 seed 双层 ensemble |
+| `--seed_dirs` | 5 个 seed checkpoint 目录 |
+| `--vote_threshold` | 跨 seed 投票阈值（quad 至少被 N 个 seed 预测才保留，常用 3 或 4）|
+| `--span_topk_threshold` | span top-k 概率阈值（0.0 = 不过滤）|
+| `--test_file` / `--output` | 输入文本 / 预测输出 |
 
-| 参数 | 默认值 | 说明 |
-|------|--------|------|
-| `--checkpoint` | 无 | 模型权重路径（单模型模式） |
-| `--ensemble` | false | 启用 ensemble 模式 |
-| `--checkpoint_dir` | 无 | 权重目录（ensemble 模式必填） |
-| `--config` | `configs/config.yaml` | 配置文件路径 |
-| `--test_file` | **必填** | 测试数据路径 |
-| `--output` | **必填** | 预测输出路径 |
-| `--batch_size` | 32 | 推理 batch size |
-| `--device` | auto | 设备 |
-
-**说明**: 推理时自动从 checkpoint 加载 `entity_labels` 和 `attribute_labels`，无需担心标签不匹配。如果 checkpoint 包含 EMA 权重，会自动使用 EMA 权重。
+> 单模型推理仍可用 `--checkpoint <path>`；旧 `--ensemble --checkpoint_dir`（单 seed 内 top-k）也保留。
 
 ---
 
-## 5. 评测
+## 4. 评测
 
-**脚本**: `scripts/official_eval.py`（官方评测脚本）
+**脚本**: `scripts/official_eval.py`（官方评测）
 
 ```bash
 python scripts/official_eval.py \
@@ -148,122 +90,96 @@ python scripts/official_eval.py \
     -t 3
 ```
 
-**参数**:
-
 | 参数 | 说明 |
 |------|------|
-| `-p` / `--pred_data_path` | 预测文件路径 |
-| `-g` / `--gold_data_path` | 标注文件路径 |
-| `-t` / `--task` | 任务编号（固定为 3） |
-| `--do_norm` | 启用文本归一化（可选） |
+| `-p` / `--pred_data_path` | 预测文件 |
+| `-g` / `--gold_data_path` | gold 文件 |
+| `-t` / `--task` | 任务编号（固定 3）|
+| `--do_norm` | 文本归一化（可选）|
 
-**输出示例**:
-```
---- Evaluation Results ---
-True Positives (cTP): 42.35
-cPrecision: 0.6521
-cRecall: 0.6089
-cF1: 0.6298
+输出含 `cF1`（主指标）。
+
+---
+
+## 5. vote / topk 阈值扫描
+
+确定 ensemble 最优 operating point（多数数据集 vote=3 或 4 最佳）：
+
+```bash
+SD=""; for s in 42 123 456 789 1024; do SD="$SD checkpoints/<prefix>seed${s}"; done
+for vote in 2 3 4; do for topk in 0.0 0.10 0.20; do
+  python scripts/inference.py --multi_seed_ensemble --seed_dirs $SD \
+    --config <cfg> --test_file <dev> --output /tmp/v${vote}_t${topk}.jsonl \
+    --vote_threshold $vote --span_topk_threshold $topk --batch_size 16
+  cf1=$(python scripts/official_eval.py -p /tmp/v${vote}_t${topk}.jsonl -g <dev> -t 3 | grep -oE "cF1: [0-9.]+")
+  echo "vote=$vote topk=$topk -> $cf1"
+done; done
 ```
 
 ---
 
-## 6. 批量评测
+## 6. 知识蒸馏 (KD) 流程
 
-**脚本**: `scripts/batch_eval.py`
-
-对所有已训练的数据集依次执行推理 + 评测，输出汇总表。
+LLM 对 in-domain 无标注文本打 silver 标签 → 小模型训练 → 推理不用 LLM。
 
 ```bash
-# 评测全部数据集
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml
+# (A) silver-labeling — 云端 DeepSeek
+export DEEPSEEK_API_KEY=sk-...
+python scripts/llm_silver_label.py \
+    --input <pool>.jsonl --train_file <dataset>_train_alltasks.jsonl \
+    --output <dataset>_silver.jsonl --model deepseek-v4-pro --domain restaurant --n_shots 6
 
-# 评测指定数据集
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml \
-    --datasets eng_restaurant jpn_hotel
+# (A') silver-labeling — 本地 ollama（如 qwen3.6，自动 think:false）
+OLLAMA_URL=http://localhost:11433 python scripts/llm_silver_label_ollama.py \
+    --input <pool>.jsonl --train_file <dataset>_train_alltasks.jsonl \
+    --output <dataset>_silver_qwen.jsonl --model "qwen3.6:latest" --domain restaurant --workers 2
 
-# 使用 ensemble
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml --ensemble
+# (B) 无 in-domain 语料 → 本地 LLM 原生生成池（dataset ∈ eng_restaurant/jpn_hotel/zho_restaurant/zho_laptop）
+OLLAMA_URL=http://localhost:11433 python scripts/gen_native_ollama.py \
+    --dataset zho_restaurant --n 4000 --output <pool>.jsonl --model "qwen3.6:latest"
 
-# 指定权重和输出目录
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml \
-    --checkpoint_dir checkpoints/all_lang \
-    --output_dir predictions
+# (C) distill 训练 = gold + 校验后 silver → 回到 §2 train_multi_seed（--train_file 指向 distill 集）→ §3 推理
 ```
 
-**参数**:
+一键全流程示例：`scripts/run_v23_silver_rus.sh`（DeepSeek）、`scripts/run_v23_qwen_kd_multi.sh`（本地 qwen 多数据集）、`scripts/run_v23_qwen_zho_laptop.sh`（含 silver 封顶）。
 
-| 参数 | 默认值 | 说明 |
-|------|--------|------|
-| `--base_config` | `configs/config_rethink_v3.yaml` | 配置文件 |
-| `--checkpoint_dir` | `checkpoints/all_lang` | 权重根目录 |
-| `--output_dir` | `predictions` | 预测输出目录 |
-| `--datasets` | 全部 | 指定数据集 |
-| `--ensemble` | false | 使用 ensemble 推理 |
-
-**输出**: `predictions/eval_results.json`
+KD 生效判据见 [EXPERIMENTS.md §5.29](EXPERIMENTS.md)：silver 须提供 gold 缺失的信息（gold 弱/类别稀疏，或 silver:gold<1 保持少数派）。
 
 ---
 
-## 7. Loss 权重搜索
-
-**脚本**: `scripts/sweep_loss_weights.py`
-
-自动搜索不同 loss 权重组合，找到最优配置。
+## 7. 生成提交包
 
 ```bash
-# 运行所有预设权重组合
-python scripts/sweep_loss_weights.py --config configs/config_rethink_v3.yaml
-
-# 只运行指定组合
-python scripts/sweep_loss_weights.py --config configs/config_rethink_v3.yaml \
-    --groups baseline span-focus va-boost
+# 用各数据集最佳 config + vote/topk 跑 test 集，输出 submission/final/<dataset>_test.jsonl
+bash scripts/run_test_submission.sh
+# 打包（8 个 *_test.jsonl，排除 *_backup.jsonl）→ submission/submission.zip
 ```
 
-**预设权重组合**: `baseline`, `span-focus`, `va-boost`, `span+va` 等
+切换某数据集时，旧版本重命名为 `<dataset>_test_v<XX>_backup.jsonl` 保留。
 
 ---
 
 ## 8. 常用参数说明
 
-### 配置文件层级
+### 当前 8 数据集 config（`configs/pipeline_*`）
 
-```
-configs/config_rethink_v3.yaml    ← 推荐使用（V3 最优配置）
-configs/config_rethink_v2.yaml    ← V2（无 loss weights）
-configs/config_rethink.yaml       ← V1（基础 rethink）
-configs/config_baseline.yaml      ← 无 rethink
-```
+| 数据集 | config | 方法 |
+|---|---|---|
+| eng_laptop | `pipeline_eng_laptop_v23_silver.yaml` | KD (DeepSeek) |
+| eng_restaurant | `pipeline_eng_restaurant_v16.yaml` | baseline |
+| jpn_hotel | `pipeline_jpn_v16.yaml` | baseline |
+| rus_restaurant | `pipeline_rus_v23.yaml` | KD (DeepSeek) |
+| ukr_restaurant | `pipeline_ukr_v23.yaml` | KD (DeepSeek) |
+| tat_restaurant | `pipeline_tat_v23.yaml` | KD (DeepSeek) |
+| zho_restaurant | `pipeline_zho_restaurant_v23_qwen.yaml` | KD (qwen3.6) |
+| zho_laptop | `pipeline_zho_laptop_v16.yaml` | baseline |
 
-### 完整工作流
+### 典型 vote/topk
 
-```bash
-# Step 1: 训练全部数据集
-python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml
+| 数据集 | vote | topk |
+|---|---|---|
+| jpn / zho_laptop / rus | 4 | 0.10 |
+| eng_laptop / ukr / zho_restaurant | 4 / 3 | 0.0 |
+| tat | 3 | 0.20 |
 
-# Step 2: 批量推理 + 评测
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml
-
-# Step 3: (可选) ensemble 评测
-python scripts/batch_eval.py --base_config configs/config_rethink_v3.yaml --ensemble
-```
-
-### 快速验证（开发调试用）
-
-```bash
-# 单数据集、少 epoch 快速验证
-python scripts/train_all_languages.py --base_config configs/config_rethink_v3.yaml \
-    --datasets eng_restaurant --num_epochs 3
-
-# 推理 + 评测
-python scripts/inference.py \
-    --checkpoint checkpoints/all_lang/eng_restaurant/checkpoint_best.pt \
-    --config configs/config_rethink_v3.yaml \
-    --test_file data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
-    --output predictions/eng_restaurant_pred.jsonl
-
-python scripts/official_eval.py \
-    -p predictions/eng_restaurant_pred.jsonl \
-    -g data/subtask_3/eng/eng_restaurant_dev_task3.jsonl \
-    -t 3
-```
+最优阈值随数据集不同，建议用 §5 扫描确认。

@@ -246,6 +246,22 @@ rethink.num_iterations: 2
 | 多检 FP | 15% | 非情感词被误判为 opinion |
 | VA 极端值偏移 | 5% | "disgusting"→V预测偏中性 |
 
+> 注：上表为早期单模型分析。当前提交已升级为**per-dataset 专用 encoder + 5-seed 双层 ensemble + LLM 知识蒸馏**，权威结果见 [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) 与 README.md 结果表。
+
+### 5.4 LLM 知识蒸馏 (KD, V23) — 当前最大增益来源
+
+**思路**：LLM（云端 DeepSeek 或本地 ollama qwen3.6）对 in-domain 无标注文本打 silver 四元组标签（121/44/14… 类约束 + few-shot + 严格校验：category 合法 / span 逐字子串 / VA∈[1,9]）→ 小模型在 gold+silver 上训练 → **推理时完全不用 LLM**（区别于失败的 LLM-fusion / post-correction）。
+
+**关键脚本**：
+- `scripts/llm_silver_label.py`（DeepSeek 云端，`thinking:disabled` 省 ~20× output token）
+- `scripts/llm_silver_label_ollama.py`（本地 ollama，`think:false` 抑制推理 channel；None→"NULL" 归一化）
+- `scripts/gen_native_ollama.py`（无 in-domain 语料时本地 LLM 原生生成池，中/日/英…）
+- `scripts/run_v23_*.sh`（各数据集 KD 全流程）
+
+**5/8 数据集采用 KD**：eng_laptop/rus/ukr/tat（DeepSeek）+ zho_restaurant（本地 qwen3.6）。
+
+**生效判据（核心发现）**：KD 有效 ⟺ silver 提供 gold 缺失的信息——①gold 弱/类别极稀疏（eng_laptop +8.9pp），**或** ②silver 保持少数派 silver:gold<1 只加多样性（zho_restaurant +5.2pp）。强 gold + 高 silver 比 → 灾难（eng_restaurant −25pp）。teacher 质量也重要：本地 qwen3.6-36B 回收云端 ~95% 收益，gemma-31B-Q4 仅 57%（§5.29.2）。
+
 ---
 
 ## 6. 已实现功能清单 [DONE]
