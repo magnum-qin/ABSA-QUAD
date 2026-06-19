@@ -1621,8 +1621,9 @@ ensemble sweep 三者一致偏好高 vote：qwen vote=4(0.4094) > vote=3(0.4009)
   - **zho_restaurant**（ratio **0.79** → **+5.2pp**）：gold 多(6050)使 silver 成少数派，不淹没 gold，只贡献 seed 多样性 → ensemble 抬升。**首个"数据较多却靠 silver 少数派多样性获益"的案例，与前 4 个"数据稀缺"机制不同。**
   - **eng_restaurant**（ratio 2.1 + gold 强 0.655 + 14 类密集 → **−25pp**）：噪声 silver 2 倍碾压已很强的 clean gold，把学生拽向 silver 质量。灾难性负向端。
   - **jpn_hotel**（ratio 1.6 + 强 native encoder + 44 类 → −4pp）：与 §5.20.7/§7.6.3 一致，强 native encoder 上合成数据净负面。
-  - **zho_laptop**（ratio **0.49** + 113 类稀疏 → −0.3pp ⚠️）：同时具备稀疏类 + silver 少数派两个有利条件，但 silver 砍得过狠（capped 2700，ratio 0.49）→ 多样性增益不足，ensemble 0.4454 刚好差强基线 0.4487 0.3pp。说明 **silver 少数派是必要而非充分——量太少则多样性不够**；甜区疑似在 ratio ≈ 0.7–0.9（zho_restaurant 0.79 成功）。→ 用 full silver (ratio 0.86) 重跑验证甜区（见下）。
-- **预测规则**：KD 有效 ⟺ ①gold 弱或类别极稀疏（silver 补信息）**或** ②silver 保持少数派**且量足够**（ratio ≈ 0.7–0.9，加多样性不淹没）。强 gold + 高 silver 比 → 灾难；silver 砍太狠（ratio≪0.7）→ 多样性不足。
+  - **zho_laptop**（capped ratio 0.49 → 0.4454；full ratio 0.86 → 0.4434；均 vs 基线 0.4487 微负）：**甜区假设被否定**。capped(0.49) 与 full(0.86) 两个 silver 比例结果几乎相同（差 ~0.2pp 在噪声内），说明 silver 比例不是 zho_laptop 失败的原因。
+    - **为何同 ratio≈0.86 下 zho_restaurant +5.2pp 而 zho_laptop 不行**？真正差异：① **zho_laptop 的 V16 base 已是 v13c（含 paraphrase 增强）→ silver 只是冗余多样性**；zho_restaurant base 是 raw train_alltasks，silver 提供全新多样性。② zho_laptop 基线 0.4487 已较强，qwen silver 单 seed ~0.38 < gold，补不进有效信息。
+- **预测规则（修正版）**：KD 有效 ⟺ silver 提供 gold 缺失的信息——①gold 弱/类别极稀疏（eng_laptop），或 ②base 未充分增强 + silver 保持少数派加全新多样性（zho_restaurant ratio 0.79）。**反例 zho_laptop 证明：base 已增强 + 强基线时，调 silver 比例（0.49↔0.86）无济于事**。silver 比例本身不是主因，silver 与现有训练数据的「信息互补性」才是。
 - **论文叙述**：「KD's benefit is governed by whether the silver supplies information the gold lacks: it helps a weak / sparse-category gold model (eng_laptop, +8.9pp) and a data-rich model where silver stays a minority adding only diversity (zho_restaurant ratio 0.79, +5.2pp), but catastrophically harms a strong dense-category model flooded with 2× noisy silver (eng_restaurant, −25pp).」
 
 **提交切换**：zho_restaurant 从 V16 (0.4745) → **qwen-KD vote=3 topk=0.0 (0.5263, +5.18pp)**，V16 留 `zho_restaurant_test_v16_backup.jsonl`。jpn_hotel / eng_restaurant **不切换**（KD 负向）。→ **第 5 个经 KD 改善的数据集**。
