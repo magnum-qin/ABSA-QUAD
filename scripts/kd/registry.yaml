@@ -95,6 +95,46 @@ experiments:
     result: 0.5263
     status: submitted
 
+  # ---- TEACHER-GENERALIZATION (qwen on DeepSeek winners; same pool, only teacher differs) ----
+  rus_restaurant_qwen:
+    dataset: rus_restaurant
+    lang: rus
+    domain: restaurant
+    teacher: qwen
+    pool: {source: existing, file: data/subtask_3/rus/rus_restaurant_pool_v23.jsonl}
+    gold_base: data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    status: pending   # vs deepseek 0.5753 / baseline 0.5267
+
+  ukr_restaurant_qwen:
+    dataset: ukr_restaurant
+    lang: ukr
+    domain: restaurant
+    teacher: qwen
+    pool: {source: existing, file: data/subtask_3/ukr/ukr_restaurant_pool_v23_trans.jsonl}
+    gold_base: data/subtask_3/ukr/ukr_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
+    test: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
+    status: pending   # vs deepseek 0.5560 / baseline 0.5068
+
+  tat_restaurant_qwen:
+    dataset: tat_restaurant
+    lang: tat
+    domain: restaurant
+    teacher: qwen
+    pool: {source: existing, file: data/subtask_3/tat/tat_restaurant_pool_v23_native.jsonl}
+    gold_base: data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
+    test: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
+    status: pending   # vs deepseek 0.5196 / baseline 0.4821
+
   # ---- ABLATIONS / NEGATIVES (baseline kept) ----
   eng_laptop_qwen:
     dataset: eng_laptop
