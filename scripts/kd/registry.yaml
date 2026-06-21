@@ -1,0 +1,198 @@
+# KD experiment registry — declarative ledger of every V23 knowledge-distillation run.
+# Consumed by scripts/kd/pipeline.py:  python scripts/kd/pipeline.py --exp <name>
+# Naming follows docs/NAMING.md:  v23_<dataset>_<teacher>[_<variant>]
+#
+# Fields:
+#   dataset/lang/domain : dataset identity (domain feeds the silver prompt)
+#   teacher             : deepseek | qwen | gemma  (selects labeler + endpoint)
+#   pool                : {source: gen|real|trans|existing, n, file}
+#   gold_base           : training data WITHOUT silver; distill = gold_base + silver
+#   distill_prebuilt    : true if gold_base ALREADY contains silver (skip build step)
+#   silver_cap          : keep only N silver rows (0 = all) -> controls silver:gold ratio
+#   base_config         : pipeline yaml to derive encoder/hparams from
+#   result / status     : recorded outcome (documentation)
+
+defaults:
+  seeds: [42, 123, 456, 789, 1024]
+  vote_sweep: [2, 3, 4]
+  topk_sweep: [0.0, 0.10]
+  ollama_url: http://localhost:11433
+  qwen_model: "qwen3.6:latest"
+  gemma_model: "hf.co/unsloth/gemma-4-31B-it-qat-GGUF:UD-Q4_K_XL"
+  deepseek_model: "deepseek-v4-pro"
+
+experiments:
+
+  # ---- SUBMITTED (KD beat baseline) ----
+  eng_laptop_deepseek:
+    dataset: eng_laptop
+    lang: eng
+    domain: laptop
+    teacher: deepseek
+    pool: {source: existing, file: data/subtask_3/eng/eng_laptop_pool_v23.jsonl}
+    gold_base: data/subtask_3/eng/eng_laptop_train_v23_deepseek.jsonl
+    distill_prebuilt: true
+    silver_cap: 0
+    base_config: configs/pipeline_eng_laptop_v23_deepseek.yaml
+    dev: data/subtask_3/eng/eng_laptop_dev_task3.jsonl
+    test: data/subtask_3/eng/eng_laptop_test_task3.jsonl
+    result: 0.4141
+    status: submitted
+
+  rus_restaurant_deepseek:
+    dataset: rus_restaurant
+    lang: rus
+    domain: restaurant
+    teacher: deepseek
+    pool: {source: real, file: data/subtask_3/rus/rus_restaurant_pool_v23.jsonl}
+    gold_base: data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    result: 0.5753
+    status: submitted
+
+  ukr_restaurant_deepseek:
+    dataset: ukr_restaurant
+    lang: ukr
+    domain: restaurant
+    teacher: deepseek
+    pool: {source: trans, file: data/subtask_3/ukr/ukr_restaurant_pool_v23_trans.jsonl}
+    gold_base: data/subtask_3/ukr/ukr_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
+    test: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
+    result: 0.5560
+    status: submitted
+
+  tat_restaurant_deepseek:
+    dataset: tat_restaurant
+    lang: tat
+    domain: restaurant
+    teacher: deepseek
+    pool: {source: gen, n: 4000, file: data/subtask_3/tat/tat_restaurant_pool_v23_native.jsonl}
+    gold_base: data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
+    test: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
+    result: 0.5196
+    status: submitted
+
+  zho_restaurant_qwen:
+    dataset: zho_restaurant
+    lang: zho
+    domain: restaurant
+    teacher: qwen
+    pool: {source: gen, n: 4000, file: data/subtask_3/zho/zho_restaurant_pool_v23_gen.jsonl}
+    gold_base: data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_zho_restaurant_v23_qwen.yaml
+    dev: data/subtask_3/zho/zho_restaurant_dev_task3.jsonl
+    test: data/subtask_3/zho/zho_restaurant_test_task3.jsonl
+    result: 0.5263
+    status: submitted
+
+  # ---- ABLATIONS / NEGATIVES (baseline kept) ----
+  eng_laptop_qwen:
+    dataset: eng_laptop
+    lang: eng
+    domain: laptop
+    teacher: qwen
+    pool: {source: existing, file: data/subtask_3/eng/eng_laptop_pool_v23_matched.jsonl}
+    gold_base: data/subtask_3/eng/eng_laptop_train_v23_qwen.jsonl
+    distill_prebuilt: true
+    silver_cap: 0
+    base_config: configs/pipeline_eng_laptop_v23_deepseek.yaml
+    dev: data/subtask_3/eng/eng_laptop_dev_task3.jsonl
+    test: data/subtask_3/eng/eng_laptop_test_task3.jsonl
+    result: 0.4094
+    status: ablation
+
+  eng_laptop_gemma:
+    dataset: eng_laptop
+    lang: eng
+    domain: laptop
+    teacher: gemma
+    pool: {source: existing, file: data/subtask_3/eng/eng_laptop_pool_v23_matched.jsonl}
+    gold_base: data/subtask_3/eng/eng_laptop_train_v23_gemma.jsonl
+    distill_prebuilt: true
+    silver_cap: 0
+    base_config: configs/pipeline_eng_laptop_v23_deepseek.yaml
+    dev: data/subtask_3/eng/eng_laptop_dev_task3.jsonl
+    test: data/subtask_3/eng/eng_laptop_test_task3.jsonl
+    result: 0.3764
+    status: ablation
+
+  jpn_hotel_qwen:
+    dataset: jpn_hotel
+    lang: jpn
+    domain: hotel
+    teacher: qwen
+    pool: {source: gen, n: 4000, file: data/subtask_3/jpn/jpn_hotel_pool_v23_gen.jsonl}
+    gold_base: data/subtask_3/jpn/jpn_hotel_train_v13.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_jpn_v16.yaml
+    dev: data/subtask_3/jpn/jpn_hotel_dev_task3.jsonl
+    test: data/subtask_3/jpn/jpn_hotel_test_task3.jsonl
+    result: 0.4043
+    status: negative
+
+  eng_restaurant_qwen:
+    dataset: eng_restaurant
+    lang: eng
+    domain: restaurant
+    teacher: qwen
+    pool: {source: gen, n: 4000, file: data/subtask_3/eng/eng_restaurant_pool_v23_gen.jsonl}
+    gold_base: data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_eng_restaurant_v16.yaml
+    dev: data/subtask_3/eng/eng_restaurant_dev_task3.jsonl
+    test: data/subtask_3/eng/eng_restaurant_test_task3.jsonl
+    result: 0.4043
+    status: negative
+
+  eng_restaurant_qwen_real:
+    dataset: eng_restaurant
+    lang: eng
+    domain: restaurant
+    teacher: qwen
+    variant: real
+    pool: {source: real, file: data/subtask_3/eng/eng_restaurant_pool_v23_real.jsonl}
+    gold_base: data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl
+    silver_cap: 1800
+    base_config: configs/pipeline_eng_restaurant_v16.yaml
+    dev: data/subtask_3/eng/eng_restaurant_dev_task3.jsonl
+    test: data/subtask_3/eng/eng_restaurant_test_task3.jsonl
+    result: 0.4190
+    status: negative
+
+  zho_laptop_qwen:
+    dataset: zho_laptop
+    lang: zho
+    domain: laptop
+    teacher: qwen
+    pool: {source: gen, n: 4000, file: data/subtask_3/zho/zho_laptop_pool_v23_gen.jsonl}
+    gold_base: data/subtask_3/zho/zho_laptop_train_v13c.jsonl
+    silver_cap: 2700
+    base_config: configs/pipeline_zho_laptop_v16.yaml
+    dev: data/subtask_3/zho/zho_laptop_dev_task3.jsonl
+    test: data/subtask_3/zho/zho_laptop_test_task3.jsonl
+    result: 0.4454
+    status: negative
+
+  zho_laptop_deepseek:
+    dataset: zho_laptop
+    lang: zho
+    domain: laptop
+    teacher: deepseek
+    pool: {source: existing, file: data/subtask_3/zho/zho_laptop_pool_v23.jsonl}
+    gold_base: data/subtask_3/zho/zho_laptop_train_v13c.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_zho_laptop_v16.yaml
+    dev: data/subtask_3/zho/zho_laptop_dev_task3.jsonl
+    test: data/subtask_3/zho/zho_laptop_test_task3.jsonl
+    result: 0.4428
+    status: negative
