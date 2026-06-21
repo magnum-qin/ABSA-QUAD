@@ -1626,6 +1626,20 @@ ensemble sweep 三者一致偏好高 vote：qwen vote=4(0.4094) > vote=3(0.4009)
 - **预测规则（修正版）**：KD 有效 ⟺ silver 提供 gold 缺失的信息——①gold 弱/类别极稀疏（eng_laptop），或 ②base 未充分增强 + silver 保持少数派加全新多样性（zho_restaurant ratio 0.79）。**反例 zho_laptop 证明：base 已增强 + 强基线时，调 silver 比例（0.49↔0.86）无济于事**。silver 比例本身不是主因，silver 与现有训练数据的「信息互补性」才是。
 - **论文叙述**：「KD's benefit is governed by whether the silver supplies information the gold lacks: it helps a weak / sparse-category gold model (eng_laptop, +8.9pp) and a data-rich model where silver stays a minority adding only diversity (zho_restaurant ratio 0.79, +5.2pp), but catastrophically harms a strong dense-category model flooded with 2× noisy silver (eng_restaurant, −25pp).」
 
+##### 5.29.3.1 消融：真实公开语料池 vs LLM 生成池（排除池来源 confound）
+
+**动机**：失败的 3 个数据集都用 LLM 生成池，怀疑败于生成文本质量而非 KD 机制。用真实公开语料 + 少数派 silver 重试，控制"池来源"+"碾压比例"两个变量。jpn_hotel 因 HF 无可访问日语酒店语料（amazon_ja 是商品评论、Rakuten Travel 需申请）**无法测**。脚本：`scripts/collect_real_pools.py`（Yelp / amazon_zh+opencc 繁化）。
+
+| 数据集 | 真实语料 | 生成池 KD | 真实语料池 KD | 基线 | Δ vs 基线 |
+|---|---|---|---|---|---|
+| eng_restaurant | Yelp（ratio 0.79）| 0.4043 (ratio 2.1) | **0.4190** | 0.6554 | **−23.6pp ❌** |
+| zho_laptop | amazon_zh→繁体（ratio 0.25，1392 silver）| 0.4454 (ratio 0.49) | **0.4264** | 0.4487 | **−2.2pp ❌** |
+
+**🔍 结论：池来源不是失败主因**。
+- eng_restaurant：真实 Yelp + 少数派 silver 仅比生成池好 +1.5pp（0.4190 vs 0.4043），仍距基线 −23.6pp。**强 gold(0.655) 无法被 qwen silver(标注质量~0.40) 改善是本质——换真实语料也救不了。**
+- zho_laptop：真实语料反而略差（受语料稀缺 silver 仅 1392、ratio 0.25 拖累），两版都低于基线。
+- **统一规律再确认**：决定 KD 成败的是「teacher 标注质量 vs gold 基线强度 / 信息互补性」，**池来源 real/generated 影响很小（±1.5pp）**，排除了该 confound。两个数据集均不切换提交。
+
 **提交切换**：zho_restaurant 从 V16 (0.4745) → **qwen-KD vote=3 topk=0.0 (0.5263, +5.18pp)**，V16 留 `zho_restaurant_test_v16_backup.jsonl`。jpn_hotel / eng_restaurant **不切换**（KD 负向）。→ **第 5 个经 KD 改善的数据集**。
 
 ---
