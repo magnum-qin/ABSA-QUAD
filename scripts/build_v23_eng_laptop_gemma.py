@@ -10,8 +10,8 @@ delta isolates teacher quality (cloud DeepSeek vs local gemma).
 """
 import json
 
-V23 = "data/subtask_3/eng/eng_laptop_train_v23.jsonl"
-GEMMA_SILVER = "data/subtask_3/eng/eng_laptop_silver_gemma.jsonl"
+V23 = "data/subtask_3/eng/eng_laptop_train_v23_deepseek.jsonl"
+GEMMA_SILVER = "data/subtask_3/eng/eng_laptop_silver_v23_gemma.jsonl"
 OUT = "data/subtask_3/eng/eng_laptop_train_v23_gemma.jsonl"
 
 # 1. fixed base = everything in train_v23 that is NOT silver (no `unlab_` prefix)

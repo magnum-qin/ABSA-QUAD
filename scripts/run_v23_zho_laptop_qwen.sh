@@ -9,14 +9,14 @@ OLU="http://localhost:11433"; QM="qwen3.6:latest"
 CAP=2700
 RES=/tmp/zho_laptop_qwen_kd_results.txt; : > $RES
 
-POOL=data/subtask_3/zho/zho_laptop_qwen_pool.jsonl
-NATIVE=data/subtask_3/zho/zho_laptop_qwen_native.jsonl
-SILVER=data/subtask_3/zho/zho_laptop_silver_qwen.jsonl
+POOL=data/subtask_3/zho/zho_laptop_pool_v23_gen.jsonl
+NATIVE=data/subtask_3/zho/zho_laptop_pool_v23_gen_raw.jsonl
+SILVER=data/subtask_3/zho/zho_laptop_silver_v23_qwen.jsonl
 DISTILL=data/subtask_3/zho/zho_laptop_train_v23_qwen.jsonl
 BASE=data/subtask_3/zho/zho_laptop_train_v13c.jsonl
 ALLTASKS=data/subtask_3/zho/zho_laptop_train_alltasks.jsonl
 CFG=/tmp/pipeline_zho_laptop_v16.yaml
-V23CFG=/tmp/pipeline_zho_laptop_v23_qwen.yaml
+V23CFG=configs/pipeline_zho_laptop_v23_qwen.yaml
 DEV=data/subtask_3/zho/zho_laptop_dev_task3.jsonl
 TEST=data/subtask_3/zho/zho_laptop_test_task3.jsonl
 
@@ -89,12 +89,12 @@ print(f"  wrote {dst}")
 PY
 conda run -n absa --no-capture-output python -u scripts/train_multi_seed.py \
   --config $V23CFG --seeds 42 123 456 789 1024 \
-  --save_prefix v23_qwen_zho_laptop_seed --train_file $DISTILL \
-  > /tmp/v23_qwen_zho_laptop_train.log 2>&1
+  --save_prefix v23_zho_laptop_qwen_seed --train_file $DISTILL \
+  > /tmp/v23_zho_laptop_qwen_train.log 2>&1
 
 # 6) ensemble eval sweep
 echo "[6/6] ensemble eval ($(date))" | tee -a $RES
-SD=""; for s in 42 123 456 789 1024; do SD="$SD checkpoints/v23_qwen_zho_laptop_seed${s}"; done
+SD=""; for s in 42 123 456 789 1024; do SD="$SD checkpoints/v23_zho_laptop_qwen_seed${s}"; done
 echo "=== zho_laptop qwen-KD ensemble (vs V16 0.4487) ===" | tee -a $RES
 for vote in 2 3 4; do for topk in 0.0 0.10; do
   out=/tmp/zho_laptop_qwen_kd_v${vote}_t${topk}.jsonl

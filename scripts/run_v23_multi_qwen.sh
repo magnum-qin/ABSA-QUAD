@@ -96,12 +96,12 @@ print(f"  wrote {dst}")
 PY
   conda run -n absa --no-capture-output python -u scripts/train_multi_seed.py \
     --config $V23CFG --seeds 42 123 456 789 1024 \
-    --save_prefix v23_qwen_${name}_seed --train_file $DISTILL \
-    > /tmp/v23_qwen_${name}_train.log 2>&1
+    --save_prefix v23_${name}_qwen_seed --train_file $DISTILL \
+    > /tmp/v23_${name}_qwen_train.log 2>&1
 
   # 6) ensemble eval sweep
   echo "[$name 6/6] ensemble eval ($(date))" | tee -a $RES
-  SD=""; for s in 42 123 456 789 1024; do SD="$SD checkpoints/v23_qwen_${name}_seed${s}"; done
+  SD=""; for s in 42 123 456 789 1024; do SD="$SD checkpoints/v23_${name}_qwen_seed${s}"; done
   echo "=== $name qwen-KD ensemble (vs current best $curr) ===" | tee -a $RES
   for vote in 2 3 4; do
     for topk in 0.0 0.10; do

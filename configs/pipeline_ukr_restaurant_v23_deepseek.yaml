@@ -15,7 +15,7 @@ model:
     label_embedding_dim: 64
 
 data:
-  train_file: "data/subtask_3/ukr/ukr_restaurant_train_v23.jsonl"
+  train_file: "data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek.jsonl"
   dev_file: "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl"
   test_file: "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl"
   max_seq_length: 256
@@ -47,7 +47,7 @@ training:
     va_arousal: 2.0
     consistency: 0.5
   patience: 8
-  save_dir: "checkpoints/v23_silver_ukr_BT_paraphrase_comet094"
+  save_dir: "checkpoints/v23_ukr_restaurant_deepseek_BT_paraphrase_comet094"
   save_top_k: 3
 
 evaluation:

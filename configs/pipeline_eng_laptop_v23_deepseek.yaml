@@ -15,7 +15,7 @@ model:
     num_iterations: 2
     label_embedding_dim: 64
 data:
-  train_file: "data/subtask_3/eng/eng_laptop_train_v23.jsonl"
+  train_file: "data/subtask_3/eng/eng_laptop_train_v23_deepseek.jsonl"
   dev_file: "data/subtask_3/eng/eng_laptop_dev_task3.jsonl"
   test_file: "data/subtask_3/eng/eng_laptop_test_task3.jsonl"
   max_seq_length: 256
@@ -42,7 +42,7 @@ training:
     va_arousal: 2.0
     consistency: 0.5
   patience: 8
-  save_dir: "checkpoints/v23_silver_eng_laptop"
+  save_dir: "checkpoints/v23_eng_laptop_deepseek"
   save_top_k: 3
 evaluation:
   va_tolerance: 0.5
