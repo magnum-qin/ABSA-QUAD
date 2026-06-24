@@ -91,6 +91,10 @@ def step_distill(e):
         d = json.loads(l)
         if d.get("_err") or not d.get("Quadruplet"): continue
         sv.append({"ID": d["ID"], "Text": d["Text"], "Quadruplet": d["Quadruplet"]})
+    if not sv:
+        raise SystemExit(f"[distill] ABORT: silver file {e['silver_file']} has 0 valid quads "
+                         f"(labeling likely failed, e.g. 404/empty). Refusing to build a gold-only "
+                         f"distill set that would silently masquerade as KD. Re-run the silver step.")
     if e["silver_cap"]:
         random.seed(42); random.shuffle(sv); sv = sv[:e["silver_cap"]]
     rows += sv

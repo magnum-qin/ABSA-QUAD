@@ -107,7 +107,7 @@ experiments:
     base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
     dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
     test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
-    result: 0.5365   # vs deepseek 0.5753 / baseline 0.5267 (beats baseline, -3.9pp vs cloud)
+    result: 0.5365   # VALID (silver 8362 non-empty); vs deepseek 0.5753 / baseline 0.5267 (-3.9pp vs cloud, +1.0 vs baseline)
     status: ablation
 
   ukr_restaurant_qwen:
@@ -121,8 +121,8 @@ experiments:
     base_config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
     dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
     test: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
-    result: 0.4068   # vs deepseek 0.5560 / baseline 0.5068 (COLLAPSE -10pp, low-resource translated pool)
-    status: ablation
+    result: null   # INVALID: qwen silver labeling 404 (model removed from ollama mid-run) -> distill was gold-only, not KD. RE-RUN NEEDED.
+    status: invalid
 
   tat_restaurant_qwen:
     dataset: tat_restaurant
@@ -135,8 +135,8 @@ experiments:
     base_config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
     dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
     test: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
-    result: 0.4603   # 4-seed (seed123 lost to disk-full); vs deepseek 0.5196 / baseline 0.4821 (-2.2pp)
-    status: ablation
+    result: null   # INVALID: qwen silver labeling 404 (model removed from ollama mid-run) -> distill was gold-only, not KD. RE-RUN NEEDED.
+    status: invalid
 
   # ---- ABLATIONS / NEGATIVES (baseline kept) ----
   eng_laptop_qwen:
