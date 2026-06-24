@@ -107,7 +107,8 @@ experiments:
     base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
     dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
     test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
-    status: pending   # vs deepseek 0.5753 / baseline 0.5267
+    result: 0.5365   # vs deepseek 0.5753 / baseline 0.5267 (beats baseline, -3.9pp vs cloud)
+    status: ablation
 
   ukr_restaurant_qwen:
     dataset: ukr_restaurant
@@ -120,7 +121,8 @@ experiments:
     base_config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
     dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
     test: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
-    status: pending   # vs deepseek 0.5560 / baseline 0.5068
+    result: 0.4068   # vs deepseek 0.5560 / baseline 0.5068 (COLLAPSE -10pp, low-resource translated pool)
+    status: ablation
 
   tat_restaurant_qwen:
     dataset: tat_restaurant
@@ -133,7 +135,8 @@ experiments:
     base_config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
     dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
     test: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
-    status: pending   # vs deepseek 0.5196 / baseline 0.4821
+    result: 0.4603   # 4-seed (seed123 lost to disk-full); vs deepseek 0.5196 / baseline 0.4821 (-2.2pp)
+    status: ablation
 
   # ---- ABLATIONS / NEGATIVES (baseline kept) ----
   eng_laptop_qwen:

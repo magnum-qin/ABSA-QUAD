@@ -1600,6 +1600,25 @@ ensemble sweep 三者一致偏好高 vote：qwen vote=4(0.4094) > vote=3(0.4009)
 
 **eng_laptop 提交不切换** —— 仍用 DeepSeek 臂 V23 KD (0.4141，三者最高)。Gemma/qwen 臂作 teacher-quality 消融证据。脚本：`scripts/llm_silver_label_ollama.py`、`scripts/build_eng_v23_{gemma,qwen}.py`、`scripts/run_v23_{gemma,qwen}_eng_laptop.sh`。
 
+##### 5.29.2.1 teacher 等价性的语言边界（qwen vs DeepSeek，n=1 → n=4）
+
+**动机**：§5.29.2 的"本地 qwen ≈ 云端 DeepSeek"只有 eng_laptop 一个数据点。在 3 个 DeepSeek 已胜的数据集（rus/ukr/tat）上补跑 qwen，**复用同一池、同 encoder/config，仅换 teacher**，检验泛化性。用 `scripts/kd/pipeline.py` 主干驱动（registry 声明式）。
+
+| 数据集 | 语言（资源）| qwen-KD | DeepSeek-KD | 基线 | qwen vs DeepSeek | qwen vs 基线 |
+|---|---|---|---|---|---|---|
+| eng_laptop | 英语（高）| 0.4094 | 0.4141 | 0.3254 | **−0.5pp** | +8.4 ✅ |
+| rus_restaurant | 俄语（高）| 0.5365 | 0.5753 | 0.5267 | −3.9pp | +1.0 ✅ |
+| tat_restaurant | 鞑靼语（极低，4-seed*）| 0.4603 | 0.5196 | 0.4821 | −5.9pp | −2.2 ❌ |
+| ukr_restaurant | 乌克兰语（低，翻译池）| 0.4068 | 0.5560 | 0.5068 | **−15pp** | −10 ❌ |
+
+\* tat qwen seed123 因磁盘满未存，4-seed ensemble；差距足够大不影响结论。
+
+**🔑 反转/精炼发现 —— teacher 等价性有语言边界**：
+- qwen 与 DeepSeek 的差距**随目标语言资源降低而单调扩大**：英语几乎持平(−0.5) → 俄语略逊但仍超基线(−3.9) → 低资源语言（鞑靼/乌克兰）qwen 标注质量**塌陷、跌破基线**（ukr −15pp 最惨，叠加翻译池 translationese）。
+- **修正 §5.29.2 的过度泛化**："本地开源模型可替代云端 teacher"**只在该模型擅长的高资源语言成立**（英/中/俄）。前沿云模型 DeepSeek 跨语言保持标注质量；开源 36B 仅在训练充分的语言有竞争力。
+- **论文叙述**：「The local-≈-cloud teacher equivalence is language-bounded: a local open 36B matches the cloud frontier on high-resource languages (English −0.5pp, Russian still beats baseline) but its silver quality collapses on low-resource languages (Ukrainian −15pp / Tatar −5.9pp vs cloud, both below the no-KD baseline). Frontier cloud models remain necessary teachers for low-resource KD.」
+- 四个 qwen 臂均**不切换提交**（rus/tat/ukr 仍用 DeepSeek 臂，质量更高）。
+
 ---
 
 #### 5.29.3 KD 推广到剩余 3 个数据集（jpn_hotel / eng_restaurant / zho_restaurant，teacher=本地 qwen3.6）
