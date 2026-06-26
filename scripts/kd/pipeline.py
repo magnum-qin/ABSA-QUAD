@@ -70,13 +70,18 @@ def step_silver(e):
     if e["teacher"] == "deepseek":
         sh(f"{conda('scripts/llm_silver_label.py')} --input {e['pool']['file']} --train_file {e['alltasks']} "
            f"--output {e['silver_file']} --model {e['teacher_model']} --domain {e['domain']} --n_shots 6")
-    else:
-        sh(f"OLLAMA_URL={DEF['ollama_url']} {conda('scripts/llm_silver_label_ollama.py')} "
-           f"--input {e['pool']['file']} --train_file {e['alltasks']} --output {e['silver_file']} "
-           f"--model '{e['teacher_model']}' --domain {e['domain']} --workers 2 --n_shots 6")
-        if not DRY:  # free GPU for training
-            subprocess.run(f"curl -s {DEF['ollama_url']}/api/generate "
-                           f"-d '{{\"model\":\"{e['teacher_model']}\",\"keep_alive\":0}}' >/dev/null 2>&1", shell=True)
+    else:  # local teacher via Unsloth Studio (OpenAI-compatible); key from $UNSLOTH_API_KEY
+        sh(f"{conda('scripts/llm_silver_label_openai.py')} --input {e['pool']['file']} "
+           f"--train_file {e['alltasks']} --output {e['silver_file']} "
+           f"--base_url {DEF['local_base_url']} --model '{e['teacher_model']}' "
+           f"--domain {e['domain']} --workers 4 --n_shots 6")
+        if not DRY:  # free GPU for training (Unsloth Studio: unload needs {model_path}, lives at /api/..)
+            host = DEF["local_base_url"].rsplit("/v1", 1)[0]
+            subprocess.run(
+                f"curl -s -X POST {host}/api/inference/unload "
+                f"-H \"Authorization: Bearer $UNSLOTH_API_KEY\" -H 'Content-Type: application/json' "
+                f"-d '{{\"model_path\":\"{e['teacher_model']}\"}}' >/dev/null 2>&1", shell=True)
+            import time as _t; _t.sleep(8)  # let VRAM free before training claims it
 
 
 def step_distill(e):
@@ -103,11 +108,18 @@ def step_distill(e):
     print(f"  base={n0} + silver={len(sv)} = {len(rows)}  ratio={len(sv)/n0:.2f} -> {e['distill_file']}")
 
 
+def ensure_config(e):
+    """Derive the v23 train/eval config (base_config + distill train_file). Idempotent;
+    needed by BOTH train and eval (the /tmp config does not survive across sessions)."""
+    if DRY:
+        return
+    txt = open(e["base_config"]).read()
+    txt = re.sub(r'(train_file:\s*)"[^"]*"', r'\1"%s"' % e["distill_file"], txt, count=1)
+    open(e["v23_config"], "w").write(txt)
+
+
 def step_train(e):
-    if not DRY:  # derive config with the distill train_file
-        txt = open(e["base_config"]).read()
-        txt = re.sub(r'(train_file:\s*)"[^"]*"', r'\1"%s"' % e["distill_file"], txt, count=1)
-        open(e["v23_config"], "w").write(txt)
+    ensure_config(e)
     seeds = " ".join(map(str, DEF["seeds"]))
     sh(f"{conda('scripts/train_multi_seed.py')} --config {e['v23_config']} --seeds {seeds} "
        f"--save_prefix {e['prefix']}_seed --train_file {e['distill_file']} "
@@ -115,6 +127,7 @@ def step_train(e):
 
 
 def step_eval(e):
+    ensure_config(e)  # regenerate config if missing (e.g. running eval alone after a session restart)
     sd = " ".join(f"checkpoints/{e['prefix']}_seed{s}" for s in DEF["seeds"])
     res = f"/tmp/{e['prefix']}_results.txt"
     if not DRY: open(res, "w").write(f"# {e['name']} (baseline result {e.get('result')})\n")

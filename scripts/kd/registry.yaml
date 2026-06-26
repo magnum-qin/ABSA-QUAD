@@ -16,9 +16,10 @@ defaults:
   seeds: [42, 123, 456, 789, 1024]
   vote_sweep: [2, 3, 4]
   topk_sweep: [0.0, 0.10]
-  ollama_url: http://localhost:11433
-  qwen_model: "qwen3.6:latest"
-  gemma_model: "hf.co/unsloth/gemma-4-31B-it-qat-GGUF:UD-Q4_K_XL"
+  # local teacher served by Unsloth Studio (OpenAI-compatible /v1; api key via $UNSLOTH_API_KEY env)
+  local_base_url: http://localhost:8888/v1
+  qwen_model: "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+  gemma_model: "unsloth/gemma-4-31B-it-qat-GGUF"
   deepseek_model: "deepseek-v4-pro"
 
 experiments:
@@ -121,8 +122,8 @@ experiments:
     base_config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
     dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
     test: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
-    result: null   # INVALID: qwen silver labeling 404 (model removed from ollama mid-run) -> distill was gold-only, not KD. RE-RUN NEEDED.
-    status: invalid
+    result: 0.4886   # VALID (re-run via Unsloth Qwen3.6-35B-A3B, silver 6162); vs deepseek 0.5560 / baseline 0.5068 (-6.7pp vs cloud)
+    status: ablation
 
   tat_restaurant_qwen:
     dataset: tat_restaurant
@@ -135,8 +136,8 @@ experiments:
     base_config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
     dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
     test: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
-    result: null   # INVALID: qwen silver labeling 404 (model removed from ollama mid-run) -> distill was gold-only, not KD. RE-RUN NEEDED.
-    status: invalid
+    result: 0.5327   # VALID (re-run via Unsloth Qwen3.6-35B-A3B, silver 3915); vs deepseek 0.5196 / baseline 0.4821 (BEATS cloud +1.3pp)
+    status: ablation
 
   # ---- ABLATIONS / NEGATIVES (baseline kept) ----
   eng_laptop_qwen:

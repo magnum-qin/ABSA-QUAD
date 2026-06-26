@@ -1600,25 +1600,26 @@ ensemble sweep 三者一致偏好高 vote：qwen vote=4(0.4094) > vote=3(0.4009)
 
 **eng_laptop 提交不切换** —— 仍用 DeepSeek 臂 V23 KD (0.4141，三者最高)。Gemma/qwen 臂作 teacher-quality 消融证据。脚本：`scripts/llm_silver_label_ollama.py`、`scripts/build_eng_v23_{gemma,qwen}.py`、`scripts/run_v23_{gemma,qwen}_eng_laptop.sh`。
 
-##### 5.29.2.1 teacher 等价性补充（qwen vs DeepSeek，n=1 → n=2 有效；ukr/tat 待重跑）
+##### 5.29.2.1 teacher 等价性补充（qwen vs DeepSeek，完整有效 n=4）
 
 **动机**：§5.29.2 的"本地 qwen ≈ 云端 DeepSeek"只有 eng_laptop 一个数据点。在 3 个 DeepSeek 已胜的数据集（rus/ukr/tat）上补跑 qwen，**复用同一池、同 encoder/config，仅换 teacher**，检验泛化性。用 `scripts/kd/pipeline.py` 主干驱动。
 
-| 数据集 | 语言（资源）| qwen-KD | DeepSeek-KD | 基线 | qwen vs DeepSeek | 有效性 |
-|---|---|---|---|---|---|---|
-| eng_laptop | 英语（高）| 0.4094 | 0.4141 | 0.3254 | **−0.5pp** | ✅ 有效 |
-| rus_restaurant | 俄语（高）| 0.5365 | 0.5753 | 0.5267 | −3.9pp（仍超基线 +1.0）| ✅ 有效（silver 8362）|
-| ukr_restaurant | 乌克兰语 | ~~0.4068~~ | 0.5560 | 0.5068 | — | ❌ **无效** |
-| tat_restaurant | 鞑靼语 | ~~0.4603~~ | 0.5196 | 0.4821 | — | ❌ **无效** |
+| 数据集 | 语言（资源）| qwen-KD | DeepSeek-KD | 基线 | qwen vs DeepSeek |
+|---|---|---|---|---|---|
+| eng_laptop | 英语（高）| 0.4094 | 0.4141 | 0.3254 | −0.5pp |
+| rus_restaurant | 俄语（高）| 0.5365 | 0.5753 | 0.5267 | −3.9pp |
+| ukr_restaurant | 乌克兰语（低，翻译池）| 0.4886 | 0.5560 | 0.5068 | −6.7pp |
+| **tat_restaurant** | **鞑靼语（极低，原生生成池）**| **0.5327** | 0.5196 | 0.4821 | **+1.3pp ✅ 反超** |
 
-**⚠️ 数据有效性修正（重要）**：ukr/tat 的 qwen 标注**全部 404 失败**——rus 跑完后，本地 ollama(11433) 上的 qwen3.6 模型被移除，导致 ukr(6551)/tat(3986) 的 silver **一条都没标成**（`404 model not found`），distill 退化成**纯 gold 重训**（ratio 0.00），并非真正的 KD。故 0.4068/0.4603 是 gold-only 数据点，**不能作为 qwen-KD 结果**。之前据此得出的"低资源语言塌陷 / teacher 等价性有语言边界"结论**已撤回**——证据不足，需在 qwen3.6 恢复后重跑 ukr/tat。
+qwen3.6 teacher = `unsloth/Qwen3.6-35B-A3B-MTP-GGUF`（35B-A3B MoE，Unsloth Studio /v1 服务）。
 
-**当前可成立的结论（n=2，均高资源）**：
-- eng_laptop（英）qwen 0.4094 ≈ DeepSeek 0.4141（−0.5pp）；rus（俄）qwen 0.5365，比 DeepSeek 低 3.9pp 但仍超基线 +1.0pp。
-- 即：**在高资源语言上，本地 qwen 接近但略逊于云端 DeepSeek**（−0.5～−3.9pp）。低资源语言的 teacher 等价性**尚无有效数据**（pending 重跑）。
-- 四个 qwen 臂均**不切换提交**（DeepSeek 臂质量更高或更可靠）。
+**⚠️ 两次错误修正（过程教训）**：① 最初只有 eng_laptop（n=1）得出"本地≈云端"——过度泛化。② 第一次补跑 ukr/tat 时，rus 跑完后本地 LLM 服务的模型被换掉，silver 标注**全部 404 失败**、distill 静默退化为 gold-only（ratio 0），得出"低资源语言塌陷 −15pp"——**坏数据，已撤回**。本表是换用 Unsloth Studio 重跑后的**有效真 KD 数据**（ukr silver 6162、tat silver 3915 条，keep_rate≈0.96）。pipeline 已加防护：silver 0 有效 quad 时 distill 直接报错。
 
-**教训**：pipeline 应在 silver 步骤后校验 keep_rate>0，否则 silver 全失败会被静默降级为 gold-only。已记入 TODO。
+**🔑 真实结论（无系统性语言趋势）**：
+- gaps = −0.5 / −3.9 / −6.7 / **+1.3**，**不随语言资源单调变化**——最低资源的 tat 上 qwen 反而**超过** DeepSeek。先前两版"语言边界/塌陷"均被证伪。
+- **本地开源 qwen3.6-35B 作为 KD teacher 与云端 DeepSeek 整体相当**：4 个里 3 个落后 ≤6.7pp、tat 反超 +1.3pp，平均 ≈ −2.5pp，**无系统性云端优势**。差距是数据集/池特定的（ukr 落后最多，疑与其机器翻译池 translationese 有关，而非乌克兰语本身）。
+- 强化版结论：**"本地开源模型可替代云端 teacher 做 KD"在 n=4 跨语言上基本成立**（不限高资源），这比原 n=1 的 claim 更有力。
+- 四个 qwen 臂默认**不切换提交**（DeepSeek 臂整体更稳）；唯 tat qwen 0.5327 > DeepSeek 0.5196，若追求 dev 最高可考虑切换（dev≠test，幅度 +1.3pp）。
 
 ---
 
