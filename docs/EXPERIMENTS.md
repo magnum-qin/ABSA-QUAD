@@ -1663,6 +1663,28 @@ qwen3.6 teacher = `unsloth/Qwen3.6-35B-A3B-MTP-GGUF`（35B-A3B MoE，Unsloth Stu
 
 **提交切换**：zho_restaurant 从 V16 (0.4745) → **qwen-KD vote=3 topk=0.0 (0.5263, +5.18pp)**，V16 留 `zho_restaurant_test_v16_backup.jsonl`。jpn_hotel / eng_restaurant **不切换**（KD 负向）。→ **第 5 个经 KD 改善的数据集**。
 
+#### 5.29.4 完整 teacher 矩阵（8 数据集 × DeepSeek / qwen，同池仅换 teacher）
+
+补齐 DeepSeek 在最初只跑过 qwen 的 3 个数据集（zho_restaurant / jpn_hotel / eng_restaurant），形成全 8 数据集的云端 vs 本地完整对照（dev cF1）：
+
+| 数据集 | baseline | DeepSeek-KD | qwen-KD | DS − qwen | KD 最优 vs baseline |
+|---|---|---|---|---|---|
+| eng_laptop | 0.3254 | **0.4141** | 0.4094 | +0.5 | +8.9 ✅ |
+| rus_restaurant | 0.5267 | **0.5753** | 0.5365 | +3.9 | +4.9 ✅ |
+| ukr_restaurant | 0.5068 | **0.5560** | 0.4886 | +6.7 | +4.9 ✅ |
+| tat_restaurant | 0.4821 | 0.5196 | **0.5327** | −1.3 | +5.1 ✅ |
+| zho_restaurant | 0.4745 | **0.5351** | 0.5263 | +0.9 | +6.1 ✅ |
+| zho_laptop | 0.4487 | 0.4428 | 0.4454 | −0.3 | −0.3 ❌ |
+| jpn_hotel | 0.4466 | 0.4281 | 0.4043 | +2.4 | −1.9 ❌ |
+| eng_restaurant | 0.6554 | 0.6013 | 0.4043 | **+19.7** | −5.4 ❌ |
+
+**🔑 结论（n=8 完整对照）**：
+- **DeepSeek 整体 ≥ qwen**：8 个里 DeepSeek 赢 6、tat 输、zho_laptop 平。但多数差距仅 ±几 pp，印证"本地 ≈ 云端"在多数数据集成立。
+- **eng_restaurant 大反转修正了之前的归因**：DeepSeek 0.6013 vs qwen 0.4043（**+19.7pp**）。说明 qwen 在此前的 −25pp 灾难**主因是 qwen silver 质量差**（该域 qwen 标注崩盘），并非"KD 完全不能用"。但 DeepSeek 仍 < 基线 0.6554（−5.4pp）→ eng_restaurant KD 仍净负。
+- **jpn 即使最强 teacher 也救不回**（DeepSeek 0.4281 < 基线 0.4466）→ jpn 的 KD 失败是**数据集级**（强 native encoder + 小类别），与 teacher 无关。
+- **"local ≈ cloud" 需加注**：多数数据集本地 qwen 与云端差距小，但 eng_restaurant 上 qwen silver 崩盘（−19.7pp）说明开源模型在个别域/语言上质量不稳定，前沿云模型更鲁棒。
+- **提交切换**：zho_restaurant 由 qwen 0.5263 → **DeepSeek 0.5351**（+0.9pp），qwen 版留 `zho_restaurant_test_qwen_backup.jsonl`。jpn/eng_restaurant 仍保留 baseline。
+
 ---
 
 ### 5.21 Jpn 跨基线对比
