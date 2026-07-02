@@ -151,8 +151,8 @@ experiments:
     base_config: configs/pipeline_zho_restaurant_v23_qwen.yaml
     dev: data/subtask_3/zho/zho_restaurant_dev_task3.jsonl
     test: data/subtask_3/zho/zho_restaurant_test_task3.jsonl
-    result: 0.5351   # > qwen 0.5263 (+0.9pp), > baseline 0.4745 -- SUBMITTED (switched from qwen)
-    status: submitted
+    result: 0.5351   # superseded by zho_restaurant_deepseek_real 0.5579 (kept as deepseek_gen_backup)
+    status: superseded
 
   jpn_hotel_deepseek:
     dataset: jpn_hotel
@@ -181,6 +181,22 @@ experiments:
     test: data/subtask_3/eng/eng_restaurant_test_task3.jsonl
     result: 0.6013   # >> qwen 0.4043 (+19.7pp) but < baseline 0.6554 -> KD still net negative
     status: negative
+
+  # ---- POOL-SOURCE ABLATION on a KD-positive dataset (real corpus vs generated, same teacher) ----
+  zho_restaurant_deepseek_real:
+    dataset: zho_restaurant
+    lang: zho
+    domain: restaurant
+    teacher: deepseek
+    variant: real
+    pool: {source: existing, file: data/subtask_3/zho/zho_restaurant_pool_v23_real.jsonl}
+    gold_base: data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_zho_restaurant_v23_qwen.yaml
+    dev: data/subtask_3/zho/zho_restaurant_dev_task3.jsonl
+    test: data/subtask_3/zho/zho_restaurant_test_task3.jsonl
+    result: 0.5579   # REAL dianping pool > generated 0.5351 (+2.3pp), best zho_restaurant -- SUBMITTED
+    status: submitted
 
   # ---- ABLATIONS / NEGATIVES (baseline kept) ----
   eng_laptop_qwen:

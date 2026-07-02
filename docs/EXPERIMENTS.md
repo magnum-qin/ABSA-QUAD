@@ -1659,7 +1659,17 @@ qwen3.6 teacher = `unsloth/Qwen3.6-35B-A3B-MTP-GGUF`（35B-A3B MoE，Unsloth Stu
 **🔍 结论：池来源不是失败主因**。
 - eng_restaurant：真实 Yelp + 少数派 silver 仅比生成池好 +1.5pp（0.4190 vs 0.4043），仍距基线 −23.6pp。**强 gold(0.655) 无法被 qwen silver(标注质量~0.40) 改善是本质——换真实语料也救不了。**
 - zho_laptop：真实语料反而略差（受语料稀缺 silver 仅 1392、ratio 0.25 拖累），两版都低于基线。
-- **统一规律再确认**：决定 KD 成败的是「teacher 标注质量 vs gold 基线强度 / 信息互补性」，**池来源 real/generated 影响很小（±1.5pp）**，排除了该 confound。两个数据集均不切换提交。
+- **注意**：以上两个都是 **KD 失败**的数据集（两臂都低于基线），"池来源无所谓"其实是个 confound——KD 本就不生效，换什么池都救不回。
+
+**补充 ablation：KD 成功的数据集上，真实 vs 生成池（zho_restaurant，同 teacher DeepSeek，仅换池）**：
+
+| 池来源 | dev cF1 | vs 生成 |
+|---|---|---|
+| **真实 dianping（繁化，4000+test）** | **0.5579** | — |
+| 生成（qwen 原生，当前提交）| 0.5351 | 真实 **+2.3pp** |
+| baseline | 0.4745 | |
+
+**🔑 修正结论（关键）**：**当 KD 处在有效区间时，真实 in-domain 语料池明显优于 LLM 生成池（+2.3pp）**。之前"池来源 ±1.5pp 无所谓"只在 KD 失败的数据集上成立（confound）。在 KD 生效时，真实评论的分布更贴近 test、silver 质量更高——LLM 生成池"够用能生效"，真实语料"更优"。→ zho_restaurant 提交候选切换到真实池 0.5579。脚本：`/tmp/collect_dianping.py`（twn39/dianping + opencc s2twp）。
 
 **提交切换**：zho_restaurant 从 V16 (0.4745) → **qwen-KD vote=3 topk=0.0 (0.5263, +5.18pp)**，V16 留 `zho_restaurant_test_v16_backup.jsonl`。jpn_hotel / eng_restaurant **不切换**（KD 负向）。→ **第 5 个经 KD 改善的数据集**。
 
