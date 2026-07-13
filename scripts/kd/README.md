@@ -38,6 +38,15 @@ Add a new experiment = add one block to `registry.yaml` (no new script).
 | train | derive config (train_file=distill), `train_multi_seed.py` 5 seeds | — |
 | eval | vote×topk sweep on dev, `official_eval.py` | — |
 
+Long runs can set `resume_existing: true` in the registry. Training then resumes
+from each seed's `checkpoint_latest.pt`, skips seeds carrying
+`training_complete.json`, and appends to the existing log. Epoch checkpoints are
+written atomically and `latest` / `best` / top-k names share identical bytes via
+hard links, avoiding duplicate serialization without changing model state or
+ensemble inputs. Resume checkpoints also restore Python, NumPy, PyTorch, and CUDA
+RNG state at the epoch boundary. CUDA training defaults to 4 deterministic, non-persistent data
+workers with pinned-memory prefetch; set `data.num_workers: 0` to opt out.
+
 GPU note: a local teacher (qwen/gemma) occupies ~24GB, so silver-labeling and training
 cannot overlap; the trunk unloads the model after `silver` before `train`.
 

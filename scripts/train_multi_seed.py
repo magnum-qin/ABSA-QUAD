@@ -24,7 +24,8 @@ DEFAULT_SEEDS = [42, 123, 456, 789, 1024]
 def run_training(config_path: str, seed: int, base_config: dict,
                  save_prefix: str = "ensemble_seed", train_file: str = None,
                  pretrained_checkpoint: str = None,
-                 pretrained_checkpoints: list = None):
+                 pretrained_checkpoints: list = None,
+                 resume_existing: bool = False):
     """Run a single training with the given seed."""
     config = copy.deepcopy(base_config)
     config['seed'] = seed
@@ -42,17 +43,30 @@ def run_training(config_path: str, seed: int, base_config: dict,
     print(f"  Save dir: {config['training']['save_dir']}")
     print(f"{'='*60}\n")
 
+    save_dir = Path(config['training']['save_dir'])
+    complete_marker = save_dir / 'training_complete.json'
+    if resume_existing and complete_marker.exists():
+        print(f"  Already complete: {complete_marker} (skipping seed={seed})")
+        return 0
+
     cmd = [sys.executable, "scripts/train.py", "--config", tmp_config_path]
     if pretrained_checkpoints:
         cmd.extend(["--pretrained_checkpoints"] + pretrained_checkpoints)
     elif pretrained_checkpoint:
         cmd.extend(["--pretrained_checkpoint", pretrained_checkpoint])
+    if resume_existing and (save_dir / 'checkpoint_latest.pt').exists():
+        cmd.extend(["--resume_checkpoint", str(save_dir / 'checkpoint_latest.pt')])
     # Ensure LD_LIBRARY_PATH includes conda lib (for libstdc++ compatibility)
     env = os.environ.copy()
     conda_prefix = os.environ.get('CONDA_PREFIX', '')
     if conda_prefix:
         env['LD_LIBRARY_PATH'] = f"{conda_prefix}/lib:{env.get('LD_LIBRARY_PATH', '')}"
     result = subprocess.run(cmd, capture_output=False, text=True, env=env)
+
+    if result.returncode == 0:
+        complete_marker.write_text(
+            f'{{"seed": {seed}, "completed_at": "{datetime.now().isoformat()}"}}\n'
+        )
 
     Path(tmp_config_path).unlink(missing_ok=True)
     return result.returncode
@@ -91,6 +105,8 @@ def main():
                         help="Pretrained checkpoint for cross-lingual transfer")
     parser.add_argument("--pretrained_checkpoints", type=str, nargs='+', default=None,
                         help="Multiple pretrained checkpoints for multi-source transfer (weights averaged)")
+    parser.add_argument("--resume_existing", action="store_true",
+                        help="Resume interrupted seeds and skip seeds with a completion marker")
     args = parser.parse_args()
 
     with open(args.config, 'r') as f:
@@ -116,7 +132,8 @@ def main():
                                   save_prefix=args.save_prefix,
                                   train_file=args.train_file,
                                   pretrained_checkpoint=args.pretrained_checkpoint,
-                                  pretrained_checkpoints=args.pretrained_checkpoints)
+                                  pretrained_checkpoints=args.pretrained_checkpoints,
+                                  resume_existing=args.resume_existing)
         if returncode != 0:
             print(f"WARNING: seed={seed} exited with code {returncode}")
 

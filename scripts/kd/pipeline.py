@@ -44,10 +44,16 @@ def resolve(exp):
                           "deepseek": DEF["deepseek_model"]}[e["teacher"]]
     e["prefix"] = f"v23_{e['dataset']}_{e['teacher']}" + (f"_{e['variant']}" if e.get("variant") else "")
     e["alltasks"] = f"data/subtask_3/{e['lang']}/{e['dataset']}_train_alltasks.jsonl"
-    e["silver_file"] = (f"data/subtask_3/{e['lang']}/{e['dataset']}_silver_v23_{e['teacher']}"
-                        + (f"_{e['variant']}" if e.get('variant') else "") + ".jsonl")
-    e["distill_file"] = (f"data/subtask_3/{e['lang']}/{e['dataset']}_train_v23_{e['teacher']}"
-                         + (f"_{e['variant']}" if e.get('variant') else "") + ".jsonl")
+    e["silver_file"] = e.get(
+        "silver_file",
+        f"data/subtask_3/{e['lang']}/{e['dataset']}_silver_v23_{e['teacher']}"
+        + (f"_{e['variant']}" if e.get('variant') else "") + ".jsonl",
+    )
+    e["distill_file"] = e.get(
+        "distill_file",
+        f"data/subtask_3/{e['lang']}/{e['dataset']}_train_v23_{e['teacher']}"
+        + (f"_{e['variant']}" if e.get('variant') else "") + ".jsonl",
+    )
     e["v23_config"] = f"/tmp/pipeline_{e['prefix']}.yaml"
     return e
 
@@ -67,6 +73,11 @@ def step_pool(e):
 
 
 def step_silver(e):
+    if e.get("silver_prebuilt"):
+        if not os.path.exists(e["silver_file"]):
+            raise FileNotFoundError(f"prebuilt silver file missing: {e['silver_file']}")
+        print(f"  silver prebuilt: {e['silver_file']}")
+        return
     if e["teacher"] == "deepseek":
         sh(f"{conda('scripts/llm_silver_label.py')} --input {e['pool']['file']} --train_file {e['alltasks']} "
            f"--output {e['silver_file']} --model {e['teacher_model']} --domain {e['domain']} --n_shots 6")
@@ -120,18 +131,21 @@ def ensure_config(e):
 
 def step_train(e):
     ensure_config(e)
-    seeds = " ".join(map(str, DEF["seeds"]))
+    seeds = " ".join(map(str, e.get("seeds", DEF["seeds"])))
+    resume_flag = " --resume_existing" if e.get("resume_existing") else ""
+    redirect = ">>" if e.get("resume_existing") else ">"
     sh(f"{conda('scripts/train_multi_seed.py')} --config {e['v23_config']} --seeds {seeds} "
        f"--save_prefix {e['prefix']}_seed --train_file {e['distill_file']} "
-       f"> /tmp/{e['prefix']}_train.log 2>&1")
+       f"{resume_flag} {redirect} /tmp/{e['prefix']}_train.log 2>&1")
 
 
 def step_eval(e):
     ensure_config(e)  # regenerate config if missing (e.g. running eval alone after a session restart)
-    sd = " ".join(f"checkpoints/{e['prefix']}_seed{s}" for s in DEF["seeds"])
+    seeds = e.get("seeds", DEF["seeds"])
+    sd = " ".join(f"checkpoints/{e['prefix']}_seed{s}" for s in seeds)
     res = f"/tmp/{e['prefix']}_results.txt"
     if not DRY: open(res, "w").write(f"# {e['name']} (baseline result {e.get('result')})\n")
-    for vote in DEF["vote_sweep"]:
+    for vote in (v for v in DEF["vote_sweep"] if v <= len(seeds)):
         for topk in DEF["topk_sweep"]:
             out = f"/tmp/{e['prefix']}_v{vote}_t{topk}.jsonl"
             sh(f"{conda('scripts/inference.py')} --multi_seed_ensemble --seed_dirs {sd} "

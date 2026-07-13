@@ -326,11 +326,11 @@ def create_dataloader(
     max_length: int = 256,
     shuffle: bool = True,
     num_workers: int = 0,
+    prefetch_factor: int = 2,
     entity_labels: list = None,
     attribute_labels: list = None
 ) -> DataLoader:
     """Create a DataLoader for DimASQP"""
-    import platform
     dataset = DimASQPDataset(
         data_path=data_path,
         tokenizer=tokenizer,
@@ -341,11 +341,19 @@ def create_dataloader(
 
     use_pin_memory = torch.cuda.is_available()
 
-    return DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=shuffle,
-        num_workers=num_workers,
-        collate_fn=collate_fn,
-        pin_memory=use_pin_memory
-    )
+    loader_kwargs = {
+        "dataset": dataset,
+        "batch_size": batch_size,
+        "shuffle": shuffle,
+        "num_workers": num_workers,
+        "collate_fn": collate_fn,
+        "pin_memory": use_pin_memory,
+    }
+    if num_workers > 0:
+        loader_kwargs["prefetch_factor"] = prefetch_factor
+        # Deliberately keep workers non-persistent. Recreating the iterator each
+        # epoch preserves the same main-process RNG consumption pattern as the
+        # original num_workers=0 pipeline while still overlapping tokenization.
+        loader_kwargs["persistent_workers"] = False
+
+    return DataLoader(**loader_kwargs)

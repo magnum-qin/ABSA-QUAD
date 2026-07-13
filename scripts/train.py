@@ -9,9 +9,12 @@ import yaml
 import json
 import argparse
 import logging
+import random
+import shutil
 from datetime import datetime
 from pathlib import Path
 
+import numpy as np
 import torch
 import torch.nn as nn
 from torch.optim import AdamW
@@ -38,6 +41,30 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+
+def _atomic_torch_save(payload: dict, path: Path):
+    """Write a checkpoint atomically so interruption keeps the prior file valid."""
+    tmp = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        torch.save(payload, tmp)
+        os.replace(tmp, path)
+    finally:
+        tmp.unlink(missing_ok=True)
+
+
+def _replace_with_hardlink(source: Path, destination: Path):
+    """Atomically point destination at identical checkpoint bytes, copying as fallback."""
+    tmp = destination.with_name(f".{destination.name}.{os.getpid()}.tmp")
+    tmp.unlink(missing_ok=True)
+    try:
+        try:
+            os.link(source, tmp)
+        except OSError:
+            shutil.copy2(source, tmp)
+        os.replace(tmp, destination)
+    finally:
+        tmp.unlink(missing_ok=True)
 
 
 class EMA:
@@ -131,6 +158,7 @@ class Trainer:
         self.val_dataloader = val_dataloader
         self.config = config
         self.device = device
+        self.non_blocking_transfer = str(device).startswith('cuda')
         
         # Optimizer with different learning rates
         encoder_params = list(model.encoder.parameters())
@@ -177,12 +205,82 @@ class Trainer:
         self.best_metric = 0.0
         self.patience_counter = 0
         self.global_step = 0
+        self.start_epoch = 1
 
         # Checkpointing
         self.save_dir = Path(config['training']['save_dir'])
         self.save_dir.mkdir(parents=True, exist_ok=True)
         self.save_top_k = config['training'].get('save_top_k', 3)
         self.top_k_checkpoints = []  # min-heap: (cF1, epoch, path)
+
+    def resume_from_checkpoint(self, checkpoint_path: str):
+        """Resume an interrupted run from an epoch-boundary checkpoint."""
+        import heapq
+
+        checkpoint_path = Path(checkpoint_path)
+        logger.info(f"Resuming training from: {checkpoint_path}")
+        checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
+
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        self.scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
+        if self.use_ema and checkpoint.get('ema_state_dict'):
+            self.ema.load_state_dict(checkpoint['ema_state_dict'])
+
+        last_epoch = int(checkpoint['epoch'])
+        self.start_epoch = last_epoch + 1
+        self.global_step = int(checkpoint.get(
+            'global_step', checkpoint['scheduler_state_dict'].get('last_epoch', 0)
+        ))
+
+        # Older checkpoints did not persist early-stopping state. Recover it
+        # from checkpoint_best.pt, which is authoritative for the run.
+        best_path = checkpoint_path.parent / 'checkpoint_best.pt'
+        best_epoch = last_epoch
+        if best_path.exists():
+            best_ckpt = torch.load(best_path, map_location='cpu', weights_only=False)
+            best_epoch = int(best_ckpt['epoch'])
+            self.best_metric = float(best_ckpt['metrics'].get('continuous_f1', 0.0))
+            del best_ckpt
+        else:
+            self.best_metric = float(checkpoint.get(
+                'best_metric', checkpoint['metrics'].get('continuous_f1', 0.0)
+            ))
+        self.patience_counter = int(checkpoint.get(
+            'patience_counter', max(0, last_epoch - best_epoch)
+        ))
+        self.best_val_loss = float(checkpoint.get(
+            'best_val_loss', checkpoint['metrics'].get('val_loss', float('inf'))
+        ))
+
+        # Reconstruct the top-k heap so resumed training preserves the same
+        # checkpoint replacement policy instead of treating the directory as empty.
+        self.top_k_checkpoints = []
+        for path in checkpoint_path.parent.glob('checkpoint_epoch*.pt'):
+            ckpt = torch.load(path, map_location='cpu', weights_only=False)
+            cf1 = float(ckpt['metrics'].get('continuous_f1', 0.0))
+            epoch = int(ckpt['epoch'])
+            heapq.heappush(self.top_k_checkpoints, (cf1, epoch, str(path)))
+            del ckpt
+        while len(self.top_k_checkpoints) > self.save_top_k:
+            heapq.heappop(self.top_k_checkpoints)
+
+        logger.info(
+            f"Resume state: next_epoch={self.start_epoch}, global_step={self.global_step}, "
+            f"best_cF1={self.best_metric:.4f}, patience={self.patience_counter}, "
+            f"top_k={len(self.top_k_checkpoints)}"
+        )
+        rng_state = checkpoint.get('rng_state')
+        if rng_state:
+            random.setstate(rng_state['python'])
+            np.random.set_state(rng_state['numpy'])
+            torch.set_rng_state(rng_state['torch'].cpu())
+            if torch.cuda.is_available() and rng_state.get('cuda'):
+                torch.cuda.set_rng_state_all([state.cpu() for state in rng_state['cuda']])
+            logger.info("Restored Python, NumPy, PyTorch, and CUDA RNG states")
+        else:
+            logger.warning("Resume checkpoint has no RNG state; continuation is not bitwise comparable")
+        del checkpoint
     
     def train_epoch(self, epoch: int) -> dict:
         """Train for one epoch"""
@@ -207,9 +305,9 @@ class Trainer:
         self.optimizer.zero_grad()
         for batch_idx, batch in enumerate(progress_bar):
             # Move to device
-            input_ids = batch['input_ids'].to(self.device)
-            attention_mask = batch['attention_mask'].to(self.device)
-            bio_labels = batch['bio_labels'].to(self.device)
+            input_ids = batch['input_ids'].to(self.device, non_blocking=self.non_blocking_transfer)
+            attention_mask = batch['attention_mask'].to(self.device, non_blocking=self.non_blocking_transfer)
+            bio_labels = batch['bio_labels'].to(self.device, non_blocking=self.non_blocking_transfer)
             pair_labels = batch['pair_labels']
 
             is_last_batch = (batch_idx + 1 == len(self.train_dataloader))
@@ -295,9 +393,9 @@ class Trainer:
         total_loss = 0.0
 
         for batch in tqdm(self.val_dataloader, desc="Evaluating"):
-            input_ids = batch['input_ids'].to(self.device)
-            attention_mask = batch['attention_mask'].to(self.device)
-            bio_labels = batch['bio_labels'].to(self.device)
+            input_ids = batch['input_ids'].to(self.device, non_blocking=self.non_blocking_transfer)
+            attention_mask = batch['attention_mask'].to(self.device, non_blocking=self.non_blocking_transfer)
+            bio_labels = batch['bio_labels'].to(self.device, non_blocking=self.non_blocking_transfer)
             pair_labels = batch['pair_labels']
             texts = batch['texts']
             gold_quads = batch['quadruplets']
@@ -354,42 +452,60 @@ class Trainer:
             'optimizer_state_dict': self.optimizer.state_dict(),
             'scheduler_state_dict': self.scheduler.state_dict(),
             'metrics': {k: float(v) for k, v in metrics.items()},
-            'config': self.config
+            'config': self.config,
+            'global_step': self.global_step,
+            'best_metric': self.best_metric,
+            'patience_counter': self.patience_counter,
+            'best_val_loss': getattr(self, 'best_val_loss', float('inf')),
+            'rng_state': {
+                'python': random.getstate(),
+                'numpy': np.random.get_state(),
+                'torch': torch.get_rng_state(),
+                'cuda': torch.cuda.get_rng_state_all() if torch.cuda.is_available() else [],
+            },
         }
 
         if self.use_ema:
             checkpoint['ema_state_dict'] = self.ema.state_dict()
 
-        # Save latest checkpoint (for resume)
-        torch.save(checkpoint, self.save_dir / 'checkpoint_latest.pt')
+        # Serialize the full state exactly once. Atomic replacement keeps the
+        # previous epoch resumable if the process is interrupted mid-write.
+        latest_path = self.save_dir / 'checkpoint_latest.pt'
+        _atomic_torch_save(checkpoint, latest_path)
 
-        # Save best checkpoint
-        if is_best:
-            torch.save(checkpoint, self.save_dir / 'checkpoint_best.pt')
-            logger.info(f"✅ Saved new best model with cF1: {metrics['continuous_f1']:.4f}")
-
-        # Save top-k checkpoints
+        # Top-k and best are byte-identical views of that epoch. Hard links avoid
+        # re-serializing 9+ GB two more times; inference and resume paths are unchanged.
         import heapq
         cf1 = metrics.get('continuous_f1', 0)
         ckpt_path = self.save_dir / f'checkpoint_epoch{epoch}.pt'
+        saved_top_k = False
         if len(self.top_k_checkpoints) < self.save_top_k:
-            torch.save(checkpoint, ckpt_path)
+            _replace_with_hardlink(latest_path, ckpt_path)
             heapq.heappush(self.top_k_checkpoints, (cf1, epoch, str(ckpt_path)))
+            saved_top_k = True
             logger.info(f"Top-{self.save_top_k} saved: epoch {epoch} (cF1={cf1:.4f})")
         elif cf1 > self.top_k_checkpoints[0][0]:
             # Remove worst checkpoint
             _, old_epoch, old_path = heapq.heapreplace(self.top_k_checkpoints, (cf1, epoch, str(ckpt_path)))
             if Path(old_path).exists():
                 Path(old_path).unlink()
-            torch.save(checkpoint, ckpt_path)
+            _replace_with_hardlink(latest_path, ckpt_path)
+            saved_top_k = True
             logger.info(f"Top-{self.save_top_k} updated: epoch {epoch} (cF1={cf1:.4f}) replaced epoch {old_epoch}")
+
+        if is_best:
+            # A new global best is necessarily in top-k; fall back to latest only
+            # for defensive compatibility with unusual custom ranking policies.
+            best_source = ckpt_path if saved_top_k else latest_path
+            _replace_with_hardlink(best_source, self.save_dir / 'checkpoint_best.pt')
+            logger.info(f"✅ Saved new best model with cF1: {metrics['continuous_f1']:.4f}")
     
     def train(self):
         """Main training loop"""
         logger.info("🚀 Starting training...")
         logger.info(f"Config: {json.dumps(self.config['training'], indent=2)}")
         
-        for epoch in range(1, self.config['training']['num_epochs'] + 1):
+        for epoch in range(self.start_epoch, self.config['training']['num_epochs'] + 1):
             logger.info(f"\n{'='*60}")
             logger.info(f"Epoch {epoch}/{self.config['training']['num_epochs']}")
             logger.info('='*60)
@@ -450,6 +566,8 @@ def main():
                        help='Pretrained checkpoint for cross-lingual transfer (loads encoder weights)')
     parser.add_argument('--pretrained_checkpoints', type=str, nargs='+', default=None,
                        help='Multiple pretrained checkpoints for multi-source transfer (encoder weights averaged)')
+    parser.add_argument('--resume_checkpoint', type=str, default=None,
+                       help='Resume full training state from an epoch-boundary checkpoint')
     args = parser.parse_args()
     
     # Load config
@@ -469,9 +587,12 @@ def main():
     logger.info(f"Using device: {device}")
     
     # Set random seed
-    torch.manual_seed(config.get('seed', 42))
+    seed = config.get('seed', 42)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
     if device == 'cuda':
-        torch.cuda.manual_seed_all(config.get('seed', 42))
+        torch.cuda.manual_seed_all(seed)
     
     # Load tokenizer
     logger.info(f"Loading tokenizer: {config['model']['encoder_name']}")
@@ -483,12 +604,22 @@ def main():
 
     # Create datasets
     logger.info("Loading datasets...")
+    default_workers = min(4, os.cpu_count() or 1) if str(device).startswith('cuda') else 0
+    num_workers = int(config['data'].get('num_workers', default_workers))
+    prefetch_factor = int(config['data'].get('prefetch_factor', 2))
+    # Persist resolved runtime values in checkpoints for reproducibility.
+    config['data']['num_workers'] = num_workers
+    config['data']['prefetch_factor'] = prefetch_factor
+    logger.info(f"DataLoader workers: {num_workers} (prefetch_factor={prefetch_factor})")
+
     train_dataloader = create_dataloader(
         data_path=config['data']['train_file'],
         tokenizer=tokenizer,
         batch_size=config['training']['batch_size'],
         max_length=config['data']['max_seq_length'],
         shuffle=True,
+        num_workers=num_workers,
+        prefetch_factor=prefetch_factor,
         entity_labels=entity_labels,
         attribute_labels=attribute_labels
     )
@@ -499,6 +630,7 @@ def main():
         batch_size=config['training']['batch_size'],
         max_length=config['data']['max_seq_length'],
         shuffle=False,
+        num_workers=0,
         entity_labels=entity_labels,
         attribute_labels=attribute_labels
     )
@@ -577,6 +709,8 @@ def main():
         config=config,
         device=device
     )
+    if args.resume_checkpoint:
+        trainer.resume_from_checkpoint(args.resume_checkpoint)
     
     # Train
     best_metric = trainer.train()
