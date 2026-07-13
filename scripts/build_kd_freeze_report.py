@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+"""Build the canonical Data Analytics artifact for the KD freeze audit."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT_DIR = ROOT / "docs/audits/kd_freeze_report"
+
+manifest_data = json.loads((ROOT / "submission/final_manifest.json").read_text(encoding="utf-8"))
+audit = json.loads((ROOT / "docs/audits/final_submission_audit.json").read_text(encoding="utf-8"))
+quality = json.loads((ROOT / "docs/audits/rus_silver_quality_metrics.json").read_text(encoding="utf-8"))
+
+performance = [
+    {"system": "gen4k cap3000 ensemble", "dev_cf1": 0.6162, "comparison": "final selected"},
+    {"system": "gen8k full ensemble", "dev_cf1": 0.5858, "comparison": "not selected"},
+    {"system": "gen8k full paired mean", "dev_cf1": 0.5467, "comparison": "seeds 42/123"},
+    {"system": "gen8k cap3000 paired mean", "dev_cf1": 0.5353, "comparison": "seeds 42/123"},
+]
+quality_rows = []
+for batch in ("gen4k", "gen8k"):
+    item = quality["batches"][batch]
+    quality_rows.append({
+        "batch": batch,
+        "rows": item["rows"],
+        "flagged_rows": item["invalid_rows"],
+        "flagged_rate_pct": 100 * item["invalid_rows"] / item["rows"],
+        "duplicate_rows": item["normalized_duplicate_rows"],
+        "category_jsd_vs_gold": item["category_jsd_vs_gold"],
+        "category_top_share_pct": 100 * item["category_top_share"],
+        "msttr_100": item["equal_size_lexical_sample"]["msttr_100"],
+    })
+freeze_rows = [{
+    "dataset": item["dataset"], "method": item["method"], "dev_cf1": item["dev_cf1"],
+    "vote": item["vote_threshold"], "topk": item["span_topk_threshold"],
+    "checkpoint_state": item["checkpoint_state"], "prediction_sha256": item["prediction_sha256"][:12],
+} for item in manifest_data["datasets"]]
+
+sources = [
+    {
+        "id": "silver_quality",
+        "query": {
+            "engine": "duckdb", "language": "sql",
+            "sql": "CREATE TEMP TABLE performance(system, dev_cf1, comparison) AS VALUES ('gen4k cap3000 ensemble', 0.6162, 'final selected'), ('gen8k full ensemble', 0.5858, 'not selected'), ('gen8k full paired mean', 0.5467, 'seeds 42/123'), ('gen8k cap3000 paired mean', 0.5353, 'seeds 42/123'); CREATE TEMP TABLE quality(batch, rows, flagged_rows, flagged_rate_pct, duplicate_rows, category_jsd_vs_gold, category_top_share_pct, msttr_100) AS VALUES ('gen4k', 4000, 10, 0.25, 0, 0.0651371030, 26.19647355, 0.8843157895), ('gen8k', 8000, 31, 0.3875, 0, 0.0718774208, 29.19854187, 0.88328); SELECT * FROM performance; SELECT * FROM quality;",
+            "description": "Materializes the reviewed report rows produced by scripts/analyze_rus_silver_quality.py; rerun that script before rebuilding this artifact.",
+            "executed_at": "2026-07-13T00:00:00+09:00",
+            "tables_used": [
+                "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_gen4k.jsonl",
+                "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_gen.jsonl",
+                "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl"
+            ],
+            "filters": ["Equal-size lexical comparison uses a deterministic 3,000-row sample per batch."],
+            "metric_definitions": {
+                "category_jsd_vs_gold": "Jensen-Shannon divergence in bits between silver and gold category distributions; lower is closer.",
+                "flagged_rate_pct": "Rows with at least one automated schema, category, VA, or exact-span flag divided by all rows."
+            }
+        }
+    },
+    {
+        "id": "submission_audit",
+        "query": {
+            "engine": "python", "language": "python",
+            "sql": "import subprocess\nsubprocess.run(['python', 'scripts/audit_final_submission.py'], check=True)",
+            "description": "Validates file hashes, ZIP byte equality, JSONL schema, test-row alignment and checkpoint availability.",
+            "executed_at": "2026-07-13T00:00:00+09:00",
+            "tables_used": ["submission/final_manifest.json", "submission/submission.zip", "submission/final/*_test.jsonl"]
+        }
+    },
+    {
+        "id": "freeze_manifest",
+        "query": {
+            "engine": "duckdb", "language": "sql",
+            "sql": "SELECT dataset, method, dev_cf1, vote_threshold AS vote, span_topk_threshold AS topk, checkpoint_state, left(prediction_sha256, 12) AS prediction_sha256 FROM read_json_auto('submission/final_manifest.json', format='array'), UNNEST(datasets) AS t(dataset);",
+            "description": "Loads the frozen per-dataset method, score, inference settings and prediction hashes from the manifest.",
+            "executed_at": "2026-07-13T00:00:00+09:00",
+            "tables_used": ["submission/final_manifest.json"]
+        }
+    }
+]
+
+artifact = {
+    "surface": "report",
+    "manifest": {
+        "version": 1,
+        "surface": "report",
+        "title": "Final KD freeze and Russian silver quality audit",
+        "description": "Technical freeze record for the eight-dataset submission and the gen4k/gen8k decision.",
+        "generatedAt": "2026-07-13T00:00:00+09:00",
+        "charts": [{
+            "id": "rus_performance",
+            "title": "Russian dev cF1 by silver setup",
+            "subtitle": "The same-pool cap3000 paired mean trails full gen8k by 1.14pp; gen4k remains the selected ensemble.",
+            "type": "bar", "dataset": "performance", "sourceId": "silver_quality",
+            "valueFormat": "number",
+            "encodings": {
+                "x": {"field": "system", "type": "nominal", "label": "Silver setup"},
+                "y": {"field": "dev_cf1", "type": "quantitative", "label": "dev cF1", "format": "number"},
+                "tooltip": [{"field": "comparison", "type": "nominal", "label": "Evidence"}]
+            }
+        }],
+        "tables": [
+            {
+                "id": "quality_table", "title": "Automated silver quality indicators",
+                "subtitle": "Distributional and validity proxies; not human semantic accuracy.",
+                "dataset": "quality", "sourceId": "silver_quality",
+                "defaultSort": {"field": "batch", "direction": "asc"},
+                "columns": [
+                    {"field": "batch", "label": "Batch", "type": "text"},
+                    {"field": "rows", "label": "Rows", "format": "number"},
+                    {"field": "flagged_rows", "label": "Flagged rows", "format": "number"},
+                    {"field": "flagged_rate_pct", "label": "Flagged rate (%)", "format": "number"},
+                    {"field": "duplicate_rows", "label": "Duplicates", "format": "number"},
+                    {"field": "category_jsd_vs_gold", "label": "Category JSD vs gold", "format": "number"},
+                    {"field": "category_top_share_pct", "label": "Top category share (%)", "format": "number"},
+                    {"field": "msttr_100", "label": "MSTTR-100", "format": "number"}
+                ]
+            },
+            {
+                "id": "freeze_table", "title": "Frozen final submission map",
+                "subtitle": "Prediction hashes are abbreviated to 12 hexadecimal characters.",
+                "dataset": "freeze", "sourceId": "freeze_manifest",
+                "defaultSort": {"field": "dataset", "direction": "asc"},
+                "columns": [
+                    {"field": "dataset", "label": "Dataset", "type": "text"},
+                    {"field": "method", "label": "Method", "type": "text"},
+                    {"field": "dev_cf1", "label": "dev cF1", "format": "number"},
+                    {"field": "vote", "label": "Vote", "format": "number"},
+                    {"field": "topk", "label": "Top-k threshold", "format": "number"},
+                    {"field": "checkpoint_state", "label": "Checkpoint state", "type": "text"},
+                    {"field": "prediction_sha256", "label": "SHA-256 prefix", "type": "text"}
+                ]
+            }
+        ],
+        "sources": [
+            {"id": "silver_quality", "label": "Russian silver quality metrics", "path": "docs/audits/rus_silver_quality_metrics.json"},
+            {"id": "submission_audit", "label": "Final submission audit", "path": "docs/audits/final_submission_audit.json"},
+            {"id": "freeze_manifest", "label": "Frozen final manifest", "path": "submission/final_manifest.json"}
+        ],
+        "blocks": [
+            {"id": "title", "type": "markdown", "body": "# Final KD freeze and Russian silver quality audit"},
+            {"id": "technical_summary", "type": "markdown", "body": "## Technical Summary\n\nThe submission is frozen to the current per-dataset best systems. Russian gen4k remains selected; the pre-registered same-pool cap gate rejects further cap-curve training."},
+            {"id": "submission_finding", "type": "markdown", "sourceId": "submission_audit", "body": f"## Key Findings: submission integrity\n\nThe audit passed all {audit['summary']['datasets']} datasets and {audit['summary']['rows']:,} rows with {audit['summary']['errors']} errors. The two warnings are explicit reproducibility gaps: the historical eng_restaurant and jpn_hotel checkpoint sets are no longer local. ZIP members match the frozen prediction bytes."},
+            {"id": "performance_chart", "type": "chart", "chartId": "rus_performance"},
+            {"id": "quality_findings", "type": "markdown", "sourceId": "silver_quality", "body": "## Key Findings: silver batches\n\nSame-pool gen8k cap3000 averaged 0.5353 across seeds 42/123 versus 0.5467 for full gen8k, a −1.14pp change that fails the +1.5pp continuation gate. The gen4k ensemble scored 0.6162 versus 0.5858 for full gen8k. Automated proxies slightly favor gen4k, but the differences are small and cannot by themselves prove semantic-label superiority."},
+            {"id": "quality_table_block", "type": "table", "tableId": "quality_table"},
+            {"id": "scope", "type": "markdown", "body": "## Scope, Data, and Definitions\n\nScope covers the eight final Task-3 prediction files, their ZIP archive, five-seed checkpoint presence, and Russian gen4k/gen8k silver JSONL. JSD measures category-distribution drift from gold. MSTTR-100 measures lexical diversity over equal-size deterministic samples."},
+            {"id": "methodology", "type": "markdown", "sourceId": "silver_quality", "body": "## Methodology\n\nThe analysis validates JSON structure, categories, VA range, and exact text spans; computes duplicate, length, quadruplet, NULL, category, VA, and lexical indicators; and compares 3,000 deterministically selected rows from each silver batch. The paired-seed stopping rule was evaluated before any additional cap curve."},
+            {"id": "freeze_table_block", "type": "table", "tableId": "freeze_table"},
+            {"id": "limitations", "type": "markdown", "body": "## Limitations and Robustness\n\nTwo baseline checkpoint ensembles are unavailable locally, although their prediction bytes and hashes are frozen. Automated quality checks detect structural and distributional defects, not whether each Russian quadruplet is semantically correct. A balanced 100-row review sample is prepared but intentionally remains unadjudicated."},
+            {"id": "next_steps", "type": "markdown", "body": "## Recommended Next Steps\n\nDo not run the remaining gen8k cap3000 seeds or cap5000. Preserve the current archive. If stronger causal evidence is needed later, first complete blinded Russian human adjudication of the prepared sample; only a material batch-quality difference would justify a new controlled generation study."},
+            {"id": "further_questions", "type": "markdown", "body": "## Further Questions\n\nWhich teacher-generation failure modes explain the performance gap despite similar aggregate distributions? Can prompt-level metadata be recovered to separate prompt drift from sampling noise?"}
+        ]
+    },
+    "snapshot": {
+        "version": 1, "generatedAt": "2026-07-13T00:00:00+09:00", "status": "ready",
+        "datasets": {"performance": performance, "quality": quality_rows, "freeze": freeze_rows}
+    },
+    "sources": sources
+}
+
+OUT_DIR.mkdir(parents=True, exist_ok=True)
+(OUT_DIR / "artifact.json").write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+print(OUT_DIR / "artifact.json")

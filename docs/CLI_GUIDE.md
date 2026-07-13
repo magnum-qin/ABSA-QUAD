@@ -150,12 +150,17 @@ KD 生效判据见 [EXPERIMENTS.md §5.29](EXPERIMENTS.md)：silver 须提供 go
 ## 7. 生成提交包
 
 ```bash
-# 用各数据集最佳 config + vote/topk 跑 test 集，输出 submission/final/<dataset>_test.jsonl
+# 默认：按冻结 manifest 只读审计 8 个文件、ZIP、输入对齐和 checkpoint 状态
 bash scripts/run_test_submission.sh
-# 打包（8 个 *_test.jsonl，排除 *_backup.jsonl）→ submission/submission.zip
+
+# 可选：只重推当前仍保留完整 checkpoint 的 6 个任务；不会覆盖 submission/final
+bash scripts/run_test_submission.sh reproduce
+# 输出默认写入 submission/reproduced，可用 OUT_DIR 覆盖
 ```
 
-切换某数据集时，旧版本重命名为 `<dataset>_test_v<XX>_backup.jsonl` 保留。
+冻结权威源为 [`submission/final_manifest.json`](../submission/final_manifest.json)，其中记录方法、dev cF1、config/hash、checkpoint 前缀、vote/topk 和预测 SHA-256。当前 `submission/submission.zip` 的 8 个成员与 `submission/final` 字节一致。eng_restaurant 与 jpn_hotel 的历史五种子 checkpoint 已不在本机，因此两者只能验证冻结预测字节，不能在当前工作区完整重推；脚本会显式拒绝伪复现。
+
+银标批次质量分析：[`notebooks/rus_silver_quality_audit.ipynb`](../notebooks/rus_silver_quality_audit.ipynb)；最终技术审计：[`docs/audits/kd_freeze_report/report.html`](audits/kd_freeze_report/report.html)。
 
 ---
 

@@ -25,21 +25,23 @@ Output: [(thai food, FOOD#QUALITY, delicious, 7.5#6.2),
 | eng_laptop | deberta-v3-base | **KD (DeepSeek)** | **0.4141** | ✅ 反超 nchellwig 0.4006 |
 | eng_restaurant | deberta-v3-large | V16 baseline | 0.6554 | ✅ 领先 |
 | jpn_hotel | ku-nlp/deberta-v2-large-japanese | V16 baseline | 0.4466 | ✅ 反超 PALI 0.4252 |
-| rus_restaurant | xlm-roberta-large | **KD (DeepSeek)** | **0.5753** | ✅ 反超 PAI 0.5599 |
+| rus_restaurant | xlm-roberta-large | **KD (DeepSeek, gen4k cap)** | **0.6162** | ✅ 反超 PAI 0.5599 |
 | ukr_restaurant | mdeberta-v3-base | **KD (DeepSeek)** | **0.5560** | ✅ 反超 PAI 0.5437 |
-| tat_restaurant | xlm-roberta-large | **KD (DeepSeek)** | **0.5196** | ✅ 反超 Takoyaki 0.4736 |
-| zho_restaurant | chinese-roberta-wwm-ext-large | **KD (qwen3.6)** | **0.5263** | ✅ 领先（基线 0.4745）|
+| tat_restaurant | xlm-roberta-large | **KD (qwen3.6)** | **0.5327** | ✅ 反超 Takoyaki 0.4736 |
+| zho_restaurant | chinese-roberta-wwm-ext-large | **KD (DeepSeek, real pool)** | **0.5579** | ✅ 领先（基线 0.4745）|
 | zho_laptop | chinese-roberta-wwm-ext-large | V16 baseline | 0.4487 | ❌ 距 NYCU 0.4824 −3.4pp |
 
 **5/8 数据集采用 KD**（4 个 DeepSeek + 1 个本地 qwen3.6）。注意 dev≠test，最终以 test 集为准。
 
+最终方案已冻结到 [`submission/final_manifest.json`](submission/final_manifest.json)。运行 `bash scripts/run_test_submission.sh` 默认只做只读一致性审计；技术审计报告见 [`docs/audits/kd_freeze_report/report.html`](docs/audits/kd_freeze_report/report.html)，可复现银标分析见 [`notebooks/rus_silver_quality_audit.ipynb`](notebooks/rus_silver_quality_audit.ipynb)。
+
 ### KD 何时有效（核心发现）
 
-KD 有效 ⟺ **silver 能提供 gold 缺失的信息**：
-- gold 弱 / 类别空间极稀疏 → silver 补充稀疏类先验（eng_laptop +8.9pp、rus/ukr/tat）；
-- 或 silver 保持少数派（silver:gold < 1）→ 只加 seed 多样性不淹没 gold（zho_restaurant +5.2pp）。
+KD 有效 ⟺ **silver 能提供 gold/base 缺失的互补信息**。Teacher 标注质量和 pool 来源都存在明显域差异，没有固定的 teacher 或 real/translated/generated 排序；最佳 silver 也不是越多越好，而是质量、类别覆盖与相对 gold 权重合适。
 
-反例：强 gold（eng_restaurant 0.655）被 2× 噪声 silver 碾压 → −25pp；强 native encoder（jpn）→ 净负面。完整消融见 [docs/EXPERIMENTS.md §5.29.1–5.29.3](docs/EXPERIMENTS.md)。
+rus_restaurant 的 4k 生成批次（silver cap=3000）达到 **0.6162**，另一批完整 8k silver 为 **0.5858**。在同一 8k silver 上做 cap=3000 paired-seed 对照后，mean 反而从 0.5467 降至 0.5353（−1.14pp），未通过 +1.5pp gate；因此 4k 优势更可能来自生成批次质量，而非单纯“silver 更少”。
+
+反例：强 gold（eng_restaurant 0.655）被较噪 silver 淹没会退化；强 native encoder（jpn）也没有从 KD 获益。完整证据收敛见 [docs/EXPERIMENTS.md §5.29.5](docs/EXPERIMENTS.md)。
 
 ## Setup
 

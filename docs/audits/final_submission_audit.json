@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "manifest": "submission/final_manifest.json",
+  "status": "pass_with_warnings",
+  "summary": {
+    "datasets": 8,
+    "rows": 6690,
+    "errors": 0,
+    "warnings": 2
+  },
+  "archive": {
+    "path": "submission/submission.zip",
+    "sha256": "693481cf8f9889c1fb25ea7faf4df0c3a083d07841dd661447d9eb6134d3cfbe",
+    "member_count": 8
+  },
+  "datasets": [
+    {
+      "dataset": "eng_laptop",
+      "rows": 1000,
+      "quadruplets": 1488,
+      "prediction_sha256": "5e421fcde0432e8b39d68525a38fad1e890e0ee55b7a11b8d811550cc843febc",
+      "zip_bytes_match": true,
+      "checkpoint_best_files": 5,
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "dataset": "eng_restaurant",
+      "rows": 1000,
+      "quadruplets": 1792,
+      "prediction_sha256": "0a1e8dd65c82838972763f646495355e67504cf10a26d1f826c5bcb63feaafbb",
+      "zip_bytes_match": true,
+      "checkpoint_best_files": 0,
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "dataset": "jpn_hotel",
+      "rows": 800,
+      "quadruplets": 1438,
+      "prediction_sha256": "e6b167602d60b235b4a0969295956fd9325abdb384e29f037fc639cf7af397c6",
+      "zip_bytes_match": true,
+      "checkpoint_best_files": 0,
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "dataset": "rus_restaurant",
+      "rows": 630,
+      "quadruplets": 1296,
+      "prediction_sha256": "59bc8c646e066da723c93bfc7ae9b5f682b64c80d32ec1803473027f86ed3549",
+      "zip_bytes_match": true,
+      "checkpoint_best_files": 5,
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "dataset": "tat_restaurant",
+      "rows": 630,
+      "quadruplets": 1123,
+      "prediction_sha256": "b2d3b814b5c33bce27c1473f7c43d4129d27c28d375c1e4ebcc805e98c66fbf9",
+      "zip_bytes_match": true,
+      "checkpoint_best_files": 5,
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "rows": 630,
+      "quadruplets": 1230,
+      "prediction_sha256": "5fef6f0336d677b8484c0aeea4478c3cd9f13cc2444d6c138c3a12c239a2b8be",
+      "zip_bytes_match": true,
+      "checkpoint_best_files": 5,
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "dataset": "zho_laptop",
+      "rows": 1000,
+      "quadruplets": 1344,
+      "prediction_sha256": "5768b3c9a461d73181b029daac42dd5d7ff51bd7c45321b0e70341f3e4285133",
+      "zip_bytes_match": true,
+      "checkpoint_best_files": 5,
+      "status": "pass",
+      "issues": []
+    },
+    {
+      "dataset": "zho_restaurant",
+      "rows": 1000,
+      "quadruplets": 3435,
+      "prediction_sha256": "851e1ed35c79e484b5a813bebbe75be32fa34107f3754b0936d9cbed9a18fa8d",
+      "zip_bytes_match": true,
+      "checkpoint_best_files": 5,
+      "status": "pass",
+      "issues": []
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "check": "historical_checkpoints_missing",
+      "dataset": "eng_restaurant",
+      "detail": "The frozen prediction bytes are preserved, but the historical five local checkpoints have been removed."
+    },
+    {
+      "severity": "warning",
+      "check": "historical_checkpoints_missing",
+      "dataset": "jpn_hotel",
+      "detail": "The frozen prediction bytes are preserved, but the historical five local checkpoints have been removed; the retained config is the closest repository V16 config, not the deleted /tmp no-augmentation snapshot."
+    }
+  ]
+}

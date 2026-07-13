@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-13T00:00:00+09:00",
+  "scope": "Automated low-cost silver quality audit; semantic label correctness is not automatically established.",
+  "source_files": {
+    "gen4k": "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_gen4k.jsonl",
+    "gen8k": "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_gen.jsonl",
+    "gold": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+    "test": "data/subtask_3/rus/rus_restaurant_test_task3.jsonl"
+  },
+  "equal_size_sample_rows_per_batch": 3000,
+  "batches": {
+    "gen4k": {
+      "rows": 4000,
+      "unique_ids": 4000,
+      "unique_texts": 4000,
+      "normalized_duplicate_rows": 0,
+      "invalid_rows": 10,
+      "validation_flags": {
+        "aspect_span": 8,
+        "opinion_span": 4
+      },
+      "text_characters": {
+        "min": 34,
+        "p25": 72.0,
+        "median": 85.0,
+        "p75": 99.0,
+        "max": 193,
+        "mean": 86.9945,
+        "std": 20.677656292481505
+      },
+      "text_tokens": {
+        "min": 4,
+        "p25": 10.0,
+        "median": 12.0,
+        "p75": 15.0,
+        "max": 31,
+        "mean": 12.69925,
+        "std": 3.2928406334804605
+      },
+      "quadruplets": 9925,
+      "quadruplets_per_row": {
+        "min": 0,
+        "p25": 2.0,
+        "median": 2.0,
+        "p75": 3.0,
+        "max": 8,
+        "mean": 2.48125,
+        "std": 1.0325446418920587
+      },
+      "null_aspect_rate": 0.07909319899244333,
+      "null_opinion_rate": 0.033047858942065494,
+      "both_null_rate": 0.00040302267002518893,
+      "category_count": 12,
+      "category_entropy_bits": 2.8081127979035885,
+      "category_entropy_normalized": 0.7833032555678628,
+      "category_top_share": 0.2619647355163728,
+      "category_distribution": {
+        "AMBIENCE#GENERAL": 0.2619647355163728,
+        "FOOD#QUALITY": 0.24463476070528967,
+        "SERVICE#GENERAL": 0.17924433249370278,
+        "LOCATION#GENERAL": 0.08967254408060453,
+        "FOOD#STYLE_OPTIONS": 0.06670025188916877,
+        "DRINKS#QUALITY": 0.058035264483627204,
+        "RESTAURANT#PRICES": 0.03697732997481108,
+        "RESTAURANT#GENERAL": 0.029622166246851385,
+        "DRINKS#STYLE_OPTIONS": 0.01380352644836272,
+        "FOOD#PRICES": 0.009571788413098237,
+        "RESTAURANT#MISCELLANEOUS": 0.006952141057934509,
+        "DRINKS#PRICES": 0.0028211586901763226
+      },
+      "valence": {
+        "min": 1.0,
+        "p25": 4.0,
+        "median": 7.0,
+        "p75": 7.5,
+        "max": 9.0,
+        "mean": 5.9925037783375315,
+        "std": 2.3569566314059096
+      },
+      "arousal": {
+        "min": 2.0,
+        "p25": 5.0,
+        "median": 6.0,
+        "p75": 7.0,
+        "max": 9.0,
+        "mean": 5.9849168765743075,
+        "std": 1.2785859655010055
+      },
+      "lexical": {
+        "tokens": 50797,
+        "types": 8492,
+        "type_token_ratio": 0.16717522688347736,
+        "msttr_100": 0.8704733727810651,
+        "unigram_novelty_vs_reference": 0.674752708431465,
+        "bigram_novelty_vs_reference": 0.9229202939180217
+      },
+      "equal_size_lexical_sample": {
+        "tokens": 38001,
+        "types": 7277,
+        "type_token_ratio": 0.19149496065893004,
+        "msttr_100": 0.8843157894736842,
+        "unigram_novelty_vs_reference": 0.6505428061014155,
+        "bigram_novelty_vs_reference": 0.9139780912364946
+      },
+      "category_jsd_vs_gold": 0.06513710302383519
+    },
+    "gen8k": {
+      "rows": 8000,
+      "unique_ids": 8000,
+      "unique_texts": 8000,
+      "normalized_duplicate_rows": 0,
+      "invalid_rows": 31,
+      "validation_flags": {
+        "opinion_span": 11,
+        "aspect_span": 24
+      },
+      "text_characters": {
+        "min": 30,
+        "p25": 71.0,
+        "median": 83.0,
+        "p75": 98.0,
+        "max": 213,
+        "mean": 85.3265,
+        "std": 20.888247838198396
+      },
+      "text_tokens": {
+        "min": 4,
+        "p25": 10.0,
+        "median": 12.0,
+        "p75": 14.0,
+        "max": 33,
+        "mean": 12.5065,
+        "std": 3.3013569558592115
+      },
+      "quadruplets": 19477,
+      "quadruplets_per_row": {
+        "min": 0,
+        "p25": 2.0,
+        "median": 2.0,
+        "p75": 3.0,
+        "max": 7,
+        "mean": 2.434625,
+        "std": 1.00981488866772
+      },
+      "null_aspect_rate": 0.0767572008009447,
+      "null_opinion_rate": 0.026390101144940187,
+      "both_null_rate": 0.00020537043692560455,
+      "category_count": 12,
+      "category_entropy_bits": 2.8113141225219196,
+      "category_entropy_normalized": 0.7841962424868856,
+      "category_top_share": 0.29198541869897826,
+      "category_distribution": {
+        "AMBIENCE#GENERAL": 0.29198541869897826,
+        "FOOD#QUALITY": 0.24023206859372592,
+        "SERVICE#GENERAL": 0.1434512501925348,
+        "DRINKS#QUALITY": 0.0768598860194075,
+        "LOCATION#GENERAL": 0.07619243209939928,
+        "FOOD#STYLE_OPTIONS": 0.0636648354469374,
+        "RESTAURANT#PRICES": 0.039790522154335886,
+        "RESTAURANT#GENERAL": 0.034964316886584176,
+        "DRINKS#STYLE_OPTIONS": 0.014632643630949325,
+        "RESTAURANT#MISCELLANEOUS": 0.007496020947784566,
+        "FOOD#PRICES": 0.0073933357293217645,
+        "DRINKS#PRICES": 0.003337269600041074
+      },
+      "valence": {
+        "min": 1.0,
+        "p25": 3.5,
+        "median": 7.0,
+        "p75": 7.5,
+        "max": 9.0,
+        "mean": 5.879377727576116,
+        "std": 2.374213955449547
+      },
+      "arousal": {
+        "min": 1.0,
+        "p25": 5.0,
+        "median": 6.0,
+        "p75": 7.0,
+        "max": 9.0,
+        "mean": 5.902113261795964,
+        "std": 1.3080266070188813
+      },
+      "lexical": {
+        "tokens": 100052,
+        "types": 11600,
+        "type_token_ratio": 0.11593971135009795,
+        "msttr_100": 0.87162,
+        "unigram_novelty_vs_reference": 0.7192241379310345,
+        "bigram_novelty_vs_reference": 0.9408232395811948
+      },
+      "equal_size_lexical_sample": {
+        "tokens": 37555,
+        "types": 7090,
+        "type_token_ratio": 0.18878977499667154,
+        "msttr_100": 0.88328,
+        "unigram_novelty_vs_reference": 0.638787023977433,
+        "bigram_novelty_vs_reference": 0.9156704484885403
+      },
+      "category_jsd_vs_gold": 0.0718774207790781
+    }
+  },
+  "gold_reference": {
+    "rows": 1240,
+    "unique_ids": 1240,
+    "unique_texts": 1240,
+    "normalized_duplicate_rows": 1,
+    "invalid_rows": 1,
+    "validation_flags": {
+      "va": 1
+    },
+    "text_characters": {
+      "min": 12,
+      "p25": 48.0,
+      "median": 75.0,
+      "p75": 115.0,
+      "max": 409,
+      "mean": 90.54435483870968,
+      "std": 60.60370717184605
+    },
+    "text_tokens": {
+      "min": 2,
+      "p25": 7.0,
+      "median": 11.0,
+      "p75": 17.0,
+      "max": 67,
+      "mean": 13.633064516129032,
+      "std": 9.695527916337657
+    },
+    "quadruplets": 2487,
+    "quadruplets_per_row": {
+      "min": 1,
+      "p25": 1.0,
+      "median": 2.0,
+      "p75": 3.0,
+      "max": 10,
+      "mean": 2.0056451612903228,
+      "std": 1.3710604807343203
+    },
+    "null_aspect_rate": 0.0,
+    "null_opinion_rate": 0.0,
+    "both_null_rate": 0.0,
+    "category_count": 12,
+    "category_entropy_bits": 2.6008805197243863,
+    "category_entropy_normalized": 0.7254972734585619,
+    "category_top_share": 0.2882991556091677,
+    "category_distribution": {
+      "FOOD#QUALITY": 0.2882991556091677,
+      "SERVICE#GENERAL": 0.2553277040611178,
+      "AMBIENCE#GENERAL": 0.2018496180136711,
+      "RESTAURANT#GENERAL": 0.10856453558504221,
+      "FOOD#STYLE_OPTIONS": 0.0611178126256534,
+      "DRINKS#QUALITY": 0.028950542822677925,
+      "DRINKS#STYLE_OPTIONS": 0.01166063530357861,
+      "FOOD#PRICES": 0.011258544431041415,
+      "RESTAURANT#PRICES": 0.010856453558504222,
+      "RESTAURANT#MISCELLANEOUS": 0.010856453558504222,
+      "LOCATION#GENERAL": 0.007639726578206675,
+      "DRINKS#PRICES": 0.0036188178528347406
+    },
+    "valence": {
+      "min": 1.0,
+      "p25": 6.6,
+      "median": 7.1,
+      "p75": 7.75,
+      "max": 9.0,
+      "mean": 6.579203860072377,
+      "std": 1.7998492569282116
+    },
+    "arousal": {
+      "min": 3.0,
+      "p25": 6.4,
+      "median": 7.0,
+      "p75": 7.5,
+      "max": 16.5,
+      "mean": 6.865810213108163,
+      "std": 1.0249898334095406
+    },
+    "lexical": {
+      "tokens": 16905,
+      "types": 4340,
+      "type_token_ratio": 0.2567287784679089,
+      "msttr_100": 0.8423668639053254,
+      "unigram_novelty_vs_reference": 0.0,
+      "bigram_novelty_vs_reference": 0.0
+    }
+  },
+  "comparisons": {
+    "normalized_text_overlap_rows": 8,
+    "category_jsd_gen4k_vs_gen8k": 0.0037376578362887406,
+    "paired_seed_dev_cf1": {
+      "gen8k_full": {
+        "seed42": 0.5286,
+        "seed123": 0.5648,
+        "mean": 0.5467
+      },
+      "gen8k_cap3000": {
+        "seed42": 0.5123,
+        "seed123": 0.5584,
+        "mean": 0.5353
+      },
+      "same_pool_cap3k_minus_full_pp": -1.14
+    },
+    "ensemble_dev_cf1": {
+      "gen4k_cap3000": 0.6162,
+      "gen8k_full": 0.5858
+    }
+  },
+  "manual_review": {
+    "sample_rows": 100,
+    "status": "sample_prepared_not_human_adjudicated",
+    "path": "docs/audits/rus_silver_manual_sample_100.jsonl"
+  }
+}

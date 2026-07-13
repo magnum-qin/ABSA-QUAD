@@ -1,57 +1,64 @@
-#!/bin/bash
-# Generate test-set predictions for final submission using per-language best configs.
-# Per §5.23 doc:
-#   jpn:        V16 (ku-nlp deberta-v2-large) vote=4 topk=0.0
-#   rus:        V15 (xlm-roberta-large)       vote=4 topk=0.10
-#   zho_laptop: V16 (chinese-roberta-wwm-ext-large) vote=4 topk=0.10
-#   ukr:        V13b (mdeberta-v3-base)       vote=3 topk=0.0
-#   tat:        V15 (xlm-roberta-large)       vote=3 topk=0.20
+#!/usr/bin/env bash
+# Frozen-submission entry point. Default is read-only audit; reproduction writes elsewhere.
+set -euo pipefail
 
-set -e
-cd /home/g24tka12/ABSA-QUAD
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
 
-SEEDS="42 123 456 789 1024"
-OUT_DIR=submission/final
-mkdir -p $OUT_DIR
-RESULT=/tmp/test_submission_results.txt
-: > $RESULT
+MODE="${1:-audit}"
+SEEDS=(42 123 456 789 1024)
+OUT_DIR="${OUT_DIR:-submission/reproduced}"
+TASKS="${TASKS:-eng_laptop rus_restaurant tat_restaurant ukr_restaurant zho_laptop zho_restaurant}"
 
-predict () {
-  local lang=$1
-  local prefix=$2
-  local cfg=$3
-  local test_file=$4
-  local vote=$5
-  local topk=$6
+if [[ "$MODE" == "audit" ]]; then
+  python scripts/audit_final_submission.py
+  exit 0
+fi
+if [[ "$MODE" != "reproduce" ]]; then
+  echo "Usage: $0 [audit|reproduce]" >&2
+  exit 2
+fi
 
-  local seed_dirs=""
-  for s in $SEEDS; do seed_dirs="$seed_dirs checkpoints/${prefix}${s}"; done
-  local out=$OUT_DIR/${lang}_test.jsonl
+mkdir -p "$OUT_DIR"
 
-  echo "[$(date +%H:%M:%S)] === $lang ($prefix vote=$vote topk=$topk) ===" | tee -a $RESULT
+predict() {
+  local task="$1" prefix="$2" config="$3" test_file="$4" vote="$5" topk="$6"
+  local seed_dirs=()
+  local seed checkpoint
+  for seed in "${SEEDS[@]}"; do
+    checkpoint="checkpoints/${prefix}${seed}/checkpoint_best.pt"
+    if [[ ! -f "$checkpoint" ]]; then
+      echo "Missing checkpoint: $checkpoint" >&2
+      return 1
+    fi
+    seed_dirs+=("checkpoints/${prefix}${seed}")
+  done
   conda run -n absa --no-capture-output python -u scripts/inference.py \
-    --multi_seed_ensemble --seed_dirs $seed_dirs \
-    --config $cfg --test_file $test_file --output $out \
-    --vote_threshold $vote --span_topk_threshold $topk \
-    --batch_size 16 > /tmp/test_pred_${lang}.log 2>&1
-
-  local n_samples=$(wc -l < $out)
-  local n_quads=$(python -c "import json; print(sum(len(json.loads(l).get('Quadruplet',[])) for l in open('$out')))")
-  echo "  → $n_samples samples, $n_quads total quads → $out" | tee -a $RESULT
+    --multi_seed_ensemble --seed_dirs "${seed_dirs[@]}" \
+    --config "$config" --test_file "$test_file" \
+    --output "$OUT_DIR/${task}_test.jsonl" \
+    --vote_threshold "$vote" --span_topk_threshold "$topk" --batch_size 16
 }
 
-# jpn: V16 deberta-v2
-predict jpn_hotel       v16_native_jpn_seed        /tmp/pipeline_jpn_v16.yaml        data/subtask_3/jpn/jpn_hotel_test_task3.jsonl       4 0.0
-# rus: V15 XLM-R
-predict rus_restaurant  v15_xlmr_rus_seed          /tmp/pipeline_rus_v15.yaml        data/subtask_3/rus/rus_restaurant_test_task3.jsonl 4 0.10
-# zho_laptop: V16 chinese-roberta
-predict zho_laptop      v16_native_zho_laptop_seed /tmp/pipeline_zho_laptop_v16.yaml data/subtask_3/zho/zho_laptop_test_task3.jsonl     4 0.10
-# ukr: V13b mDeBERTa
-predict ukr_restaurant  v13b_ukr_seed              /tmp/pipeline_ukr_v13b.yaml       data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl 3 0.0
-# tat: V15 XLM-R
-predict tat_restaurant  v15_xlmr_tat_seed          /tmp/pipeline_tat_v15.yaml        data/subtask_3/tat/tat_restaurant_test_task3.jsonl 3 0.20
+for task in $TASKS; do
+  case "$task" in
+    eng_laptop)
+      predict "$task" v23_eng_laptop_deepseek_seed configs/pipeline_eng_laptop_v23_deepseek.yaml data/subtask_3/eng/eng_laptop_test_task3.jsonl 4 0.0 ;;
+    rus_restaurant)
+      predict "$task" v23_rus_restaurant_deepseek_gen4k_seed configs/pipeline_rus_restaurant_v23_deepseek.yaml data/subtask_3/rus/rus_restaurant_test_task3.jsonl 3 0.0 ;;
+    tat_restaurant)
+      predict "$task" v23_tat_restaurant_qwen_seed configs/pipeline_tat_restaurant_v23_deepseek.yaml data/subtask_3/tat/tat_restaurant_test_task3.jsonl 3 0.0 ;;
+    ukr_restaurant)
+      predict "$task" v23_ukr_restaurant_deepseek_seed configs/pipeline_ukr_restaurant_v23_deepseek.yaml data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl 3 0.0 ;;
+    zho_laptop)
+      predict "$task" final_zho_laptop_v16_seed configs/pipeline_zho_laptop_v16.yaml data/subtask_3/zho/zho_laptop_test_task3.jsonl 4 0.1 ;;
+    zho_restaurant)
+      predict "$task" v23_zho_restaurant_deepseek_real_seed configs/pipeline_zho_restaurant_v23_qwen.yaml data/subtask_3/zho/zho_restaurant_test_task3.jsonl 3 0.0 ;;
+    eng_restaurant|jpn_hotel)
+      echo "$task is frozen by prediction hash only; its historical five checkpoints are not local." >&2
+      exit 1 ;;
+    *) echo "Unknown task: $task" >&2; exit 2 ;;
+  esac
+done
 
-echo "================ TEST SUBMISSION DONE ================" | tee -a $RESULT
-ls -la $OUT_DIR/
-
-# ===== APPENDED: missing 3 datasets =====
+echo "Reproduced available frozen tasks under $OUT_DIR (submission/final was not modified)."

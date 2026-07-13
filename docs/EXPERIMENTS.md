@@ -1555,7 +1555,7 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 **结论**：KD **不是普适增强**，是**数据稀缺数据集的特效药**，收益与稀缺度呈清晰单调关系。论文叙述：「LLM distillation benefit is inversely proportional to gold-data sufficiency: all four data-starved subsets (tat, rus, ukr, eng_laptop, ≤4k gold) gain +3.8~8.9pp and surpass prior test SOTA, while a data-adequate subset with a strong native encoder (zho_laptop, 5.5k gold) is slightly hurt. KD is robust to silver text source — ukr used MarianMT-translated Russian reviews and tat used DeepSeek-generated native low-resource Tatar text, both still beating SOTA.」
 
-**最终采用**：tat → V23 KD (0.5196, 4-seed)；rus → V23 KD (0.5753)；ukr → V23 KD (0.5560)；eng_laptop → V23 KD (0.4141)；zho_laptop → 保留 V16。**4 个数据集靠 KD 反超 test SOTA。**
+**该阶段采用**：tat → V23 KD (0.5196, 4-seed)；rus → V23 KD (0.5753)；ukr → V23 KD (0.5560)；eng_laptop → V23 KD (0.4141)；zho_laptop → 保留 V16。后续 tat teacher、rus pool/规模和 zho_restaurant pool 消融继续刷新，见 §5.29.2.1、§5.29.3.1–2。
 
 #### 5.29.1 消融：原生生成 silver vs 机器翻译 silver（ukr）
 
@@ -1669,9 +1669,31 @@ qwen3.6 teacher = `unsloth/Qwen3.6-35B-A3B-MTP-GGUF`（35B-A3B MoE，Unsloth Stu
 | 生成（qwen 原生，当前提交）| 0.5351 | 真实 **+2.3pp** |
 | baseline | 0.4745 | |
 
-**🔑 修正结论（关键）**：**当 KD 处在有效区间时，真实 in-domain 语料池明显优于 LLM 生成池（+2.3pp）**。之前"池来源 ±1.5pp 无所谓"只在 KD 失败的数据集上成立（confound）。在 KD 生效时，真实评论的分布更贴近 test、silver 质量更高——LLM 生成池"够用能生效"，真实语料"更优"。→ zho_restaurant 提交候选切换到真实池 0.5579。脚本：`/tmp/collect_dianping.py`（twn39/dianping + opencc s2twp）。
+**🔑 修正结论（关键）**：在 zho_restaurant 的有效区间，真实 in-domain 语料池比生成池高 +2.3pp；但这不是跨数据集的普适排序，rus 的 size-matched 对照反而是生成池最佳（§5.29.3.2）。更准确的结论是：**池与目标域的互补性、teacher 标注质量和 silver:gold 比共同决定 KD**。脚本：`scripts/collect_dianping.py`（twn39/dianping + opencc s2twp）。
 
-**提交切换**：zho_restaurant 从 V16 (0.4745) → **qwen-KD vote=3 topk=0.0 (0.5263, +5.18pp)**，V16 留 `zho_restaurant_test_v16_backup.jsonl`。jpn_hotel / eng_restaurant **不切换**（KD 负向）。→ **第 5 个经 KD 改善的数据集**。
+**最终提交切换**：zho_restaurant 从 V16 (0.4745) 经 qwen 生成池 0.5263、DeepSeek 生成池 0.5351，最终切到 **DeepSeek 真实池 0.5579（+8.34pp）**。jpn_hotel / eng_restaurant **不切换**（KD 负向）。→ **第 5 个经 KD 改善的数据集**。
+
+##### 5.29.3.2 rus_restaurant：池来源三路对照 + 8k 独立批次复验
+
+**严格三路对照**：同一 DeepSeek teacher、同 gold 1240、同 XLM-R-large 配置；real / translated / generated 池尽量 size-matched，并统一 `silver_cap=3000`，最终训练集均为 4240 行（translated 原池 3466，其余 4000）。
+
+| variant | pool / silver used | 5-seed ensemble best | vs baseline 0.5267 | 结论 |
+|---|---:|---:|---:|---|
+| real4k | 4000 / 3000 | 0.5586 | +3.19pp | 有效但最弱 |
+| trans4k | 3466 / 3000 | 0.5761 | +4.94pp | 居中 |
+| **gen4k** | **4000 / 3000** | **0.6162** | **+8.95pp** | **三路最佳，提交采用** |
+| gen8k full（独立生成批次） | 8000 / 7988 | 0.5858 | +5.91pp | 比 gen4k 低 3.04pp，淘汰 |
+
+8k 完整复验的单 seed best 为 **0.5286 / 0.5648 / 0.5207 / 0.5501 / 0.5463**（mean **0.5421**）；ensemble sweep 最佳为 **vote=4, topk=0.10 → 0.5858**。所有 5 seeds 均完成，训练集 9228 行（1240 gold + 7988 valid silver）。审计发现 gen4k 与 gen8k 来自两次独立生成，按 `(ID, Text)` 的交集为 **0**；因此二者同时改变了 pool batch 与 silver 数量，不是干净的 dose-response。
+
+**同池数量控制（paired-seed gate）**：复用 gen8k 的同一份 DeepSeek silver，仅将 `silver_cap` 从 0（7988 条）改为 3000；训练集从 9228 行变为 4240 行。先跑相同 seeds 42/123，预注册 gate 为 paired mean 相对 full-8k 提升至少 +1.5pp。
+
+| 同一 gen8k silver | seed 42 | seed 123 | paired mean | Δ vs full |
+|---|---:|---:|---:|---:|
+| full 7988 | 0.5286 | 0.5648 | **0.5467** | — |
+| cap 3000 | 0.5123 | 0.5584 | **0.5353** | **−1.14pp** |
+
+gate 未通过，因此按计划停止，不补 seeds 456/789/1024、不跑 ensemble、也不补 cap5000。**修正结论**：① pool 来源没有跨数据集固定优先级——zho 上 real 胜，rus 的 size-matched 三路对照中 generated 胜；② 对同一 gen8k batch，减至 3000 silver 没有改善，故 gen4k 0.6162 相对独立 gen8k 0.5858 的优势更可能来自**生成批次质量/信息互补性**，而非简单的 silver 数量效应。rus 最终保留 gen4k capped 提交 0.6162。
 
 #### 5.29.4 完整 teacher 矩阵（8 数据集 × DeepSeek / qwen，同池仅换 teacher）
 
@@ -1693,7 +1715,19 @@ qwen3.6 teacher = `unsloth/Qwen3.6-35B-A3B-MTP-GGUF`（35B-A3B MoE，Unsloth Stu
 - **eng_restaurant 大反转修正了之前的归因**：DeepSeek 0.6013 vs qwen 0.4043（**+19.7pp**）。说明 qwen 在此前的 −25pp 灾难**主因是 qwen silver 质量差**（该域 qwen 标注崩盘），并非"KD 完全不能用"。但 DeepSeek 仍 < 基线 0.6554（−5.4pp）→ eng_restaurant KD 仍净负。
 - **jpn 即使最强 teacher 也救不回**（DeepSeek 0.4281 < 基线 0.4466）→ jpn 的 KD 失败是**数据集级**（强 native encoder + 小类别），与 teacher 无关。
 - **"local ≈ cloud" 需加注**：多数数据集本地 qwen 与云端差距小，但 eng_restaurant 上 qwen silver 崩盘（−19.7pp）说明开源模型在个别域/语言上质量不稳定，前沿云模型更鲁棒。
-- **提交切换**：zho_restaurant 由 qwen 0.5263 → **DeepSeek 0.5351**（+0.9pp），qwen 版留 `zho_restaurant_test_qwen_backup.jsonl`。jpn/eng_restaurant 仍保留 baseline。
+- **同生成池的阶段性切换**：zho_restaurant 由 qwen 0.5263 → DeepSeek 0.5351；加入真实池消融后最终采用 0.5579（§5.29.3.1）。jpn/eng_restaurant 仍保留 baseline。
+
+#### 5.29.5 最终证据收敛（论文与汇报统一口径）
+
+早期“低资源必然受益”“真实池普遍更优”“silver 减量就是甜区”等说法，均被后续跨 teacher、跨 pool 和同池数量控制进一步限定。最终只保留以下五条可由现有消融直接支持的结论：
+
+1. **KD 是否有效取决于信息互补性。** silver 必须补充 gold/base 尚未覆盖的类别先验、表达多样性或域信息；若只是用较噪的重复信号淹没强 gold，KD 会持平或退化。
+2. **Teacher 质量存在明显域差异。** qwen 在多数域接近 DeepSeek、tat 甚至更优，但在 eng_restaurant 落后 19.7pp；因此不能把单域结果泛化为“本地≈云端”或固定 teacher 排名。
+3. **Pool 来源没有普适排序。** zho_restaurant 是 real > generated，而 rus 的 size-matched 对照是 generated > translated > real。决定因素是 pool 与目标任务的互补性及其被 teacher 转化为有效四元组的质量。
+4. **同池减量未改善，rus 的 gen4k 优势主要来自生成批次质量。** 对完全相同的 gen8k silver，cap3000 paired mean 比 full 低 1.14pp；独立 gen4k 批次的 0.6162 不能归因于“只用 3000 条”。
+5. **最佳 silver 不是“越多越好”，而是质量与覆盖合适。** 数量、类别覆盖、文本多样性、teacher 标注正确性和 gold:silver 权重共同决定结果；当前证据不支持跨数据集的统一 cap 或 dose-response 最优点。
+
+**统一表述**：KD is effective when silver data contributes complementary, accurately labeled coverage beyond the gold set. Teacher and pool quality are domain-dependent, and the best silver set is not the largest one but the one with an appropriate quality–coverage trade-off.
 
 ---
 
@@ -2101,6 +2135,21 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 **论文 narrative**：旧的方法学（V3 时代）的两大 trick（Rethink、augmentation）在大 encoder 时代衰减为接近零。但 **per-language native encoder + 5-seed ensemble** 这两个简单选择共同贡献了 ~10 pp 的提升。
 
 ---
+
+### 7.9 最终冻结与 rus silver 批次质量审计（2026-07-13）
+
+最终 8 数据集方案已冻结到 [`submission/final_manifest.json`](../submission/final_manifest.json)，包含每个预测文件和 config 的 SHA-256、checkpoint 前缀、vote/topk 与 dev cF1。只读审计覆盖 8 个 JSONL、6,690 行、ZIP 成员字节、test ID/顺序、schema/VA/category 和 checkpoint 存在性，结果为 **0 error、2 warning**；两项 warning 均来自已删除的 eng_restaurant 与 jpn_hotel 历史五种子 checkpoint，冻结预测本身及 ZIP 字节一致。
+
+rus 同池 stopping gate 的 paired mean 为：full-gen8k **0.5467**，cap3000 **0.5353**，变化 **−1.14pp**，未达到预设的 **+1.5pp** 继续门槛。因此停止剩余 3 seeds 与 cap5000，不再做 dose-response。最终保留 gen4k cap3000 五种子 ensemble **0.6162**；full-gen8k ensemble 为 **0.5858**。
+
+低成本质量审计显示：gen4k/gen8k 分别有 4,000/8,000 行，规范化重复均为 0；自动有效性标记为 10/31 行；相对 gold 的 category JSD 为 **0.0651/0.0719**。这些代理信号略偏向 gen4k，但差异小，不能独立证明语义标注更准。因此正式结论限定为：**性能差更符合生成批次质量敏感性，而非通用的 cap=3000 最优规律**。
+
+最终论文/汇报口径以 §5.29.5 的五条证据收敛为准；本轮不修改 LaTeX。
+
+- 可执行 notebook：[`notebooks/rus_silver_quality_audit.ipynb`](../notebooks/rus_silver_quality_audit.ipynb)
+- 技术报告：[`docs/audits/kd_freeze_report/report.html`](audits/kd_freeze_report/report.html)
+- 最终 KD 汇报：[`docs/KD_ablation_final_20260713.pptx`](KD_ablation_final_20260713.pptx)
+- 100 条平衡人工复核样本：[`docs/audits/rus_silver_manual_sample_100.jsonl`](audits/rus_silver_manual_sample_100.jsonl)（尚未人工判定，不报告人工 precision）
 
 ## 8. 错误分析
 

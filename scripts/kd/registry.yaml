@@ -51,8 +51,8 @@ experiments:
     base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
     dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
     test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
-    result: 0.5753
-    status: submitted
+    result: 0.5753   # superseded by rus_restaurant_deepseek_gen4k 0.6162 (generated pool > real; kept as real_backup)
+    status: superseded
 
   ukr_restaurant_deepseek:
     dataset: ukr_restaurant
@@ -197,6 +197,90 @@ experiments:
     test: data/subtask_3/zho/zho_restaurant_test_task3.jsonl
     result: 0.5579   # REAL dianping pool > generated 0.5351 (+2.3pp), best zho_restaurant -- SUBMITTED
     status: submitted
+
+  rus_restaurant_deepseek_gen:
+    dataset: rus_restaurant
+    lang: rus
+    domain: restaurant
+    teacher: deepseek
+    variant: gen
+    resume_existing: true   # long 8k run; resume safely across execution-session limits
+    pool: {source: existing, file: data/subtask_3/rus/rus_restaurant_pool_v23_gen.jsonl}
+    gold_base: data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl
+    silver_cap: 0
+    base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    result: 0.5858   # full 8k generated batch; 3.04pp below gen4k, but pools are disjoint (size/quality confounded)
+    status: superseded   # KD-positive; keep gen4k submission pending same-pool cap control
+
+  # Same exact gen8k silver as above; only silver quantity changes (paired-seed gate first).
+  rus_restaurant_deepseek_gen8k_cap3k:
+    dataset: rus_restaurant
+    lang: rus
+    domain: restaurant
+    teacher: deepseek
+    variant: gen8k_cap3k
+    seeds: [42, 123]
+    resume_existing: true
+    pool: {source: existing, file: data/subtask_3/rus/rus_restaurant_pool_v23_gen.jsonl}
+    silver_prebuilt: true
+    silver_file: data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_gen.jsonl
+    gold_base: data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl
+    silver_cap: 3000
+    base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    paired_results: {42: 0.5123, 123: 0.5584}
+    paired_mean: 0.5353
+    paired_delta_vs_full_pp: -1.14   # full-8k paired mean=0.5467; gate required >= +1.5pp
+    status: stopped_gate   # gate failed: no remaining seeds, ensemble, or cap5000
+
+  # ---- POOL-SOURCE 3-WAY ABLATION (rus, size-matched pools, silver capped 3000) ----
+  rus_restaurant_deepseek_real4k:
+    dataset: rus_restaurant
+    lang: rus
+    domain: restaurant
+    teacher: deepseek
+    variant: real4k
+    pool: {source: existing, file: data/subtask_3/rus/rus_restaurant_pool_v23_real4k.jsonl}
+    gold_base: data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl
+    silver_cap: 3000
+    base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    result: 0.5586   # pool-source 3-way (size-matched, silver 3000)
+    status: ablation   # pool-source ablation (size-matched, silver capped 3000)
+
+  rus_restaurant_deepseek_trans4k:
+    dataset: rus_restaurant
+    lang: rus
+    domain: restaurant
+    teacher: deepseek
+    variant: trans4k
+    pool: {source: existing, file: data/subtask_3/rus/rus_restaurant_pool_v23_trans4k.jsonl}
+    gold_base: data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl
+    silver_cap: 3000
+    base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    result: 0.5761   # pool-source 3-way (size-matched, silver 3000)
+    status: ablation   # pool-source ablation (size-matched, silver capped 3000)
+
+  rus_restaurant_deepseek_gen4k:
+    dataset: rus_restaurant
+    lang: rus
+    domain: restaurant
+    teacher: deepseek
+    variant: gen4k
+    pool: {source: existing, file: data/subtask_3/rus/rus_restaurant_pool_v23_gen4k.jsonl}
+    gold_base: data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl
+    silver_cap: 3000
+    base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    result: 0.6162   # generated > translated 0.5761 > real 0.5586; SUBMITTED (switched from real 0.5753)
+    status: submitted   # pool-source ablation (size-matched, silver capped 3000)
 
   # ---- ABLATIONS / NEGATIVES (baseline kept) ----
   eng_laptop_qwen:

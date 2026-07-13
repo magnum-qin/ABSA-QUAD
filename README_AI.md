@@ -258,9 +258,9 @@ rethink.num_iterations: 2
 - `scripts/gen_native_ollama.py`（无 in-domain 语料时本地 LLM 原生生成池，中/日/英…）
 - `scripts/run_v23_*.sh`（各数据集 KD 全流程）
 
-**5/8 数据集采用 KD**：eng_laptop/rus/ukr/tat（DeepSeek）+ zho_restaurant（本地 qwen3.6）。
+**5/8 数据集采用 KD**：eng_laptop/rus/ukr/zho_restaurant（DeepSeek）+ tat（本地 qwen3.6）。rus 最终采用 4k 生成批次 capped silver（0.6162）；同一 8k silver 的 cap=3000 paired mean 为 0.5353，低于 full-8k 的 0.5467，说明 4k 优势主要来自生成批次质量而非单纯减量。
 
-**生效判据（核心发现）**：KD 有效 ⟺ silver 提供 gold 缺失的信息——①gold 弱/类别极稀疏（eng_laptop +8.9pp），**或** ②silver 保持少数派 silver:gold<1 只加多样性（zho_restaurant +5.2pp）。强 gold + 高 silver 比 → 灾难（eng_restaurant −25pp）。teacher 质量也重要：本地 qwen3.6-36B 回收云端 ~95% 收益，gemma-31B-Q4 仅 57%（§5.29.2）。
+**生效判据（最终收敛）**：KD 有效 ⟺ silver 提供 gold/base 缺失的互补信息。Teacher 质量具有域差异（qwen 多数域接近 DeepSeek，但 eng_restaurant 明显退化）；pool 来源无普适排序（zho: real 胜，rus: generated 胜）；同池 gen8k 减量没有改善。最佳 silver 不是越多越好，而是标注质量、类别覆盖、多样性与 gold:silver 权重合适（§5.29.5）。
 
 ---
 
