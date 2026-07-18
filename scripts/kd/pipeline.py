@@ -145,8 +145,10 @@ def step_eval(e):
     sd = " ".join(f"checkpoints/{e['prefix']}_seed{s}" for s in seeds)
     res = f"/tmp/{e['prefix']}_results.txt"
     if not DRY: open(res, "w").write(f"# {e['name']} (baseline result {e.get('result')})\n")
-    for vote in (v for v in DEF["vote_sweep"] if v <= len(seeds)):
-        for topk in DEF["topk_sweep"]:
+    votes = [e["eval_vote"]] if "eval_vote" in e else [v for v in DEF["vote_sweep"] if v <= len(seeds)]
+    topks = [e["eval_topk"]] if "eval_topk" in e else DEF["topk_sweep"]
+    for vote in votes:
+        for topk in topks:
             out = f"/tmp/{e['prefix']}_v{vote}_t{topk}.jsonl"
             sh(f"{conda('scripts/inference.py')} --multi_seed_ensemble --seed_dirs {sd} "
                f"--config {e['v23_config']} --test_file {e['dev']} --output {out} "

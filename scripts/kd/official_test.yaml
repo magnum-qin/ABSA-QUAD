@@ -1,0 +1,134 @@
+# One-shot post-competition evaluation protocol for the released SemEval-2026
+# Task 3 test labels. This matrix was locked before inspecting any gold labels.
+
+protocol:
+  locked_at: "2026-07-18T21:50:41+09:00"
+  selection_basis: dev_only
+  no_test_tuning: true
+  official_repository: https://github.com/DimABSA/DimABSA2026.git
+  official_commit: bdc93be1224106ae7d3eb95739c02a76ed4ae8a1
+  official_subtree: task-dataset/track_a/subtask_3
+  gold_root: data/official_test_gold/DimABSA2026/bdc93be1224106ae7d3eb95739c02a76ed4ae8a1
+  evaluator: evaluation_script/metrics_subtask_1_2_3.py
+  output_root: data/audits/tallip_kd/official_test
+  audit_root: docs/audits/tallip_kd/official_test
+  bootstrap_seed: 20260713
+  bootstrap_iterations: 10000
+
+inference:
+  eng_laptop_clean_kd:
+    dataset: eng_laptop
+    config: configs/pipeline_eng_laptop_v23_deepseek.yaml
+    checkpoint_prefix: v23_eng_laptop_deepseek_inductive_seed
+    vote: 4
+    topk: 0.0
+  eng_laptop_clean_baseline:
+    dataset: eng_laptop
+    config: configs/pipeline_eng_laptop_v5repro.yaml
+    checkpoint_prefix: v5repro_eng_laptop_inductive_seed
+    vote: 3
+    topk: 0.0
+  ukr_restaurant_clean_kd:
+    dataset: ukr_restaurant
+    config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
+    checkpoint_prefix: v23_ukr_restaurant_deepseek_inductive_seed
+    vote: 3
+    topk: 0.0
+  ukr_restaurant_clean_baseline:
+    dataset: ukr_restaurant
+    config: configs/pipeline_ukr_v13b.yaml
+    checkpoint_prefix: v13b_ukr_inductive_seed
+    vote: 4
+    topk: 0.0
+  zho_restaurant_clean_kd:
+    dataset: zho_restaurant
+    config: configs/pipeline_zho_restaurant_v23_qwen.yaml
+    checkpoint_prefix: v23_zho_restaurant_deepseek_real_inductive_seed
+    vote: 3
+    topk: 0.0
+  tat_restaurant_deepseek_matched:
+    dataset: tat_restaurant
+    config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
+    checkpoint_prefix: v23_tat_restaurant_deepseek_teacher_matched_seed
+    vote: 3
+    topk: 0.0
+
+datasets:
+  eng_laptop:
+    lang: eng
+    domain: laptop
+    local_test: data/subtask_3/eng/eng_laptop_test_task3.jsonl
+    gold: eng/eng_laptop_test_task3.jsonl
+    main_system: eng_laptop_clean_kd
+    systems:
+      eng_laptop_clean_kd: generated
+      eng_laptop_clean_baseline: generated
+  eng_restaurant:
+    lang: eng
+    domain: restaurant
+    local_test: data/subtask_3/eng/eng_restaurant_test_task3.jsonl
+    gold: eng/eng_restaurant_test_task3.jsonl
+    main_system: eng_restaurant_v16
+    systems:
+      eng_restaurant_v16: submission/final/eng_restaurant_test.jsonl
+  jpn_hotel:
+    lang: jpn
+    domain: hotel
+    local_test: data/subtask_3/jpn/jpn_hotel_test_task3.jsonl
+    gold: jpn/jpn_hotel_test_task3.jsonl
+    main_system: jpn_hotel_v16_no_aug
+    systems:
+      jpn_hotel_v16_no_aug: submission/final/jpn_hotel_test.jsonl
+  rus_restaurant:
+    lang: rus
+    domain: restaurant
+    local_test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    gold: rus/rus_restaurant_test_task3.jsonl
+    main_system: rus_restaurant_gen4k_kd
+    systems:
+      rus_restaurant_gen4k_kd: submission/final/rus_restaurant_test.jsonl
+      rus_restaurant_v15_baseline: submission/final/rus_restaurant_test_v15_backup.jsonl
+  tat_restaurant:
+    lang: tat
+    domain: restaurant
+    local_test: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
+    gold: tat/tat_restaurant_test_task3.jsonl
+    main_system: tat_restaurant_qwen_kd
+    systems:
+      tat_restaurant_qwen_kd: submission/final/tat_restaurant_test.jsonl
+      tat_restaurant_v15_baseline: submission/final/tat_restaurant_test_v15_backup.jsonl
+      tat_restaurant_deepseek_matched: generated
+  ukr_restaurant:
+    lang: ukr
+    domain: restaurant
+    local_test: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
+    gold: ukr/ukr_restaurant_test_task3.jsonl
+    main_system: ukr_restaurant_clean_kd
+    systems:
+      ukr_restaurant_clean_kd: generated
+      ukr_restaurant_clean_baseline: generated
+  zho_laptop:
+    lang: zho
+    domain: laptop
+    local_test: data/subtask_3/zho/zho_laptop_test_task3.jsonl
+    gold: zho/zho_laptop_test_task3.jsonl
+    main_system: zho_laptop_v16
+    systems:
+      zho_laptop_v16: submission/final/zho_laptop_test.jsonl
+  zho_restaurant:
+    lang: zho
+    domain: restaurant
+    local_test: data/subtask_3/zho/zho_restaurant_test_task3.jsonl
+    gold: zho/zho_restaurant_test_task3.jsonl
+    main_system: zho_restaurant_clean_kd
+    systems:
+      zho_restaurant_clean_kd: generated
+      zho_restaurant_v16_baseline: submission/final/zho_restaurant_test_v16_backup.jsonl
+
+comparisons:
+  - {dataset: eng_laptop, a: eng_laptop_clean_kd, b: eng_laptop_clean_baseline, role: adopted_kd_vs_baseline}
+  - {dataset: rus_restaurant, a: rus_restaurant_gen4k_kd, b: rus_restaurant_v15_baseline, role: adopted_kd_vs_baseline}
+  - {dataset: tat_restaurant, a: tat_restaurant_qwen_kd, b: tat_restaurant_v15_baseline, role: adopted_kd_vs_baseline}
+  - {dataset: ukr_restaurant, a: ukr_restaurant_clean_kd, b: ukr_restaurant_clean_baseline, role: adopted_kd_vs_baseline}
+  - {dataset: zho_restaurant, a: zho_restaurant_clean_kd, b: zho_restaurant_v16_baseline, role: adopted_kd_vs_baseline}
+  - {dataset: tat_restaurant, a: tat_restaurant_deepseek_matched, b: tat_restaurant_qwen_kd, role: matched_pool_teacher_sensitivity}

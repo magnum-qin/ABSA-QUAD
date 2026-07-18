@@ -15,10 +15,11 @@ Usage:
     --base_url http://localhost:8888/v1 --api_key sk-unsloth-xxx --model "<model-id>" \
     --domain restaurant --workers 4 --n_shots 6
 """
-import os, sys, json, re, argparse, threading
+import os, sys, json, re, argparse, threading, hashlib
 from pathlib import Path
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 
 from openai import OpenAI
 
@@ -78,7 +79,15 @@ def call_llm(client, model, prompt, sys_prompt):
     m = _FENCE.search(content)
     if m:
         content = m.group(1)
-    return content.strip()
+    return content.strip(), getattr(resp, "model", model)
+
+
+def sha256_file(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def validate_quad(q, text, valid_cats):
@@ -114,6 +123,22 @@ def load_resume(path):
     return done
 
 
+def remove_ids_from_jsonl(path, ids):
+    """Drop stale failed attempts before retry so each probe ID stays unique."""
+    path = Path(path)
+    if not path.exists() or not ids:
+        return
+    kept = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if str(row.get("ID")) not in ids:
+            kept.append(line)
+    path.write_text("\n".join(kept) + ("\n" if kept else ""), encoding="utf-8")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--input", required=True)
@@ -126,6 +151,9 @@ def main():
     p.add_argument("--n_shots", type=int, default=6)
     p.add_argument("--workers", type=int, default=4)
     p.add_argument("--limit", type=int, default=None)
+    p.add_argument("--raw_output", default=None)
+    p.add_argument("--metadata_output", default=None)
+    p.add_argument("--prompt_version", default="dim-asqp-fidelity-v1")
     args = p.parse_args()
 
     if not args.api_key:
@@ -136,40 +164,69 @@ def main():
     sys_prompt = build_system_prompt(valid_cats, args.domain)
     train = [json.loads(l) for l in open(args.train_file, encoding="utf-8")]
     examples = [t for t in train if t.get("Quadruplet") and len(t["Text"]) < 160][: args.n_shots]
+    metadata = {
+        "prompt_version": args.prompt_version,
+        "provider": "openai-compatible",
+        "requested_model": args.model,
+        "base_url": args.base_url,
+        "temperature": 0.3,
+        "thinking": "disabled",
+        "n_shots": args.n_shots,
+        "workers": args.workers,
+        "domain": args.domain,
+        "input": args.input,
+        "input_sha256": sha256_file(args.input),
+        "train_file": args.train_file,
+        "train_sha256": sha256_file(args.train_file),
+        "system_prompt": sys_prompt,
+        "few_shot_ids": [example.get("ID") for example in examples],
+        "started_at": datetime.now(timezone.utc).isoformat(),
+    }
 
     pool = [json.loads(l) for l in open(args.input, encoding="utf-8")]
     if args.limit:
         pool = pool[: args.limit]
     done = load_resume(args.output)
     pending = [s for s in pool if s["ID"] not in done or "_err" in done.get(s["ID"], {})]
+    retry_ids = {str(sample["ID"]) for sample in pending if "_err" in done.get(sample["ID"], {})}
+    remove_ids_from_jsonl(args.output, retry_ids)
+    if args.raw_output:
+        remove_ids_from_jsonl(args.raw_output, retry_ids)
     print(f"Pool: {len(pool)}, done: {len(done)}, pending: {len(pending)}, "
           f"valid_cats: {len(valid_cats)}, model: {args.model}", flush=True)
 
     out_f = open(args.output, "a", encoding="utf-8")
+    raw_f = open(args.raw_output, "a", encoding="utf-8") if args.raw_output else None
     write_lock = threading.Lock()
     stats = Counter()
 
     def work(sample):
         text = sample["Text"]
         try:
-            raw = call_llm(client, args.model, build_user_prompt(text, examples), sys_prompt)
+            raw, response_model = call_llm(client, args.model, build_user_prompt(text, examples), sys_prompt)
             quads = json.loads(raw).get("Quadruplet", [])
             valid = [q for q in quads if validate_quad(q, text, valid_cats)]
             clean = [{"Aspect": q["Aspect"] if q.get("Aspect") is not None else "NULL",
                       "Category": q["Category"],
                       "Opinion": q["Opinion"] if q.get("Opinion") is not None else "NULL",
                       "VA": q["VA"]} for q in valid]
-            return {"ID": sample["ID"], "Text": text, "Quadruplet": clean}, len(quads), len(clean)
+            return ({"ID": sample["ID"], "Text": text, "Quadruplet": clean}, len(quads), len(clean),
+                    {"ID": sample["ID"], "Text": text, "raw_response": raw,
+                     "response_model": response_model})
         except Exception as e:
-            return {"ID": sample["ID"], "Text": text, "Quadruplet": [], "_err": str(e)[:80]}, 0, 0
+            error = str(e)[:500]
+            return ({"ID": sample["ID"], "Text": text, "Quadruplet": [], "_err": error}, 0, 0,
+                    {"ID": sample["ID"], "Text": text, "raw_response": None, "_err": error})
 
     n_done = 0
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
         futs = {ex.submit(work, s): s for s in pending}
         for fut in as_completed(futs):
-            rec, n_raw, n_kept = fut.result()
+            rec, n_raw, n_kept, raw_rec = fut.result()
             with write_lock:
                 out_f.write(json.dumps(rec, ensure_ascii=False) + "\n"); out_f.flush()
+                if raw_f:
+                    raw_f.write(json.dumps(raw_rec, ensure_ascii=False) + "\n"); raw_f.flush()
             stats["raw"] += n_raw; stats["kept"] += n_kept
             if "_err" in rec: stats["err"] += 1
             n_done += 1
@@ -178,6 +235,19 @@ def main():
                     print(f"  [{n_done}/{len(pending)}] raw={stats['raw']} kept={stats['kept']} "
                           f"err={stats['err']} keep_rate={stats['kept']/max(1,stats['raw']):.2f}", flush=True)
     out_f.close()
+    if raw_f:
+        raw_f.close()
+    metadata.update({
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+        "processed": n_done,
+        "raw_quads": stats["raw"],
+        "kept_quads": stats["kept"],
+        "errors": stats["err"],
+    })
+    if args.metadata_output:
+        metadata_path = Path(args.metadata_output)
+        metadata_path.parent.mkdir(parents=True, exist_ok=True)
+        metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"\nDone. {n_done} processed. raw={stats['raw']} kept={stats['kept']} err={stats['err']}", flush=True)
 
 

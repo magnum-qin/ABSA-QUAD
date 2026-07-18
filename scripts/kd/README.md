@@ -26,6 +26,54 @@ python scripts/kd/pipeline.py --exp eng_laptop_deepseek --steps eval   # re-eval
 python scripts/kd/pipeline.py --exp <name> --dry-run       # print commands, run nothing
 ```
 
+## TALLIP clean-inductive evidence closure
+
+The post-ICONIP protocol is frozen in `scripts/kd/tallip.yaml`. It deliberately
+does not extend the teacher/pool/cap grid.
+
+```bash
+# deterministic audit + clean files
+python scripts/kd/audit_contamination.py filter
+python scripts/kd/audit_contamination.py audit
+python scripts/kd/audit_contamination.py verify
+
+# label-free dev probes and the 8x2 teacher-fidelity experiment
+# credentials may be placed in ignored .env.local (DEEPSEEK_API_KEY / UNSLOTH_API_KEY)
+python scripts/kd/teacher_fidelity.py prepare
+python scripts/kd/teacher_fidelity.py run --teacher deepseek --phase smoke
+python scripts/kd/teacher_fidelity.py run --teacher deepseek --phase full
+python scripts/kd/teacher_fidelity.py run --teacher qwen --phase smoke
+python scripts/kd/teacher_fidelity.py run --teacher qwen --phase full
+python scripts/kd/teacher_fidelity.py validate --strict-model
+python scripts/kd/teacher_fidelity.py evaluate
+
+# When a full paired 8x2 run is unavailable, report a complete teacher honestly
+# without implying a cross-teacher comparison:
+python scripts/kd/teacher_fidelity.py evaluate-single --teacher qwen
+
+# clean KD plus the conditionally required clean baselines
+conda run -n absa --no-capture-output python scripts/kd/inductive_experiments.py train
+conda run -n absa --no-capture-output python scripts/kd/inductive_experiments.py infer
+python scripts/kd/inductive_experiments.py collect
+
+# one-shot post-competition official test (run in this exact order)
+conda run -n absa --no-capture-output python scripts/kd/official_test.py preflight
+conda run -n absa --no-capture-output python scripts/kd/official_test.py infer
+conda run -n absa --no-capture-output python scripts/kd/official_test.py freeze
+conda run -n absa --no-capture-output python scripts/kd/official_test.py fetch
+conda run -n absa --no-capture-output python scripts/kd/official_test.py audit
+conda run -n absa --no-capture-output python scripts/kd/official_test.py score
+```
+
+All new model directories contain `inductive` in their prefix. Evaluation uses
+only `checkpoint_best.pt` and the frozen vote/top-k settings in the manifest.
+Raw API responses and removed rows live below `data/audits/tallip_kd/` (ignored
+by Git); their hashes and compact reports live below `docs/audits/tallip_kd/`.
+The official-test protocol refuses to fetch gold until all dev-selected
+prediction bytes are frozen. Its result is a post-competition local evaluation,
+not a new CodaBench submission or official rank, and must never be used for
+model, threshold, teacher, pool, or augmentation selection.
+
 Add a new experiment = add one block to `registry.yaml` (no new script).
 
 ## Steps

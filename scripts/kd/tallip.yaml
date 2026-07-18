@@ -1,0 +1,174 @@
+# Reproducibility manifest for the post-ICONIP TALLIP KD evidence closure.
+# Paths are repository-relative. Gold train files are the only source allowed
+# for teacher categories and few-shot examples.
+
+defaults:
+  seeds: [42, 123, 456, 789, 1024]
+  bootstrap_seed: 20260713
+  bootstrap_iterations: 10000
+  output_root: data/audits/tallip_kd
+
+datasets:
+  eng_laptop:
+    lang: eng
+    domain: laptop
+    gold_train: data/subtask_3/eng/eng_laptop_train_alltasks.jsonl
+    dev: data/subtask_3/eng/eng_laptop_dev_task3.jsonl
+    test: data/subtask_3/eng/eng_laptop_test_task3.jsonl
+    adopted_train: data/subtask_3/eng/eng_laptop_train_v23_deepseek.jsonl
+    clean_train: data/subtask_3/eng/eng_laptop_train_v23_deepseek_inductive.jsonl
+    expected_clean_rows: 22595
+    baseline_train: data/subtask_3/eng/eng_laptop_train_v5repro.jsonl
+    clean_baseline_train: data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl
+    expected_clean_baseline_rows: 15048
+    base_config: configs/pipeline_eng_laptop_v23_deepseek.yaml
+    baseline_config: configs/pipeline_eng_laptop_v5repro.yaml
+    clean_prefix: v23_eng_laptop_deepseek_inductive_seed
+    original_prefix: v23_eng_laptop_deepseek_seed
+    baseline_prefix: v5repro_eng_laptop_inductive_seed
+    original_baseline_prefix: v5repro_eng_laptop_seed
+    vote: 4
+    topk: 0.0
+    baseline_vote: 3
+    baseline_topk: 0.0
+    original_result: 0.4141
+    baseline_result: 0.3254
+    adopted: true
+    retrospective_silver:
+      deepseek: data/subtask_3/eng/eng_laptop_silver_v23_deepseek_clean.jsonl
+      qwen: data/subtask_3/eng/eng_laptop_silver_v23_qwen.jsonl
+    clean_rerun: true
+    clean_baseline_rerun: true
+
+  eng_restaurant:
+    lang: eng
+    domain: restaurant
+    gold_train: data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl
+    dev: data/subtask_3/eng/eng_restaurant_dev_task3.jsonl
+    test: data/subtask_3/eng/eng_restaurant_test_task3.jsonl
+    adopted: false
+    retrospective_silver:
+      deepseek: data/subtask_3/eng/eng_restaurant_silver_v23_deepseek.jsonl
+      qwen: data/subtask_3/eng/eng_restaurant_silver_v23_qwen.jsonl
+
+  jpn_hotel:
+    lang: jpn
+    domain: hotel
+    gold_train: data/subtask_3/jpn/jpn_hotel_train_alltasks.jsonl
+    dev: data/subtask_3/jpn/jpn_hotel_dev_task3.jsonl
+    test: data/subtask_3/jpn/jpn_hotel_test_task3.jsonl
+    adopted: false
+    retrospective_silver:
+      deepseek: data/subtask_3/jpn/jpn_hotel_silver_v23_deepseek.jsonl
+      qwen: data/subtask_3/jpn/jpn_hotel_silver_v23_qwen.jsonl
+
+  rus_restaurant:
+    lang: rus
+    domain: restaurant
+    gold_train: data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    adopted_train: data/subtask_3/rus/rus_restaurant_train_v23_deepseek_gen4k.jsonl
+    baseline_train: data/subtask_3/rus/rus_restaurant_train_v13.jsonl
+    base_config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    original_prefix: v23_rus_restaurant_deepseek_gen4k_seed
+    baseline_prediction: predictions/v15_sweep/v15_rus_vote4_topk0.10.jsonl
+    vote: 3
+    topk: 0.0
+    original_result: 0.6162
+    baseline_result: 0.5267
+    adopted: true
+    clean_rerun: false
+    retrospective_silver:
+      deepseek: data/subtask_3/rus/rus_restaurant_silver_v23_deepseek.jsonl
+      qwen: data/subtask_3/rus/rus_restaurant_silver_v23_qwen.jsonl
+
+  tat_restaurant:
+    lang: tat
+    domain: restaurant
+    gold_train: data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl
+    dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
+    test: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
+    adopted_train: data/subtask_3/tat/tat_restaurant_train_v23_qwen.jsonl
+    baseline_train: data/subtask_3/tat/tat_restaurant_train_v13.jsonl
+    base_config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
+    original_prefix: v23_tat_restaurant_qwen_seed
+    baseline_prediction: predictions/v15_sweep/v15_tat_vote3_topk0.20.jsonl
+    vote: 3
+    topk: 0.0
+    original_result: 0.5327
+    baseline_result: 0.4821
+    adopted: true
+    clean_rerun: false
+    retrospective_silver:
+      deepseek: data/subtask_3/tat/tat_restaurant_silver_v23_deepseek.jsonl
+
+  ukr_restaurant:
+    lang: ukr
+    domain: restaurant
+    gold_train: data/subtask_3/ukr/ukr_restaurant_train_alltasks.jsonl
+    dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
+    test: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
+    adopted_train: data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek.jsonl
+    clean_train: data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek_inductive.jsonl
+    expected_clean_rows: 8500
+    baseline_train: data/subtask_3/ukr/ukr_restaurant_train_v13b.jsonl
+    clean_baseline_train: data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl
+    expected_clean_baseline_rows: 2966
+    base_config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
+    baseline_config: configs/pipeline_ukr_v13b.yaml
+    clean_prefix: v23_ukr_restaurant_deepseek_inductive_seed
+    original_prefix: v23_ukr_restaurant_deepseek_seed
+    baseline_prefix: v13b_ukr_inductive_seed
+    vote: 3
+    topk: 0.0
+    baseline_vote: 4
+    baseline_topk: 0.0
+    original_result: 0.5560
+    baseline_result: 0.5068
+    adopted: true
+    clean_rerun: true
+    clean_baseline_rerun: true
+    retrospective_silver:
+      deepseek: data/subtask_3/ukr/ukr_restaurant_silver_v23_deepseek.jsonl
+      qwen: data/subtask_3/ukr/ukr_restaurant_silver_v23_qwen.jsonl
+
+  zho_laptop:
+    lang: zho
+    domain: laptop
+    gold_train: data/subtask_3/zho/zho_laptop_train_alltasks.jsonl
+    dev: data/subtask_3/zho/zho_laptop_dev_task3.jsonl
+    test: data/subtask_3/zho/zho_laptop_test_task3.jsonl
+    adopted: false
+    retrospective_silver:
+      deepseek: data/subtask_3/zho/zho_laptop_silver_v23_deepseek.jsonl
+      qwen: data/subtask_3/zho/zho_laptop_silver_v23_qwen.jsonl
+
+  zho_restaurant:
+    lang: zho
+    domain: restaurant
+    gold_train: data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl
+    dev: data/subtask_3/zho/zho_restaurant_dev_task3.jsonl
+    test: data/subtask_3/zho/zho_restaurant_test_task3.jsonl
+    adopted_train: data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real.jsonl
+    clean_train: data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real_inductive.jsonl
+    expected_clean_rows: 9932
+    baseline_train: data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl
+    base_config: configs/pipeline_zho_restaurant_v23_qwen.yaml
+    clean_prefix: v23_zho_restaurant_deepseek_real_inductive_seed
+    original_prefix: v23_zho_restaurant_deepseek_real_seed
+    original_baseline_prefix: final_zho_restaurant_v16_seed
+    strongest_baseline_prediction: predictions/v16_missing_sweep/v16_zho_restaurant_vote4_topk0.0.jsonl
+    vote: 3
+    topk: 0.0
+    baseline_vote: 4
+    baseline_topk: 0.0
+    original_result: 0.5579
+    matched_baseline_result_legacy: 0.4745
+    baseline_result: 0.5669
+    adopted: true
+    clean_rerun: true
+    clean_baseline_rerun: false
+    retrospective_silver:
+      deepseek: data/subtask_3/zho/zho_restaurant_silver_v23_deepseek.jsonl
+      qwen: data/subtask_3/zho/zho_restaurant_silver_v23_qwen.jsonl
