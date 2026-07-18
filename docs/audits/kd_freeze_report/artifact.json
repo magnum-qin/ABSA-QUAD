@@ -3,8 +3,8 @@
   "manifest": {
     "version": 1,
     "surface": "report",
-    "title": "Final KD freeze and Russian silver quality audit",
-    "description": "Technical freeze record for the eight-dataset submission and the gen4k/gen8k decision.",
+    "title": "Historical pre-clean KD freeze and Russian silver quality audit",
+    "description": "Historical 2026-07-13 submission record; superseded for TALLIP conclusions by the clean-inductive and official-test evidence.",
     "generatedAt": "2026-07-13T00:00:00+09:00",
     "charts": [
       {
@@ -161,12 +161,12 @@
       {
         "id": "title",
         "type": "markdown",
-        "body": "# Final KD freeze and Russian silver quality audit"
+        "body": "# Historical pre-clean KD freeze and Russian silver quality audit"
       },
       {
         "id": "technical_summary",
         "type": "markdown",
-        "body": "## Technical Summary\n\nThe submission is frozen to the current per-dataset best systems. Russian gen4k remains selected; the pre-registered same-pool cap gate rejects further cap-curve training."
+        "body": "## Technical Summary\n\nThis is the 2026-07-13 pre-clean submission snapshot, not the current TALLIP conclusion source. Russian gen4k remains the selected historical arm; the pre-registered same-pool cap gate rejects further cap-curve training. Current claims must use docs/CONCLUSIONS.md."
       },
       {
         "id": "submission_finding",

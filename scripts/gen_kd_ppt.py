@@ -217,7 +217,7 @@ tx(s, "eng_laptop is the hardest subset in the entire project.", 0.55, 1.7, 12.2
 stats = [
     ("4,076",  "gold training samples",         "fewest across all subsets", PANEL_BLUE),
     ("240",    "(entity, attribute) classes",   "avg. ~17 examples per class", PANEL_PURPLE),
-    ("0.3035", "V16 baseline dev cF1",          "9.7 pp below SOTA 0.4006", PANEL_SLATE),
+    ("0.3035", "V16 baseline dev cF1",          "historical internal baseline", PANEL_SLATE),
 ]
 for i, (num, label, sub, pal) in enumerate(stats):
     x = 0.55 + i * 4.12
@@ -430,11 +430,8 @@ for i, (label, val, col, delta, best) in enumerate(steps):
         badge(s, "BEST", bar_x0 + 0.18, y + 0.16, 0.85, bar_h - 0.32, C_WHITE,
               fg=C_GREEN, size=11)
 
-# SOTA marker
-sota_x = bar_x0 + (0.4006 - min_v) * scale
-rect(s, sota_x, bar_y0 - 0.12, 0.025, len(steps) * (bar_h + gap) - gap + 0.24, PANEL_AMBER[2])
-tx(s, "SOTA 2nd  ·  nchellwig 27B LLM  ·  0.4006", sota_x - 0.2, 6.95, 5.0, 0.4,
-   size=12, italic=True, color=C_AMBER)
+tx(s, "Historical dev progression only · do not compare these values with the official test leaderboard.",
+   0.55, 6.92, 12.0, 0.4, size=12, italic=True, color=C_AMBER)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -442,18 +439,18 @@ tx(s, "SOTA 2nd  ·  nchellwig 27B LLM  ·  0.4006", sota_x - 0.2, 6.95, 5.0, 0.
 # ══════════════════════════════════════════════════════════════
 s = add_slide()
 eyebrow(s, "Root Cause")
-title(s, "Why KD Works — Three Mechanisms")
+title(s, "Why KD May Help — Three Candidate Mechanisms")
 
 mechs = [
-    (PANEL_BLUE, "1   Fills Sparse Category Slots",
+    (PANEL_BLUE, "1   Adds Sparse-Category Coverage",
      "15+ of 240 categories have only 1-3 gold samples. KD silver independently samples new text "
      "per category: MOUSE#USABILITY grows 1 -> 18, MOTHERBOARD#GENERAL 1 -> 13 — from near-zero to meaningful coverage."),
-    (PANEL_AMBER, "2   Injects LLM Polarity Prior",
+    (PANEL_AMBER, "2   May Transfer a Polarity Prior",
      'DeepSeek, pre-trained on billions of e-commerce texts, maps "struggling / not responsive / burnt out" '
      "to the correct negative categories. BT/Paraphrase cannot create negative polarity from a single positive gold — KD transfers this prior into the weights."),
-    (PANEL_GREEN, "3   No LLM at Inference — Noise Contained",
+    (PANEL_GREEN, "3   No LLM at Inference",
      "Earlier inference-time fusion failed (LLM outputs are high-variance). KD distills during training only; "
-     "silver noise is absorbed by 5-seed ensemble + vote=4. Final inference is pure small-model ensemble — stable, fast, no LLM."),
+     "the final system uses a five-seed student ensemble with vote=4. This avoids runtime LLM cost, but does not prove that all silver noise is removed."),
 ]
 for i, (pal, htxt, body) in enumerate(mechs):
     y = 1.7 + i * 1.74
@@ -464,17 +461,17 @@ for i, (pal, htxt, body) in enumerate(mechs):
 
 
 # ══════════════════════════════════════════════════════════════
-#  SLIDE 9 — KD gain ∝ scarcity
+#  SLIDE 9 — Heterogeneous dev gains
 # ══════════════════════════════════════════════════════════════
 s = add_slide()
-eyebrow(s, "Generalization  ·  4 datasets")
-title(s, "KD Gain Scales Inversely with Gold-Data Size", size=27)
+eyebrow(s, "Historical Dev Analysis · 4 datasets")
+title(s, "Gold Size Alone Does Not Explain KD Gain", size=27)
 
 data = [
-    ("rus",        1766, "+4.86 pp", "Beats PAI SOTA by +1.54 pp",       PANEL_GREEN, True),
-    ("ukr",        2967, "+4.92 pp", "Beats PAI SOTA by +1.23 pp",       PANEL_GREEN, True),
-    ("eng_laptop", 4076, "+8.87 pp", "Beats nchellwig 2nd by +1.35 pp",  PANEL_GREEN, True),
-    ("zho_laptop", 5534, "-0.59 pp", "Silver dilutes sufficient data",   PANEL_RED,   False),
+    ("rus",        1766, "+4.86 pp", "Positive dev point estimate", PANEL_GREEN, True),
+    ("ukr",        2967, "+4.92 pp", "Positive dev point estimate", PANEL_GREEN, True),
+    ("eng_laptop", 4076, "+8.87 pp", "Positive dev point estimate", PANEL_GREEN, True),
+    ("zho_laptop", 5534, "-0.59 pp", "Negative dev point estimate", PANEL_RED, False),
 ]
 for i, (name, gold, delta, verdict, pal, good) in enumerate(data):
     y = 1.65 + i * 1.2
@@ -494,7 +491,7 @@ for i, (name, gold, delta, verdict, pal, good) in enumerate(data):
           pal[2], size=9)
 
 rrect(s, 0.52, 6.55, 12.3, 0.62, PANEL_BLUE[0], radius=0.08)
-tx(s, "Rule:   gold <= 4k  ->  large positive gain      |      gold >= 5.5k + strong native encoder  ->  KD slightly hurts",
+tx(s, "Dataset, encoder, teacher and pool also change here; this chart cannot identify a causal scarcity rule.",
    0.74, 6.65, 11.9, 0.42, size=15, bold=True, color=PANEL_BLUE[1])
 
 
@@ -503,7 +500,7 @@ tx(s, "Rule:   gold <= 4k  ->  large positive gain      |      gold >= 5.5k + st
 # ══════════════════════════════════════════════════════════════
 s = add_slide()
 eyebrow(s, "Conclusion")
-title(s, "KD is a Targeted Fix for Data-Scarce Subsets")
+title(s, "KD Helps Conditionally, Not Universally")
 
 # paper quote
 rrect(s, 0.52, 1.62, 12.3, 1.85, PANEL_SLATE[0], radius=0.05)
@@ -511,16 +508,16 @@ rect(s, 0.52, 1.62, 0.13, 1.85, PANEL_BLUE[2])
 tx(s, "PAPER NARRATIVE", 0.82, 1.74, 11.8, 0.35, size=12, bold=True,
    color=PANEL_BLUE[1], spacing=150)
 tx(s,
-   '"LLM distillation benefit is inversely proportional to gold-data sufficiency: all three '
-   'data-starved subsets (rus, ukr, eng_laptop, <=4k gold) gain +4.9~8.9 pp and surpass prior test '
-   'SOTA, while a data-adequate subset with a strong native encoder (zho_laptop, 5.5k gold) is slightly hurt."',
+   '"KD is more likely to help when accurately labeled silver adds coverage that the gold/base lacks. '
+   'The effect remains dataset-dependent: teacher, pool, coverage and gold:silver weight all matter, '
+   'and current evidence supports neither a universal data-size rule nor a universal silver cap."',
    0.82, 2.12, 11.8, 1.3, size=15, italic=True, color=C_BODY)
 
 takeaways = [
     (PANEL_AMBER, "BT / Paraphrase: surface change only; regularization benefit, but cannot break the class-sparsity ceiling."),
-    (PANEL_GREEN, "V23 KD: new text + LLM re-labeling fills long-tail slots and injects polarity prior -> qualitative leap (+8.87 pp)."),
-    (PANEL_RED,   "Cost: silver noise exists; needs 5-seed ensemble + vote filtering; harmful on data-sufficient subsets."),
-    (PANEL_BLUE,  "440M deberta-v3-base + KD reaches 27B-LLM-team level — 60x smaller, zero LLM at inference."),
+    (PANEL_GREEN, "V23 KD: new text + LLM re-labeling can add long-tail coverage; official test supports four KD contrasts."),
+    (PANEL_RED,   "Cost: silver noise exists; zho_restaurant is inconclusive and some development arms regress."),
+    (PANEL_BLUE,  "Inference uses the student ensemble only; none of the eight main systems establishes official test SOTA."),
 ]
 for i, (pal, text) in enumerate(takeaways):
     y = 3.66 + i * 0.84

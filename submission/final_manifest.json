@@ -1,7 +1,9 @@
 {
   "schema_version": 1,
   "frozen_at": "2026-07-13T00:00:00+09:00",
-  "status": "frozen",
+  "status": "historical_frozen",
+  "scope": "Historical pre-clean submission freeze; not the TALLIP clean-inductive or official-test protocol.",
+  "superseded_by": "scripts/kd/official_test.yaml",
   "decision_rule": "Use the best validated per-dataset system; do not replace rus gen4k with gen8k because same-pool cap3000 failed the +1.5pp gate.",
   "seeds": [42, 123, 456, 789, 1024],
   "archive": {

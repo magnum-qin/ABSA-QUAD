@@ -354,7 +354,7 @@ def build():
         add_text(s, score, x + 4.48, y + 0.32, 1.08, 0.32, 17, NAVY, True, PP_ALIGN.RIGHT, font=FONT_LATIN)
     add_rect(s, 1.15, 6.88, 11.05, 0.08, TEAL, TEAL, False, 0)
     add_text(s, "原则：语言专用模型不一定更好；所有选择都必须由 dev cF1 验证。", 1.15, 6.45, 11.0, 0.35, 19, NAVY, True, PP_ALIGN.CENTER)
-    add_footer(s, "Best validated per-dataset configuration · hidden-test labels not used")
+    add_footer(s, "Historical pre-release dev selection · official-test evidence is reported separately")
 
     # 8. Augmentation nuance
     s = prs.slides.add_slide(blank)
@@ -415,16 +415,16 @@ def build():
     # 10. Dataset results and external comparison
     s = prs.slides.add_slide(blank)
     set_bg(s)
-    add_title(s, "Per-dataset evidence", "优势并不均匀：三项刷新已报告 top，四项仍有差距", 10)
+    add_title(s, "Per-dataset evidence", "八项 dev 结果用于内部选择，不推导 test 排名", 10)
     rows = [
-        ("Eng-R", 0.6949, "strong", GREEN),
-        ("Eng-L", 0.3304, "below reported best", RED),
-        ("Jpn-H", 0.4500, "reported top ↑", GREEN),
-        ("Rus-R", 0.5267, "below reported best", RED),
-        ("Tat-R", 0.4821, "reported top ↑", GREEN),
-        ("Ukr-R", 0.5068, "below reported best", RED),
-        ("Zho-R", 0.5669, "reported top ↑", GREEN),
-        ("Zho-L", 0.4487, "below reported best", RED),
+        ("Eng-R", 0.6949, "dev-selected", GREEN),
+        ("Eng-L", 0.3304, "dev-selected", GREEN),
+        ("Jpn-H", 0.4500, "dev-selected", GREEN),
+        ("Rus-R", 0.5267, "dev-selected", GREEN),
+        ("Tat-R", 0.4821, "dev-selected", GREEN),
+        ("Ukr-R", 0.5068, "dev-selected", GREEN),
+        ("Zho-R", 0.5669, "dev-selected", GREEN),
+        ("Zho-L", 0.4487, "dev-selected", GREEN),
     ]
     add_rect(s, 0.74, 1.55, 7.50, 5.25, WHITE, GRID, True, 1)
     for i, (name, score, status, c) in enumerate(rows):
@@ -434,10 +434,10 @@ def build():
         add_text(s, name, 1.02, y, 1.10, 0.25, 16, INK, True, font=FONT_LATIN)
         add_text(s, f"{score:.4f}", 2.45, y, 1.05, 0.25, 17, NAVY, True, font=FONT_LATIN)
         add_pill(s, status, 4.15, y - 0.03, 2.75, PALE_GREEN if c == GREEN else PALE_RED, c, 12.5)
-    add_card(s, "论文可以自信地说", "• 超过全部官方开发集基线\n• 平均 cF1 提升显著\n• Jpn / Tat / Zho-R 超过已报告 top", 8.55, 1.68, 4.05, 2.06, TEAL, WHITE, 19, 17.5)
+    add_card(s, "论文可以自信地说", "• 超过全部官方开发集基线\n• 平均 dev cF1 提升显著\n• 配方按数据集验证", 8.55, 1.68, 4.05, 2.06, TEAL, WHITE, 19, 17.5)
     add_card(s, "论文不应说", "• “所有数据集全面领先”\n• “绝对统治力”\n• 将 dev 结果写成 hidden-test 排名", 8.55, 4.05, 4.05, 2.06, RED, WHITE, 19, 17.5)
-    add_text(s, "学术表达要区分：official baseline / reported system / hidden test。", 8.58, 6.45, 4.00, 0.32, 15.5, MUTED, True, PP_ALIGN.CENTER)
-    add_footer(s, "External scores are reference comparisons, not hidden-test claims")
+    add_text(s, "学术表达必须区分 dev 选择、official test 与外部系统。", 8.58, 6.45, 4.00, 0.32, 15.5, MUTED, True, PP_ALIGN.CENTER)
+    add_footer(s, "Historical dev analysis only · current conclusions use the locked official-test evaluation")
 
     # 11. Ablations
     s = prs.slides.add_slide(blank)
@@ -496,7 +496,7 @@ def build():
         x, y = 6.82 + col * 2.88, 2.00 + row * 1.65
         add_card(s, name, body, x, y, 2.65, 1.40, c, WHITE, 16.5, 14.5)
     add_rect(s, 6.82, 5.50, 5.70, 1.12, PALE_RED, "F3C4C9", True, 1)
-    add_text(s, "局限：最终系统是 dataset-specific mixture；所有排名比较仍基于 dev；增强依赖近似精确的 span 对齐。", 7.05, 5.73, 5.25, 0.62, 17, INK, True, PP_ALIGN.CENTER, MSO_ANCHOR.MIDDLE)
+    add_text(s, "局限：最终系统是 dataset-specific mixture；本 deck 仅报告 V20 dev 选择；增强依赖近似精确的 span 对齐。", 7.05, 5.73, 5.25, 0.62, 17, INK, True, PP_ALIGN.CENTER, MSO_ANCHOR.MIDDLE)
     add_footer(s, "Negative results, error analysis and limitations: paper §7–§8")
 
     # 13. Conclusion
@@ -515,7 +515,7 @@ def build():
         add_text(s, num, x + 0.25, 2.28, 0.60, 0.36, 18, c, True, font=FONT_LATIN)
         add_text(s, title, x + 0.25, 2.84, 3.25, 0.48, 21, WHITE, True)
         add_text(s, body, x + 0.25, 3.54, 3.25, 0.92, 17.5, "DCE8F5")
-    add_text(s, "0.5008 mean dev cF1  ·  +11.46 pp vs Llama-3.3 70B  ·  reported top on Jpn / Tat / Zho-R", 0.72, 5.45, 11.90, 0.45, 18.5, "70D7CD", True, PP_ALIGN.CENTER, font=FONT_LATIN)
+    add_text(s, "0.5008 mean dev cF1  ·  +11.46 pp vs the official Llama development baseline", 0.72, 5.45, 11.90, 0.45, 18.5, "70D7CD", True, PP_ALIGN.CENTER, font=FONT_LATIN)
     add_line(s, 2.52, 6.15, 10.82, 6.15, "3B6288", 1.2)
     add_text(s, "谢谢 · Questions?", 0.72, 6.47, 11.90, 0.50, 25, WHITE, True, PP_ALIGN.CENTER)
 

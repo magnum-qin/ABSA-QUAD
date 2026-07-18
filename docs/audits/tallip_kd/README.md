@@ -29,12 +29,12 @@ clean file and removal hashes are in `cleaning_manifest.json`.
 
 ## Baseline correction discovered during validation
 
-The historical KD notes compare zho_restaurant KD against 0.4745. The preserved
-strongest no-KD V16 prediction evaluates to 0.5669 with the official Task-3
-metric, above the reported KD score 0.5579. TALLIP results must show both the
-historical matched/raw reference and the strongest frozen no-KD system; the
-claim that zho_restaurant is an overall KD improvement is not valid unless the
-clean rerun exceeds the stronger baseline.
+The historical KD notes compare zho_restaurant KD against 0.4745. Validation
+recovered a stronger no-KD V16 dev prediction at 0.5669. The clean KD dev result
+is 0.5738, but its paired CI against 0.5669 crosses zero. On official test,
+clean KD is 0.4660 versus 0.4798 for the frozen baseline (delta -0.0137,
+95% CI [-0.0289, +0.0014]). zho_restaurant is therefore not counted as a
+statistically supported KD success.
 
 No paper LaTeX is modified by this workflow.
 

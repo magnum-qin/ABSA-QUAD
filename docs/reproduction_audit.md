@@ -2,6 +2,12 @@
 
 Date: 2026-06-03
 
+> **2026-07-18 retrospective:** this document audits historical reproducibility
+> as of its original date. Official test labels were subsequently released and
+> evaluated once under a pre-locked protocol. Current test conclusions are in
+> [`docs/CONCLUSIONS.md`](CONCLUSIONS.md); the asset-recovery conclusions below
+> remain historical and unchanged.
+
 Goal: verify whether current data and training parameters can reproduce the recorded best dev cF1 in `docs/EXPERIMENTS.md`.
 
 ## Conclusion
@@ -53,7 +59,11 @@ The current 12,632-row file is raw + BT-only, not the historical 15,049-row V5/V
 
 ## Existing Local Test Predictions
 
-The tracked local `submission/final/*.jsonl` files are old test predictions, but they cannot verify dev cF1 because test labels are not available. They may still be useful as previously generated submission outputs.
+The tracked local `submission/final/*.jsonl` files are old test predictions. At
+the time of this audit, test labels were not locally available, so these files
+could not verify dev cF1. Released labels are now available and were evaluated
+separately under the locked official-test protocol; these historical prediction
+files are not the TALLIP clean-inductive systems.
 
 Current local tracked test prediction sizes:
 

@@ -1,9 +1,9 @@
 """Generate the final KD ablation evidence deck.
 
-1. Final KD choices across all 8 datasets
+1. One-shot official-test KD comparisons
 2. Size-matched Russian pool-source comparison
 3. Same-pool gen8k quantity control
-4. Five evidence-backed conclusions
+4. Six evidence-backed conclusions
 
 Same visual language as gen_kd_ppt.py (clean pastel-panel theme, English).
 """
@@ -161,49 +161,45 @@ tx(s, "What Actually Controls KD Gain?", 0.55, 2.1, 12.2, 1.0,
 tx(s, "Teacher × Pool × Quality–Coverage Trade-off", 0.55, 3.05, 12.2, 0.65,
    size=26, color=C_EYEBROW, bold=True)
 rect(s, 0.6, 3.95, 1.7, 0.05, C_EYEBROW)
-tx(s, "Final ablation synthesis · frozen submission · 2026-07-13",
+tx(s, "TALLIP evidence closure · clean-inductive + official test · 2026-07-18",
    0.55, 4.15, 12.2, 0.5, size=16, color=C_MUTED, italic=True)
 
 
 # ══════════════════════════════════════════════════════════════
-#  SLIDE 2 — KD experiments across all 8 datasets
+#  SLIDE 2 — One-shot official-test KD comparisons
 # ══════════════════════════════════════════════════════════════
 s = add_slide()
-eyebrow(s, "KD Experiments")
-title(s, "All 8 Datasets, Simplified")
+eyebrow(s, "Official Test · Pre-Locked")
+title(s, "Four Supported KD Gains; One Inconclusive")
 
-headers = ["DATASET", "TEACHER", "SILVER SOURCE", "BASELINE", "BEST KD", "Δ", "ADOPTED"]
-col_w = [1.65, 1.45, 3.5, 1.25, 1.55, 1.45, 1.35]
+headers = ["DATASET", "KD", "NO-KD", "Δ cF1", "95% CI", "DECISION"]
+col_w = [2.1, 1.55, 1.55, 1.5, 3.4, 2.1]
 rows = [
-    ("eng_laptop", "DeepSeek", "Real · n=8,578 (Amazon laptop)", "0.3254", "0.4141", "+8.9pp", "Submitted"),
-    ("rus_restaurant", "DeepSeek", "Generated 4k · cap 3,000", "0.5267", "0.6162", "+9.0pp", "Submitted"),
-    ("ukr_restaurant", "DeepSeek", "Translated · n=6,551 (RU→UK)", "0.5068", "0.5560", "+4.9pp", "Submitted"),
-    ("zho_restaurant", "DeepSeek", "Real n=5,000 (dianping); Gen n=4,930 (superseded)", "0.4745", "0.5579", "+8.3pp", "Submitted"),
-    ("tat_restaurant", "qwen (local)", "Generated · n=3,986 (native Tatar)", "0.4821", "0.5327", "+5.1pp", "Submitted"),
-    ("zho_laptop", "qwen/DeepSeek", "Gen n=4,923; Real n=1,673", "0.4487", "0.4454 / 0.4264", "−0.3~−2.2pp", "Rejected"),
-    ("jpn_hotel", "DeepSeek/qwen", "Generated · n=4,756 (no real corpus)", "0.4466", "0.4281", "−1.9pp", "Rejected"),
-    ("eng_restaurant", "DeepSeek/qwen", "Gen n=4,974; Real n=5,000 (Yelp)", "0.6554", "0.6013 / 0.4190", "−5.4~−23.6pp", "Rejected"),
+    ("eng_laptop", "0.3532", "0.2710", "+0.0822", "[+0.0629, +0.1021]", "Supported"),
+    ("rus_restaurant", "0.5189", "0.4978", "+0.0211", "[+0.0005, +0.0431]", "Supported"),
+    ("tat_restaurant", "0.4311", "0.4037", "+0.0274", "[+0.0071, +0.0482]", "Supported"),
+    ("ukr_restaurant", "0.4608", "0.4215", "+0.0393", "[+0.0150, +0.0639]", "Supported"),
+    ("zho_restaurant", "0.4660", "0.4798", "−0.0137", "[−0.0289, +0.0014]", "Inconclusive"),
 ]
 
 def _adopted_color(i, j, cell):
-    if j == 6:
-        return PANEL_GREEN[1] if cell == "Submitted" else C_RED
+    if j == 5:
+        return PANEL_GREEN[1] if cell == "Supported" else C_AMBER
     return None
 
-bottom = data_table(s, 0.52, 1.62, col_w, headers, rows, highlight_idx=1,
-                     highlight_color=PANEL_GREEN[0], row_h=0.52, size=11.5,
+bottom = data_table(s, 0.52, 1.82, col_w, headers, rows, row_h=0.70, size=13,
                      cell_color_fn=_adopted_color)
 
-tx(s, "Five datasets adopt KD. Source labels describe the selected arm, not a universal ranking: "
-      "zho_restaurant prefers real reviews, while rus_restaurant prefers a generated batch.",
-   0.55, bottom + 0.18, 12.2, 0.55, size=12, italic=True, color=C_MUTED)
+tx(s, "10,000 paired bootstrap resamples · seed 20260713. Systems, predictions and thresholds were "
+      "frozen before gold retrieval. None of the eight main systems establishes test SOTA.",
+   0.55, bottom + 0.25, 12.2, 0.65, size=13, italic=True, color=C_MUTED)
 
 
 # ══════════════════════════════════════════════════════════════
 #  SLIDE 3 — Pool -> Silver -> Training pipeline
 # ══════════════════════════════════════════════════════════════
 s = add_slide()
-eyebrow(s, "Ablation Design")
+eyebrow(s, "Ablation Design · Dev Evidence")
 title(s, "Size-Matched Pool Source Comparison (rus_restaurant)")
 
 headers2 = ["CONTROL / RESULT", "REAL4K", "TRANSLATED4K", "GENERATED4K"]
@@ -223,7 +219,7 @@ data_table(s, 0.52, 2.0, col_w2, headers2, rows2, row_h=0.62, size=14.5, header_
 #  SLIDE 4 — Same-pool quantity control
 # ══════════════════════════════════════════════════════════════
 s = add_slide()
-eyebrow(s, "Quantity Control")
+eyebrow(s, "Quantity Control · Dev Evidence")
 title(s, "Same gen8k Silver: Reducing to 3,000 Does Not Help")
 
 headers3 = ["PAIRED EVIDENCE", "FULL GEN8K (7,988)", "CAP 3,000"]
@@ -242,24 +238,25 @@ data_table(s, 0.52, 2.0, col_w3, headers3, rows3, row_h=0.85, size=13, header_si
 # ══════════════════════════════════════════════════════════════
 s = add_slide()
 eyebrow(s, "Final Synthesis")
-title(s, "Five Conclusions Supported by the Full Ablation Matrix")
+title(s, "Six Conclusions Within the Evidence Boundary")
 
 conclusions = [
-    ("1", "Complementarity decides whether KD helps", "Silver must add coverage or priors missing from gold/base.", PANEL_BLUE),
-    ("2", "Teacher quality is domain-dependent", "Qwen is competitive in many domains but collapses on eng_restaurant.", PANEL_AMBER),
+    ("1", "KD gains are conditional", "Complementary, accurate coverage is a supported interpretation—not a universal law.", PANEL_BLUE),
+    ("2", "DeepSeek is more robust overall", "Direct fidelity is 8/8 higher by point estimate; only 3/8 gaps are supported.", PANEL_AMBER),
     ("3", "Pool source has no universal ranking", "zho: real wins; rus: generated wins under size matching.", PANEL_GREEN),
     ("4", "rus gen4k is a batch-quality effect", "Same-pool reduction failed; the 4k advantage is not a generic cap effect.", PANEL_RED),
     ("5", "Best silver balances quality and coverage", "More is not automatically better; no universal cap is supported.", PANEL_SLATE),
+    ("6", "Official test supports 4/5 contrasts", "zho is inconclusive; no main system exceeds the leaderboard best.", PANEL_BLUE),
 ]
 for i, (num, heading, body, palette) in enumerate(conclusions):
-    y = 1.52 + i * 1.05
-    rrect(s, 0.62, y, 12.05, 0.85, palette[0], radius=0.05)
-    rrect(s, 0.82, y + 0.13, 0.60, 0.58, palette[2], radius=0.10)
-    tx(s, num, 0.82, y + 0.13, 0.60, 0.58, size=19, bold=True, color=C_WHITE,
+    y = 1.48 + i * 0.91
+    rrect(s, 0.62, y, 12.05, 0.73, palette[0], radius=0.05)
+    rrect(s, 0.82, y + 0.10, 0.54, 0.52, palette[2], radius=0.10)
+    tx(s, num, 0.82, y + 0.10, 0.54, 0.52, size=17, bold=True, color=C_WHITE,
        align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-    tx(s, heading, 1.66, y + 0.09, 4.25, 0.62, size=16.5, bold=True,
+    tx(s, heading, 1.58, y + 0.06, 4.35, 0.56, size=15.2, bold=True,
        color=palette[1], anchor=MSO_ANCHOR.MIDDLE)
-    tx(s, body, 6.12, y + 0.10, 6.00, 0.55, size=14.2, color=C_BODY,
+    tx(s, body, 6.02, y + 0.06, 6.20, 0.56, size=12.8, color=C_BODY,
        anchor=MSO_ANCHOR.MIDDLE)
 
 

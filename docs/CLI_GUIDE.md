@@ -143,7 +143,7 @@ OLLAMA_URL=http://localhost:11433 python scripts/gen_native_ollama.py \
 
 一键全流程示例：`scripts/run_v23_rus_restaurant_deepseek.sh`（DeepSeek）、`scripts/run_v23_multi_qwen.sh`（本地 qwen 多数据集）、`scripts/run_v23_zho_laptop_qwen.sh`（含 silver 封顶）。
 
-KD 生效判据见 [EXPERIMENTS.md §5.29](EXPERIMENTS.md)：silver 须提供 gold 缺失的信息（gold 弱/类别稀疏，或 silver:gold<1 保持少数派）。
+KD 的最终证据边界见 [CONCLUSIONS.md](CONCLUSIONS.md)：互补覆盖是与结果一致的解释性机制，不是充要判据；gold 规模或 silver:gold 比不能单独预测收益。
 
 ---
 
@@ -158,15 +158,21 @@ bash scripts/run_test_submission.sh reproduce
 # 输出默认写入 submission/reproduced，可用 OUT_DIR 覆盖
 ```
 
-冻结权威源为 [`submission/final_manifest.json`](../submission/final_manifest.json)，其中记录方法、dev cF1、config/hash、checkpoint 前缀、vote/topk 和预测 SHA-256。当前 `submission/submission.zip` 的 8 个成员与 `submission/final` 字节一致。eng_restaurant 与 jpn_hotel 的历史五种子 checkpoint 已不在本机，因此两者只能验证冻结预测字节，不能在当前工作区完整重推；脚本会显式拒绝伪复现。
+该命令审计的是 2026-07-13 的历史 pre-clean submission 快照，来源为
+[`submission/final_manifest.json`](../submission/final_manifest.json)。当前
+TALLIP clean-inductive/official-test 权威源是
+[`scripts/kd/official_test.yaml`](../scripts/kd/official_test.yaml) 与
+[`docs/CONCLUSIONS.md`](CONCLUSIONS.md)。历史 ZIP 的 8 个成员仍与
+`submission/final` 字节一致；eng_restaurant 与 jpn_hotel 的历史五种子
+checkpoint 已不在本机，因此只能验证冻结预测字节，不能伪称完整重推。
 
-银标批次质量分析：[`notebooks/rus_silver_quality_audit.ipynb`](../notebooks/rus_silver_quality_audit.ipynb)；最终技术审计：[`docs/audits/kd_freeze_report/report.html`](audits/kd_freeze_report/report.html)。
+银标批次质量分析：[`notebooks/rus_silver_quality_audit.ipynb`](../notebooks/rus_silver_quality_audit.ipynb)；历史 pre-clean 技术审计：[`docs/audits/kd_freeze_report/report.html`](audits/kd_freeze_report/report.html)。
 
 ---
 
 ## 8. 常用参数说明
 
-### 当前 8 数据集 config（`configs/pipeline_*`）
+### 历史 pre-clean submission config（`configs/pipeline_*`）
 
 | 数据集 | config | 方法 |
 |---|---|---|
@@ -175,11 +181,14 @@ bash scripts/run_test_submission.sh reproduce
 | jpn_hotel | `pipeline_jpn_v16.yaml` | baseline |
 | rus_restaurant | `pipeline_rus_restaurant_v23_deepseek.yaml` | KD (DeepSeek) |
 | ukr_restaurant | `pipeline_ukr_restaurant_v23_deepseek.yaml` | KD (DeepSeek) |
-| tat_restaurant | `pipeline_tat_restaurant_v23_deepseek.yaml` | KD (DeepSeek) |
-| zho_restaurant | `pipeline_zho_restaurant_v23_qwen.yaml` | KD (qwen3.6) |
+| tat_restaurant | `pipeline_tat_restaurant_v23_deepseek.yaml`† | KD (Qwen) |
+| zho_restaurant | `pipeline_zho_restaurant_v23_qwen.yaml`† | KD (DeepSeek, real pool) |
 | zho_laptop | `pipeline_zho_laptop_v16.yaml` | baseline |
 
-### 典型 vote/topk
+† 历史 config 文件名沿用早期 teacher 命名，不能据文件名推断最终 silver teacher；
+准确 provenance 以 manifest 的 `method` 和 TALLIP registry 为准。
+
+### 历史 dev sweep 的典型 vote/topk
 
 | 数据集 | vote | topk |
 |---|---|---|
@@ -187,4 +196,5 @@ bash scripts/run_test_submission.sh reproduce
 | eng_laptop / ukr / zho_restaurant | 4 / 3 | 0.0 |
 | tat | 3 | 0.20 |
 
-最优阈值随数据集不同，建议用 §5 扫描确认。
+仅在新的 dev-only 开发实验中可按 §5 扫描；已冻结 official-test 系统禁止重新
+扫阈值，必须使用 `scripts/kd/official_test.yaml` 中的固定设置。

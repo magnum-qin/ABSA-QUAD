@@ -98,12 +98,12 @@ T = {
     # Main results
     "平均 dev cF1 = 0.5008，显著超过官方基线": "Mean dev cF1 = 0.5008, well above the official baselines",
     # Per-dataset evidence
-    "优势并不均匀：三项刷新已报告 top，四项仍有差距": "Gains are uneven: three reported tops, but four remaining gaps",
+    "八项 dev 结果用于内部选择，不推导 test 排名": "Eight dev results guide internal selection—not test ranking",
     "论文可以自信地说": "What the paper can claim",
-    "• 超过全部官方开发集基线\n• 平均 cF1 提升显著\n• Jpn / Tat / Zho-R 超过已报告 top": "• Beats all official dev baselines\n• +11.46 pp vs Llama mean\n• Reported tops: Jpn / Tat / Zho-R",
+    "• 超过全部官方开发集基线\n• 平均 dev cF1 提升显著\n• 配方按数据集验证": "• Beats all official dev baselines\n• Improves mean dev cF1\n• Validates recipes per dataset",
     "论文不应说": "Unsupported claims",
     "• “所有数据集全面领先”\n• “绝对统治力”\n• 将 dev 结果写成 hidden-test 排名": "• ‘Best on every dataset’\n• ‘Absolute dominance’\n• Hidden-test rank from dev scores",
-    "学术表达要区分：official baseline / reported system / hidden test。": "Keep official baselines, reported systems, and hidden-test results distinct.",
+    "学术表达必须区分 dev 选择、official test 与外部系统。": "Keep dev selection, official test, and external systems distinct.",
     # Ablation
     "最稳健的最终贡献来自集成；其他收益依赖模型规模": "Ensembling is the most robust final gain; other effects depend on scale",
     "相对五种子单模均值": "versus the five-seed single-model mean",
@@ -132,7 +132,7 @@ T = {
     "俄/鞑/乌仍有较多漏检": "Russian, Tatar, and Ukrainian still miss quads",
     "V–A 收缩": "V–A shrinkage",
     "极端情绪回归向中心收缩": "Extreme affect values regress toward the center",
-    "局限：最终系统是 dataset-specific mixture；所有排名比较仍基于 dev；增强依赖近似精确的 span 对齐。": "Limitations: the final system is a dataset-specific mixture; comparisons remain dev-based; augmentation relies on near-exact span alignment.",
+    "局限：最终系统是 dataset-specific mixture；本 deck 仅报告 V20 dev 选择；增强依赖近似精确的 span 对齐。": "Limitations: the system is a dataset-specific mixture; this deck reports V20 dev selection only; augmentation relies on near-exact span alignment.",
     # Conclusion
     "三句话带走 LEADER-DimASQP": "LEADER-DimASQP in three takeaways",
     "先解决结构稳定性": "Stabilize structure first",
@@ -195,9 +195,9 @@ FONT_SIZES = {
     # Per-dataset claim cards
     "What the paper can claim": 16.5,
     "Unsupported claims": 16.5,
-    "• Beats all official dev baselines\n• +11.46 pp vs Llama mean\n• Reported tops: Jpn / Tat / Zho-R": 14.5,
+    "• Beats all official dev baselines\n• Improves mean dev cF1\n• Validates recipes per dataset": 14.5,
     "• ‘Best on every dataset’\n• ‘Absolute dominance’\n• Hidden-test rank from dev scores": 14.5,
-    "Keep official baselines, reported systems, and hidden-test results distinct.": 13.5,
+    "Keep dev selection, official test, and external systems distinct.": 13.5,
     # Ablation card copy
     "versus the five-seed single-model mean": 14.5,
     "Improves all eight datasets": 15,
@@ -223,7 +223,7 @@ FONT_SIZES = {
     "Large entity–attribute inventories cause confusion": 12.5,
     "Russian, Tatar, and Ukrainian still miss quads": 12.5,
     "Extreme affect values regress toward the center": 12.5,
-    "Limitations: the final system is a dataset-specific mixture; comparisons remain dev-based; augmentation relies on near-exact span alignment.": 14.5,
+    "Limitations: the system is a dataset-specific mixture; this deck reports V20 dev selection only; augmentation relies on near-exact span alignment.": 14.5,
     # Long validation principles
     "Principle: language-specific ≠ automatically better; validate every choice by dev cF1.": 15,
     # Compact labels and values in narrow boxes

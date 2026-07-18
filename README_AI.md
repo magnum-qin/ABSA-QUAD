@@ -2,6 +2,8 @@
 
 > 本文件供 AI 助手快速建立项目全貌认知，包含架构、数据流、已实现功能和创新方向。
 > 人类文档请见 [README.md](README.md) 和 [docs/](docs/)。
+> KD 结论必须以 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) 为准；历史 dev
+> 记录不得与 official test leaderboard 直接比较。
 
 ---
 
@@ -56,7 +58,7 @@ ABSA-QUAD/
 └── data/subtask_3/eng/
     ├── eng_restaurant_train_alltasks.jsonl  # 训练集 (~2284 样本)
     ├── eng_restaurant_dev_task3.jsonl       # 验证集 (~200 样本)
-    └── eng_restaurant_test_task3.jsonl      # 测试集 (~1000 样本，无标签)
+    └── eng_restaurant_test_task3.jsonl      # 本地任务输入副本；released gold 独立审计
 ```
 
 ---
@@ -248,7 +250,7 @@ rethink.num_iterations: 2
 
 > 注：上表为早期单模型分析。当前提交已升级为**per-dataset 专用 encoder + 5-seed 双层 ensemble + LLM 知识蒸馏**，权威结果见 [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) 与 README.md 结果表。
 
-### 5.4 LLM 知识蒸馏 (KD, V23) — 当前最大增益来源
+### 5.4 LLM 知识蒸馏 (KD, V23) — 最终证据闭环
 
 **思路**：LLM（云端 DeepSeek 或本地 ollama qwen3.6）对 in-domain 无标注文本打 silver 四元组标签（121/44/14… 类约束 + few-shot + 严格校验：category 合法 / span 逐字子串 / VA∈[1,9]）→ 小模型在 gold+silver 上训练 → **推理时完全不用 LLM**（区别于失败的 LLM-fusion / post-correction）。
 
@@ -258,9 +260,17 @@ rethink.num_iterations: 2
 - `scripts/gen_native_ollama.py`（无 in-domain 语料时本地 LLM 原生生成池，中/日/英…）
 - `scripts/run_v23_*.sh`（各数据集 KD 全流程）
 
-**5/8 数据集采用 KD**：eng_laptop/rus/ukr/zho_restaurant（DeepSeek）+ tat（本地 qwen3.6）。rus 最终采用 4k 生成批次 capped silver（0.6162）；同一 8k silver 的 cap=3000 paired mean 为 0.5353，低于 full-8k 的 0.5467，说明 4k 优势主要来自生成批次质量而非单纯减量。
+**最终证据**：五个预注册 KD−baseline official-test 对照中，eng_laptop、
+rus、tat、ukr 的 95% CI 下界大于 0；zho_restaurant 点估计为负且 CI 跨 0。
+因此只能写“4/5 对照得到统计支持”，不能写“5/8 KD 成功”或 SOTA。
+rus 最终采用 4k 生成批次 capped silver；同一 8k silver 的 cap=3000
+paired mean 低于 full-8k，说明 4k 优势不能归因于单纯减量。
 
-**生效判据（最终收敛）**：KD 有效 ⟺ silver 提供 gold/base 缺失的互补信息。Teacher 质量具有域差异（qwen 多数域接近 DeepSeek，但 eng_restaurant 明显退化）；pool 来源无普适排序（zho: real 胜，rus: generated 胜）；同池 gen8k 减量没有改善。最佳 silver 不是越多越好，而是标注质量、类别覆盖、多样性与 gold:silver 权重合适（§5.29.5）。
+**最终解释（非普适因果定律）**：当 silver 提供 gold/base 缺失且标注较准确的
+互补覆盖时，KD 更可能有效。直接 fidelity 中 DeepSeek 点估计 8/8 更高，
+但仅三个域获得统计支持；Tatar matched downstream 无可靠排名反转。pool 来源
+无普适排序，同池 gen8k 减量没有改善，现有证据也不支持统一 cap 或甜区。
+统一口径见 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) 和 §5.29.5–5.29.7。
 
 ---
 

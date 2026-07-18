@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the canonical Data Analytics artifact for the KD freeze audit."""
+"""Build the historical pre-clean Data Analytics artifact for the KD freeze audit."""
 
 from __future__ import annotations
 
@@ -85,8 +85,8 @@ artifact = {
     "manifest": {
         "version": 1,
         "surface": "report",
-        "title": "Final KD freeze and Russian silver quality audit",
-        "description": "Technical freeze record for the eight-dataset submission and the gen4k/gen8k decision.",
+        "title": "Historical pre-clean KD freeze and Russian silver quality audit",
+        "description": "Historical 2026-07-13 submission record; superseded for TALLIP conclusions by the clean-inductive and official-test evidence.",
         "generatedAt": "2026-07-13T00:00:00+09:00",
         "charts": [{
             "id": "rus_performance",
@@ -139,8 +139,8 @@ artifact = {
             {"id": "freeze_manifest", "label": "Frozen final manifest", "path": "submission/final_manifest.json"}
         ],
         "blocks": [
-            {"id": "title", "type": "markdown", "body": "# Final KD freeze and Russian silver quality audit"},
-            {"id": "technical_summary", "type": "markdown", "body": "## Technical Summary\n\nThe submission is frozen to the current per-dataset best systems. Russian gen4k remains selected; the pre-registered same-pool cap gate rejects further cap-curve training."},
+            {"id": "title", "type": "markdown", "body": "# Historical pre-clean KD freeze and Russian silver quality audit"},
+            {"id": "technical_summary", "type": "markdown", "body": "## Technical Summary\n\nThis is the 2026-07-13 pre-clean submission snapshot, not the current TALLIP conclusion source. Russian gen4k remains the selected historical arm; the pre-registered same-pool cap gate rejects further cap-curve training. Current claims must use docs/CONCLUSIONS.md."},
             {"id": "submission_finding", "type": "markdown", "sourceId": "submission_audit", "body": f"## Key Findings: submission integrity\n\nThe audit passed all {audit['summary']['datasets']} datasets and {audit['summary']['rows']:,} rows with {audit['summary']['errors']} errors. The two warnings are explicit reproducibility gaps: the historical eng_restaurant and jpn_hotel checkpoint sets are no longer local. ZIP members match the frozen prediction bytes."},
             {"id": "performance_chart", "type": "chart", "chartId": "rus_performance"},
             {"id": "quality_findings", "type": "markdown", "sourceId": "silver_quality", "body": "## Key Findings: silver batches\n\nSame-pool gen8k cap3000 averaged 0.5353 across seeds 42/123 versus 0.5467 for full gen8k, a −1.14pp change that fails the +1.5pp continuation gate. The gen4k ensemble scored 0.6162 versus 0.5858 for full gen8k. Automated proxies slightly favor gen4k, but the differences are small and cannot by themselves prove semantic-label superiority."},

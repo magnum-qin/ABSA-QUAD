@@ -12,36 +12,46 @@ Output: [(thai food, FOOD#QUALITY, delicious, 7.5#6.2),
 
 ## 方法概览
 
-每个数据集使用**专用预训练 encoder + 5-seed 双层 ensemble**，部分数据稀缺的数据集额外用 **LLM 知识蒸馏 (KD)** 突破。
+每个数据集使用**专用预训练 encoder + 5-seed 双层 ensemble**，并在部分数据集上评估 **LLM 知识蒸馏 (KD)**。
 
 - **专用 encoder**：按语言/领域选最优 encoder（见下表），而非单模型跑全部。
 - **双层 ensemble**：每个 seed 内 `save_top_k=3` 权重平均 → 跨 5 seed `vote_threshold` + `span_topk_threshold` 投票。
 - **LLM 知识蒸馏 (V23)**：LLM（云端 DeepSeek 或本地 qwen3.6）对 in-domain 无标注文本打 silver 标签 → 小模型在 gold+silver 上训练 → **推理时完全不用 LLM**。详见 [§5.28–5.29](docs/EXPERIMENTS.md)。
 
-## 当前结果（dev cF1，8 数据集提交配置）
+## 当前结果（赛后一次性 official test）
 
-| 数据集 | encoder | 方法 | dev cF1 | test SOTA 对比 |
-|---|---|---|---|---|
-| eng_laptop | deberta-v3-base | **KD (DeepSeek)** | **0.4141** | ✅ 反超 nchellwig 0.4006 |
-| eng_restaurant | deberta-v3-large | V16 baseline | 0.6554 | ✅ 领先 |
-| jpn_hotel | ku-nlp/deberta-v2-large-japanese | V16 baseline | 0.4466 | ✅ 反超 PALI 0.4252 |
-| rus_restaurant | xlm-roberta-large | **KD (DeepSeek, gen4k cap)** | **0.6162** | ✅ 反超 PAI 0.5599 |
-| ukr_restaurant | mdeberta-v3-base | **KD (DeepSeek)** | **0.5560** | ✅ 反超 PAI 0.5437 |
-| tat_restaurant | xlm-roberta-large | **KD (qwen3.6)** | **0.5327** | ✅ 反超 Takoyaki 0.4736 |
-| zho_restaurant | chinese-roberta-wwm-ext-large | **KD (DeepSeek, real pool)** | **0.5579** | ✅ 领先（基线 0.4745）|
-| zho_laptop | chinese-roberta-wwm-ext-large | V16 baseline | 0.4487 | ❌ 距 NYCU 0.4824 −3.4pp |
+系统、预测哈希和阈值在读取 released test gold 前已冻结；test 标签未用于选择
+模型、teacher、pool、数据增强或阈值。
 
-**5/8 数据集采用 KD**（4 个 DeepSeek + 1 个本地 qwen3.6）。注意 dev≠test，最终以 test 集为准。
+| 数据集 | 冻结主系统 | official test cF1 |
+|---|---|---:|
+| eng_laptop | clean DeepSeek KD | **0.3532** |
+| eng_restaurant | V16 baseline | **0.5904** |
+| jpn_hotel | V16 no-augmentation | **0.4217** |
+| rus_restaurant | DeepSeek gen4k KD | **0.5189** |
+| tat_restaurant | Qwen KD | **0.4311** |
+| ukr_restaurant | clean DeepSeek KD | **0.4608** |
+| zho_laptop | V16 baseline | **0.4309** |
+| zho_restaurant | clean DeepSeek-real KD | **0.4660** |
 
-最终方案已冻结到 [`submission/final_manifest.json`](submission/final_manifest.json)。运行 `bash scripts/run_test_submission.sh` 默认只做只读一致性审计；技术审计报告见 [`docs/audits/kd_freeze_report/report.html`](docs/audits/kd_freeze_report/report.html)，可复现银标分析见 [`notebooks/rus_silver_quality_audit.ipynb`](notebooks/rus_silver_quality_audit.ipynb)。
+五个预注册 KD−baseline 对照中，eng_laptop、rus_restaurant、tat_restaurant
+和 ukr_restaurant 的 paired bootstrap 95% CI 下界大于 0；zho_restaurant
+点估计为 −1.37pp 且 CI 跨 0。八个主系统均未超过官方 leaderboard 最佳，
+因此不作 SOTA 声明。完整数值和允许使用的论文措辞见
+[`docs/CONCLUSIONS.md`](docs/CONCLUSIONS.md) 与
+[`official_test_table.md`](docs/audits/tallip_kd/official_test/official_test_table.md)。
+
+[`submission/final_manifest.json`](submission/final_manifest.json) 是 2026-07-13
+的历史 pre-clean 冻结快照，不是 TALLIP clean-inductive/official-test 协议；
+当前协议以 [`scripts/kd/official_test.yaml`](scripts/kd/official_test.yaml) 为准。
 
 ### KD 何时有效（核心发现）
 
-KD 有效 ⟺ **silver 能提供 gold/base 缺失的互补信息**。Teacher 标注质量和 pool 来源都存在明显域差异，没有固定的 teacher 或 real/translated/generated 排序；最佳 silver 也不是越多越好，而是质量、类别覆盖与相对 gold 权重合适。
+现有证据与以下解释一致：当 **silver 提供 gold/base 缺失且标注较准确的互补覆盖**时，KD 更可能有效。该机制不是已独立验证的普适因果定律。Teacher 标注质量和 pool 效果均随域变化，没有固定的 teacher 或 real/translated/generated 排序；现有证据也不支持统一的 silver 数量最优点。
 
 rus_restaurant 的 4k 生成批次（silver cap=3000）达到 **0.6162**，另一批完整 8k silver 为 **0.5858**。在同一 8k silver 上做 cap=3000 paired-seed 对照后，mean 反而从 0.5467 降至 0.5353（−1.14pp），未通过 +1.5pp gate；因此 4k 优势更可能来自生成批次质量，而非单纯“silver 更少”。
 
-反例：强 gold（eng_restaurant 0.655）被较噪 silver 淹没会退化；强 native encoder（jpn）也没有从 KD 获益。完整证据收敛见 [docs/EXPERIMENTS.md §5.29.5](docs/EXPERIMENTS.md)。
+反例：强 gold（eng_restaurant）和强 native encoder（jpn）在现有 KD 配方下没有获益。完整证据收敛见 [docs/EXPERIMENTS.md §5.29.5–5.29.7](docs/EXPERIMENTS.md)；最终统一口径见 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md)。
 
 ## Setup
 
@@ -161,7 +171,8 @@ Input → 专用 Encoder → [Span BIO, Pair Classifier, V-A Regressor]
 
 ## Documentation
 
-- [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) — 完整实验记录与结果分析（含 KD 消融 §5.28–5.29，**最权威最新**）
+- [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) — TALLIP KD 最终结论与证据边界（**结论口径最权威**）
+- [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) — 完整实验记录与结果分析（含历史假设及 KD 消融 §5.28–5.29）
 - [docs/MODEL.md](docs/MODEL.md) — 模型架构详解
 - [docs/CLI_GUIDE.md](docs/CLI_GUIDE.md) — 命令行操作指南
 - [README_AI.md](README_AI.md) — AI 快速理解指南

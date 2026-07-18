@@ -1457,7 +1457,7 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ### 5.28 V23 eng_laptop = LLM 知识蒸馏（dev 显著提升；历史 SOTA claim 已撤回）
 
-**动机**：eng_laptop 本质瓶颈是 240 个 (entity#attribute) 组合 × 仅 4076 样本的极端稀疏，小模型学不到 LLM 那样的稀疏类先验。所有"推理时引入 LLM"的尝试（§5.20.4 fusion、§7.7.1 post-correction）都失败——因为 LLM 推理输出噪声大。**知识蒸馏 (KD) 是把 LLM 先验灌进小模型权重、推理时完全不碰 LLM 的正解。**
+**动机（历史假设）**：eng_laptop 有 240 个 (entity#attribute) 组合但仅 4076 个样本，类别覆盖稀疏。此前“推理时引入 LLM”的配方（§5.20.4 fusion、§7.7.1 post-correction）在本项目中失败，因此改测训练期 silver KD；推理时不使用 LLM。后续证据只支持该配方在部分域有效，不支持把它称为普适“正解”。
 
 **Pipeline**：
 1. **无标注池**：8,578 句笔记本评论（7,580 Amazon `naga-jay/amazon-laptop-reviews-enriched` + 998 eng_laptop test 文本，in-domain transductive）
@@ -1494,11 +1494,11 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 | Route A 6-pivot BT (10-seed) | 0.3109 | es/it 稀释，死路 |
 | **V23 LLM 蒸馏** | **0.4141** 🚀 | **+11.06 vs V16 / +8.87 vs V5-repro** |
 
-**对标官方 leaderboard**（test）：
-- nchellwig (Gemma 27B + k=10 SCSG): 0.4006 → **dev 反超 +1.35pp** ✅
-- Takoyaki SOTA 1st: 0.4227 → −0.86pp（很接近）
+**已撤回的历史 cross-split 对标**：本节早期曾把 dev=0.4141 与 test leaderboard
+0.4006/0.4227 比较；二者 split 不同，不能据此判断追平或超过榜单系统。
+released official test 上 clean KD 为 0.3532，未超过榜单最佳 0.4227。
 
-**论文核心贡献**：用 **440M deberta-v3-base + DeepSeek silver KD**，在 eng_laptop（最稀疏数据集）上达到 **27B LLM 队伍水准**，参数小 60×，推理无 LLM。这是「small model + LLM distillation > brute-force LLM at inference」的强力证据，也是全项目最有论文价值的结果。
+**允许保留的贡献表述**：440M deberta-v3-base 可在推理时不调用 LLM 的前提下吸收 silver supervision；其 eng_laptop official-test 分数相对 clean no-KD baseline 提升 +0.0822，95% CI [+0.0629, +0.1021]。该结果支持本域的 KD 收益，不支持相对 27B 系统的效率或优劣结论，因为没有同协议成本/效果对照。
 
 **eng_laptop 最终 submission 切换为 V23**（std vote=4 topk=0），V20/V19/V16 备份保留。
 
@@ -1506,7 +1506,7 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ### 5.29 V23 KD 推广到 zho_laptop / rus / ukr（历史过程记录；最终结论见 §5.29.5–§5.29.7）
 
-**动机**：eng_laptop KD +8.87pp 大获成功后，推广到其余 3 个未达 SOTA 的数据集（zho_laptop −3.4pp, rus −3.3pp, ukr −3.7pp）。
+**动机**：eng_laptop dev 上观察到 +8.87pp 后，将相同思路推广到 zho_laptop、rus 和 ukr，检验跨域可迁移性。此前记录的“SOTA 差距”是无效 cross-split 比较，已撤回。
 
 **Pipeline 泛化**：
 - `scripts/llm_silver_label.py`（通用版，`--domain` + `--lang`，category 从各语种 train 自动构建）
@@ -1525,13 +1525,15 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 **最终结果（5-seed ensemble；tat 用 4-seed，见下）**：
 
-| 数据集 | gold 量 | 旧最佳 | KD ensemble best | Δ | Test SOTA 1st | 结论 |
+| 数据集 | gold 量 | 旧最佳 dev | KD ensemble dev | Δ | 历史 test 榜单参考† | 当阶段选择 |
 |---|---|---|---|---|---|---|
-| **tat** | 1,240（最稀缺）| V15 0.4821 | **0.5196** (vote=2) | **+3.75** | Takoyaki 0.4736 | ✅✅ **反超 SOTA +4.60pp** 🥇 |
-| **rus** | 1,766（稀缺）| V15 0.5267 | **0.5753** (vote=3) | **+4.86** | PAI 0.5599 | ✅✅ **反超 SOTA +1.54pp** 🥇 |
-| **ukr** | 2,967（稀缺）| V13b 0.5068 | **0.5560** (vote=3) | **+4.92** | PAI 0.5437 | ✅✅ **反超 SOTA +1.23pp** 🥇 |
-| **eng_laptop** | 4,076（稀缺）| V5-repro 0.3254 | **0.4141** (vote=4) | **+8.87** | Takoyaki 0.4227 | ✅✅ 超 nchellwig 2nd 0.4006 |
+| **tat** | 1,240（最稀缺）| V15 0.4821 | **0.5196** (vote=2) | **+3.75** | Takoyaki 0.4736 | dev 提升；后续配方已替换 |
+| **rus** | 1,766（稀缺）| V15 0.5267 | **0.5753** (vote=3) | **+4.86** | PAI 0.5599 | dev 提升；后续配方已替换 |
+| **ukr** | 2,967（稀缺）| V13b 0.5068 | **0.5560** (vote=3) | **+4.92** | PAI 0.5437 | dev 提升；后续 clean 重训 |
+| **eng_laptop** | 4,076（稀缺）| V5-repro 0.3254 | **0.4141** (vote=4) | **+8.87** | Takoyaki 0.4227 | dev 提升；后续 clean 重训 |
 | zho_laptop | 5,534（充足）| V16 0.4487 | 0.4428 (vote=4) | **−0.59** | NYCU 0.4824 | ❌ 保留 V16 |
+
+† 仅保留当时记录；dev 与 test 不可直接比较，不构成 SOTA 证据。
 
 **tat 无外部鞑靼语语料解法**：HF 无鞑靼语餐厅评论 → **DeepSeek 直接生成 3986 条原生鞑靼语评论**（探针确认生成流利、含鞑靼语特有字母 ә ө ү җ ң һ，标注正确）+ test 文本 → silver 标注 9415 quads。这是 KD 对低资源语言可行性的强证据。
 
@@ -1543,19 +1545,21 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 **tat 坏 seed 的鲁棒性观察**：seed 1024=0.2318 是坏初始化，但 **5-seed ensemble 与 4-seed（丢 1024）逐位相同 = 0.5196** —— vote≥2 时坏 seed 的低质量 quad 拿不到 2 票，被投票机制自动剔除。最终 tat 采用 **4-seed vote=2**。说明 **ensemble vote 对单个坏 seed 鲁棒**。
 
-**核心发现 — KD 收益 ∝ 数据稀缺度（4 数据集反超 SOTA，单调关系完整验证）**：
+**当阶段观察 — 多个较小数据集 dev 提升，但“收益与稀缺度单调”已被后续证据否定**：
 
 | 数据集 | gold 量 | KD ensemble Δ | 验证 |
 |---|---|---|---|
-| **tat** | 1,240（最稀缺）| **+3.75pp** ✅ 反超 Takoyaki SOTA | 受益 |
-| **rus** | 1,766（稀缺）| **+4.86pp** ✅ 反超 PAI SOTA | 受益 |
-| **ukr** | 2,967（稀缺）| **+4.92pp** ✅ 反超 PAI SOTA | 受益 |
-| **eng_laptop** | 4,076（稀缺）| **+8.87pp** ✅ 反超 nchellwig | 受益 |
+| **tat** | 1,240（最稀缺）| **+3.75pp** | dev 方向性提升 |
+| **rus** | 1,766（稀缺）| **+4.86pp** | dev 提升 |
+| **ukr** | 2,967（稀缺）| **+4.92pp** | dev 方向性提升 |
+| **eng_laptop** | 4,076（稀缺）| **+8.87pp** | dev 提升 |
 | **zho_laptop** | 5,534（充足）| **−0.59pp** ❌ 稀释 | 无益 |
 
-**解读**：KD 注入 LLM 先验，但 silver label 噪声大于 gold。当 gold **稀缺**时（rus/ukr/eng_laptop ≤4076），silver 的新覆盖压倒噪声，大幅增益、全部反超 SOTA；当 gold **充足 + encoder 强**时（zho_laptop 5534 + chinese-roberta-large），silver 稀释信号反而有害。**ukr 用机器翻译的 silver 仍反超 SOTA**，说明 KD 对文本来源（原生 vs 翻译）有相当鲁棒性。
-
-**结论**：KD **不是普适增强**，是**数据稀缺数据集的特效药**，收益与稀缺度呈清晰单调关系。论文叙述：「LLM distillation benefit is inversely proportional to gold-data sufficiency: all four data-starved subsets (tat, rus, ukr, eng_laptop, ≤4k gold) gain +3.8~8.9pp and surpass prior test SOTA, while a data-adequate subset with a strong native encoder (zho_laptop, 5.5k gold) is slightly hurt. KD is robust to silver text source — ukr used MarianMT-translated Russian reviews and tat used DeepSeek-generated native low-resource Tatar text, both still beating SOTA.」
+**回溯解读**：这一小样本矩阵同时改变了语言、encoder、pool、teacher 和
+gold 规模，不能识别“数据稀缺度”的独立效应。后续 zho_restaurant、teacher
+fidelity、clean-inductive 与 official-test 结果进一步否定了单调规律和
+cross-split SOTA 叙述。允许保留的解释是：silver 的质量、覆盖及其相对 gold
+权重共同影响收益，低资源本身既非充分条件也非必要条件。
 
 **该阶段采用**：tat → V23 KD (0.5196, 4-seed)；rus → V23 KD (0.5753)；ukr → V23 KD (0.5560)；eng_laptop → V23 KD (0.4141)；zho_laptop → 保留 V16。后续 tat teacher、rus pool/规模和 zho_restaurant pool 消融继续刷新，见 §5.29.2.1、§5.29.3.1–2。
 
@@ -1585,20 +1589,20 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 **踩坑记录**：① gemma-4-QAT / qwen3.6 都是推理模型，CoT 走 `thinking` channel 导致 OpenAI-compat `content` 为空 → ollama native `/api/chat` 加 `think:false` 修复（qwen3-vl:4b 不支持该参数，弃用）；② 模型曾被 fallback 到 CPU → `num_gpu:99` 强制全量上 GPU；③ gemma 31B 用 `OLLAMA_NUM_PARALLEL=4` 并行（0.25→0.8 rows/s）；qwen3.6-36B 占 23.6/24.5GB 显存无法并行，单流 ~1.9s/样本；④ qwen3.6 对隐式 aspect 输出 JSON `null` 而非 `"NULL"` 字符串 → 脚本加 None→"NULL" 归一化。
 
-| teacher | 部署 | 规模 | silver 量 | quads/text | 单 seed mean | ensemble best (vote=4 topk=0) | vs 基线 | vs SOTA 0.4006 |
+| teacher | 部署 | 规模 | silver 量 | quads/text | 单 seed mean | ensemble dev (vote=4 topk=0) | vs dev 基线 |
 |---|---|---|---|---|---|---|---|---|
-| 无 KD (V5-repro) | — | — | — | — | ~0.305 | 0.3254 | — | −7.52pp ❌ |
-| **Gemma-31B-Q4** | 本地 | 31B | 8538 / 24,049 | 2.82 | ~0.355 | **0.3764** (topk=0.20) | **+5.10pp** | **−2.42pp ❌** |
-| **qwen3.6:latest** | 本地 | 36B | 8426 / 23,541 | 2.79 | **0.3777** | **0.4094** | **+8.40pp** | **+0.88pp ✅** |
-| **DeepSeek-v4-pro** | 云端 | frontier | 8541 / 26,723 | 3.13 | ~0.39 | **0.4141** | **+8.87pp** | **+1.35pp ✅** |
+| 无 KD (V5-repro) | — | — | — | — | ~0.305 | 0.3254 | — |
+| **Gemma-31B-Q4** | 本地 | 31B | 8538 / 24,049 | 2.82 | ~0.355 | **0.3764** (topk=0.20) | **+5.10pp** |
+| **qwen3.6:latest** | 本地 | 36B | 8426 / 23,541 | 2.79 | **0.3777** | **0.4094** | **+8.40pp** |
+| **DeepSeek-v4-pro** | 云端 | frontier | 8541 / 26,723 | 3.13 | ~0.39 | **0.4141** | **+8.87pp** |
 
 ensemble sweep 三者一致偏好高 vote：qwen vote=4(0.4094) > vote=3(0.4009) > vote=2(0.3631)；gemma vote=4(0.3764) > vote=3(0.3674) > vote=2(0.3517)。
 
 **🔍 核心发现 —— teacher 重要，但「云 vs 本地」不是决定因素，模型质量才是**：
-- **本地强模型可追平云端**：qwen3.6-36B (本地) ensemble **0.4094**，仅落后云端 DeepSeek **0.47pp**，回收了 **95%** 的 KD 收益（+8.40 / +8.87），且**反超 SOTA +0.88pp**。→ KD 不依赖付费云 API，一块 24GB 卡 + 开源 36B 即可复现超 SOTA 结果。
-- **本地模型之间差异巨大**：同为本地、qwen3.6 (0.4094) 比 gemma-31B-Q4 (0.3764) 高 **+3.3pp**，正好跨过 SOTA 分界线。「local vs cloud」是伪命题，真正的轴是 teacher 本身的标注质量。
-- **🔑 反直觉：决定 KD 的是 quad 正确性，不是召回/密度**：qwen silver 密度 **2.79** quads/text **低于** gemma 的 **2.82**，量更少，但 KD 高 +3.3pp。推翻了"silver 越多越好"的直觉 → teacher 抽的四元组**更准**（category / span / VA 更对）比**更多**更重要。DeepSeek 密度最高(3.13)且质量最好，是量质双优；qwen 是低量高质，gemma 是中量低质。
-- **论文叙述**：「Teacher quality, not cloud-vs-local deployment, governs KD: a local open-source 36B (qwen3.6) recovers 95% of the cloud frontier teacher's gain (+8.4 vs +8.9pp) and still surpasses SOTA (+0.9pp), while a weaker local 31B trails by 3.3pp and misses SOTA. Counter-intuitively the stronger teacher had *lower* silver density (2.79 vs 2.82 quads/text), showing that per-quad correctness — not recall — drives distillation quality.」
+- **本地 Qwen 在该配方的 dev 上接近 DeepSeek**：ensemble 仅差 0.47pp，并回收了按点估计计算的 95% KD 增益；这是单域工程可行性证据，不代表所有域等价。
+- **本地模型点估计有差异**：Qwen 比 Gemma 高 3.3pp；但学生分数还混合了 teacher–student 适配等因素，不能仅凭该结果把差异全部归因于 teacher 标注正确率。
+- **silver 密度不是 fidelity 指标**：Qwen 的 quads/text 略低于 Gemma 而学生分数更高，只能否定“密度越高必然越好”；直接正确性结论应以后续 8×2 gold-dev teacher fidelity 为准。
+- **允许的论文表述**：该 eng_laptop 对照显示本地 Qwen 可接近云端 DeepSeek，部署位置本身不足以预测 KD 效果；跨域 teacher 结论见 §5.29.5–5.29.7。
 
 **eng_laptop 提交不切换** —— 仍用 DeepSeek 臂 V23 KD (0.4141，三者最高)。Gemma/qwen 臂作 teacher-quality 消融证据。脚本：`scripts/llm_silver_label_ollama.py`、`scripts/build_eng_v23_{gemma,qwen}.py`、`scripts/run_v23_{gemma,qwen}_eng_laptop.sh`。
 
@@ -1611,7 +1615,7 @@ ensemble sweep 三者一致偏好高 vote：qwen vote=4(0.4094) > vote=3(0.4009)
 | eng_laptop | 英语（高）| 0.4094 | 0.4141 | 0.3254 | −0.5pp |
 | rus_restaurant | 俄语（高）| 0.5365 | 0.5753 | 0.5267 | −3.9pp |
 | ukr_restaurant | 乌克兰语（低，翻译池）| 0.4886 | 0.5560 | 0.5068 | −6.7pp |
-| **tat_restaurant** | **鞑靼语（极低，原生生成池）**| **0.5327** | 0.5196 | 0.4821 | **+1.3pp ✅ 反超** |
+| **tat_restaurant** | **鞑靼语（极低，原生生成池）**| **0.5327** | 0.5196 | 0.4821 | **+1.3pp（历史非 matched）** |
 
 qwen3.6 teacher = `unsloth/Qwen3.6-35B-A3B-MTP-GGUF`（35B-A3B MoE，Unsloth Studio /v1 服务）。
 
@@ -1638,21 +1642,20 @@ DeepSeek−Qwen ensemble Δ=**+0.0038**，10,000 次 paired bootstrap 95% CI **[
 |---|---|---|---|---|---|---|---|---|
 | jpn_hotel | deberta-v2-large-japanese | 2893 | 4558 | 1.6 | 0.4466 | 0.4043 (v4 t0.10) | **−4.2pp ❌** | 44 |
 | eng_restaurant | deberta-v3-large | 2284 | 4884 | **2.1** | 0.6554 | 0.4043 (v3 t0.0) | **−25.1pp ❌❌** | 14 |
-| **zho_restaurant** | chinese-roberta-wwm-ext-large | **6050** | 4776 | **0.79** | 0.4745 | **0.5263** (v3 t0.0) | **+5.2pp ✅** | 12 |
+| **zho_restaurant** | chinese-roberta-wwm-ext-large | **6050** | 4776 | **0.79** | 0.4745† | **0.5263** (v3 t0.0) | **+5.2pp vs historical ref** | 12 |
 | zho_laptop（capped silver）| chinese-roberta-wwm-ext-large | 5534† | 2700 | **0.49** | 0.4487 | 0.4454 (v4 t0.10) | **−0.3pp ⚠️** | 113 |
 
-†zho_laptop base 用 V16 配方 v13c（5534，含 paraphrase aug）。zho-restaurant 细 sweep 确认稳健：整个 vote=3 行 0.5227–0.5263、vote=4 0.519，对 topk 不敏感（非单点过拟合）。
+†zho_laptop base 用 V16 配方 v13c（5534，含 paraphrase aug）。zho_restaurant 的 0.4745 后来确认不是最强 no-KD baseline；最强冻结 dev baseline 为 0.5669。其细 sweep 仅说明该 KD 臂对阈值不敏感，不能恢复整体改善结论。
 
-**🔑 真正的统一判据 = silver 能否提供 gold 缺失的信息（修正"teacher 天花板"的中途误判）**：
-- 中途曾误以为"KD 模型收敛到 teacher 标注质量 ~0.40 天花板"，被 zho_restaurant 0.5263 推翻。真正机制是 **silver:gold 比例 × gold 质量/类别稀疏度**：
-  - **eng_laptop**（ratio 2.1 但 **+8pp**）：gold 弱(0.325)+240 类极稀疏 → silver 填补弱模型学不到的稀疏类先验。
-  - **zho_restaurant**（ratio **0.79** → **+5.2pp**）：gold 多(6050)使 silver 成少数派，不淹没 gold，只贡献 seed 多样性 → ensemble 抬升。**首个"数据较多却靠 silver 少数派多样性获益"的案例，与前 4 个"数据稀缺"机制不同。**
-  - **eng_restaurant**（ratio 2.1 + gold 强 0.655 + 14 类密集 → **−25pp**）：噪声 silver 2 倍碾压已很强的 clean gold，把学生拽向 silver 质量。灾难性负向端。
-  - **jpn_hotel**（ratio 1.6 + 强 native encoder + 44 类 → −4pp）：与 §5.20.7/§7.6.3 一致，强 native encoder 上合成数据净负面。
-  - **zho_laptop**（capped ratio 0.49 → 0.4454；full ratio 0.86 → 0.4434；均 vs 基线 0.4487 微负）：**甜区假设被否定**。capped(0.49) 与 full(0.86) 两个 silver 比例结果几乎相同（差 ~0.2pp 在噪声内），说明 silver 比例不是 zho_laptop 失败的原因。
-    - **为何同 ratio≈0.86 下 zho_restaurant +5.2pp 而 zho_laptop 不行**？真正差异：① **zho_laptop 的 V16 base 已是 v13c（含 paraphrase 增强）→ silver 只是冗余多样性**；zho_restaurant base 是 raw train_alltasks，silver 提供全新多样性。② zho_laptop 基线 0.4487 已较强，qwen silver 单 seed ~0.38 < gold，补不进有效信息。
-- **预测规则（修正版）**：KD 有效 ⟺ silver 提供 gold 缺失的信息——①gold 弱/类别极稀疏（eng_laptop），或 ②base 未充分增强 + silver 保持少数派加全新多样性（zho_restaurant ratio 0.79）。**反例 zho_laptop 证明：base 已增强 + 强基线时，调 silver 比例（0.49↔0.86）无济于事**。silver 比例本身不是主因，silver 与现有训练数据的「信息互补性」才是。
-- **论文叙述**：「KD's benefit is governed by whether the silver supplies information the gold lacks: it helps a weak / sparse-category gold model (eng_laptop, +8.9pp) and a data-rich model where silver stays a minority adding only diversity (zho_restaurant ratio 0.79, +5.2pp), but catastrophically harms a strong dense-category model flooded with 2× noisy silver (eng_restaurant, −25pp).」
+**回溯解释：信息互补性是与结果一致的候选机制，不是已独立验证的统一判据**：
+- 中途“KD 模型收敛到 teacher 标注质量 ~0.40 天花板”的假设被 zho_restaurant 0.5263 推翻。以下是当时观察到的关联，不能拆分 silver:gold、gold 质量、类别稀疏度和数据集差异的独立效应：
+  - **eng_laptop**：ratio 2.1、历史参考较弱且类别稀疏，dev 点估计为正；新增类别覆盖是可能解释。
+  - **zho_restaurant**：ratio 0.79，相对 0.4745 历史参考点估计为正；恢复强 baseline 后该结论不再成立。
+  - **eng_restaurant**：ratio 2.1、历史 baseline 较强，Qwen-KD dev 大幅下降；DeepSeek 也未超过 baseline。
+  - **jpn_hotel**：两个 teacher 的 KD dev 臂均低于 native-encoder baseline。
+  - **zho_laptop**：capped ratio 0.49 与 full ratio 0.86 均略低于 baseline；两个点不足以识别普适比例效应。
+- **候选解释**：eng_laptop 的稀疏类别覆盖与 zho_restaurant 的新增表达多样性可能解释 dev 改善；zho_laptop 的 capped/full 两臂均未改善。由于这些对照还混合了数据集、base 和 teacher，不把“信息互补性”写成充要条件。
+- **允许的论文叙述**：现有结果表明 KD 收益具有数据集依赖性，并与 silver 的互补覆盖、标注质量及 gold:silver 权重共同变化；后续 official test 支持四域收益，但 zho_restaurant 证据不确定。
 
 ##### 5.29.3.1 消融：真实公开语料池 vs LLM 生成池（排除池来源 confound）
 
@@ -1663,22 +1666,25 @@ DeepSeek−Qwen ensemble Δ=**+0.0038**，10,000 次 paired bootstrap 95% CI **[
 | eng_restaurant | Yelp（ratio 0.79）| 0.4043 (ratio 2.1) | **0.4190** | 0.6554 | **−23.6pp ❌** |
 | zho_laptop | amazon_zh→繁体（ratio 0.25，1392 silver）| 0.4454 (ratio 0.49) | **0.4264** | 0.4487 | **−2.2pp ❌** |
 
-**🔍 结论：池来源不是失败主因**。
-- eng_restaurant：真实 Yelp + 少数派 silver 仅比生成池好 +1.5pp（0.4190 vs 0.4043），仍距基线 −23.6pp。**强 gold(0.655) 无法被 qwen silver(标注质量~0.40) 改善是本质——换真实语料也救不了。**
+**🔍 该局部对照的结论：更换 pool 未反转两个失败臂**。
+- eng_restaurant：真实 Yelp + 少数派 silver 比生成池高 +1.5pp（0.4190 vs 0.4043），但仍低于基线 −23.6pp；这只能说明该 pool 替换不足以恢复收益。
 - zho_laptop：真实语料反而略差（受语料稀缺 silver 仅 1392、ratio 0.25 拖累），两版都低于基线。
-- **注意**：以上两个都是 **KD 失败**的数据集（两臂都低于基线），"池来源无所谓"其实是个 confound——KD 本就不生效，换什么池都救不回。
+- **注意**：以上两个数据集的两臂都低于基线，因此该对照对 pool 排名的识别力有限；不能写成“池来源无所谓”。
 
-**补充 ablation：KD 成功的数据集上，真实 vs 生成池（zho_restaurant，同 teacher DeepSeek，仅换池）**：
+**补充 ablation：历史 dev 参考下点估计为正的数据集，真实 vs 生成池（zho_restaurant，同 teacher DeepSeek，仅换池）**：
 
 | 池来源 | dev cF1 | vs 生成 |
 |---|---|---|
 | **真实 dianping（繁化，4000+test）** | **0.5579** | — |
 | 生成（qwen 原生，当前提交）| 0.5351 | 真实 **+2.3pp** |
-| baseline | 0.4745 | |
+| historical reference arm† | 0.4745 | |
 
-**🔑 修正结论（关键）**：在 zho_restaurant 的有效区间，真实 in-domain 语料池比生成池高 +2.3pp；但这不是跨数据集的普适排序，rus 的 size-matched 对照反而是生成池最佳（§5.29.3.2）。更准确的结论是：**池与目标域的互补性、teacher 标注质量和 silver:gold 比共同决定 KD**。脚本：`scripts/collect_dianping.py`（twn39/dianping + opencc s2twp）。
+**🔑 修正结论（关键）**：在 zho_restaurant 的该组 dev 配方中，真实 in-domain 语料池比生成池高 +2.3pp；但这不是跨数据集的普适排序，rus 的 size-matched 对照反而是生成池最佳（§5.29.3.2）。更准确的结论是：**pool 效果与域互补性、teacher 标注质量和 silver:gold 比共同变化，现有对照不能分离所有因素**。脚本：`scripts/collect_dianping.py`（twn39/dianping + opencc s2twp）。
 
-**最终提交切换**：zho_restaurant 从 V16 (0.4745) 经 qwen 生成池 0.5263、DeepSeek 生成池 0.5351，最终切到 **DeepSeek 真实池 0.5579（+8.34pp）**。jpn_hotel / eng_restaurant **不切换**（KD 负向）。→ **第 5 个经 KD 改善的数据集**。
+**历史 dev 选择**：zho_restaurant 当时从 0.4745 参考臂切到 DeepSeek 真实池
+0.5579；后续发现更强 no-KD dev baseline=0.5669，clean paired CI 跨 0，
+official test 的 KD 点估计更低且 CI 跨 0。因此 zho_restaurant 不计为得到统计
+支持的 KD 成功案例。
 
 ##### 5.29.3.2 rus_restaurant：池来源三路对照 + 8k 独立批次复验
 
@@ -1704,31 +1710,34 @@ gate 未通过，因此按计划停止，不补 seeds 456/789/1024、不跑 ense
 
 #### 5.29.4 完整 teacher 矩阵（8 数据集 × DeepSeek / qwen，同池仅换 teacher）
 
-补齐 DeepSeek 在最初只跑过 qwen 的 3 个数据集（zho_restaurant / jpn_hotel / eng_restaurant），形成全 8 数据集的云端 vs 本地完整对照（dev cF1）：
+补齐 DeepSeek 在最初只跑过 qwen 的 3 个数据集（zho_restaurant / jpn_hotel / eng_restaurant），形成全 8 数据集的云端 vs 本地历史学生分数矩阵（dev cF1）：
 
-| 数据集 | baseline | DeepSeek-KD | qwen-KD | DS − qwen | KD 最优 vs baseline |
+| 数据集 | 当时 reference | DeepSeek-KD | qwen-KD | DS − qwen | KD 最优 vs reference |
 |---|---|---|---|---|---|
 | eng_laptop | 0.3254 | **0.4141** | 0.4094 | +0.5 | +8.9 ✅ |
 | rus_restaurant | 0.5267 | **0.5753** | 0.5365 | +3.9 | +4.9 ✅ |
 | ukr_restaurant | 0.5068 | **0.5560** | 0.4886 | +6.7 | +4.9 ✅ |
 | tat_restaurant | 0.4821 | 0.5196 | **0.5327** | −1.3 | +5.1 ✅ |
-| zho_restaurant | 0.4745 | **0.5351** | 0.5263 | +0.9 | +6.1 ✅ |
+| zho_restaurant | 0.4745† | **0.5351** | 0.5263 | +0.9 | +6.1（仅历史参考） |
 | zho_laptop | 0.4487 | 0.4428 | 0.4454 | −0.3 | −0.3 ❌ |
 | jpn_hotel | 0.4466 | 0.4281 | 0.4043 | +2.4 | −1.9 ❌ |
 | eng_restaurant | 0.6554 | 0.6013 | 0.4043 | **+19.7** | −5.4 ❌ |
 
-**🔑 结论（n=8 完整对照）**：
-- **DeepSeek 整体 ≥ qwen**：8 个里 DeepSeek 赢 6、tat 输、zho_laptop 平。但多数差距仅 ±几 pp，印证"本地 ≈ 云端"在多数数据集成立。
-- **eng_restaurant 大反转修正了之前的归因**：DeepSeek 0.6013 vs qwen 0.4043（**+19.7pp**）。说明 qwen 在此前的 −25pp 灾难**主因是 qwen silver 质量差**（该域 qwen 标注崩盘），并非"KD 完全不能用"。但 DeepSeek 仍 < 基线 0.6554（−5.4pp）→ eng_restaurant KD 仍净负。
-- **jpn 即使最强 teacher 也救不回**（DeepSeek 0.4281 < 基线 0.4466）→ jpn 的 KD 失败是**数据集级**（强 native encoder + 小类别），与 teacher 无关。
-- **"local ≈ cloud" 需加注**：多数数据集本地 qwen 与云端差距小，但 eng_restaurant 上 qwen silver 崩盘（−19.7pp）说明开源模型在个别域/语言上质量不稳定，前沿云模型更鲁棒。
+† zho_restaurant 后续恢复的最强 no-KD dev baseline 为 0.5669；本表 0.4745
+不能用于最终 KD−baseline 结论。
+
+**历史学生分数矩阵的限制**：
+- 该表是不同下游学生臂的 dev 点估计，不是直接 teacher fidelity；旧的“DeepSeek 赢 6、tat 输、zho_laptop 平”不能替代后续 8×2 gold-dev 标注质量评测。直接 fidelity 为 DeepSeek 点估计 8/8 更高，但仅三域差异得到统计支持。
+- **eng_restaurant 点估计差异很大**：DeepSeek 0.6013 vs Qwen 0.4043（+19.7pp），与后续直接 fidelity 中 DeepSeek 的显著优势方向一致；但 DeepSeek 仍低于 dev baseline 0.6554，因此本配方的 KD 净负。
+- **jpn 两个 teacher 臂均未超过 dev baseline**：这说明仅替换这两个 teacher 没有救回该配方；不能进一步断言失败与 teacher 完全无关。
+- **“local ≈ cloud” 需限定到域**：多数学生臂点估计接近，但 eng_restaurant 差异很大。最终 teacher 结论以后续直接 fidelity 及其 CI 为准，而非部署类型。
 - **同生成池的阶段性切换**：zho_restaurant 由 qwen 0.5263 → DeepSeek 0.5351；加入真实池消融后最终采用 0.5579（§5.29.3.1）。jpn/eng_restaurant 仍保留 baseline。
 
 #### 5.29.5 最终证据收敛（论文与汇报统一口径）
 
-早期“低资源必然受益”“真实池普遍更优”“silver 减量就是甜区”等说法，均被后续跨 teacher、跨 pool 和同池数量控制进一步限定。最终只保留以下五条可由现有消融直接支持的结论：
+早期“低资源必然受益”“真实池普遍更优”“silver 减量就是甜区”等说法，均被后续跨 teacher、跨 pool、同池数量控制和 official test 进一步限定。最终只保留以下六条结论：
 
-1. **KD 是否有效取决于信息互补性。** silver 必须补充 gold/base 尚未覆盖的类别先验、表达多样性或域信息；若只是用较噪的重复信号淹没强 gold，KD 会持平或退化。
+1. **KD 的收益具有条件性。** 结果与“silver 提供 gold/base 尚未覆盖且标注较准确的类别先验、表达多样性或域信息时更可能有效”一致；信息互补性是解释性机制，不宣称为已独立验证的普适因果定律。
 2. **DeepSeek teacher 整体更稳健，Qwen 在部分域接近，但不存在可靠的排名反转。** 完整 8×2 直接 fidelity 中 DeepSeek cF1 在 8/8 域更高；eng_restaurant、zho_laptop、zho_restaurant 的 paired CI 下界 > 0，eng_laptop/jpn/rus/tat/ukr 则跨 0。Tatar matched downstream control 同样跨 0，故直接与下游证据均不支持“某些域 Qwen 显著更优”。
 3. **Pool 来源没有普适排序。** zho_restaurant 是 real > generated，而 rus 的 size-matched 对照是 generated > translated > real。决定因素是 pool 与目标任务的互补性及其被 teacher 转化为有效四元组的质量。
 4. **同池减量未改善，rus 的 gen4k 优势主要来自生成批次质量。** 对完全相同的 gen8k silver，cap3000 paired mean 比 full 低 1.14pp；独立 gen4k 批次的 0.6162 不能归因于“只用 3000 条”。
@@ -1751,7 +1760,7 @@ gate 未通过，因此按计划停止，不补 seeds 456/789/1024、不跑 ense
 
 rus-gen4k 与 tat-qwen 的 adopted train 对 dev/test 规范化文本交集均为 0，无需重训。由于 eng/ukr baseline 也各含 1 条 dev 重合，严格 paired 方案由原计划的 15 个 KD seeds 扩展为 **25 个任务**：3×5 clean KD + 2×5 clean baseline。所有新 prefix 均含 `inductive`，旧 checkpoint 不覆盖；ensemble 阈值冻结为 eng vote=4、ukr vote=3、zho vote=3，top-k 均为 0。
 
-**额外基线口径修正（高优先级）**：此前 KD 章节将 zho_restaurant no-KD baseline 写为 0.4745；但仓库中冻结、可复现的 V16 no-KD ensemble 官方 cF1 为 **0.5669**（vote=4, top-k=0），高于 DeepSeek-real KD 0.5579。故“zho_restaurant 是第 5 个 KD 改善数据集”当前不成立。TALLIP 必须同时给出历史 matched/raw 参考和最强 no-KD baseline；只有 clean KD 超过 0.5669 且 paired CI 支持时才能恢复整体改善 claim。
+**额外基线口径修正（已闭环）**：此前 KD 章节将 zho_restaurant no-KD baseline 写为 0.4745；仓库中冻结、可复现的更强 V16 no-KD dev ensemble 为 **0.5669**。clean KD dev=0.5738，但 paired CI 跨 0；official test 上 clean KD=0.4660、baseline=0.4798，Δ=−0.0137 [−0.0289, +0.0014]。因此 zho_restaurant 最终不计为得到统计支持的 KD 成功案例，0.4745 仅保留为历史参考臂。
 
 直接 teacher fidelity 采用 8 个 gold dev（每个 teacher 共 1,344 条）去除 `Quadruplet`，类别与 6-shot 示例只来自 gold train。DeepSeek 与 Qwen 均完成 **1,344/1,344**，模型身份、ID 覆盖、重复和错误检查全部通过，最终均为 0 调用错误。主指标为官方 Task-3 cF1，并补充 categorical exact F1、aspect/opinion/category F1、matched-VA MAE/RMSE、NULL/稀有类别切片及错误率。所有 teacher 和 clean KD 对比均固定 10,000 次 paired bootstrap、seed=20260713；95% CI 下界 >0 / 跨 0 / 上界 <0 分别记为 supported / inconclusive / harmful。
 
@@ -1769,7 +1778,7 @@ rus-gen4k 与 tat-qwen 的 adopted train 对 dev/test 规范化文本交集均�
 
 完整 teacher fidelity 结果（DeepSeek prompt 与 Qwen byte-identical 后的最终重跑）：DeepSeek/Qwen cF1 分别为 eng_laptop 0.3575/0.3170、eng_restaurant 0.5529/0.3638、jpn_hotel 0.2146/0.2004、rus 0.3904/0.3649、tat 0.4359/0.3954、ukr 0.3786/0.3598、zho_laptop 0.2821/0.2374、zho_restaurant 0.4653/0.4060。DeepSeek−Qwen 仅在 eng_restaurant、zho_laptop、zho_restaurant 得到统计支持，其余五域 inconclusive；没有任何域支持 Qwen > DeepSeek。Tatar matched downstream control 为 DeepSeek 0.5365 vs Qwen 0.5327，Δ=+0.0038 [−0.0823, +0.0852]，同样 inconclusive。故最终表述为“DeepSeek 整体更稳健，Qwen 在部分域接近；teacher 优势幅度具有域差异”，而非“teacher 排名发生可靠反转”。
 
-可复现入口与最终结果见 `scripts/kd/tallip.yaml`、`scripts/kd/tallip_status.py` 和 `docs/audits/tallip_kd/`；四张核心表由 `scripts/kd/build_tallip_report.py` 生成。永久停止 cap5000、rus cap3000 剩余 seeds 和新的 teacher/pool 网格。
+可复现入口与最终结果见 `scripts/kd/tallip.yaml`、`scripts/kd/tallip_status.py` 和 `docs/audits/tallip_kd/`；五张核心表由 `scripts/kd/build_tallip_report.py` 生成。永久停止 cap5000、rus cap3000 剩余 seeds 和新的 teacher/pool 网格。
 
 #### 5.29.7 官方 test 一次性评测（2026-07-18）
 
@@ -1941,21 +1950,20 @@ Tatar matched-pool teacher sensitivity 在 test 上为 DeepSeek 0.4421 vs Qwen 0
 
 **5 语种最终最佳配置 + dev cF1**：
 
-| 语种 | 推荐版本 | encoder | dev cF1 | Test SOTA (top 1) | Δ vs SOTA |
-|---|---|---|---|---|---|
-| **jpn** | V16 | ku-nlp/deberta-v2-large-japanese | **0.4466** | PALI 0.4252 | **+2.14** (反超 🎉) |
-| **rus** | V15 | xlm-roberta-large | **0.5267** | PAI 0.5599 | −3.32 |
-| **zho_laptop** | V16 | hfl/chinese-roberta-wwm-ext-large | **0.4487** | NYCU 0.4824 | −3.37 |
-| **ukr** | V13b | microsoft/mdeberta-v3-base | **0.5068** | PAI 0.5437 | −3.69 |
-| **tat** | V15 | xlm-roberta-large | **0.4821** | Takoyaki 0.4736 | **+0.85** (反超 🎉) |
-| **5-lang mean** | per-lang mix | mixed | **0.4822** | — | — |
+| 语种 | 推荐版本 | encoder | dev cF1 |
+|---|---|---|---|
+| **jpn** | V16 | ku-nlp/deberta-v2-large-japanese | **0.4466** |
+| **rus** | V15 | xlm-roberta-large | **0.5267** |
+| **zho_laptop** | V16 | hfl/chinese-roberta-wwm-ext-large | **0.4487** |
+| **ukr** | V13b | microsoft/mdeberta-v3-base | **0.5068** |
+| **tat** | V15 | xlm-roberta-large | **0.4821** |
+| **5-lang mean** | per-lang mix | mixed | **0.4822** |
 
 **意义**：
-- ✅ **jpn / tat 在 dev 上反超 test 1st**（注意 dev≠test，最终需要 test 集验证）
+- 历史版本曾将 jpn/tat dev 与 test leaderboard 比较；该 cross-split 结论已撤回。released official test 分别为 0.4217/0.4311，均未超过榜单最佳。
 - ✅ 5 语种平均 cF1 从 V15 时代 0.4604 → **0.4822** (+2.18 pp)
 - ✅ 验证了**「per-lang best encoder + ensemble + per-lang sweep」**才是最优策略
-- ⚠️ 局限：zho_laptop 距 NYCU SOTA 仍差 3.4 pp（NYCU 可能用了 unpublished 中文领域适应 pretrain）；ukr 距 PAI SOTA 差 3.7 pp（PAI 论文未公开方法）
-- 🎯 **5 语种 dev mean 0.4822 已具有相当强的 leaderboard 竞争力**
+- 5 语种 dev mean 仅用于仓库内部版本选择，不作为 leaderboard 竞争力证据。
 
 ---
 
@@ -2211,15 +2219,15 @@ Pred Pairs (笛卡尔积): [(food, good), (food, terrible), (service, good), (se
 
 ---
 
-### 7.9 最终冻结与 rus silver 批次质量审计（2026-07-13）
+### 7.9 历史 pre-clean 冻结与 rus silver 批次质量审计（2026-07-13）
 
-最终 8 数据集方案已冻结到 [`submission/final_manifest.json`](../submission/final_manifest.json)，包含每个预测文件和 config 的 SHA-256、checkpoint 前缀、vote/topk 与 dev cF1。只读审计覆盖 8 个 JSONL、6,690 行、ZIP 成员字节、test ID/顺序、schema/VA/category 和 checkpoint 存在性，结果为 **0 error、2 warning**；两项 warning 均来自已删除的 eng_restaurant 与 jpn_hotel 历史五种子 checkpoint，冻结预测本身及 ZIP 字节一致。
+当时的 8 数据集方案冻结到 [`submission/final_manifest.json`](../submission/final_manifest.json)，包含每个预测文件和 config 的 SHA-256、checkpoint 前缀、vote/topk 与 dev cF1。该 manifest 现仅代表历史 pre-clean submission，不是 TALLIP clean-inductive/official-test 权威源。只读审计覆盖 8 个 JSONL、6,690 行、ZIP 成员字节、test ID/顺序、schema/VA/category 和 checkpoint 存在性，结果为 **0 error、2 warning**；两项 warning 均来自已删除的 eng_restaurant 与 jpn_hotel 历史五种子 checkpoint，冻结预测本身及 ZIP 字节一致。
 
 rus 同池 stopping gate 的 paired mean 为：full-gen8k **0.5467**，cap3000 **0.5353**，变化 **−1.14pp**，未达到预设的 **+1.5pp** 继续门槛。因此停止剩余 3 seeds 与 cap5000，不再做 dose-response。最终保留 gen4k cap3000 五种子 ensemble **0.6162**；full-gen8k ensemble 为 **0.5858**。
 
 低成本质量审计显示：gen4k/gen8k 分别有 4,000/8,000 行，规范化重复均为 0；自动有效性标记为 10/31 行；相对 gold 的 category JSD 为 **0.0651/0.0719**。这些代理信号略偏向 gen4k，但差异小，不能独立证明语义标注更准。因此正式结论限定为：**性能差更符合生成批次质量敏感性，而非通用的 cap=3000 最优规律**。
 
-最终论文/汇报口径以 §5.29.5 的五条证据收敛为准；本轮不修改 LaTeX。
+最终论文/汇报口径以 §5.29.5–§5.29.7 的六条证据收敛及 [`docs/CONCLUSIONS.md`](CONCLUSIONS.md) 为准；本轮不修改 LaTeX。
 
 - 可执行 notebook：[`notebooks/rus_silver_quality_audit.ipynb`](../notebooks/rus_silver_quality_audit.ipynb)
 - 技术报告：[`docs/audits/kd_freeze_report/report.html`](audits/kd_freeze_report/report.html)

@@ -124,6 +124,31 @@ class TallipKDTests(unittest.TestCase):
             self.assertEqual(protocol["inference"][system]["vote"], vote)
             self.assertEqual(protocol["inference"][system]["topk"], 0.0)
 
+    def test_public_conclusion_surface_matches_locked_evidence(self):
+        conclusions = (ROOT / "docs/CONCLUSIONS.md").read_text()
+        readme = (ROOT / "README.md").read_text()
+        ai_readme = (ROOT / "README_AI.md").read_text()
+
+        for dataset, score in {
+            "eng_laptop": "0.3532",
+            "eng_restaurant": "0.5904",
+            "jpn_hotel": "0.4217",
+            "rus_restaurant": "0.5189",
+            "tat_restaurant": "0.4311",
+            "ukr_restaurant": "0.4608",
+            "zho_laptop": "0.4309",
+            "zho_restaurant": "0.4660",
+        }.items():
+            self.assertIn(f"| {dataset} |", conclusions)
+            self.assertIn(score, conclusions)
+            self.assertIn(score, readme)
+
+        self.assertIn("四个域支持 KD 的条件性收益", conclusions)
+        self.assertIn("不能写“5/8 KD 成功”", ai_readme)
+        self.assertNotIn("test SOTA 对比", readme)
+        self.assertNotIn("反超 nchellwig", readme)
+        self.assertNotIn("第 5 个经 KD 改善", readme)
+
 
 if __name__ == "__main__":
     unittest.main()
