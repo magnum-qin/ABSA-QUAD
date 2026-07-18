@@ -1453,7 +1453,9 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ---
 
-### 5.28 V23 eng_laptop = LLM 知识蒸馏（🚀 重大突破 0.4141，超 nchellwig SOTA）
+> **2026-07-18 回溯修正**：§5.28–§5.29.4 是实验过程日志，其中把 dev cF1 与官方 test 榜单分数直接比较，属于无效的 cross-split comparison。该区间所有“超过/接近 test SOTA”“最终 submission”措辞仅保留为历史记录，均已由 §5.29.7 的一次性 official-test 结果撤回；TALLIP 不得引用这些 SOTA 判断。
+
+### 5.28 V23 eng_laptop = LLM 知识蒸馏（dev 显著提升；历史 SOTA claim 已撤回）
 
 **动机**：eng_laptop 本质瓶颈是 240 个 (entity#attribute) 组合 × 仅 4076 样本的极端稀疏，小模型学不到 LLM 那样的稀疏类先验。所有"推理时引入 LLM"的尝试（§5.20.4 fusion、§7.7.1 post-correction）都失败——因为 LLM 推理输出噪声大。**知识蒸馏 (KD) 是把 LLM 先验灌进小模型权重、推理时完全不碰 LLM 的正解。**
 
@@ -1502,7 +1504,7 @@ deepseek-v4-pro 内部 reasoning 占用 token，max_tokens=4096 仍不够稳定�
 
 ---
 
-### 5.29 V23 KD 推广到 zho_laptop / rus / ukr（进行中：KD 非普适，依赖数据稀缺度）
+### 5.29 V23 KD 推广到 zho_laptop / rus / ukr（历史过程记录；最终结论见 §5.29.5–§5.29.7）
 
 **动机**：eng_laptop KD +8.87pp 大获成功后，推广到其余 3 个未达 SOTA 的数据集（zho_laptop −3.4pp, rus −3.3pp, ukr −3.7pp）。
 
@@ -1615,11 +1617,16 @@ qwen3.6 teacher = `unsloth/Qwen3.6-35B-A3B-MTP-GGUF`（35B-A3B MoE，Unsloth Stu
 
 **⚠️ 两次错误修正（过程教训）**：① 最初只有 eng_laptop（n=1）得出"本地≈云端"——过度泛化。② 第一次补跑 ukr/tat 时，rus 跑完后本地 LLM 服务的模型被换掉，silver 标注**全部 404 失败**、distill 静默退化为 gold-only（ratio 0），得出"低资源语言塌陷 −15pp"——**坏数据，已撤回**。本表是换用 Unsloth Studio 重跑后的**有效真 KD 数据**（ukr silver 6162、tat silver 3915 条，keep_rate≈0.96）。pipeline 已加防护：silver 0 有效 quad 时 distill 直接报错。
 
-**🔑 真实结论（无系统性语言趋势）**：
-- gaps = −0.5 / −3.9 / −6.7 / **+1.3**，**不随语言资源单调变化**——最低资源的 tat 上 qwen 反而**超过** DeepSeek。先前两版"语言边界/塌陷"均被证伪。
-- **本地开源 qwen3.6-35B 作为 KD teacher 与云端 DeepSeek 整体相当**：4 个里 3 个落后 ≤6.7pp、tat 反超 +1.3pp，平均 ≈ −2.5pp，**无系统性云端优势**。差距是数据集/池特定的（ukr 落后最多，疑与其机器翻译池 translationese 有关，而非乌克兰语本身）。
-- 强化版结论：**"本地开源模型可替代云端 teacher 做 KD"在 n=4 跨语言上基本成立**（不限高资源），这比原 n=1 的 claim 更有力。
-- 四个 qwen 臂默认**不切换提交**（DeepSeek 臂整体更稳）；唯 tat qwen 0.5327 > DeepSeek 0.5196，若追求 dev 最高可考虑切换（dev≠test，幅度 +1.3pp）。
+**历史结果的限制**：上述 tat DeepSeek 0.5196 与 Qwen 0.5327 并非严格 matched control；两臂的 silver 文本、样本数和旧 DeepSeek prompt 均不同，因此不能据此断言 Qwen teacher 在 Tatar 上稳定反超。
+
+**Tatar matched-control（2026-07-18）**：固定同一 1,240 条 gold、同一 3,915 条 silver 文本及顺序、相同 prompt/schema、相同五个 seeds 与固定 vote=3/topk=0，唯一变量为 teacher 标签。
+
+| Teacher | 5-seed mean±SD | vote=3 ensemble cF1 |
+|---|---:|---:|
+| DeepSeek | **0.4708±0.0065** | **0.5365** |
+| Qwen | 0.4637±0.0147 | 0.5327 |
+
+DeepSeek−Qwen ensemble Δ=**+0.0038**，10,000 次 paired bootstrap 95% CI **[−0.0823, +0.0852]**，判定为 **inconclusive**。因此原先的 Qwen +1.3pp 优势属于不稳定/混杂证据；严格控制后两者下游表现近似，既不支持 Qwen 反转，也不支持 DeepSeek 在 Tatar 下游显著更优。允许的结论是：**本地 Qwen 可以接近云端 DeepSeek，但 teacher 排名需直接 fidelity 与严格 matched downstream control 共同判断。**
 
 ---
 
@@ -1722,12 +1729,80 @@ gate 未通过，因此按计划停止，不补 seeds 456/789/1024、不跑 ense
 早期“低资源必然受益”“真实池普遍更优”“silver 减量就是甜区”等说法，均被后续跨 teacher、跨 pool 和同池数量控制进一步限定。最终只保留以下五条可由现有消融直接支持的结论：
 
 1. **KD 是否有效取决于信息互补性。** silver 必须补充 gold/base 尚未覆盖的类别先验、表达多样性或域信息；若只是用较噪的重复信号淹没强 gold，KD 会持平或退化。
-2. **Teacher 质量存在明显域差异。** qwen 在多数域接近 DeepSeek、tat 甚至更优，但在 eng_restaurant 落后 19.7pp；因此不能把单域结果泛化为“本地≈云端”或固定 teacher 排名。
+2. **DeepSeek teacher 整体更稳健，Qwen 在部分域接近，但不存在可靠的排名反转。** 完整 8×2 直接 fidelity 中 DeepSeek cF1 在 8/8 域更高；eng_restaurant、zho_laptop、zho_restaurant 的 paired CI 下界 > 0，eng_laptop/jpn/rus/tat/ukr 则跨 0。Tatar matched downstream control 同样跨 0，故直接与下游证据均不支持“某些域 Qwen 显著更优”。
 3. **Pool 来源没有普适排序。** zho_restaurant 是 real > generated，而 rus 的 size-matched 对照是 generated > translated > real。决定因素是 pool 与目标任务的互补性及其被 teacher 转化为有效四元组的质量。
 4. **同池减量未改善，rus 的 gen4k 优势主要来自生成批次质量。** 对完全相同的 gen8k silver，cap3000 paired mean 比 full 低 1.14pp；独立 gen4k 批次的 0.6162 不能归因于“只用 3000 条”。
 5. **最佳 silver 不是“越多越好”，而是质量与覆盖合适。** 数量、类别覆盖、文本多样性、teacher 标注正确性和 gold:silver 权重共同决定结果；当前证据不支持跨数据集的统一 cap 或 dose-response 最优点。
+6. **官方 test 支持条件性收益，但不支持 SOTA。** dev 冻结系统在 eng/rus/tat/ukr 的 KD−baseline paired CI 下界大于 0，zho_restaurant 跨 0；8 个主系统均未超过官方榜单最佳（§5.29.7）。
 
-**统一表述**：KD is effective when silver data contributes complementary, accurately labeled coverage beyond the gold set. Teacher and pool quality are domain-dependent, and the best silver set is not the largest one but the one with an appropriate quality–coverage trade-off.
+**统一表述**：KD is effective when silver data contributes complementary, accurately labeled coverage beyond the gold set. Teacher and pool quality are domain-dependent, and the best silver set is not the largest one but the one with an appropriate quality–coverage trade-off. The released official test supports gains over matched no-KD baselines in four domains, but the method does not establish a new test SOTA.
+
+#### 5.29.6 TALLIP clean-inductive 审计与统计闭环（2026-07-13—2026-07-17）
+
+对所有 gold / silver / distill / dev / test 采用 **Unicode NFKC + casefold + 空白折叠**进行文本泄漏审计。原 V23 中三个已采用 KD 训练集含有 dev/test 文本，因此 §5.29.2–§5.29.5 中相应结果在 clean 重跑完成前必须标记为 **transductive**：
+
+| 数据集/系统 | 原行数 | 删除 | clean 行数 | dev 重合 | test 重合 |
+|---|---:|---:|---:|---:|---:|
+| eng_laptop KD | 23,590 | 995 | **22,595** | 1 | 994 |
+| eng_laptop no-KD baseline | 15,049 | 1 | **15,048** | 1 | 0 |
+| ukr_restaurant KD | 9,105 | 605 | **8,500** | 1 | 604 |
+| ukr_restaurant no-KD baseline | 2,967 | 1 | **2,966** | 1 | 0 |
+| zho_restaurant KD-real | 10,911 | 979 | **9,932** | 1 | 979 |
+
+rus-gen4k 与 tat-qwen 的 adopted train 对 dev/test 规范化文本交集均为 0，无需重训。由于 eng/ukr baseline 也各含 1 条 dev 重合，严格 paired 方案由原计划的 15 个 KD seeds 扩展为 **25 个任务**：3×5 clean KD + 2×5 clean baseline。所有新 prefix 均含 `inductive`，旧 checkpoint 不覆盖；ensemble 阈值冻结为 eng vote=4、ukr vote=3、zho vote=3，top-k 均为 0。
+
+**额外基线口径修正（高优先级）**：此前 KD 章节将 zho_restaurant no-KD baseline 写为 0.4745；但仓库中冻结、可复现的 V16 no-KD ensemble 官方 cF1 为 **0.5669**（vote=4, top-k=0），高于 DeepSeek-real KD 0.5579。故“zho_restaurant 是第 5 个 KD 改善数据集”当前不成立。TALLIP 必须同时给出历史 matched/raw 参考和最强 no-KD baseline；只有 clean KD 超过 0.5669 且 paired CI 支持时才能恢复整体改善 claim。
+
+直接 teacher fidelity 采用 8 个 gold dev（每个 teacher 共 1,344 条）去除 `Quadruplet`，类别与 6-shot 示例只来自 gold train。DeepSeek 与 Qwen 均完成 **1,344/1,344**，模型身份、ID 覆盖、重复和错误检查全部通过，最终均为 0 调用错误。主指标为官方 Task-3 cF1，并补充 categorical exact F1、aspect/opinion/category F1、matched-VA MAE/RMSE、NULL/稀有类别切片及错误率。所有 teacher 和 clean KD 对比均固定 10,000 次 paired bootstrap、seed=20260713；95% CI 下界 >0 / 跨 0 / 上界 <0 分别记为 supported / inconclusive / harmful。
+
+**Clean-inductive 最终结果（25/25 训练任务、25/25 best checkpoint 完成）**：
+
+| 数据集 | 5-seed mean±SD | 固定阈值 ensemble | baseline | ΔcF1 [95% CI] | 判定 |
+|---|---:|---:|---:|---:|---|
+| eng_laptop clean KD | 0.3785±0.0107 | **0.4102** | 0.3045 | +0.1058 [+0.0601, +0.1537] | supported |
+| rus_restaurant adopted KD | 0.5553±0.0099 | **0.6162** | 0.5267 | +0.0895 [+0.0191, +0.1631] | supported |
+| tat_restaurant adopted KD | 0.4637±0.0147 | **0.5327** | 0.4821 | +0.0506 [−0.0302, +0.1353] | inconclusive |
+| ukr_restaurant clean KD | 0.4851±0.0355 | **0.5377** | 0.4905 | +0.0472 [−0.0466, +0.1449] | inconclusive |
+| zho_restaurant clean KD-real | 0.5400±0.0026 | **0.5738** | 0.5669 | +0.0069 [−0.0204, +0.0349] | inconclusive |
+
+清洗前后差异均无统计支持：eng clean−transductive = −0.0038 [−0.0444, +0.0351]；ukr = −0.0183 [−0.0738, +0.0292]；zho = +0.0159 [−0.0075, +0.0398]。这说明删除重合行没有可靠地改变三域结论，但论文主表仍必须使用 clean-inductive 结果。仅就 **dev evidence** 而言，五个 adopted KD 数据集中 eng 与 rus 得到统计支持，tat/ukr/zho 仅为方向性改善；official test 的预注册对照见 §5.29.7。不得再写“5/5 数据集均确认提升”。
+
+完整 teacher fidelity 结果（DeepSeek prompt 与 Qwen byte-identical 后的最终重跑）：DeepSeek/Qwen cF1 分别为 eng_laptop 0.3575/0.3170、eng_restaurant 0.5529/0.3638、jpn_hotel 0.2146/0.2004、rus 0.3904/0.3649、tat 0.4359/0.3954、ukr 0.3786/0.3598、zho_laptop 0.2821/0.2374、zho_restaurant 0.4653/0.4060。DeepSeek−Qwen 仅在 eng_restaurant、zho_laptop、zho_restaurant 得到统计支持，其余五域 inconclusive；没有任何域支持 Qwen > DeepSeek。Tatar matched downstream control 为 DeepSeek 0.5365 vs Qwen 0.5327，Δ=+0.0038 [−0.0823, +0.0852]，同样 inconclusive。故最终表述为“DeepSeek 整体更稳健，Qwen 在部分域接近；teacher 优势幅度具有域差异”，而非“teacher 排名发生可靠反转”。
+
+可复现入口与最终结果见 `scripts/kd/tallip.yaml`、`scripts/kd/tallip_status.py` 和 `docs/audits/tallip_kd/`；四张核心表由 `scripts/kd/build_tallip_report.py` 生成。永久停止 cap5000、rus cap3000 剩余 seeds 和新的 teacher/pool 网格。
+
+#### 5.29.7 官方 test 一次性评测（2026-07-18）
+
+官方在赛后公开了 Track A Task 3 的 test gold。本节是 **post-competition local evaluation**，不是新的 CodaBench 官方提交或排名。评测矩阵只按 dev 结果选择，并在取得 gold 前冻结：官方仓库 commit `bdc93be1224106ae7d3eb95739c02a76ed4ae8a1`，8 个无标签本地 test 与 gold 的 ID、顺序和 Text 均逐条完全一致；所有 prediction、checkpoint、config、gold 和 evaluator 均保存 SHA256。评分使用官方 `metrics_subtask_1_2_3.py`，paired bootstrap 固定 10,000 次、seed=20260713。取得 test 标签后未重新训练、调阈值或替换系统。
+
+| 数据集 | dev 冻结主系统 | official test cF1 | 官方榜单最佳 | 差距 |
+|---|---|---:|---:|---:|
+| eng_laptop | clean-inductive DeepSeek KD | **0.3532** | 0.4227 | −0.0695 |
+| eng_restaurant | V16 no-KD | **0.5904** | 0.6514 | −0.0610 |
+| jpn_hotel | V16 no-aug | **0.4217** | 0.4252 | −0.0035 |
+| rus_restaurant | DeepSeek gen4k KD | **0.5189** | 0.5599 | −0.0410 |
+| tat_restaurant | Qwen KD | **0.4311** | 0.4736 | −0.0425 |
+| ukr_restaurant | clean-inductive DeepSeek KD | **0.4608** | 0.5437 | −0.0829 |
+| zho_laptop | V16 no-KD | **0.4309** | 0.4824 | −0.0515 |
+| zho_restaurant | clean-inductive DeepSeek-real KD | **0.4660** | 0.5521 | −0.0861 |
+
+官方榜单参考：`https://docs.google.com/spreadsheets/d/1geyC9aFjAmXFE_7w1LnjGYX4F0y2jttN/`。8 个冻结主系统均未超过榜单最佳，因此早期仅凭 dev 对比写出的“击败 test SOTA”或“反超官方第一”必须撤回。最接近榜首的是 jpn_hotel（−0.35pp），但仍不能宣称 SOTA。
+
+预注册的 adopted KD 对照如下；zho_restaurant 的主系统仍保留 gold 前按 dev 选出的 clean KD，不允许看完 test 后换回 V16：
+
+| 数据集 | KD | baseline | ΔcF1 [95% CI] | 判定 |
+|---|---:|---:|---:|---|
+| eng_laptop | 0.3532 | 0.2709 | +0.0822 [+0.0629, +0.1021] | supported |
+| rus_restaurant | 0.5189 | 0.4978 | +0.0211 [+0.0005, +0.0431] | supported |
+| tat_restaurant | 0.4311 | 0.4037 | +0.0274 [+0.0071, +0.0482] | supported |
+| ukr_restaurant | 0.4608 | 0.4215 | +0.0393 [+0.0150, +0.0639] | supported |
+| zho_restaurant | 0.4660 | 0.4798 | −0.0137 [−0.0289, +0.0014] | inconclusive |
+
+**结论更新**：official test 在 eng/rus/tat/ukr 四域支持 KD 相对预注册 no-KD baseline 的改善；zho_restaurant 点估计转为负向但 CI 跨 0，不能再作为 KD 成功案例。dev 上 tat/ukr 为方向性改善，test 因样本更多而 CI 下界转正；zho 在 dev/test 均不确定且方向不一致。总体结论可以保留为“KD 在信息互补条件下有效”，但不能写成普适改善或 SOTA 方法。
+
+Tatar matched-pool teacher sensitivity 在 test 上为 DeepSeek 0.4421 vs Qwen 0.4311，Δ=+0.0109 [−0.0069, +0.0293]，仍为 inconclusive。这与 dev 的 Δ=+0.0038、CI 跨 0 一致，说明下游 teacher 差异容易受 seed/ensemble/test sample 扰动；没有可靠证据支持 teacher 排名反转。
+
+可复现协议、冻结哈希、gold 审计、官方原始输出与完整统计位于 `scripts/kd/official_test.yaml`、`scripts/kd/official_test.py` 和 `docs/audits/tallip_kd/official_test/`。从本节完成起永久停止基于 official test 的模型、阈值、teacher、pool 或增强选择。
 
 ---
 

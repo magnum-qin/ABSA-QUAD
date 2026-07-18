@@ -1,0 +1,1348 @@
+{
+  "created_at": "2026-07-13T05:57:12.441561+00:00",
+  "normalization": "Unicode NFKC + casefold + Unicode whitespace collapse",
+  "manifest_sha256": "e2900f7e1cd98bf12d3c56583a904f6ec1db6fe05139b0543a0a39767ee28df0",
+  "datasets": {
+    "eng_laptop": {
+      "dev": {
+        "path": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "rows": 200,
+        "sha256": "c3a622060eba7b770a70bdf789c1ec5fddf5ec780877b88c5e8bfca5a3f87ab9"
+      },
+      "test": {
+        "path": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "rows": 1000,
+        "sha256": "76dad16c5aba037dbeb8f839f73eb0c7f84a15ea621dbe959ee58a1189f34688"
+      },
+      "files": {
+        "adopted_train": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v23_deepseek.jsonl",
+          "sha256": "11de188f907e0a71701e0da1a04325474edc5a12f18e61faf4f315de7c8e3cd0",
+          "rows": 23590,
+          "matched_rows": 995,
+          "reason_counts": {
+            "test:exact_text": 994,
+            "test:normalized_text": 994,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__adopted_train.jsonl",
+          "match_detail_sha256": "3faa288a3fc11a250478ec74c11183c09539eee92e32cea0c7bf3a5221f1fa6d"
+        },
+        "baseline_train": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v5repro.jsonl",
+          "sha256": "6d21a604fb58edc31d922d505d2483cf18566e3313bbc8e853eab0ca3e8de0ab",
+          "rows": 15049,
+          "matched_rows": 1,
+          "reason_counts": {
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__baseline_train.jsonl",
+          "match_detail_sha256": "88f60dd228a0fb198c7befe08700d3a0a62537649e1501e5039fd0fbbf4da5df"
+        },
+        "clean_baseline_train": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl",
+          "sha256": "0bdddb1accff1a911770916c46dbedfe6ccdc03478605db0921a8ca60cb010f4",
+          "rows": 15048,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "clean_train": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v23_deepseek_inductive.jsonl",
+          "sha256": "6d1a9b14eaffcc98222143fdc9763eab666c02fec2ffd68c7c62bf609a47595c",
+          "rows": 22595,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "gold_train": {
+          "path": "data/subtask_3/eng/eng_laptop_train_alltasks.jsonl",
+          "sha256": "8cac1811b543999206f0f69c2ad6bf387bde12bbdc237946ace66c8f6be7d221",
+          "rows": 4076,
+          "matched_rows": 1,
+          "reason_counts": {
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__gold_train.jsonl",
+          "match_detail_sha256": "6afa1226eaf9dce98f46c967a85b86f04116986cd0125a8659afcc0ad2f5b8c8"
+        },
+        "registry:eng_laptop_deepseek:distill": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v23_deepseek.jsonl",
+          "sha256": "11de188f907e0a71701e0da1a04325474edc5a12f18e61faf4f315de7c8e3cd0",
+          "rows": 23590,
+          "matched_rows": 995,
+          "reason_counts": {
+            "test:exact_text": 994,
+            "test:normalized_text": 994,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_deepseek__distill.jsonl",
+          "match_detail_sha256": "3faa288a3fc11a250478ec74c11183c09539eee92e32cea0c7bf3a5221f1fa6d"
+        },
+        "registry:eng_laptop_deepseek:gold": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v23_deepseek.jsonl",
+          "sha256": "11de188f907e0a71701e0da1a04325474edc5a12f18e61faf4f315de7c8e3cd0",
+          "rows": 23590,
+          "matched_rows": 995,
+          "reason_counts": {
+            "test:exact_text": 994,
+            "test:normalized_text": 994,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_deepseek__gold.jsonl",
+          "match_detail_sha256": "3faa288a3fc11a250478ec74c11183c09539eee92e32cea0c7bf3a5221f1fa6d"
+        },
+        "registry:eng_laptop_deepseek:pool": {
+          "path": "data/subtask_3/eng/eng_laptop_pool_v23.jsonl",
+          "sha256": "98fc837b8f67441c6211108426e96aebcefeeac5ef3ddbfd045db21a0baa65a0",
+          "rows": 8578,
+          "matched_rows": 999,
+          "reason_counts": {
+            "test:exact_text": 999,
+            "test:normalized_text": 999
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_deepseek__pool.jsonl",
+          "match_detail_sha256": "be18fe4013b58a60be878229b7c2a03ed3496d45e7c02eeb094ee0b32894540d"
+        },
+        "registry:eng_laptop_deepseek:silver": {
+          "path": "data/subtask_3/eng/eng_laptop_silver_v23_deepseek.jsonl",
+          "sha256": "ec832d01cb26ed70d03fd0efe528c2be66ba6f691223e468b8e95114ace0cd69",
+          "rows": 12912,
+          "matched_rows": 1997,
+          "reason_counts": {
+            "test:exact_text": 1997,
+            "test:normalized_text": 1997
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_deepseek__silver.jsonl",
+          "match_detail_sha256": "d517b68efe410d312ed026901d274dc4561915b12ae76f9195d7a065f318ee72"
+        },
+        "registry:eng_laptop_gemma:distill": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v23_gemma.jsonl",
+          "sha256": "e2a94a36a9f5674196414074622f286a23adf25aeeacf81e15d28bff06c4ff58",
+          "rows": 23587,
+          "matched_rows": 997,
+          "reason_counts": {
+            "dev:normalized_text": 1,
+            "test:exact_text": 996,
+            "test:normalized_text": 996
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_gemma__distill.jsonl",
+          "match_detail_sha256": "fea28d4fadd20ff360d71aa09e8957d266fa23eb8d5cf003c1fe7198731d4cc6"
+        },
+        "registry:eng_laptop_gemma:gold": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v23_gemma.jsonl",
+          "sha256": "e2a94a36a9f5674196414074622f286a23adf25aeeacf81e15d28bff06c4ff58",
+          "rows": 23587,
+          "matched_rows": 997,
+          "reason_counts": {
+            "dev:normalized_text": 1,
+            "test:exact_text": 996,
+            "test:normalized_text": 996
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_gemma__gold.jsonl",
+          "match_detail_sha256": "fea28d4fadd20ff360d71aa09e8957d266fa23eb8d5cf003c1fe7198731d4cc6"
+        },
+        "registry:eng_laptop_gemma:pool": {
+          "path": "data/subtask_3/eng/eng_laptop_pool_v23_matched.jsonl",
+          "sha256": "8adcf44717fd25864eec8fd816233e7eb48dced847982ff9455ed70a52bcc0e8",
+          "rows": 8578,
+          "matched_rows": 999,
+          "reason_counts": {
+            "test:exact_text": 999,
+            "test:normalized_text": 999
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_gemma__pool.jsonl",
+          "match_detail_sha256": "b9687c8e54a19c71e84ec0db3c88545c382aad7d5bc9263de430edf5ae6a9963"
+        },
+        "registry:eng_laptop_gemma:silver": {
+          "path": "data/subtask_3/eng/eng_laptop_silver_v23_gemma.jsonl",
+          "sha256": "2977b374f1f31ffc9f5dc39a034a82d5b67405d47a7fbcd459ed300be0d935ae",
+          "rows": 8578,
+          "matched_rows": 999,
+          "reason_counts": {
+            "test:exact_text": 999,
+            "test:normalized_text": 999
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_gemma__silver.jsonl",
+          "match_detail_sha256": "a8793615c350808c33d7b99b1809429302b954e67df3bb4fcc893cc6aadebcbe"
+        },
+        "registry:eng_laptop_qwen:distill": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v23_qwen.jsonl",
+          "sha256": "d60688bc88d72f3a6aa7f6bb07c38166d5ce625542f3e4108fa13f6cdc40a5db",
+          "rows": 23475,
+          "matched_rows": 980,
+          "reason_counts": {
+            "dev:normalized_text": 1,
+            "test:exact_text": 979,
+            "test:normalized_text": 979
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_qwen__distill.jsonl",
+          "match_detail_sha256": "98d68db427f0e0ce81973720379dbc6d08c0e50575b897b6fd6cd52930dd2f48"
+        },
+        "registry:eng_laptop_qwen:gold": {
+          "path": "data/subtask_3/eng/eng_laptop_train_v23_qwen.jsonl",
+          "sha256": "d60688bc88d72f3a6aa7f6bb07c38166d5ce625542f3e4108fa13f6cdc40a5db",
+          "rows": 23475,
+          "matched_rows": 980,
+          "reason_counts": {
+            "dev:normalized_text": 1,
+            "test:exact_text": 979,
+            "test:normalized_text": 979
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_qwen__gold.jsonl",
+          "match_detail_sha256": "98d68db427f0e0ce81973720379dbc6d08c0e50575b897b6fd6cd52930dd2f48"
+        },
+        "registry:eng_laptop_qwen:pool": {
+          "path": "data/subtask_3/eng/eng_laptop_pool_v23_matched.jsonl",
+          "sha256": "8adcf44717fd25864eec8fd816233e7eb48dced847982ff9455ed70a52bcc0e8",
+          "rows": 8578,
+          "matched_rows": 999,
+          "reason_counts": {
+            "test:exact_text": 999,
+            "test:normalized_text": 999
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_qwen__pool.jsonl",
+          "match_detail_sha256": "b9687c8e54a19c71e84ec0db3c88545c382aad7d5bc9263de430edf5ae6a9963"
+        },
+        "registry:eng_laptop_qwen:silver": {
+          "path": "data/subtask_3/eng/eng_laptop_silver_v23_qwen.jsonl",
+          "sha256": "e483d08163ebb254fdf0fcb17493a0025bdbc8446a71cfe4efc06949a5e3dde9",
+          "rows": 8578,
+          "matched_rows": 999,
+          "reason_counts": {
+            "test:exact_text": 999,
+            "test:normalized_text": 999
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_laptop__registry__eng_laptop_qwen__silver.jsonl",
+          "match_detail_sha256": "b9687c8e54a19c71e84ec0db3c88545c382aad7d5bc9263de430edf5ae6a9963"
+        }
+      }
+    },
+    "eng_restaurant": {
+      "dev": {
+        "path": "data/subtask_3/eng/eng_restaurant_dev_task3.jsonl",
+        "rows": 200,
+        "sha256": "656022e2d83ec0d758765881cdfa38b409077c6137f4df743165c72eb08e4a9c"
+      },
+      "test": {
+        "path": "data/subtask_3/eng/eng_restaurant_test_task3.jsonl",
+        "rows": 1000,
+        "sha256": "f5675ec4a26feec85e09471bc9310a1d985dc22ca2dfe1cb8209f7423ca48b95"
+      },
+      "files": {
+        "gold_train": {
+          "path": "data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl",
+          "sha256": "bebab04e593f3f6afe76f144b897c85bcc2eb9749bfbfa1e0080e7d4e2d3985c",
+          "rows": 2284,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:eng_restaurant_deepseek:distill": {
+          "path": "data/subtask_3/eng/eng_restaurant_train_v23_deepseek.jsonl",
+          "sha256": "cf3e98b06e551b955dc678ee305468e27815f1ceb9a1f529bdf99f526611aa5f",
+          "rows": 7242,
+          "matched_rows": 996,
+          "reason_counts": {
+            "test:exact_text": 996,
+            "test:normalized_text": 996
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_restaurant__registry__eng_restaurant_deepseek__distill.jsonl",
+          "match_detail_sha256": "f4af7d77bc949620b81890af38529c13a8fe54eb57ff1552358d6920d707116a"
+        },
+        "registry:eng_restaurant_deepseek:gold": {
+          "path": "data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl",
+          "sha256": "bebab04e593f3f6afe76f144b897c85bcc2eb9749bfbfa1e0080e7d4e2d3985c",
+          "rows": 2284,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:eng_restaurant_deepseek:pool": {
+          "path": "data/subtask_3/eng/eng_restaurant_pool_v23_gen.jsonl",
+          "sha256": "f9aa6656dee22c515e563623b909352c95240655d0e392ee57f2fafe54851cf7",
+          "rows": 4974,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_restaurant__registry__eng_restaurant_deepseek__pool.jsonl",
+          "match_detail_sha256": "3193dbf65390ddb567849a4716d8aec89dbbb247cb8465eba81a13037cdb154f"
+        },
+        "registry:eng_restaurant_deepseek:silver": {
+          "path": "data/subtask_3/eng/eng_restaurant_silver_v23_deepseek.jsonl",
+          "sha256": "a6f9c0a3eca5d54051f063f5752d7e74e57131ea80658ec52b64689d54c9d53a",
+          "rows": 4974,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_restaurant__registry__eng_restaurant_deepseek__silver.jsonl",
+          "match_detail_sha256": "862b728df550209347eea991824a2054c66420bd770452c479afd36cee80572d"
+        },
+        "registry:eng_restaurant_qwen:distill": {
+          "path": "data/subtask_3/eng/eng_restaurant_train_v23_qwen.jsonl",
+          "sha256": "d08ff853ebcb8e0dc716f8f08b07975a99311689fb166868a7918bbc8113354a",
+          "rows": 7168,
+          "matched_rows": 975,
+          "reason_counts": {
+            "test:exact_text": 975,
+            "test:normalized_text": 975
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_restaurant__registry__eng_restaurant_qwen__distill.jsonl",
+          "match_detail_sha256": "667b59f74528af295c6adf2d689668f63a8863c81e276d1e8ae8dcdf5aebd4d7"
+        },
+        "registry:eng_restaurant_qwen:gold": {
+          "path": "data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl",
+          "sha256": "bebab04e593f3f6afe76f144b897c85bcc2eb9749bfbfa1e0080e7d4e2d3985c",
+          "rows": 2284,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:eng_restaurant_qwen:pool": {
+          "path": "data/subtask_3/eng/eng_restaurant_pool_v23_gen.jsonl",
+          "sha256": "f9aa6656dee22c515e563623b909352c95240655d0e392ee57f2fafe54851cf7",
+          "rows": 4974,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_restaurant__registry__eng_restaurant_qwen__pool.jsonl",
+          "match_detail_sha256": "3193dbf65390ddb567849a4716d8aec89dbbb247cb8465eba81a13037cdb154f"
+        },
+        "registry:eng_restaurant_qwen:silver": {
+          "path": "data/subtask_3/eng/eng_restaurant_silver_v23_qwen.jsonl",
+          "sha256": "782f415e81b5f3ab782977fac88e4ac04bcfd69528e0423a6357b59f50cde74a",
+          "rows": 4974,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_restaurant__registry__eng_restaurant_qwen__silver.jsonl",
+          "match_detail_sha256": "3193dbf65390ddb567849a4716d8aec89dbbb247cb8465eba81a13037cdb154f"
+        },
+        "registry:eng_restaurant_qwen_real:distill": {
+          "path": "data/subtask_3/eng/eng_restaurant_train_v23_qwen_real.jsonl",
+          "sha256": "2637cb9f816d4d4941a939e664f433fb21a1be23c76237a64e544db7668b8fd1",
+          "rows": 4084,
+          "matched_rows": 365,
+          "reason_counts": {
+            "test:exact_text": 365,
+            "test:normalized_text": 365
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_restaurant__registry__eng_restaurant_qwen_real__distill.jsonl",
+          "match_detail_sha256": "5bbc33175c40a64b43ed58cfde55691237d98d9541ab6aa70c0f895aed414496"
+        },
+        "registry:eng_restaurant_qwen_real:gold": {
+          "path": "data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl",
+          "sha256": "bebab04e593f3f6afe76f144b897c85bcc2eb9749bfbfa1e0080e7d4e2d3985c",
+          "rows": 2284,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:eng_restaurant_qwen_real:pool": {
+          "path": "data/subtask_3/eng/eng_restaurant_pool_v23_real.jsonl",
+          "sha256": "53d43e6aaf3a5de1ccc184e4f90e18224af89579a6bfd956204248bd4e561a55",
+          "rows": 5000,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_restaurant__registry__eng_restaurant_qwen_real__pool.jsonl",
+          "match_detail_sha256": "2162b7753ffe2e741861040d19317cd7a1f182b8d3541551b7374ebdd6514d1e"
+        },
+        "registry:eng_restaurant_qwen_real:silver": {
+          "path": "data/subtask_3/eng/eng_restaurant_silver_v23_qwen_real.jsonl",
+          "sha256": "2694358d0345eda6f2178a3608ee09746e5e89c9b9311f98aa25c4ba005af259",
+          "rows": 5000,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/eng_restaurant__registry__eng_restaurant_qwen_real__silver.jsonl",
+          "match_detail_sha256": "2162b7753ffe2e741861040d19317cd7a1f182b8d3541551b7374ebdd6514d1e"
+        }
+      }
+    },
+    "jpn_hotel": {
+      "dev": {
+        "path": "data/subtask_3/jpn/jpn_hotel_dev_task3.jsonl",
+        "rows": 200,
+        "sha256": "70c6c21de271ef90daec4a66a6cd14a66d2ea8eb85f01f8bd5d070e41db5e8e8"
+      },
+      "test": {
+        "path": "data/subtask_3/jpn/jpn_hotel_test_task3.jsonl",
+        "rows": 800,
+        "sha256": "ff991f6b36c29d5731146725bb1c0f36eba19111a47ba5d5d47847c677538cb6"
+      },
+      "files": {
+        "gold_train": {
+          "path": "data/subtask_3/jpn/jpn_hotel_train_alltasks.jsonl",
+          "sha256": "ec3dbffd24e1175fad20a3e5519427d4019ae346af7359f162176a1ce3bf39e5",
+          "rows": 1600,
+          "matched_rows": 3,
+          "reason_counts": {
+            "test:exact_text": 2,
+            "test:normalized_text": 2,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/jpn_hotel__gold_train.jsonl",
+          "match_detail_sha256": "1d4a01530e8b4c4a07b054c915aea3cab28e9f4dd0f68516a9543cf6fb8e5336"
+        },
+        "registry:jpn_hotel_deepseek:distill": {
+          "path": "data/subtask_3/jpn/jpn_hotel_train_v23_deepseek.jsonl",
+          "sha256": "b2980abe7bca312a248ae2fe059d9aeac0dede8c1a1c054bc9bba88b1bb40f71",
+          "rows": 7643,
+          "matched_rows": 802,
+          "reason_counts": {
+            "test:exact_text": 801,
+            "test:normalized_text": 801,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/jpn_hotel__registry__jpn_hotel_deepseek__distill.jsonl",
+          "match_detail_sha256": "07422be218dbaff884374b26f20768ecdc777e40e3db4f662b4458c763bebc71"
+        },
+        "registry:jpn_hotel_deepseek:gold": {
+          "path": "data/subtask_3/jpn/jpn_hotel_train_v13.jsonl",
+          "sha256": "a392fb1533230042e1a8904f5529773198564d752d504e223660d8fbd78c42b0",
+          "rows": 2893,
+          "matched_rows": 3,
+          "reason_counts": {
+            "test:exact_text": 2,
+            "test:normalized_text": 2,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/jpn_hotel__registry__jpn_hotel_deepseek__gold.jsonl",
+          "match_detail_sha256": "1d4a01530e8b4c4a07b054c915aea3cab28e9f4dd0f68516a9543cf6fb8e5336"
+        },
+        "registry:jpn_hotel_deepseek:pool": {
+          "path": "data/subtask_3/jpn/jpn_hotel_pool_v23_gen.jsonl",
+          "sha256": "c133b9390df472946197e5e4d3fee11e40a907d5c427fa31ba781c47fdb30020",
+          "rows": 4756,
+          "matched_rows": 800,
+          "reason_counts": {
+            "test:exact_text": 800,
+            "test:normalized_text": 800
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/jpn_hotel__registry__jpn_hotel_deepseek__pool.jsonl",
+          "match_detail_sha256": "b97285571f89547677077cefaf36e27ccedd388d2242f0015dbb9b691ef54ec7"
+        },
+        "registry:jpn_hotel_deepseek:silver": {
+          "path": "data/subtask_3/jpn/jpn_hotel_silver_v23_deepseek.jsonl",
+          "sha256": "75748e5234259b934b4c8c839b5d579ec6fabe3e77da415271283435147d2df6",
+          "rows": 4756,
+          "matched_rows": 800,
+          "reason_counts": {
+            "test:exact_text": 800,
+            "test:normalized_text": 800
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/jpn_hotel__registry__jpn_hotel_deepseek__silver.jsonl",
+          "match_detail_sha256": "22194400cd28a5d5d909d16c24c343513256f7245c92b932ceebf44968615cd5"
+        },
+        "registry:jpn_hotel_qwen:distill": {
+          "path": "data/subtask_3/jpn/jpn_hotel_train_v23_qwen.jsonl",
+          "sha256": "9757794c5b04c831879f1f344ce167636307029469302731312df0641dad95f5",
+          "rows": 7451,
+          "matched_rows": 773,
+          "reason_counts": {
+            "test:exact_text": 772,
+            "test:normalized_text": 772,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/jpn_hotel__registry__jpn_hotel_qwen__distill.jsonl",
+          "match_detail_sha256": "80f9de382309002242f9bddc7504c04a81792e81c3c7f55d45a47a4c54b1dee3"
+        },
+        "registry:jpn_hotel_qwen:gold": {
+          "path": "data/subtask_3/jpn/jpn_hotel_train_v13.jsonl",
+          "sha256": "a392fb1533230042e1a8904f5529773198564d752d504e223660d8fbd78c42b0",
+          "rows": 2893,
+          "matched_rows": 3,
+          "reason_counts": {
+            "test:exact_text": 2,
+            "test:normalized_text": 2,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/jpn_hotel__registry__jpn_hotel_qwen__gold.jsonl",
+          "match_detail_sha256": "1d4a01530e8b4c4a07b054c915aea3cab28e9f4dd0f68516a9543cf6fb8e5336"
+        },
+        "registry:jpn_hotel_qwen:pool": {
+          "path": "data/subtask_3/jpn/jpn_hotel_pool_v23_gen.jsonl",
+          "sha256": "c133b9390df472946197e5e4d3fee11e40a907d5c427fa31ba781c47fdb30020",
+          "rows": 4756,
+          "matched_rows": 800,
+          "reason_counts": {
+            "test:exact_text": 800,
+            "test:normalized_text": 800
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/jpn_hotel__registry__jpn_hotel_qwen__pool.jsonl",
+          "match_detail_sha256": "b97285571f89547677077cefaf36e27ccedd388d2242f0015dbb9b691ef54ec7"
+        },
+        "registry:jpn_hotel_qwen:silver": {
+          "path": "data/subtask_3/jpn/jpn_hotel_silver_v23_qwen.jsonl",
+          "sha256": "f342c3638d893978307ef1836469fbc33c7f9a13f19bfdf1dbd25020408774b7",
+          "rows": 4756,
+          "matched_rows": 800,
+          "reason_counts": {
+            "test:exact_text": 800,
+            "test:normalized_text": 800
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/jpn_hotel__registry__jpn_hotel_qwen__silver.jsonl",
+          "match_detail_sha256": "b97285571f89547677077cefaf36e27ccedd388d2242f0015dbb9b691ef54ec7"
+        }
+      }
+    },
+    "rus_restaurant": {
+      "dev": {
+        "path": "data/subtask_3/rus/rus_restaurant_dev_task3.jsonl",
+        "rows": 48,
+        "sha256": "04d1a5711e462d401283f946dfe3653773ce80d19b5cc59efa654b4e7c835624"
+      },
+      "test": {
+        "path": "data/subtask_3/rus/rus_restaurant_test_task3.jsonl",
+        "rows": 630,
+        "sha256": "ab7832c6d7ae372bb4b0e8f25412dfa7500e3679373420bb4fdeb60038cdf91e"
+      },
+      "files": {
+        "adopted_train": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_v23_deepseek_gen4k.jsonl",
+          "sha256": "2d1d30bc2c50e6d39e39b78f16046a6013ce49de4ecaa9055f121baf229ff3ea",
+          "rows": 4240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "baseline_train": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_v13.jsonl",
+          "sha256": "2ed744b17b7accebd5d583edb3a0761758f1a6a9bfb27478bb1b431ae832bdc5",
+          "rows": 1766,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "gold_train": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+          "sha256": "a81c2e737a0ed8e3fcfee48864403a3339ab388b7ed545436f45a11ae878b92a",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek:distill": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_v23_deepseek.jsonl",
+          "sha256": "d4d32249a753c3d525773155f7b60da63207cc2bd8748e38b27058c061d78399",
+          "rows": 10130,
+          "matched_rows": 614,
+          "reason_counts": {
+            "test:exact_text": 614,
+            "test:normalized_text": 614
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/rus_restaurant__registry__rus_restaurant_deepseek__distill.jsonl",
+          "match_detail_sha256": "c1c0d04a80aeee2888e645372c727d8bed17f00618bf3f68c6c07a1ffc2edc6e"
+        },
+        "registry:rus_restaurant_deepseek:gold": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+          "sha256": "a81c2e737a0ed8e3fcfee48864403a3339ab388b7ed545436f45a11ae878b92a",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek:pool": {
+          "path": "data/subtask_3/rus/rus_restaurant_pool_v23.jsonl",
+          "sha256": "b6cc6a9706131efcf5f51772f7e26cf346cfb55a6dc7539d9381c87281b2a4cb",
+          "rows": 8630,
+          "matched_rows": 630,
+          "reason_counts": {
+            "test:exact_text": 630,
+            "test:normalized_text": 630
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/rus_restaurant__registry__rus_restaurant_deepseek__pool.jsonl",
+          "match_detail_sha256": "16390085eb9614ed2824701b5a6f3d900c18c273fb962851d7f1eea78945bd5f"
+        },
+        "registry:rus_restaurant_deepseek:silver": {
+          "path": "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek.jsonl",
+          "sha256": "349718b9e77b2b6051eebd911fed96d1cccd896bc841e036b719d328aa1f34b0",
+          "rows": 8630,
+          "matched_rows": 630,
+          "reason_counts": {
+            "test:exact_text": 630,
+            "test:normalized_text": 630
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/rus_restaurant__registry__rus_restaurant_deepseek__silver.jsonl",
+          "match_detail_sha256": "9eae265af55bd5ae09709bc1c6127cba7c8be8c4637cc4e1e77a20710ff6688d"
+        },
+        "registry:rus_restaurant_deepseek_gen4k:distill": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_v23_deepseek_gen4k.jsonl",
+          "sha256": "2d1d30bc2c50e6d39e39b78f16046a6013ce49de4ecaa9055f121baf229ff3ea",
+          "rows": 4240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen4k:gold": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+          "sha256": "a81c2e737a0ed8e3fcfee48864403a3339ab388b7ed545436f45a11ae878b92a",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen4k:pool": {
+          "path": "data/subtask_3/rus/rus_restaurant_pool_v23_gen4k.jsonl",
+          "sha256": "1fa65ca62a2a99cd7221a1d133e41360aab909c289d9adffae51cf027ae6d2e0",
+          "rows": 4000,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen4k:silver": {
+          "path": "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_gen4k.jsonl",
+          "sha256": "b3a273c402b0053ab66566411e34c04af6972fe76d5d25edec782782029ed15b",
+          "rows": 4000,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen8k_cap3k:distill": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_v23_deepseek_gen8k_cap3k.jsonl",
+          "sha256": "3df7a133975f57a03f20ee4ab5db650cde8540fd664d311ac7b2ee7b3d0b9879",
+          "rows": 4240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen8k_cap3k:gold": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+          "sha256": "a81c2e737a0ed8e3fcfee48864403a3339ab388b7ed545436f45a11ae878b92a",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen8k_cap3k:pool": {
+          "path": "data/subtask_3/rus/rus_restaurant_pool_v23_gen.jsonl",
+          "sha256": "d382f41042ef891ab1f3c06f7d286697f626a2ccadbcc945d4822aa4b81f69cc",
+          "rows": 8000,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen8k_cap3k:silver": {
+          "path": "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_gen.jsonl",
+          "sha256": "3887781627811cf4fa31ff022928709fb203f8b66fb21a50cc0253110686feb1",
+          "rows": 8000,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen:distill": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_v23_deepseek_gen.jsonl",
+          "sha256": "64a050304a85a4249c7d847b16b3d7ca73e0cb7e85ec62de00421f57189df836",
+          "rows": 9228,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen:gold": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+          "sha256": "a81c2e737a0ed8e3fcfee48864403a3339ab388b7ed545436f45a11ae878b92a",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen:pool": {
+          "path": "data/subtask_3/rus/rus_restaurant_pool_v23_gen.jsonl",
+          "sha256": "d382f41042ef891ab1f3c06f7d286697f626a2ccadbcc945d4822aa4b81f69cc",
+          "rows": 8000,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_gen:silver": {
+          "path": "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_gen.jsonl",
+          "sha256": "3887781627811cf4fa31ff022928709fb203f8b66fb21a50cc0253110686feb1",
+          "rows": 8000,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_real4k:distill": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_v23_deepseek_real4k.jsonl",
+          "sha256": "46791eb63b7ddec68eb5412c8ec918a307e5c25c4a1130f3c395b7c5077b2368",
+          "rows": 4240,
+          "matched_rows": 206,
+          "reason_counts": {
+            "test:exact_text": 206,
+            "test:normalized_text": 206
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/rus_restaurant__registry__rus_restaurant_deepseek_real4k__distill.jsonl",
+          "match_detail_sha256": "97d5fcb2f19147d199068ed720b3151dd15a508a752539961896cdd70b812793"
+        },
+        "registry:rus_restaurant_deepseek_real4k:gold": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+          "sha256": "a81c2e737a0ed8e3fcfee48864403a3339ab388b7ed545436f45a11ae878b92a",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_real4k:pool": {
+          "path": "data/subtask_3/rus/rus_restaurant_pool_v23_real4k.jsonl",
+          "sha256": "148cf3002900a68fe661001b86f82deaf38ba384ff015a70a0a8350d44c71c01",
+          "rows": 4000,
+          "matched_rows": 296,
+          "reason_counts": {
+            "test:exact_text": 296,
+            "test:normalized_text": 296
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/rus_restaurant__registry__rus_restaurant_deepseek_real4k__pool.jsonl",
+          "match_detail_sha256": "6b28c04e8ea415a997c99ee74ce20b920eeaf4eaa3b77bc2cba61736844d97be"
+        },
+        "registry:rus_restaurant_deepseek_real4k:silver": {
+          "path": "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_real4k.jsonl",
+          "sha256": "f3e443f3a3057fd22dd2e3f1cc405931ac610828bd28308f8793c9a71678c9d2",
+          "rows": 4000,
+          "matched_rows": 296,
+          "reason_counts": {
+            "test:exact_text": 296,
+            "test:normalized_text": 296
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/rus_restaurant__registry__rus_restaurant_deepseek_real4k__silver.jsonl",
+          "match_detail_sha256": "92c626a1767f5034fcf6f083ddc7599de4ec24ff1df87f7ea22364f6715576b1"
+        },
+        "registry:rus_restaurant_deepseek_trans4k:distill": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_v23_deepseek_trans4k.jsonl",
+          "sha256": "837f23383f6081fa7914d1da97194eb6ebf1c7a2b1229bd91cdac265880f824d",
+          "rows": 4240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_trans4k:gold": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+          "sha256": "a81c2e737a0ed8e3fcfee48864403a3339ab388b7ed545436f45a11ae878b92a",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_trans4k:pool": {
+          "path": "data/subtask_3/rus/rus_restaurant_pool_v23_trans4k.jsonl",
+          "sha256": "8a7d22d075203adcba7b1ebd351a54adec0c2e2f831c90598b4cb59c0adbaa30",
+          "rows": 3466,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_deepseek_trans4k:silver": {
+          "path": "data/subtask_3/rus/rus_restaurant_silver_v23_deepseek_trans4k.jsonl",
+          "sha256": "4342289fd186b30cd475d2b5c4f88c3a60a236ab7824e6815106a649069112ac",
+          "rows": 3466,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_qwen:distill": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_v23_qwen.jsonl",
+          "sha256": "018573408c6b75cf25b63f0c9d96a1473f7f18e64b70a53fadf5783987792c9a",
+          "rows": 9602,
+          "matched_rows": 565,
+          "reason_counts": {
+            "test:exact_text": 565,
+            "test:normalized_text": 565
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/rus_restaurant__registry__rus_restaurant_qwen__distill.jsonl",
+          "match_detail_sha256": "9cecdf3399e89d7af20b6c4d18f272718fbc0df9f51f358382b9751afd51fdc1"
+        },
+        "registry:rus_restaurant_qwen:gold": {
+          "path": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+          "sha256": "a81c2e737a0ed8e3fcfee48864403a3339ab388b7ed545436f45a11ae878b92a",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:rus_restaurant_qwen:pool": {
+          "path": "data/subtask_3/rus/rus_restaurant_pool_v23.jsonl",
+          "sha256": "b6cc6a9706131efcf5f51772f7e26cf346cfb55a6dc7539d9381c87281b2a4cb",
+          "rows": 8630,
+          "matched_rows": 630,
+          "reason_counts": {
+            "test:exact_text": 630,
+            "test:normalized_text": 630
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/rus_restaurant__registry__rus_restaurant_qwen__pool.jsonl",
+          "match_detail_sha256": "16390085eb9614ed2824701b5a6f3d900c18c273fb962851d7f1eea78945bd5f"
+        },
+        "registry:rus_restaurant_qwen:silver": {
+          "path": "data/subtask_3/rus/rus_restaurant_silver_v23_qwen.jsonl",
+          "sha256": "bbc0788a720171910f0380d3adcbf29d3cfcd38a54e942d1835e2a39b917508f",
+          "rows": 8630,
+          "matched_rows": 630,
+          "reason_counts": {
+            "test:exact_text": 630,
+            "test:normalized_text": 630
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/rus_restaurant__registry__rus_restaurant_qwen__silver.jsonl",
+          "match_detail_sha256": "16390085eb9614ed2824701b5a6f3d900c18c273fb962851d7f1eea78945bd5f"
+        }
+      }
+    },
+    "tat_restaurant": {
+      "dev": {
+        "path": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+        "rows": 48,
+        "sha256": "9c9b9eb1a2ab7ac5d40dada5e80e3509e7a702e153b549b7d86c74e22bd10a4c"
+      },
+      "test": {
+        "path": "data/subtask_3/tat/tat_restaurant_test_task3.jsonl",
+        "rows": 630,
+        "sha256": "815bfc353d4824178b450d935d3b9bd769387c770e336f3a4a595427c25990ee"
+      },
+      "files": {
+        "adopted_train": {
+          "path": "data/subtask_3/tat/tat_restaurant_train_v23_qwen.jsonl",
+          "sha256": "f6d0e77f48914277ceaa14511d168328345bef1c3547137fe08bdf31bb63e623",
+          "rows": 5155,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "baseline_train": {
+          "path": "data/subtask_3/tat/tat_restaurant_train_v13.jsonl",
+          "sha256": "20ef6129c57b6c04096eb51eda1c25d81c0ec672e244a7949b3e37f8505ddf31",
+          "rows": 1599,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "gold_train": {
+          "path": "data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl",
+          "sha256": "1f374e08dfd3fac61d9ca6935e185958f889a24a6690dacec6ff6497d4d54917",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:tat_restaurant_deepseek:distill": {
+          "path": "data/subtask_3/tat/tat_restaurant_train_v23_deepseek.jsonl",
+          "sha256": "1bd3a4090741ea54c9fd656af5d5599f37850448ca62680dea1e5a54fe240981",
+          "rows": 6157,
+          "matched_rows": 590,
+          "reason_counts": {
+            "test:exact_text": 590,
+            "test:normalized_text": 590
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/tat_restaurant__registry__tat_restaurant_deepseek__distill.jsonl",
+          "match_detail_sha256": "e0c9860668438fd6c88fe6fb94e111489cf66a5fb731ff6bcaec38a0dc4fd31a"
+        },
+        "registry:tat_restaurant_deepseek:gold": {
+          "path": "data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl",
+          "sha256": "1f374e08dfd3fac61d9ca6935e185958f889a24a6690dacec6ff6497d4d54917",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:tat_restaurant_deepseek:pool": {
+          "path": "data/subtask_3/tat/tat_restaurant_pool_v23_native.jsonl",
+          "sha256": "4f6da13b6e09d4de5dfbba55a958398f328996232b73a1ae6ae459749027d2b6",
+          "rows": 3986,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:tat_restaurant_deepseek:silver": {
+          "path": "data/subtask_3/tat/tat_restaurant_silver_v23_deepseek.jsonl",
+          "sha256": "cd1da8eff8eedd1848165ef829d5f44fae65e78acff437d27117304f09f6eea8",
+          "rows": 4616,
+          "matched_rows": 630,
+          "reason_counts": {
+            "test:exact_text": 630,
+            "test:normalized_text": 630
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/tat_restaurant__registry__tat_restaurant_deepseek__silver.jsonl",
+          "match_detail_sha256": "d955b6c30c6276076ef40a94da2a5b251f2c81b06a3536fed18eb987c17c3f13"
+        },
+        "registry:tat_restaurant_qwen:distill": {
+          "path": "data/subtask_3/tat/tat_restaurant_train_v23_qwen.jsonl",
+          "sha256": "f6d0e77f48914277ceaa14511d168328345bef1c3547137fe08bdf31bb63e623",
+          "rows": 5155,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:tat_restaurant_qwen:gold": {
+          "path": "data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl",
+          "sha256": "1f374e08dfd3fac61d9ca6935e185958f889a24a6690dacec6ff6497d4d54917",
+          "rows": 1240,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:tat_restaurant_qwen:pool": {
+          "path": "data/subtask_3/tat/tat_restaurant_pool_v23_native.jsonl",
+          "sha256": "4f6da13b6e09d4de5dfbba55a958398f328996232b73a1ae6ae459749027d2b6",
+          "rows": 3986,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:tat_restaurant_qwen:silver": {
+          "path": "data/subtask_3/tat/tat_restaurant_silver_v23_qwen.jsonl",
+          "sha256": "83a65ec6ede053fe1b4bb4589194c1cf4a2d90f8136fde854ad9be4ff26cfdff",
+          "rows": 3986,
+          "matched_rows": 0,
+          "reason_counts": {}
+        }
+      }
+    },
+    "ukr_restaurant": {
+      "dev": {
+        "path": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "rows": 48,
+        "sha256": "2daa110ba03d4dfaa4aa91da01e61d22da495d4ad65a00a0178dd3f28b5608a0"
+      },
+      "test": {
+        "path": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+        "rows": 630,
+        "sha256": "b52c53a7ca8d5a4bbf3855a67ff38fb0642fa920553bd65601d5abd171c539c0"
+      },
+      "files": {
+        "adopted_train": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek.jsonl",
+          "sha256": "081951922f17ada1a818e4297f7837826c4af1d776a683180365bf02fc19fc87",
+          "rows": 9105,
+          "matched_rows": 605,
+          "reason_counts": {
+            "test:exact_text": 604,
+            "test:normalized_text": 604,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__adopted_train.jsonl",
+          "match_detail_sha256": "0362632d9e350a5220c563e760b2e3193a014d17003fc9a574ab0f2665cf5fc2"
+        },
+        "baseline_train": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_train_v13b.jsonl",
+          "sha256": "d820847a19e263d2f212836deea7d14d6d4527ac7885ff3804c64a5a84301312",
+          "rows": 2967,
+          "matched_rows": 1,
+          "reason_counts": {
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__baseline_train.jsonl",
+          "match_detail_sha256": "01326812ed67b348b41cf82f58f8805c0ac17422e7bf01518c8bfc24e029f7c5"
+        },
+        "clean_baseline_train": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl",
+          "sha256": "46254e55a5bbbea56f6cc3dce4452c19e01b67a25de179a1bcc73fd7199d53b5",
+          "rows": 2966,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "clean_train": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek_inductive.jsonl",
+          "sha256": "1c2158a2766c845b5e16d771ca8b5062fdf1d531afc9c5fdf3756563948a50f8",
+          "rows": 8500,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "gold_train": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_train_alltasks.jsonl",
+          "sha256": "6c1e4843fb9af233a1103c751b56b99596f724ef9309ff6156f4041e4560bff1",
+          "rows": 1240,
+          "matched_rows": 1,
+          "reason_counts": {
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__gold_train.jsonl",
+          "match_detail_sha256": "42ab3b4344ff5831a957d558b892de291eeab4388f5f17879912ef8ddadbc6f9"
+        },
+        "registry:ukr_restaurant_deepseek:distill": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek.jsonl",
+          "sha256": "081951922f17ada1a818e4297f7837826c4af1d776a683180365bf02fc19fc87",
+          "rows": 9105,
+          "matched_rows": 605,
+          "reason_counts": {
+            "test:exact_text": 604,
+            "test:normalized_text": 604,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__registry__ukr_restaurant_deepseek__distill.jsonl",
+          "match_detail_sha256": "0362632d9e350a5220c563e760b2e3193a014d17003fc9a574ab0f2665cf5fc2"
+        },
+        "registry:ukr_restaurant_deepseek:gold": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_train_alltasks.jsonl",
+          "sha256": "6c1e4843fb9af233a1103c751b56b99596f724ef9309ff6156f4041e4560bff1",
+          "rows": 1240,
+          "matched_rows": 1,
+          "reason_counts": {
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__registry__ukr_restaurant_deepseek__gold.jsonl",
+          "match_detail_sha256": "42ab3b4344ff5831a957d558b892de291eeab4388f5f17879912ef8ddadbc6f9"
+        },
+        "registry:ukr_restaurant_deepseek:pool": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_pool_v23_trans.jsonl",
+          "sha256": "474d0cd69cd693e34863a4f4e4de64986b35d6e5d3e11b379ffaa9066e0d51f7",
+          "rows": 6551,
+          "matched_rows": 630,
+          "reason_counts": {
+            "test:exact_text": 630,
+            "test:normalized_text": 630
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__registry__ukr_restaurant_deepseek__pool.jsonl",
+          "match_detail_sha256": "a0a4fbe285c9bd60e3a43952c716b4721d02a8ada007dbe54266c767b525811e"
+        },
+        "registry:ukr_restaurant_deepseek:silver": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_silver_v23_deepseek.jsonl",
+          "sha256": "59d333c8ed3e8da2a6c5e8713a7a833e79281110de8ef6d28cccf0e2bd707c23",
+          "rows": 6551,
+          "matched_rows": 630,
+          "reason_counts": {
+            "test:exact_text": 630,
+            "test:normalized_text": 630
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__registry__ukr_restaurant_deepseek__silver.jsonl",
+          "match_detail_sha256": "09f0cc6deb3f0418974671809f80300a6f7f54757d718732c4922559f6e633b9"
+        },
+        "registry:ukr_restaurant_qwen:distill": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_train_v23_qwen.jsonl",
+          "sha256": "4ab9d9c6f9912ac7069b98eaadf9bc31171cc866755761eba2dc8b505135eae1",
+          "rows": 7402,
+          "matched_rows": 588,
+          "reason_counts": {
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1,
+            "test:exact_text": 587,
+            "test:normalized_text": 587
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__registry__ukr_restaurant_qwen__distill.jsonl",
+          "match_detail_sha256": "824a9f87f7f16de6799377cf344bcf5d7e9bd32406ccc706bf4a8fd93ce416ad"
+        },
+        "registry:ukr_restaurant_qwen:gold": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_train_alltasks.jsonl",
+          "sha256": "6c1e4843fb9af233a1103c751b56b99596f724ef9309ff6156f4041e4560bff1",
+          "rows": 1240,
+          "matched_rows": 1,
+          "reason_counts": {
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__registry__ukr_restaurant_qwen__gold.jsonl",
+          "match_detail_sha256": "42ab3b4344ff5831a957d558b892de291eeab4388f5f17879912ef8ddadbc6f9"
+        },
+        "registry:ukr_restaurant_qwen:pool": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_pool_v23_trans.jsonl",
+          "sha256": "474d0cd69cd693e34863a4f4e4de64986b35d6e5d3e11b379ffaa9066e0d51f7",
+          "rows": 6551,
+          "matched_rows": 630,
+          "reason_counts": {
+            "test:exact_text": 630,
+            "test:normalized_text": 630
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__registry__ukr_restaurant_qwen__pool.jsonl",
+          "match_detail_sha256": "a0a4fbe285c9bd60e3a43952c716b4721d02a8ada007dbe54266c767b525811e"
+        },
+        "registry:ukr_restaurant_qwen:silver": {
+          "path": "data/subtask_3/ukr/ukr_restaurant_silver_v23_qwen.jsonl",
+          "sha256": "8cb357fa47f62f68d01c003f08a518511cb6202fa567902859ee514781cdc228",
+          "rows": 6551,
+          "matched_rows": 630,
+          "reason_counts": {
+            "test:exact_text": 630,
+            "test:normalized_text": 630
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/ukr_restaurant__registry__ukr_restaurant_qwen__silver.jsonl",
+          "match_detail_sha256": "a0a4fbe285c9bd60e3a43952c716b4721d02a8ada007dbe54266c767b525811e"
+        }
+      }
+    },
+    "zho_laptop": {
+      "dev": {
+        "path": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+        "rows": 300,
+        "sha256": "2251f376139777906ecc509b5709988abdf56bee0f15af52781cfdbb65ca6cdd"
+      },
+      "test": {
+        "path": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+        "rows": 1000,
+        "sha256": "413f447616b870b6af21d57d813daccf99d21604125dc327ee0c8cd36e1b4d37"
+      },
+      "files": {
+        "gold_train": {
+          "path": "data/subtask_3/zho/zho_laptop_train_alltasks.jsonl",
+          "sha256": "cb42521ee379ecfdbad87b2d2fd32eb4d5dc4add4b0693965325ec29e58009ca",
+          "rows": 3490,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:zho_laptop_deepseek:distill": {
+          "path": "data/subtask_3/zho/zho_laptop_train_v23_deepseek.jsonl",
+          "sha256": "878f5d13361dc56a53a6758528ac44c8a2ae93e144cbe02ef97ea4e27294c710",
+          "rows": 10690,
+          "matched_rows": 967,
+          "reason_counts": {
+            "test:exact_text": 967,
+            "test:normalized_text": 967
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_laptop__registry__zho_laptop_deepseek__distill.jsonl",
+          "match_detail_sha256": "01295ee18cacc086b0d31bfe11253c4894051d228c35b036b9cfbb88acf150dd"
+        },
+        "registry:zho_laptop_deepseek:gold": {
+          "path": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl",
+          "sha256": "610d8d18ba3af2b2f9fe182fb5bf411efc83574f1491f3beb870b0bb02c32d59",
+          "rows": 5534,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:zho_laptop_deepseek:pool": {
+          "path": "data/subtask_3/zho/zho_laptop_pool_v23.jsonl",
+          "sha256": "2baf8598684dabd123549dfa96c1526e498ac2c16ba5e1f350f21bef5b381561",
+          "rows": 7415,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_laptop__registry__zho_laptop_deepseek__pool.jsonl",
+          "match_detail_sha256": "58c0352968ca82d89eddb24ed2440a5effb3f239378d1beef03e70c80b7e64c2"
+        },
+        "registry:zho_laptop_deepseek:silver": {
+          "path": "data/subtask_3/zho/zho_laptop_silver_v23_deepseek.jsonl",
+          "sha256": "33feec96087c46e34c1cac04b4cf29c25d7dc924094898a74789c83bb060a1b5",
+          "rows": 7415,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_laptop__registry__zho_laptop_deepseek__silver.jsonl",
+          "match_detail_sha256": "3294e9d8ac8aa0bf7b0c90af779f5086a9ebbbdb3d1f8647a7515689f300c9ca"
+        },
+        "registry:zho_laptop_qwen:distill": {
+          "path": "data/subtask_3/zho/zho_laptop_train_v23_qwen.jsonl",
+          "sha256": "38d98a77f65d53e7f565c2639107266d10746a25cfaf031c1c0ed85693227f65",
+          "rows": 8234,
+          "matched_rows": 508,
+          "reason_counts": {
+            "test:exact_text": 508,
+            "test:normalized_text": 508
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_laptop__registry__zho_laptop_qwen__distill.jsonl",
+          "match_detail_sha256": "03acd02309d40bd2f46d9e85af386b6ce5649e283e20e3bafa3684d4bfb5efab"
+        },
+        "registry:zho_laptop_qwen:gold": {
+          "path": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl",
+          "sha256": "610d8d18ba3af2b2f9fe182fb5bf411efc83574f1491f3beb870b0bb02c32d59",
+          "rows": 5534,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:zho_laptop_qwen:pool": {
+          "path": "data/subtask_3/zho/zho_laptop_pool_v23_gen.jsonl",
+          "sha256": "2f160ed5a7d057ee5412657bbf8f74712bfcc4ca6493f2d20735bfbce2537a83",
+          "rows": 4923,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_laptop__registry__zho_laptop_qwen__pool.jsonl",
+          "match_detail_sha256": "813373e114c84a8722a0d44666c91cbc1a9576d30504130fdbc16a7a079e3193"
+        },
+        "registry:zho_laptop_qwen:silver": {
+          "path": "data/subtask_3/zho/zho_laptop_silver_v23_qwen.jsonl",
+          "sha256": "8a166e55749ee41fbd50ee35b15661a0db2dbcd410884fcbe7bf1275b5078a54",
+          "rows": 4923,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 1000,
+            "test:normalized_text": 1000
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_laptop__registry__zho_laptop_qwen__silver.jsonl",
+          "match_detail_sha256": "813373e114c84a8722a0d44666c91cbc1a9576d30504130fdbc16a7a079e3193"
+        }
+      }
+    },
+    "zho_restaurant": {
+      "dev": {
+        "path": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "rows": 300,
+        "sha256": "f1f44388802ea74490374138f9f976dbcb8346a3184c0da7e4c4c3bcec6d2ea9"
+      },
+      "test": {
+        "path": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+        "rows": 1000,
+        "sha256": "e81cd42039d28e9e486a15bf3cfbcd40f42169e80807f8a955e27b908391b141"
+      },
+      "files": {
+        "adopted_train": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real.jsonl",
+          "sha256": "c3deb86252426f968b6965f500df1f1db1eb6b12f56d4630fc70d51236212341",
+          "rows": 10911,
+          "matched_rows": 979,
+          "reason_counts": {
+            "test:exact_text": 976,
+            "test:normalized_text": 979,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__adopted_train.jsonl",
+          "match_detail_sha256": "fe9739c5453e017d38c57faf4ceeebb3f0fbaaa2d7c69ec102b412c09afc14b2"
+        },
+        "baseline_train": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+          "sha256": "6c3290734269f2bd4852daf57339fec7436af46cb93e3821c67f5926fd133849",
+          "rows": 6050,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "clean_train": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real_inductive.jsonl",
+          "sha256": "0622d5925be09a0842eace8b6d88f536925a827c9c960d425e52522de00d403e",
+          "rows": 9932,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "gold_train": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+          "sha256": "6c3290734269f2bd4852daf57339fec7436af46cb93e3821c67f5926fd133849",
+          "rows": 6050,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:zho_restaurant_deepseek:distill": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_v23_deepseek.jsonl",
+          "sha256": "d54828b66d9221ad2b8a804d19e92657a390d6538dbd718d671fa49946ba270a",
+          "rows": 10941,
+          "matched_rows": 978,
+          "reason_counts": {
+            "test:exact_text": 975,
+            "test:normalized_text": 978,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__registry__zho_restaurant_deepseek__distill.jsonl",
+          "match_detail_sha256": "297e6f9b358f5574fa503cbb242d875647109e70ee1d16d5990b1d91ff5b5428"
+        },
+        "registry:zho_restaurant_deepseek:gold": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+          "sha256": "6c3290734269f2bd4852daf57339fec7436af46cb93e3821c67f5926fd133849",
+          "rows": 6050,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:zho_restaurant_deepseek:pool": {
+          "path": "data/subtask_3/zho/zho_restaurant_pool_v23_gen.jsonl",
+          "sha256": "c38045145c1bc551f31cfde7be467e9766c4553e62a6095cc073e2541bf758c9",
+          "rows": 4930,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 997,
+            "test:normalized_text": 1000,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__registry__zho_restaurant_deepseek__pool.jsonl",
+          "match_detail_sha256": "e5c78e5e1e403046c02d61ec8f3dd75b71d382ae38543bc7298d77d7dc556065"
+        },
+        "registry:zho_restaurant_deepseek:silver": {
+          "path": "data/subtask_3/zho/zho_restaurant_silver_v23_deepseek.jsonl",
+          "sha256": "254db9b353ee91028ea541181bedeace017276ea852d4d8f87d1468075c586a6",
+          "rows": 4930,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 997,
+            "test:normalized_text": 1000,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__registry__zho_restaurant_deepseek__silver.jsonl",
+          "match_detail_sha256": "f5ef57466a6b45884698d557eaaa745bceea47cfefafec7785253546aa5245a6"
+        },
+        "registry:zho_restaurant_deepseek_real:distill": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real.jsonl",
+          "sha256": "c3deb86252426f968b6965f500df1f1db1eb6b12f56d4630fc70d51236212341",
+          "rows": 10911,
+          "matched_rows": 979,
+          "reason_counts": {
+            "test:exact_text": 976,
+            "test:normalized_text": 979,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__registry__zho_restaurant_deepseek_real__distill.jsonl",
+          "match_detail_sha256": "fe9739c5453e017d38c57faf4ceeebb3f0fbaaa2d7c69ec102b412c09afc14b2"
+        },
+        "registry:zho_restaurant_deepseek_real:gold": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+          "sha256": "6c3290734269f2bd4852daf57339fec7436af46cb93e3821c67f5926fd133849",
+          "rows": 6050,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:zho_restaurant_deepseek_real:pool": {
+          "path": "data/subtask_3/zho/zho_restaurant_pool_v23_real.jsonl",
+          "sha256": "52830fb0746e77d136316bf26025d9c3a86214f8c9be4131bdad5472f45d2df3",
+          "rows": 5000,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 997,
+            "test:normalized_text": 1000,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__registry__zho_restaurant_deepseek_real__pool.jsonl",
+          "match_detail_sha256": "99da3f8bc682a88f3ea99310c50b11f7c3afdcd761a4b633b36f79826c6877dc"
+        },
+        "registry:zho_restaurant_deepseek_real:silver": {
+          "path": "data/subtask_3/zho/zho_restaurant_silver_v23_deepseek_real.jsonl",
+          "sha256": "dcf80c73d9d2c9effb16516b9d6591d43657fda8600e9621e1eb487ec914ac4a",
+          "rows": 5000,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 997,
+            "test:normalized_text": 1000,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__registry__zho_restaurant_deepseek_real__silver.jsonl",
+          "match_detail_sha256": "ef3ba3da613a9dc5182104131350f47325d78f54c10064869c1cf4c552d85b39"
+        },
+        "registry:zho_restaurant_qwen:distill": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_v23_qwen.jsonl",
+          "sha256": "c78dc242615ed58d8def1f99e11143954bdc3f9e7f4d20585937c5701f119ebe",
+          "rows": 10826,
+          "matched_rows": 985,
+          "reason_counts": {
+            "test:exact_text": 982,
+            "test:normalized_text": 985,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__registry__zho_restaurant_qwen__distill.jsonl",
+          "match_detail_sha256": "c3dea1fc75a75ff12691ea179cb343345c26b655a1520c2920ce86e42b187682"
+        },
+        "registry:zho_restaurant_qwen:gold": {
+          "path": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+          "sha256": "6c3290734269f2bd4852daf57339fec7436af46cb93e3821c67f5926fd133849",
+          "rows": 6050,
+          "matched_rows": 0,
+          "reason_counts": {}
+        },
+        "registry:zho_restaurant_qwen:pool": {
+          "path": "data/subtask_3/zho/zho_restaurant_pool_v23_gen.jsonl",
+          "sha256": "c38045145c1bc551f31cfde7be467e9766c4553e62a6095cc073e2541bf758c9",
+          "rows": 4930,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 997,
+            "test:normalized_text": 1000,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__registry__zho_restaurant_qwen__pool.jsonl",
+          "match_detail_sha256": "e5c78e5e1e403046c02d61ec8f3dd75b71d382ae38543bc7298d77d7dc556065"
+        },
+        "registry:zho_restaurant_qwen:silver": {
+          "path": "data/subtask_3/zho/zho_restaurant_silver_v23_qwen.jsonl",
+          "sha256": "af61328c385f546b06e761e6d1e498969759d471f39d06c341a575f42b87e2d1",
+          "rows": 4930,
+          "matched_rows": 1000,
+          "reason_counts": {
+            "test:exact_text": 997,
+            "test:normalized_text": 1000,
+            "dev:exact_text": 1,
+            "dev:normalized_text": 1
+          },
+          "match_detail": "data/audits/tallip_kd/contamination/zho_restaurant__registry__zho_restaurant_qwen__silver.jsonl",
+          "match_detail_sha256": "e5c78e5e1e403046c02d61ec8f3dd75b71d382ae38543bc7298d77d7dc556065"
+        }
+      }
+    }
+  }
+}

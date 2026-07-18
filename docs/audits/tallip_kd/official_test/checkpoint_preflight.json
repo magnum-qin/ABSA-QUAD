@@ -1,0 +1,258 @@
+{
+  "datasets": {
+    "eng_laptop": {
+      "rows": 1000,
+      "local_test": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+      "local_test_sha256": "76dad16c5aba037dbeb8f839f73eb0c7f84a15ea621dbe959ee58a1189f34688",
+      "main_system": "eng_laptop_clean_kd"
+    },
+    "eng_restaurant": {
+      "rows": 1000,
+      "local_test": "data/subtask_3/eng/eng_restaurant_test_task3.jsonl",
+      "local_test_sha256": "f5675ec4a26feec85e09471bc9310a1d985dc22ca2dfe1cb8209f7423ca48b95",
+      "main_system": "eng_restaurant_v16"
+    },
+    "jpn_hotel": {
+      "rows": 800,
+      "local_test": "data/subtask_3/jpn/jpn_hotel_test_task3.jsonl",
+      "local_test_sha256": "ff991f6b36c29d5731146725bb1c0f36eba19111a47ba5d5d47847c677538cb6",
+      "main_system": "jpn_hotel_v16_no_aug"
+    },
+    "rus_restaurant": {
+      "rows": 630,
+      "local_test": "data/subtask_3/rus/rus_restaurant_test_task3.jsonl",
+      "local_test_sha256": "ab7832c6d7ae372bb4b0e8f25412dfa7500e3679373420bb4fdeb60038cdf91e",
+      "main_system": "rus_restaurant_gen4k_kd"
+    },
+    "tat_restaurant": {
+      "rows": 630,
+      "local_test": "data/subtask_3/tat/tat_restaurant_test_task3.jsonl",
+      "local_test_sha256": "815bfc353d4824178b450d935d3b9bd769387c770e336f3a4a595427c25990ee",
+      "main_system": "tat_restaurant_qwen_kd"
+    },
+    "ukr_restaurant": {
+      "rows": 630,
+      "local_test": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+      "local_test_sha256": "b52c53a7ca8d5a4bbf3855a67ff38fb0642fa920553bd65601d5abd171c539c0",
+      "main_system": "ukr_restaurant_clean_kd"
+    },
+    "zho_laptop": {
+      "rows": 1000,
+      "local_test": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+      "local_test_sha256": "413f447616b870b6af21d57d813daccf99d21604125dc327ee0c8cd36e1b4d37",
+      "main_system": "zho_laptop_v16"
+    },
+    "zho_restaurant": {
+      "rows": 1000,
+      "local_test": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+      "local_test_sha256": "e81cd42039d28e9e486a15bf3cfbcd40f42169e80807f8a955e27b908391b141",
+      "main_system": "zho_restaurant_clean_kd"
+    }
+  },
+  "inference": {
+    "eng_laptop_clean_kd": {
+      "dataset": "eng_laptop",
+      "config": "configs/pipeline_eng_laptop_v23_deepseek.yaml",
+      "config_sha256": "cea0fc5e6f731448f823e7c390805d9005c6ac1ca75695288cb5c811b85f21e0",
+      "vote": 4,
+      "topk": 0.0,
+      "checkpoints": [
+        {
+          "seed": 42,
+          "path": "checkpoints/v23_eng_laptop_deepseek_inductive_seed42/checkpoint_best.pt",
+          "sha256": "d5b53d687dd661c313413e5b330795475cc164170ccd249b97135d165930831e"
+        },
+        {
+          "seed": 123,
+          "path": "checkpoints/v23_eng_laptop_deepseek_inductive_seed123/checkpoint_best.pt",
+          "sha256": "7d293daf4910a289c1a2645d1c6584789c5c82f2f856c3b16eb19d6c20498363"
+        },
+        {
+          "seed": 456,
+          "path": "checkpoints/v23_eng_laptop_deepseek_inductive_seed456/checkpoint_best.pt",
+          "sha256": "b6d5a8d4d930373c96c5cc358bfbcd77edbf73b713eb1c9fd9be33347d2e8380"
+        },
+        {
+          "seed": 789,
+          "path": "checkpoints/v23_eng_laptop_deepseek_inductive_seed789/checkpoint_best.pt",
+          "sha256": "8876e4d60e03b60fa94900d789b765a8903cbf92848718589429cb1967f94841"
+        },
+        {
+          "seed": 1024,
+          "path": "checkpoints/v23_eng_laptop_deepseek_inductive_seed1024/checkpoint_best.pt",
+          "sha256": "7a1f7deef5796b54887792989c8780546384a2a505d6e242fa04ac62cf473100"
+        }
+      ]
+    },
+    "eng_laptop_clean_baseline": {
+      "dataset": "eng_laptop",
+      "config": "configs/pipeline_eng_laptop_v5repro.yaml",
+      "config_sha256": "eda1dc5c601a8332808cb559aa04f31ba9da519bfec7c5b036285e2d7a571437",
+      "vote": 3,
+      "topk": 0.0,
+      "checkpoints": [
+        {
+          "seed": 42,
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed42/checkpoint_best.pt",
+          "sha256": "dc3c802f41fb0bc14c53596a94c4b044108b49aa258624e15daaad995cc3501e"
+        },
+        {
+          "seed": 123,
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed123/checkpoint_best.pt",
+          "sha256": "71acc3aaf339bfaa7216842d991a0f54602d7c89a5e745e2867834cbb1319521"
+        },
+        {
+          "seed": 456,
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed456/checkpoint_best.pt",
+          "sha256": "225b4c608f9fee5a05960fa9e660126fe4d321164ec24402229e8f904c2c2edb"
+        },
+        {
+          "seed": 789,
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed789/checkpoint_best.pt",
+          "sha256": "5a7387ec18b86ac1bb6853b12b8edd7800573d318c244300fa78353c3b22c03e"
+        },
+        {
+          "seed": 1024,
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed1024/checkpoint_best.pt",
+          "sha256": "bf7ab77a87cd495cd5495864419f30512abe8921d596b11846a689d54977e0b0"
+        }
+      ]
+    },
+    "ukr_restaurant_clean_kd": {
+      "dataset": "ukr_restaurant",
+      "config": "configs/pipeline_ukr_restaurant_v23_deepseek.yaml",
+      "config_sha256": "274d9553794887de8aece2b4a334fdfce2ed6d33daa0e9bda3abd437e8e99688",
+      "vote": 3,
+      "topk": 0.0,
+      "checkpoints": [
+        {
+          "seed": 42,
+          "path": "checkpoints/v23_ukr_restaurant_deepseek_inductive_seed42/checkpoint_best.pt",
+          "sha256": "4a01dcb596b86f33db66a7f30ca29bc0c4fe00f68430151291f395652a628cdd"
+        },
+        {
+          "seed": 123,
+          "path": "checkpoints/v23_ukr_restaurant_deepseek_inductive_seed123/checkpoint_best.pt",
+          "sha256": "6037ca8cd0bfb65bcb004330b004ddec1896f2ecf4ff432144792de34259c5b0"
+        },
+        {
+          "seed": 456,
+          "path": "checkpoints/v23_ukr_restaurant_deepseek_inductive_seed456/checkpoint_best.pt",
+          "sha256": "5cea82c82aa77aa2cea644098abec7eff80b153e475f1a62591df109c15286f9"
+        },
+        {
+          "seed": 789,
+          "path": "checkpoints/v23_ukr_restaurant_deepseek_inductive_seed789/checkpoint_best.pt",
+          "sha256": "f11b5d53eaa2f4046c551ad5043524bce91c608a0b2f266d6d1edf1c5a35c3d2"
+        },
+        {
+          "seed": 1024,
+          "path": "checkpoints/v23_ukr_restaurant_deepseek_inductive_seed1024/checkpoint_best.pt",
+          "sha256": "c298810ed0360f35daf8f3c00ee2d3a502d8d65a790e0c397f4c2052f51e45c4"
+        }
+      ]
+    },
+    "ukr_restaurant_clean_baseline": {
+      "dataset": "ukr_restaurant",
+      "config": "configs/pipeline_ukr_v13b.yaml",
+      "config_sha256": "7d3ddd09c1511ba9d52315abed2eca1d6df5aff9d5798158a440ff7d1a0a119f",
+      "vote": 4,
+      "topk": 0.0,
+      "checkpoints": [
+        {
+          "seed": 42,
+          "path": "checkpoints/v13b_ukr_inductive_seed42/checkpoint_best.pt",
+          "sha256": "f8c6167c491ddd13eb6e4db7a1546e8fd8b51154e19a8f7bb3145316d7d05589"
+        },
+        {
+          "seed": 123,
+          "path": "checkpoints/v13b_ukr_inductive_seed123/checkpoint_best.pt",
+          "sha256": "8137744d9271c575b8a969f64806f69d231e7dece977453a82d44cdebb860caa"
+        },
+        {
+          "seed": 456,
+          "path": "checkpoints/v13b_ukr_inductive_seed456/checkpoint_best.pt",
+          "sha256": "62bc91b098c7625eec7a6fd34c4f81667beb95e4be221286fd43ba86eecaada1"
+        },
+        {
+          "seed": 789,
+          "path": "checkpoints/v13b_ukr_inductive_seed789/checkpoint_best.pt",
+          "sha256": "24a78bf1f61174ebb585041609ba619f869403f7b47077aea69f7c073289bc88"
+        },
+        {
+          "seed": 1024,
+          "path": "checkpoints/v13b_ukr_inductive_seed1024/checkpoint_best.pt",
+          "sha256": "3df684270848276155b9319b4b6727d79f3d423bc71bef2108b08b0a3259aa6c"
+        }
+      ]
+    },
+    "zho_restaurant_clean_kd": {
+      "dataset": "zho_restaurant",
+      "config": "configs/pipeline_zho_restaurant_v23_qwen.yaml",
+      "config_sha256": "54bd519b112bd5f4dd91e5876b6420a9d8aa2f1dcf16b7f509d1d4ed97af6538",
+      "vote": 3,
+      "topk": 0.0,
+      "checkpoints": [
+        {
+          "seed": 42,
+          "path": "checkpoints/v23_zho_restaurant_deepseek_real_inductive_seed42/checkpoint_best.pt",
+          "sha256": "092ecd65cdc365abb7aab8f539d714e7fd17d4313ca9a18a323cda37d5a3700a"
+        },
+        {
+          "seed": 123,
+          "path": "checkpoints/v23_zho_restaurant_deepseek_real_inductive_seed123/checkpoint_best.pt",
+          "sha256": "8d4da44e4b246ffd35a5082a514c53092a19dc95f6da7e1c93181795cf461b44"
+        },
+        {
+          "seed": 456,
+          "path": "checkpoints/v23_zho_restaurant_deepseek_real_inductive_seed456/checkpoint_best.pt",
+          "sha256": "89bd544953e16a4549e365a2de0622050bc2f8fd034175bf8822256c880afa96"
+        },
+        {
+          "seed": 789,
+          "path": "checkpoints/v23_zho_restaurant_deepseek_real_inductive_seed789/checkpoint_best.pt",
+          "sha256": "5e02b689fdde02e45dc370639e83f6d9b56926dd486e60b9fdd725f92a908471"
+        },
+        {
+          "seed": 1024,
+          "path": "checkpoints/v23_zho_restaurant_deepseek_real_inductive_seed1024/checkpoint_best.pt",
+          "sha256": "5dc20fb7adf4c136cfe6e0fece9dac26dc6fffbb6e6bcfdb881569f889ea7ebb"
+        }
+      ]
+    },
+    "tat_restaurant_deepseek_matched": {
+      "dataset": "tat_restaurant",
+      "config": "configs/pipeline_tat_restaurant_v23_deepseek.yaml",
+      "config_sha256": "ea218e22c329cef316a6ca3ca07a015992083850b13ebbc7368f611f32e8391c",
+      "vote": 3,
+      "topk": 0.0,
+      "checkpoints": [
+        {
+          "seed": 42,
+          "path": "checkpoints/v23_tat_restaurant_deepseek_teacher_matched_seed42/checkpoint_best.pt",
+          "sha256": "f86494d01d0b55a5d70787401bbeed01bc2b637bc63d5086677749e859dd9609"
+        },
+        {
+          "seed": 123,
+          "path": "checkpoints/v23_tat_restaurant_deepseek_teacher_matched_seed123/checkpoint_best.pt",
+          "sha256": "ded411cdb522cad92c814a4966a9c1ace35c7e187d32e6a724c1f3cef8ad1497"
+        },
+        {
+          "seed": 456,
+          "path": "checkpoints/v23_tat_restaurant_deepseek_teacher_matched_seed456/checkpoint_best.pt",
+          "sha256": "2ffdc1b3e85d02486aafd4c10b07bd9de111458252aa18f4b52e547f5fc2a581"
+        },
+        {
+          "seed": 789,
+          "path": "checkpoints/v23_tat_restaurant_deepseek_teacher_matched_seed789/checkpoint_best.pt",
+          "sha256": "9e64f6da71eb0609ce36dcede4f9f5c78ba00d06c8975214c99bf4c345be73cd"
+        },
+        {
+          "seed": 1024,
+          "path": "checkpoints/v23_tat_restaurant_deepseek_teacher_matched_seed1024/checkpoint_best.pt",
+          "sha256": "717089463b0b9ac1cd7ce116309e3bb25b4cde7e44cec6d13629d7a9f70172ae"
+        }
+      ]
+    }
+  }
+}

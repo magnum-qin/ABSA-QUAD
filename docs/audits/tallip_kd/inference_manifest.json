@@ -1,0 +1,486 @@
+{
+  "created_at": "2026-07-17T08:57:00.027109+00:00",
+  "checkpoint_policy": "checkpoint_best.pt only",
+  "runs": [
+    {
+      "dataset": "eng_laptop",
+      "system": "clean",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_clean_seed42.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "clean",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_clean_seed123.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "clean",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_clean_seed456.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "clean",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_clean_seed789.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "clean",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_clean_seed1024.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "clean",
+      "seed": "ensemble",
+      "vote": 4,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_clean_ensemble.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "original",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_original_seed42.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "original",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_original_seed123.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "original",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_original_seed456.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "original",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_original_seed789.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "original",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_original_seed1024.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "original",
+      "seed": "ensemble",
+      "vote": 4,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_original_ensemble.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "baseline",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_baseline_seed42.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "baseline",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_baseline_seed123.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "baseline",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_baseline_seed456.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "baseline",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_baseline_seed789.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "baseline",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_baseline_seed1024.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "baseline",
+      "seed": "ensemble",
+      "vote": 3,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/eng_laptop_baseline_ensemble.jsonl"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "original",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/rus_restaurant_original_seed42.jsonl"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "original",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/rus_restaurant_original_seed123.jsonl"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "original",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/rus_restaurant_original_seed456.jsonl"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "original",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/rus_restaurant_original_seed789.jsonl"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "original",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/rus_restaurant_original_seed1024.jsonl"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "original",
+      "seed": "ensemble",
+      "vote": 3,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/rus_restaurant_original_ensemble.jsonl"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "original",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/tat_restaurant_original_seed42.jsonl"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "original",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/tat_restaurant_original_seed123.jsonl"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "original",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/tat_restaurant_original_seed456.jsonl"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "original",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/tat_restaurant_original_seed789.jsonl"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "original",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/tat_restaurant_original_seed1024.jsonl"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "original",
+      "seed": "ensemble",
+      "vote": 3,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/tat_restaurant_original_ensemble.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "clean",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_clean_seed42.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "clean",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_clean_seed123.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "clean",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_clean_seed456.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "clean",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_clean_seed789.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "clean",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_clean_seed1024.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "clean",
+      "seed": "ensemble",
+      "vote": 3,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_clean_ensemble.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "original",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_original_seed42.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "original",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_original_seed123.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "original",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_original_seed456.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "original",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_original_seed789.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "original",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_original_seed1024.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "original",
+      "seed": "ensemble",
+      "vote": 3,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_original_ensemble.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "baseline",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_baseline_seed42.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "baseline",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_baseline_seed123.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "baseline",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_baseline_seed456.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "baseline",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_baseline_seed789.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "baseline",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_baseline_seed1024.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "baseline",
+      "seed": "ensemble",
+      "vote": 4,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_baseline_ensemble.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "clean",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_clean_seed42.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "clean",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_clean_seed123.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "clean",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_clean_seed456.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "clean",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_clean_seed789.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "clean",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_clean_seed1024.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "clean",
+      "seed": "ensemble",
+      "vote": 3,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_clean_ensemble.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "original",
+      "seed": 42,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_original_seed42.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "original",
+      "seed": 123,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_original_seed123.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "original",
+      "seed": 456,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_original_seed456.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "original",
+      "seed": 789,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_original_seed789.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "original",
+      "seed": 1024,
+      "vote": 1,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_original_seed1024.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "original",
+      "seed": "ensemble",
+      "vote": 3,
+      "topk": 0.0,
+      "output": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_original_ensemble.jsonl"
+    }
+  ]
+}

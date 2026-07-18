@@ -1,0 +1,308 @@
+{
+  "runs": [
+    {
+      "dataset": "eng_laptop",
+      "teacher": "deepseek",
+      "expected_rows": 200,
+      "output_rows": 200,
+      "raw_rows": 200,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "deepseek-v4-pro"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "798aeb103df00576355490999a95e4923e910747c685261691461f6319f7c94d",
+      "output_sha256": "aad6f7b4b9ca106641d3bc65c320d233b7982bb36ce16adb5fcf4e9cb2c6857f",
+      "ok": true
+    },
+    {
+      "dataset": "eng_laptop",
+      "teacher": "qwen",
+      "expected_rows": 200,
+      "output_rows": 200,
+      "raw_rows": 200,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "798aeb103df00576355490999a95e4923e910747c685261691461f6319f7c94d",
+      "output_sha256": "696c6c9bc9865cb56d7fb57405d93c6f052e2a2e3d6364a693b746bfa3cac76b",
+      "ok": true
+    },
+    {
+      "dataset": "eng_restaurant",
+      "teacher": "deepseek",
+      "expected_rows": 200,
+      "output_rows": 200,
+      "raw_rows": 200,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "deepseek-v4-pro"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "2cbdd6381ebbf6fbb29d870aca1ead40d6fb5f9daaf5a60fb4a124f5ef700b00",
+      "output_sha256": "b9f5b242fd552f59fb94b900cc62bdf7b0c8894d1b3e9b8d2fcb31f4b6437500",
+      "ok": true
+    },
+    {
+      "dataset": "eng_restaurant",
+      "teacher": "qwen",
+      "expected_rows": 200,
+      "output_rows": 200,
+      "raw_rows": 200,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "2cbdd6381ebbf6fbb29d870aca1ead40d6fb5f9daaf5a60fb4a124f5ef700b00",
+      "output_sha256": "3d001f6b90cce413260b2c2db2442b12d23f1973bf6e3bb387121d21dcb854e2",
+      "ok": true
+    },
+    {
+      "dataset": "jpn_hotel",
+      "teacher": "deepseek",
+      "expected_rows": 200,
+      "output_rows": 200,
+      "raw_rows": 200,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "deepseek-v4-pro"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "6217caa6bbacb26f48bfa5fc5fb62a34cc9debbe17d50e3bcf25714c04423ebd",
+      "output_sha256": "e334e53fcac52309e755e18147e34e66d0179ecfa88ac68a13a3b1000246ec68",
+      "ok": true
+    },
+    {
+      "dataset": "jpn_hotel",
+      "teacher": "qwen",
+      "expected_rows": 200,
+      "output_rows": 200,
+      "raw_rows": 200,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "6217caa6bbacb26f48bfa5fc5fb62a34cc9debbe17d50e3bcf25714c04423ebd",
+      "output_sha256": "8a668bd0bb92ac94fc348750273a35a7db88666ecca357a00088cbda78fa6cec",
+      "ok": true
+    },
+    {
+      "dataset": "rus_restaurant",
+      "teacher": "deepseek",
+      "expected_rows": 48,
+      "output_rows": 48,
+      "raw_rows": 48,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "deepseek-v4-pro"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "e55cf23e01831980a1ec144fd48820c279453e6cefeff63646233e14d7e0994c",
+      "output_sha256": "5b0a2f6846967b972450918f053d29a7690354e51856fffa0c4d23d458e5d71a",
+      "ok": true
+    },
+    {
+      "dataset": "rus_restaurant",
+      "teacher": "qwen",
+      "expected_rows": 48,
+      "output_rows": 48,
+      "raw_rows": 48,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "e55cf23e01831980a1ec144fd48820c279453e6cefeff63646233e14d7e0994c",
+      "output_sha256": "54cfb329fad58261fa6283435a00fed6c054aa5f4315bd27bf8154e540e500de",
+      "ok": true
+    },
+    {
+      "dataset": "tat_restaurant",
+      "teacher": "deepseek",
+      "expected_rows": 48,
+      "output_rows": 48,
+      "raw_rows": 48,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "deepseek-v4-pro"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "5d10f15b2913b4d90d7df0a11d92ae84193331ac398216e6fce8cf075abce58d",
+      "output_sha256": "1e5df2413209146c87822f5fde32b727a5b708b07f74f2e1c85529603c3795c3",
+      "ok": true
+    },
+    {
+      "dataset": "tat_restaurant",
+      "teacher": "qwen",
+      "expected_rows": 48,
+      "output_rows": 48,
+      "raw_rows": 48,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "5d10f15b2913b4d90d7df0a11d92ae84193331ac398216e6fce8cf075abce58d",
+      "output_sha256": "d41ac646bcb90c1c4e819182d654c6c5f3b45c61724f3e7d4aeecb918d33304a",
+      "ok": true
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "teacher": "deepseek",
+      "expected_rows": 48,
+      "output_rows": 48,
+      "raw_rows": 48,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "deepseek-v4-pro"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "39fb4810084255bb00a8e41e9f6ea4b7dc1836f013b331afe826315cb873bccf",
+      "output_sha256": "df22683158e2cdd4740d9d28571a025d08d7c74ffe02230227db638b9ecc63ba",
+      "ok": true
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "teacher": "qwen",
+      "expected_rows": 48,
+      "output_rows": 48,
+      "raw_rows": 48,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "39fb4810084255bb00a8e41e9f6ea4b7dc1836f013b331afe826315cb873bccf",
+      "output_sha256": "2765dc4e05748256343b332103101f9d58ad98565c9f10e5399c1a27ae23c69a",
+      "ok": true
+    },
+    {
+      "dataset": "zho_laptop",
+      "teacher": "deepseek",
+      "expected_rows": 300,
+      "output_rows": 300,
+      "raw_rows": 300,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "deepseek-v4-pro"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "e313b46a74fdbc12f44879f2cc0d25f61064948b6861dc5274ecd5a862d19050",
+      "output_sha256": "15f07472910a06669742937187777c528a92cea8b5ed4a4f4096dc0c95fd2f08",
+      "ok": true
+    },
+    {
+      "dataset": "zho_laptop",
+      "teacher": "qwen",
+      "expected_rows": 300,
+      "output_rows": 300,
+      "raw_rows": 300,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "e313b46a74fdbc12f44879f2cc0d25f61064948b6861dc5274ecd5a862d19050",
+      "output_sha256": "105ea3418d030cbd2e32d557f53aae9c815a14f533f8e4be318e33b18344b42a",
+      "ok": true
+    },
+    {
+      "dataset": "zho_restaurant",
+      "teacher": "deepseek",
+      "expected_rows": 300,
+      "output_rows": 300,
+      "raw_rows": 300,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "deepseek-v4-pro"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "10ff96119e0f73bed262685cb7d659f59f39cac66dd4e0fdb9eb662630fce1e4",
+      "output_sha256": "3b56cec5b9189f290df3e6941ab63aba83c5028a99a2a9257e912e1a22315483",
+      "ok": true
+    },
+    {
+      "dataset": "zho_restaurant",
+      "teacher": "qwen",
+      "expected_rows": 300,
+      "output_rows": 300,
+      "raw_rows": 300,
+      "errors": 0,
+      "error_rate": 0.0,
+      "duplicate_ids": [],
+      "missing_ids": [],
+      "extra_ids": [],
+      "response_models": [
+        "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+      ],
+      "model_identity_ok": true,
+      "input_sha256": "10ff96119e0f73bed262685cb7d659f59f39cac66dd4e0fdb9eb662630fce1e4",
+      "output_sha256": "76543a3bd3a31b6a88c2ae27481f8f5ebbedfc43ad0aed2b5f97eee951c44494",
+      "ok": true
+    }
+  ]
+}

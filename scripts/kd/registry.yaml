@@ -24,6 +24,97 @@ defaults:
 
 experiments:
 
+  # ---- TALLIP CLEAN-INDUCTIVE RERUNS (never overwrite original V23 checkpoints) ----
+  eng_laptop_deepseek_inductive:
+    dataset: eng_laptop
+    lang: eng
+    domain: laptop
+    teacher: deepseek
+    variant: inductive
+    pool: {source: existing, file: data/subtask_3/eng/eng_laptop_pool_v23.jsonl}
+    gold_base: data/subtask_3/eng/eng_laptop_train_v23_deepseek_inductive.jsonl
+    distill_prebuilt: true
+    silver_cap: 0
+    base_config: configs/pipeline_eng_laptop_v23_deepseek.yaml
+    dev: data/subtask_3/eng/eng_laptop_dev_task3.jsonl
+    test: data/subtask_3/eng/eng_laptop_test_task3.jsonl
+    eval_vote: 4
+    eval_topk: 0.0
+    result: 0.4102340262
+    seed_mean: 0.3784561888
+    seed_sd: 0.0106955908
+    baseline_result: 0.3044758227
+    delta_vs_baseline: 0.1057582035
+    delta_vs_baseline_ci95: [0.0600764556, 0.1536711071]
+    transductive_result: 0.4140700032
+    official_test_result: 0.3531756503
+    official_test_baseline: 0.2709380564
+    official_test_delta: 0.0822375938
+    official_test_ci95: [0.0628719659, 0.1020669962]
+    official_test_status: supported
+    official_test_evidence: docs/audits/tallip_kd/official_test/official_test_metrics.json
+    status: tallip_complete_supported
+
+  ukr_restaurant_deepseek_inductive:
+    dataset: ukr_restaurant
+    lang: ukr
+    domain: restaurant
+    teacher: deepseek
+    variant: inductive
+    pool: {source: existing, file: data/subtask_3/ukr/ukr_restaurant_pool_v23_trans.jsonl}
+    gold_base: data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek_inductive.jsonl
+    distill_prebuilt: true
+    silver_cap: 0
+    base_config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
+    test: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
+    eval_vote: 3
+    eval_topk: 0.0
+    result: 0.5377356854
+    seed_mean: 0.4850606227
+    seed_sd: 0.0355220792
+    baseline_result: 0.4904970215
+    delta_vs_baseline: 0.0472386639
+    delta_vs_baseline_ci95: [-0.0465928017, 0.1448587421]
+    transductive_result: 0.5560494475
+    official_test_result: 0.4608351416
+    official_test_baseline: 0.4215015332
+    official_test_delta: 0.0393336085
+    official_test_ci95: [0.0150400574, 0.0638975805]
+    official_test_status: supported
+    official_test_evidence: docs/audits/tallip_kd/official_test/official_test_metrics.json
+    status: tallip_complete_inconclusive
+
+  zho_restaurant_deepseek_real_inductive:
+    dataset: zho_restaurant
+    lang: zho
+    domain: restaurant
+    teacher: deepseek
+    variant: real_inductive
+    pool: {source: existing, file: data/subtask_3/zho/zho_restaurant_pool_v23_real.jsonl}
+    gold_base: data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real_inductive.jsonl
+    distill_prebuilt: true
+    silver_cap: 0
+    base_config: configs/pipeline_zho_restaurant_v23_qwen.yaml
+    dev: data/subtask_3/zho/zho_restaurant_dev_task3.jsonl
+    test: data/subtask_3/zho/zho_restaurant_test_task3.jsonl
+    eval_vote: 3
+    eval_topk: 0.0
+    result: 0.5738066835
+    seed_mean: 0.5400210832
+    seed_sd: 0.0025722520
+    baseline_result: 0.5669438102
+    delta_vs_baseline: 0.0068628734
+    delta_vs_baseline_ci95: [-0.0204266273, 0.0348611998]
+    transductive_result: 0.5578633715
+    official_test_result: 0.4660464612
+    official_test_baseline: 0.4797934033
+    official_test_delta: -0.0137469420
+    official_test_ci95: [-0.0288947469, 0.0014047447]
+    official_test_status: inconclusive
+    official_test_evidence: docs/audits/tallip_kd/official_test/official_test_metrics.json
+    status: tallip_complete_inconclusive
+
   # ---- SUBMITTED (KD beat baseline) ----
   eng_laptop_deepseek:
     dataset: eng_laptop
@@ -137,7 +228,37 @@ experiments:
     dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
     test: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
     result: 0.5327   # VALID (Unsloth Qwen3.6-35B-A3B, silver 3915); vs deepseek 0.5196 / baseline 0.4821 (+1.3pp) -- SUBMITTED (switched from deepseek 0.5196)
+    official_test_result: 0.4311189447
+    official_test_baseline: 0.4036782614
+    official_test_delta: 0.0274406833
+    official_test_ci95: [0.0071193877, 0.0481628596]
+    official_test_status: supported
+    official_test_evidence: docs/audits/tallip_kd/official_test/official_test_metrics.json
     status: submitted
+
+  tat_restaurant_deepseek_teacher_matched:
+    dataset: tat_restaurant
+    lang: tat
+    domain: restaurant
+    teacher: deepseek
+    variant: teacher_matched
+    pool: {source: matched_qwen_texts, n: 3915, file: data/audits/tallip_kd/tat_teacher_matched/input_qwen_silver_texts.jsonl}
+    gold_base: data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl
+    distill: data/subtask_3/tat/tat_restaurant_train_v23_deepseek_teacher_matched.jsonl
+    base_config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
+    eval_vote: 3
+    eval_topk: 0.0
+    checkpoint_prefix: v23_tat_restaurant_deepseek_teacher_matched_seed
+    result: 0.5365368574
+    seed_mean: 0.4708483556
+    seed_sd: 0.0065014116
+    comparison: {against: tat_restaurant_qwen, delta: 0.0038246044, ci95: [-0.0823023130, 0.0851516374], decision: inconclusive}
+    official_test_result: 0.4420618472
+    official_test_comparison: {against: tat_restaurant_qwen, delta: 0.0109429026, ci95: [-0.0069007378, 0.0292795010], decision: inconclusive}
+    evidence: docs/audits/tallip_kd/tat_teacher_matched_metrics.json
+    official_test_evidence: docs/audits/tallip_kd/official_test/official_test_metrics.json
+    status: ablation
 
   # ---- DEEPSEEK on the 3 datasets only qwen had run (same pool, only teacher differs) ----
   zho_restaurant_deepseek:
@@ -280,6 +401,12 @@ experiments:
     dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
     test: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
     result: 0.6162   # generated > translated 0.5761 > real 0.5586; SUBMITTED (switched from real 0.5753)
+    official_test_result: 0.5189422495
+    official_test_baseline: 0.4978050780
+    official_test_delta: 0.0211371715
+    official_test_ci95: [0.0004665806, 0.0430736871]
+    official_test_status: supported
+    official_test_evidence: docs/audits/tallip_kd/official_test/official_test_metrics.json
     status: submitted   # pool-source ablation (size-matched, silver capped 3000)
 
   # ---- ABLATIONS / NEGATIVES (baseline kept) ----

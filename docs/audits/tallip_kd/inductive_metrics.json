@@ -1,0 +1,1268 @@
+{
+  "bootstrap_iterations": 10000,
+  "bootstrap_seed": 20260713,
+  "datasets": {
+    "eng_laptop": {
+      "dev": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+      "dev_sha256": "c3a622060eba7b770a70bdf789c1ec5fddf5ec780877b88c5e8bfca5a3f87ab9",
+      "systems": {
+        "clean": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/eng_laptop_clean_ensemble.jsonl",
+          "source_sha256": "0e9a770c7390429799e4e72bcdbb52ce32dfdb35762cd9b2edc7d94801cd5bc2",
+          "ensemble": {
+            "cPrecision": 0.5047579953616407,
+            "cRecall": 0.3455283438280001,
+            "cF1": 0.41023402619279414,
+            "exact_precision": 0.5529953917050692,
+            "exact_recall": 0.3785488958990536,
+            "exact_f1": 0.449438202247191,
+            "tp_categorical": 120,
+            "fp_categorical": 97,
+            "fn_categorical": 197,
+            "va_mae": 0.6332916666666668,
+            "va_rmse": 0.8221807891212247,
+            "va_coordinate_n": 240,
+            "aspect_span": {
+              "precision": 0.9473684210526315,
+              "recall": 0.703125,
+              "f1": 0.8071748878923767,
+              "tp": 180,
+              "fp": 10,
+              "fn": 76
+            },
+            "opinion_span": {
+              "precision": 0.9077669902912622,
+              "recall": 0.6233333333333333,
+              "f1": 0.7391304347826086,
+              "tp": 187,
+              "fp": 19,
+              "fn": 113
+            },
+            "category_span": {
+              "precision": 0.6464646464646465,
+              "recall": 0.45714285714285713,
+              "f1": 0.5355648535564853,
+              "tp": 128,
+              "fp": 70,
+              "fn": 152
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 5,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 200,
+              "prediction_rows": 200,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 35,
+              "error_rate": 0.0,
+              "empty_rate": 0.175
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.38260118950774014
+            },
+            {
+              "seed": 123,
+              "cF1": 0.3609650314233966
+            },
+            {
+              "seed": 456,
+              "cF1": 0.38995715380198737
+            },
+            {
+              "seed": 789,
+              "cF1": 0.3798719729495772
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.37888559625825047
+            }
+          ],
+          "single_mean": 0.3784561887881904,
+          "single_sd": 0.010695590782427678
+        },
+        "original": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/eng_laptop_original_ensemble.jsonl",
+          "source_sha256": "833a0745bae37d61cbe1e9c1ab6392acb6b44bffd72791bfceeb4722c169dcf4",
+          "ensemble": {
+            "cPrecision": 0.4537646839581362,
+            "cRecall": 0.3807615329112436,
+            "cF1": 0.4140700032002203,
+            "exact_precision": 0.5112781954887218,
+            "exact_recall": 0.42902208201892744,
+            "exact_f1": 0.46655231560891935,
+            "tp_categorical": 136,
+            "fp_categorical": 130,
+            "fn_categorical": 181,
+            "va_mae": 0.7938970588235296,
+            "va_rmse": 0.9900954350911003,
+            "va_coordinate_n": 272,
+            "aspect_span": {
+              "precision": 0.9375,
+              "recall": 0.8203125,
+              "f1": 0.875,
+              "tp": 210,
+              "fp": 14,
+              "fn": 46
+            },
+            "opinion_span": {
+              "precision": 0.8446215139442231,
+              "recall": 0.7066666666666667,
+              "f1": 0.7695099818511797,
+              "tp": 212,
+              "fp": 39,
+              "fn": 88
+            },
+            "category_span": {
+              "precision": 0.6134453781512605,
+              "recall": 0.5214285714285715,
+              "f1": 0.5637065637065638,
+              "tp": 146,
+              "fp": 92,
+              "fn": 134
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 6,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 200,
+              "prediction_rows": 200,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 18,
+              "error_rate": 0.0,
+              "empty_rate": 0.09
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.39731027270780767
+            },
+            {
+              "seed": 123,
+              "cF1": 0.377299022209665
+            },
+            {
+              "seed": 456,
+              "cF1": 0.3850915817037915
+            },
+            {
+              "seed": 789,
+              "cF1": 0.38391802348060133
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.3905887210635779
+            }
+          ],
+          "single_mean": 0.38684152423308865,
+          "single_sd": 0.007521713220504386
+        },
+        "baseline": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/eng_laptop_baseline_ensemble.jsonl",
+          "source_sha256": "c9aebd9c5609b42720640aba83c09e3feb4ae8e1f689b64c44fe87b9991609fb",
+          "ensemble": {
+            "cPrecision": 0.32901233586319684,
+            "cRecall": 0.2833450084878635,
+            "cF1": 0.3044758226801787,
+            "exact_precision": 0.3553113553113553,
+            "exact_recall": 0.305993690851735,
+            "exact_f1": 0.32881355932203393,
+            "tp_categorical": 97,
+            "fp_categorical": 176,
+            "fn_categorical": 220,
+            "va_mae": 0.5607216494845361,
+            "va_rmse": 0.7178849231503598,
+            "va_coordinate_n": 194,
+            "aspect_span": {
+              "precision": 0.8812785388127854,
+              "recall": 0.75390625,
+              "f1": 0.8126315789473683,
+              "tp": 193,
+              "fp": 26,
+              "fn": 63
+            },
+            "opinion_span": {
+              "precision": 0.7905982905982906,
+              "recall": 0.6166666666666667,
+              "f1": 0.6928838951310863,
+              "tp": 185,
+              "fp": 49,
+              "fn": 115
+            },
+            "category_span": {
+              "precision": 0.5840336134453782,
+              "recall": 0.49642857142857144,
+              "f1": 0.5366795366795366,
+              "tp": 139,
+              "fp": 99,
+              "fn": 141
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 28,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 200,
+              "prediction_rows": 200,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 10,
+              "error_rate": 0.0,
+              "empty_rate": 0.05
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.30338815271080927
+            },
+            {
+              "seed": 123,
+              "cF1": 0.2980544516499945
+            },
+            {
+              "seed": 456,
+              "cF1": 0.2946244052408259
+            },
+            {
+              "seed": 789,
+              "cF1": 0.29953281335759896
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.2942039149949325
+            }
+          ],
+          "single_mean": 0.29796074759083224,
+          "single_sd": 0.003780934705603793
+        }
+      },
+      "comparisons": {
+        "clean_minus_baseline": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.41023402619279414,
+          "score_b": 0.3044758226801787,
+          "delta_a_minus_b": 0.10575820351261545,
+          "ci95": [
+            0.06007645557135561,
+            0.15367110714115242
+          ],
+          "classification": "supported"
+        },
+        "clean_minus_transductive": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.41023402619279414,
+          "score_b": 0.4140700032002203,
+          "delta_a_minus_b": -0.003835977007426161,
+          "ci95": [
+            -0.0443712221651852,
+            0.03512067658961331
+          ],
+          "classification": "inconclusive"
+        }
+      }
+    },
+    "rus_restaurant": {
+      "dev": "data/subtask_3/rus/rus_restaurant_dev_task3.jsonl",
+      "dev_sha256": "04d1a5711e462d401283f946dfe3653773ce80d19b5cc59efa654b4e7c835624",
+      "systems": {
+        "original": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/rus_restaurant_original_ensemble.jsonl",
+          "source_sha256": "bf7f8a573054c5b051e8583ba0e04f0b1865e9e5ec4123ae8a323d4a18a233c2",
+          "ensemble": {
+            "cPrecision": 0.6192847435969013,
+            "cRecall": 0.6132133245420297,
+            "cF1": 0.6162340798353403,
+            "exact_precision": 0.6831683168316832,
+            "exact_recall": 0.6764705882352942,
+            "exact_f1": 0.6798029556650248,
+            "tp_categorical": 69,
+            "fp_categorical": 32,
+            "fn_categorical": 33,
+            "va_mae": 0.6834782608695651,
+            "va_rmse": 0.9238827957537985,
+            "va_coordinate_n": 138,
+            "aspect_span": {
+              "precision": 0.9506172839506173,
+              "recall": 0.9166666666666666,
+              "f1": 0.9333333333333332,
+              "tp": 77,
+              "fp": 4,
+              "fn": 7
+            },
+            "opinion_span": {
+              "precision": 0.7619047619047619,
+              "recall": 0.7032967032967034,
+              "f1": 0.7314285714285714,
+              "tp": 64,
+              "fp": 20,
+              "fn": 27
+            },
+            "category_span": {
+              "precision": 0.9090909090909091,
+              "recall": 0.8771929824561403,
+              "f1": 0.8928571428571428,
+              "tp": 50,
+              "fp": 5,
+              "fn": 7
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 2,
+              "error_rate": 0.0,
+              "empty_rate": 0.041666666666666664
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.5713920742848146
+            },
+            {
+              "seed": 123,
+              "cF1": 0.5470867573576654
+            },
+            {
+              "seed": 456,
+              "cF1": 0.5487453750186031
+            },
+            {
+              "seed": 789,
+              "cF1": 0.5577685267740152
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.5513450862921337
+            }
+          ],
+          "single_mean": 0.5552675639454464,
+          "single_sd": 0.009888187707046366
+        },
+        "baseline": {
+          "status": "complete",
+          "source": "predictions/v15_sweep/v15_rus_vote4_topk0.10.jsonl",
+          "source_sha256": "2d74563103f441177d4371252a170009a6f65ba3cd502c478b8b0bfd9b1abe0e",
+          "ensemble": {
+            "cPrecision": 0.5522242624165499,
+            "cRecall": 0.5034985922033249,
+            "cF1": 0.5267369887665554,
+            "exact_precision": 0.6129032258064516,
+            "exact_recall": 0.5588235294117647,
+            "exact_f1": 0.5846153846153845,
+            "tp_categorical": 57,
+            "fp_categorical": 36,
+            "fn_categorical": 45,
+            "va_mae": 0.7204385964912279,
+            "va_rmse": 0.9185137690092888,
+            "va_coordinate_n": 114,
+            "aspect_span": {
+              "precision": 0.881578947368421,
+              "recall": 0.7976190476190477,
+              "f1": 0.8375,
+              "tp": 67,
+              "fp": 9,
+              "fn": 17
+            },
+            "opinion_span": {
+              "precision": 0.7702702702702703,
+              "recall": 0.6263736263736264,
+              "f1": 0.690909090909091,
+              "tp": 57,
+              "fp": 17,
+              "fn": 34
+            },
+            "category_span": {
+              "precision": 0.8653846153846154,
+              "recall": 0.7894736842105263,
+              "f1": 0.8256880733944955,
+              "tp": 45,
+              "fp": 7,
+              "fn": 12
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 5,
+              "error_rate": 0.0,
+              "empty_rate": 0.10416666666666667
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.5267369887665554
+            },
+            {
+              "seed": 123,
+              "cF1": 0.5267369887665554
+            },
+            {
+              "seed": 456,
+              "cF1": 0.5267369887665554
+            },
+            {
+              "seed": 789,
+              "cF1": 0.5267369887665554
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.5267369887665554
+            }
+          ],
+          "single_mean": 0.5267369887665554,
+          "single_sd": 0.0
+        }
+      },
+      "comparisons": {
+        "original_minus_baseline": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.6162340798353403,
+          "score_b": 0.5267369887665554,
+          "delta_a_minus_b": 0.0894970910687849,
+          "ci95": [
+            0.0191138635533811,
+            0.16312462818816614
+          ],
+          "classification": "supported"
+        }
+      }
+    },
+    "tat_restaurant": {
+      "dev": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+      "dev_sha256": "9c9b9eb1a2ab7ac5d40dada5e80e3509e7a702e153b549b7d86c74e22bd10a4c",
+      "systems": {
+        "original": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/tat_restaurant_original_ensemble.jsonl",
+          "source_sha256": "3d5036c6dbffc73101185f76b591312775f0951484801ea86493111410b7ecc0",
+          "ensemble": {
+            "cPrecision": 0.5616640059086315,
+            "cRecall": 0.5065989072901382,
+            "cF1": 0.5327122530267433,
+            "exact_precision": 0.6195652173913043,
+            "exact_recall": 0.5588235294117647,
+            "exact_f1": 0.5876288659793814,
+            "tp_categorical": 57,
+            "fp_categorical": 35,
+            "fn_categorical": 45,
+            "va_mae": 0.6813157894736843,
+            "va_rmse": 0.8188626044168098,
+            "va_coordinate_n": 114,
+            "aspect_span": {
+              "precision": 0.8918918918918919,
+              "recall": 0.7857142857142857,
+              "f1": 0.8354430379746834,
+              "tp": 66,
+              "fp": 8,
+              "fn": 18
+            },
+            "opinion_span": {
+              "precision": 0.7142857142857143,
+              "recall": 0.6043956043956044,
+              "f1": 0.6547619047619048,
+              "tp": 55,
+              "fp": 22,
+              "fn": 36
+            },
+            "category_span": {
+              "precision": 0.8775510204081632,
+              "recall": 0.7543859649122807,
+              "f1": 0.8113207547169812,
+              "tp": 43,
+              "fp": 6,
+              "fn": 14
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 6,
+              "error_rate": 0.0,
+              "empty_rate": 0.125
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.47975478150112766
+            },
+            {
+              "seed": 123,
+              "cF1": 0.45376883876692725
+            },
+            {
+              "seed": 456,
+              "cF1": 0.4681442221356362
+            },
+            {
+              "seed": 789,
+              "cF1": 0.4733098539903034
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.4437288374969761
+            }
+          ],
+          "single_mean": 0.46374130677819414,
+          "single_sd": 0.014725175525818278
+        },
+        "baseline": {
+          "status": "complete",
+          "source": "predictions/v15_sweep/v15_tat_vote3_topk0.20.jsonl",
+          "source_sha256": "96e17521715eb146ea6aa932d64005211bdec8886b47156b8c06ab9c0d467a8b",
+          "ensemble": {
+            "cPrecision": 0.4971369148212495,
+            "cRecall": 0.46789356689058775,
+            "cF1": 0.4820721598266662,
+            "exact_precision": 0.5520833333333334,
+            "exact_recall": 0.5196078431372549,
+            "exact_f1": 0.5353535353535354,
+            "tp_categorical": 53,
+            "fp_categorical": 43,
+            "fn_categorical": 49,
+            "va_mae": 0.71688679245283,
+            "va_rmse": 0.9397867080373999,
+            "va_coordinate_n": 106,
+            "aspect_span": {
+              "precision": 0.8611111111111112,
+              "recall": 0.7380952380952381,
+              "f1": 0.7948717948717949,
+              "tp": 62,
+              "fp": 10,
+              "fn": 22
+            },
+            "opinion_span": {
+              "precision": 0.7142857142857143,
+              "recall": 0.6043956043956044,
+              "f1": 0.6547619047619048,
+              "tp": 55,
+              "fp": 22,
+              "fn": 36
+            },
+            "category_span": {
+              "precision": 0.8775510204081632,
+              "recall": 0.7543859649122807,
+              "f1": 0.8113207547169812,
+              "tp": 43,
+              "fp": 6,
+              "fn": 14
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 4,
+              "error_rate": 0.0,
+              "empty_rate": 0.08333333333333333
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.4820721598266662
+            },
+            {
+              "seed": 123,
+              "cF1": 0.4820721598266662
+            },
+            {
+              "seed": 456,
+              "cF1": 0.4820721598266662
+            },
+            {
+              "seed": 789,
+              "cF1": 0.4820721598266662
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.4820721598266662
+            }
+          ],
+          "single_mean": 0.4820721598266662,
+          "single_sd": 0.0
+        }
+      },
+      "comparisons": {
+        "original_minus_baseline": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.5327122530267433,
+          "score_b": 0.4820721598266662,
+          "delta_a_minus_b": 0.05064009320007712,
+          "ci95": [
+            -0.0302426381128581,
+            0.13526312974066118
+          ],
+          "classification": "inconclusive"
+        }
+      }
+    },
+    "ukr_restaurant": {
+      "dev": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+      "dev_sha256": "2daa110ba03d4dfaa4aa91da01e61d22da495d4ad65a00a0178dd3f28b5608a0",
+      "systems": {
+        "clean": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_clean_ensemble.jsonl",
+          "source_sha256": "98f3e3cfd476e7aea1bf95209bbabe251319c0237ed084c41e4701c3eee71af5",
+          "ensemble": {
+            "cPrecision": 0.6116743421635293,
+            "cRecall": 0.47974458208904264,
+            "cF1": 0.5377356854184874,
+            "exact_precision": 0.675,
+            "exact_recall": 0.5294117647058824,
+            "exact_f1": 0.5934065934065933,
+            "tp_categorical": 54,
+            "fp_categorical": 26,
+            "fn_categorical": 48,
+            "va_mae": 0.6831481481481482,
+            "va_rmse": 0.9414675305665676,
+            "va_coordinate_n": 108,
+            "aspect_span": {
+              "precision": 0.9402985074626866,
+              "recall": 0.75,
+              "f1": 0.8344370860927153,
+              "tp": 63,
+              "fp": 4,
+              "fn": 21
+            },
+            "opinion_span": {
+              "precision": 0.7162162162162162,
+              "recall": 0.5824175824175825,
+              "f1": 0.6424242424242425,
+              "tp": 53,
+              "fp": 21,
+              "fn": 38
+            },
+            "category_span": {
+              "precision": 0.9215686274509803,
+              "recall": 0.8245614035087719,
+              "f1": 0.8703703703703703,
+              "tp": 47,
+              "fp": 4,
+              "fn": 10
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 3,
+              "error_rate": 0.0,
+              "empty_rate": 0.0625
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.4448130985609426
+            },
+            {
+              "seed": 123,
+              "cF1": 0.48353595065335137
+            },
+            {
+              "seed": 456,
+              "cF1": 0.4600583253039182
+            },
+            {
+              "seed": 789,
+              "cF1": 0.5015577350755898
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.5353380037063983
+            }
+          ],
+          "single_mean": 0.48506062266004,
+          "single_sd": 0.03552207924957143
+        },
+        "original": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_original_ensemble.jsonl",
+          "source_sha256": "9bd636c247d618295f47dce2229f7c0241bc42782b42fcdf1753541723298e16",
+          "ensemble": {
+            "cPrecision": 0.6156261740641911,
+            "cRecall": 0.5069862609940397,
+            "cF1": 0.55604944754185,
+            "exact_precision": 0.6785714285714286,
+            "exact_recall": 0.5588235294117647,
+            "exact_f1": 0.6129032258064516,
+            "tp_categorical": 57,
+            "fp_categorical": 27,
+            "fn_categorical": 45,
+            "va_mae": 0.6924561403508772,
+            "va_rmse": 0.9350513636328109,
+            "va_coordinate_n": 114,
+            "aspect_span": {
+              "precision": 0.9428571428571428,
+              "recall": 0.7857142857142857,
+              "f1": 0.8571428571428571,
+              "tp": 66,
+              "fp": 4,
+              "fn": 18
+            },
+            "opinion_span": {
+              "precision": 0.7432432432432432,
+              "recall": 0.6043956043956044,
+              "f1": 0.6666666666666667,
+              "tp": 55,
+              "fp": 19,
+              "fn": 36
+            },
+            "category_span": {
+              "precision": 0.9230769230769231,
+              "recall": 0.8421052631578947,
+              "f1": 0.8807339449541285,
+              "tp": 48,
+              "fp": 4,
+              "fn": 9
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 2,
+              "error_rate": 0.0,
+              "empty_rate": 0.041666666666666664
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.42114890491482165
+            },
+            {
+              "seed": 123,
+              "cF1": 0.4357690887058611
+            },
+            {
+              "seed": 456,
+              "cF1": 0.43751168168389165
+            },
+            {
+              "seed": 789,
+              "cF1": 0.47500840200039074
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.5304693309077494
+            }
+          ],
+          "single_mean": 0.45998148164254293,
+          "single_sd": 0.04414024843238881
+        },
+        "baseline": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_baseline_ensemble.jsonl",
+          "source_sha256": "4baebb4b38ba615b23fd7293ffebdd7e0a58b9d8c5676b239931ced4fb9adc7d",
+          "ensemble": {
+            "cPrecision": 0.6026106264338028,
+            "cRecall": 0.4135563122584921,
+            "cF1": 0.490497021515886,
+            "exact_precision": 0.6714285714285714,
+            "exact_recall": 0.46078431372549017,
+            "exact_f1": 0.5465116279069767,
+            "tp_categorical": 47,
+            "fp_categorical": 23,
+            "fn_categorical": 55,
+            "va_mae": 0.7319148936170211,
+            "va_rmse": 0.9434409632106451,
+            "va_coordinate_n": 94,
+            "aspect_span": {
+              "precision": 1.0,
+              "recall": 0.6904761904761905,
+              "f1": 0.8169014084507042,
+              "tp": 58,
+              "fp": 0,
+              "fn": 26
+            },
+            "opinion_span": {
+              "precision": 0.75,
+              "recall": 0.4945054945054945,
+              "f1": 0.5960264900662252,
+              "tp": 45,
+              "fp": 15,
+              "fn": 46
+            },
+            "category_span": {
+              "precision": 0.9347826086956522,
+              "recall": 0.7543859649122807,
+              "f1": 0.8349514563106796,
+              "tp": 43,
+              "fp": 3,
+              "fn": 14
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 6,
+              "error_rate": 0.0,
+              "empty_rate": 0.125
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.41811584038077526
+            },
+            {
+              "seed": 123,
+              "cF1": 0.41396728246712255
+            },
+            {
+              "seed": 456,
+              "cF1": 0.4057853276923019
+            },
+            {
+              "seed": 789,
+              "cF1": 0.4093774939959813
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.4204921304060701
+            }
+          ],
+          "single_mean": 0.4135476149884502,
+          "single_sd": 0.006060406578214742
+        }
+      },
+      "comparisons": {
+        "clean_minus_baseline": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.5377356854184874,
+          "score_b": 0.490497021515886,
+          "delta_a_minus_b": 0.0472386639026014,
+          "ci95": [
+            -0.04659280167267833,
+            0.14485874209903218
+          ],
+          "classification": "inconclusive"
+        },
+        "clean_minus_transductive": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.5377356854184874,
+          "score_b": 0.55604944754185,
+          "delta_a_minus_b": -0.018313762123362665,
+          "ci95": [
+            -0.07379436151288375,
+            0.029187428000056567
+          ],
+          "classification": "inconclusive"
+        }
+      }
+    },
+    "zho_restaurant": {
+      "dev": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+      "dev_sha256": "f1f44388802ea74490374138f9f976dbcb8346a3184c0da7e4c4c3bcec6d2ea9",
+      "systems": {
+        "clean": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_clean_ensemble.jsonl",
+          "source_sha256": "656b94e30aa462f7fd1eaf8247c2c213d373e8800a453b3639d4e3cb154815d6",
+          "ensemble": {
+            "cPrecision": 0.5757041924199914,
+            "cRecall": 0.5719216418784672,
+            "cF1": 0.573806683545832,
+            "exact_precision": 0.6018518518518519,
+            "exact_recall": 0.5978975032851511,
+            "exact_f1": 0.5998681608437706,
+            "tp_categorical": 455,
+            "fp_categorical": 301,
+            "fn_categorical": 306,
+            "va_mae": 0.3165164835164836,
+            "va_rmse": 0.41429179609025835,
+            "va_coordinate_n": 910,
+            "aspect_span": {
+              "precision": 0.7664473684210527,
+              "recall": 0.7350157728706624,
+              "f1": 0.7504025764895331,
+              "tp": 466,
+              "fp": 142,
+              "fn": 168
+            },
+            "opinion_span": {
+              "precision": 0.773121387283237,
+              "recall": 0.7461645746164575,
+              "f1": 0.759403832505323,
+              "tp": 535,
+              "fp": 157,
+              "fn": 182
+            },
+            "category_span": {
+              "precision": 0.8894472361809045,
+              "recall": 0.8009049773755657,
+              "f1": 0.8428571428571429,
+              "tp": 354,
+              "fp": 44,
+              "fn": 88
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 300,
+              "prediction_rows": 300,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 19,
+              "error_rate": 0.0,
+              "empty_rate": 0.06333333333333334
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.5390750531851816
+            },
+            {
+              "seed": 123,
+              "cF1": 0.5416682511191003
+            },
+            {
+              "seed": 456,
+              "cF1": 0.542732003757788
+            },
+            {
+              "seed": 789,
+              "cF1": 0.5405159204071568
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.5361141876034357
+            }
+          ],
+          "single_mean": 0.5400210832145325,
+          "single_sd": 0.0025722520423419187
+        },
+        "original": {
+          "status": "complete",
+          "source": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_original_ensemble.jsonl",
+          "source_sha256": "f69299ede52c3bb19bc5a27be5dc75aa615c1646893270f7b1f13dd1aafd16e5",
+          "ensemble": {
+            "cPrecision": 0.5574973194540601,
+            "cRecall": 0.5582299046307408,
+            "cF1": 0.5578633715351198,
+            "exact_precision": 0.583989501312336,
+            "exact_recall": 0.5847568988173456,
+            "exact_f1": 0.5843729481286933,
+            "tp_categorical": 445,
+            "fp_categorical": 317,
+            "fn_categorical": 316,
+            "va_mae": 0.3313707865168538,
+            "va_rmse": 0.43780992232918575,
+            "va_coordinate_n": 890,
+            "aspect_span": {
+              "precision": 0.758957654723127,
+              "recall": 0.7350157728706624,
+              "f1": 0.7467948717948718,
+              "tp": 466,
+              "fp": 148,
+              "fn": 168
+            },
+            "opinion_span": {
+              "precision": 0.7411598302687411,
+              "recall": 0.7308228730822873,
+              "f1": 0.7359550561797752,
+              "tp": 524,
+              "fp": 183,
+              "fn": 193
+            },
+            "category_span": {
+              "precision": 0.8645320197044335,
+              "recall": 0.7941176470588235,
+              "f1": 0.8278301886792452,
+              "tp": 351,
+              "fp": 55,
+              "fn": 91
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 300,
+              "prediction_rows": 300,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 14,
+              "error_rate": 0.0,
+              "empty_rate": 0.04666666666666667
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.5020328512016381
+            },
+            {
+              "seed": 123,
+              "cF1": 0.5099354762799607
+            },
+            {
+              "seed": 456,
+              "cF1": 0.5194103331265408
+            },
+            {
+              "seed": 789,
+              "cF1": 0.5042377066424134
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.5102702730402644
+            }
+          ],
+          "single_mean": 0.5091773280581635,
+          "single_sd": 0.006744018080378976
+        },
+        "baseline": {
+          "status": "complete",
+          "source": "predictions/v16_missing_sweep/v16_zho_restaurant_vote4_topk0.0.jsonl",
+          "source_sha256": "a64df61f808e928e4d02b1bc8841bba2b00bf8f0a9fc4541bb0c1670619bb170",
+          "ensemble": {
+            "cPrecision": 0.59076837199274,
+            "cRecall": 0.5449663562929087,
+            "cF1": 0.5669438101693828,
+            "exact_precision": 0.6168091168091168,
+            "exact_recall": 0.568988173455979,
+            "exact_f1": 0.5919343814080656,
+            "tp_categorical": 433,
+            "fp_categorical": 269,
+            "fn_categorical": 328,
+            "va_mae": 0.30931870669745964,
+            "va_rmse": 0.3930397614002562,
+            "va_coordinate_n": 866,
+            "aspect_span": {
+              "precision": 0.8073929961089494,
+              "recall": 0.6545741324921136,
+              "f1": 0.7229965156794425,
+              "tp": 415,
+              "fp": 99,
+              "fn": 219
+            },
+            "opinion_span": {
+              "precision": 0.845514950166113,
+              "recall": 0.7099023709902371,
+              "f1": 0.7717968157695223,
+              "tp": 509,
+              "fp": 93,
+              "fn": 208
+            },
+            "category_span": {
+              "precision": 0.9315068493150684,
+              "recall": 0.7692307692307693,
+              "f1": 0.8426270136307311,
+              "tp": 340,
+              "fp": 25,
+              "fn": 102
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 300,
+              "prediction_rows": 300,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 35,
+              "error_rate": 0.0,
+              "empty_rate": 0.11666666666666667
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.5669438101693828
+            },
+            {
+              "seed": 123,
+              "cF1": 0.5669438101693828
+            },
+            {
+              "seed": 456,
+              "cF1": 0.5669438101693828
+            },
+            {
+              "seed": 789,
+              "cF1": 0.5669438101693828
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.5669438101693828
+            }
+          ],
+          "single_mean": 0.5669438101693828,
+          "single_sd": 0.0
+        }
+      },
+      "comparisons": {
+        "clean_minus_baseline": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.573806683545832,
+          "score_b": 0.5669438101693828,
+          "delta_a_minus_b": 0.006862873376449197,
+          "ci95": [
+            -0.020426627262862714,
+            0.034861199785962936
+          ],
+          "classification": "inconclusive"
+        },
+        "clean_minus_transductive": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.573806683545832,
+          "score_b": 0.5578633715351198,
+          "delta_a_minus_b": 0.015943312010712196,
+          "ci95": [
+            -0.007482340214662663,
+            0.03981079475887091
+          ],
+          "classification": "inconclusive"
+        }
+      }
+    }
+  }
+}

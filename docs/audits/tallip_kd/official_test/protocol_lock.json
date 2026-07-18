@@ -1,0 +1,144 @@
+{
+  "frozen_at": "2026-07-18T13:19:27.648804+00:00",
+  "protocol_sha256": "4f5a49971453993764d4ddd222910b3bedb1dda4812d08ae659b8b26483bd3ff",
+  "git_head": "fd2dd7f39b3d59fbf6d5c873185912ef15372659",
+  "official_commit": "bdc93be1224106ae7d3eb95739c02a76ed4ae8a1",
+  "selection_basis": "dev_only",
+  "no_test_tuning": true,
+  "datasets": {
+    "eng_laptop": {
+      "local_test": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+      "local_test_sha256": "76dad16c5aba037dbeb8f839f73eb0c7f84a15ea621dbe959ee58a1189f34688",
+      "rows": 1000,
+      "main_system": "eng_laptop_clean_kd",
+      "systems": {
+        "eng_laptop_clean_kd": {
+          "path": "data/audits/tallip_kd/official_test/predictions/eng_laptop_clean_kd.jsonl",
+          "rows": 1000,
+          "sha256": "283783aed24e3c5242147e591e7da847ef3664b076b572373fc453e57eaf17d1"
+        },
+        "eng_laptop_clean_baseline": {
+          "path": "data/audits/tallip_kd/official_test/predictions/eng_laptop_clean_baseline.jsonl",
+          "rows": 1000,
+          "sha256": "70ea6fcb6525a0fc1f8804317c4ee83dd09a088738b54ff8b1788b934d777e79"
+        }
+      }
+    },
+    "eng_restaurant": {
+      "local_test": "data/subtask_3/eng/eng_restaurant_test_task3.jsonl",
+      "local_test_sha256": "f5675ec4a26feec85e09471bc9310a1d985dc22ca2dfe1cb8209f7423ca48b95",
+      "rows": 1000,
+      "main_system": "eng_restaurant_v16",
+      "systems": {
+        "eng_restaurant_v16": {
+          "path": "submission/final/eng_restaurant_test.jsonl",
+          "rows": 1000,
+          "sha256": "0a1e8dd65c82838972763f646495355e67504cf10a26d1f826c5bcb63feaafbb"
+        }
+      }
+    },
+    "jpn_hotel": {
+      "local_test": "data/subtask_3/jpn/jpn_hotel_test_task3.jsonl",
+      "local_test_sha256": "ff991f6b36c29d5731146725bb1c0f36eba19111a47ba5d5d47847c677538cb6",
+      "rows": 800,
+      "main_system": "jpn_hotel_v16_no_aug",
+      "systems": {
+        "jpn_hotel_v16_no_aug": {
+          "path": "submission/final/jpn_hotel_test.jsonl",
+          "rows": 800,
+          "sha256": "e6b167602d60b235b4a0969295956fd9325abdb384e29f037fc639cf7af397c6"
+        }
+      }
+    },
+    "rus_restaurant": {
+      "local_test": "data/subtask_3/rus/rus_restaurant_test_task3.jsonl",
+      "local_test_sha256": "ab7832c6d7ae372bb4b0e8f25412dfa7500e3679373420bb4fdeb60038cdf91e",
+      "rows": 630,
+      "main_system": "rus_restaurant_gen4k_kd",
+      "systems": {
+        "rus_restaurant_gen4k_kd": {
+          "path": "submission/final/rus_restaurant_test.jsonl",
+          "rows": 630,
+          "sha256": "59bc8c646e066da723c93bfc7ae9b5f682b64c80d32ec1803473027f86ed3549"
+        },
+        "rus_restaurant_v15_baseline": {
+          "path": "submission/final/rus_restaurant_test_v15_backup.jsonl",
+          "rows": 630,
+          "sha256": "2f23c4e7a6be114c9fa5fc77e5491636e5a482de62118b3c61835a16a66fb0ca"
+        }
+      }
+    },
+    "tat_restaurant": {
+      "local_test": "data/subtask_3/tat/tat_restaurant_test_task3.jsonl",
+      "local_test_sha256": "815bfc353d4824178b450d935d3b9bd769387c770e336f3a4a595427c25990ee",
+      "rows": 630,
+      "main_system": "tat_restaurant_qwen_kd",
+      "systems": {
+        "tat_restaurant_qwen_kd": {
+          "path": "submission/final/tat_restaurant_test.jsonl",
+          "rows": 630,
+          "sha256": "b2d3b814b5c33bce27c1473f7c43d4129d27c28d375c1e4ebcc805e98c66fbf9"
+        },
+        "tat_restaurant_v15_baseline": {
+          "path": "submission/final/tat_restaurant_test_v15_backup.jsonl",
+          "rows": 630,
+          "sha256": "86406bdf26998babc4b3a0b89c9d0b5aca910b54bb9c83f10115c0e445a5fa05"
+        },
+        "tat_restaurant_deepseek_matched": {
+          "path": "data/audits/tallip_kd/official_test/predictions/tat_restaurant_deepseek_matched.jsonl",
+          "rows": 630,
+          "sha256": "eb5bd1b9c247b2df0210945b6ffe32c4145260a6b9097ad4541f56177dd691e8"
+        }
+      }
+    },
+    "ukr_restaurant": {
+      "local_test": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+      "local_test_sha256": "b52c53a7ca8d5a4bbf3855a67ff38fb0642fa920553bd65601d5abd171c539c0",
+      "rows": 630,
+      "main_system": "ukr_restaurant_clean_kd",
+      "systems": {
+        "ukr_restaurant_clean_kd": {
+          "path": "data/audits/tallip_kd/official_test/predictions/ukr_restaurant_clean_kd.jsonl",
+          "rows": 630,
+          "sha256": "2f659d35f0be656df7f8ad9a504775bd67570f9426e2d39047ef262d59f28d65"
+        },
+        "ukr_restaurant_clean_baseline": {
+          "path": "data/audits/tallip_kd/official_test/predictions/ukr_restaurant_clean_baseline.jsonl",
+          "rows": 630,
+          "sha256": "e47100bd65c2e31b72fa32b6968fa6eb055351f1e4b4a04c1d79029400efc8db"
+        }
+      }
+    },
+    "zho_laptop": {
+      "local_test": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+      "local_test_sha256": "413f447616b870b6af21d57d813daccf99d21604125dc327ee0c8cd36e1b4d37",
+      "rows": 1000,
+      "main_system": "zho_laptop_v16",
+      "systems": {
+        "zho_laptop_v16": {
+          "path": "submission/final/zho_laptop_test.jsonl",
+          "rows": 1000,
+          "sha256": "5768b3c9a461d73181b029daac42dd5d7ff51bd7c45321b0e70341f3e4285133"
+        }
+      }
+    },
+    "zho_restaurant": {
+      "local_test": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+      "local_test_sha256": "e81cd42039d28e9e486a15bf3cfbcd40f42169e80807f8a955e27b908391b141",
+      "rows": 1000,
+      "main_system": "zho_restaurant_clean_kd",
+      "systems": {
+        "zho_restaurant_clean_kd": {
+          "path": "data/audits/tallip_kd/official_test/predictions/zho_restaurant_clean_kd.jsonl",
+          "rows": 1000,
+          "sha256": "b77e69f3b02b1fd880be2829eab78760587fe76479b989a10608b79bea37f24b"
+        },
+        "zho_restaurant_v16_baseline": {
+          "path": "submission/final/zho_restaurant_test_v16_backup.jsonl",
+          "rows": 1000,
+          "sha256": "f53026cb10dad88d611939037cd1d5fe59a77f77fd8d818ec2a9daccb2a05c6e"
+        }
+      }
+    }
+  }
+}

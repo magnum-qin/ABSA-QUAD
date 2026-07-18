@@ -1,0 +1,80 @@
+{
+  "normalization": "NFKC+casefold+whitespace",
+  "files": [
+    {
+      "dataset": "eng_laptop",
+      "label": "kd",
+      "source": "data/subtask_3/eng/eng_laptop_train_v23_deepseek.jsonl",
+      "source_sha256": "11de188f907e0a71701e0da1a04325474edc5a12f18e61faf4f315de7c8e3cd0",
+      "output": "data/subtask_3/eng/eng_laptop_train_v23_deepseek_inductive.jsonl",
+      "output_sha256": "6d1a9b14eaffcc98222143fdc9763eab666c02fec2ffd68c7c62bf609a47595c",
+      "source_rows": 23590,
+      "kept_rows": 22595,
+      "removed_rows": 995,
+      "removed_file": "data/audits/tallip_kd/removed/eng_laptop_kd_removed.jsonl",
+      "removed_sha256": "13235d7ffa50831adbca2cd7ede0c0fe1f20b9d1159709777f5c8e99555bb56c",
+      "dev_removed": 1,
+      "test_removed": 994
+    },
+    {
+      "dataset": "eng_laptop",
+      "label": "baseline",
+      "source": "data/subtask_3/eng/eng_laptop_train_v5repro.jsonl",
+      "source_sha256": "6d21a604fb58edc31d922d505d2483cf18566e3313bbc8e853eab0ca3e8de0ab",
+      "output": "data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl",
+      "output_sha256": "0bdddb1accff1a911770916c46dbedfe6ccdc03478605db0921a8ca60cb010f4",
+      "source_rows": 15049,
+      "kept_rows": 15048,
+      "removed_rows": 1,
+      "removed_file": "data/audits/tallip_kd/removed/eng_laptop_baseline_removed.jsonl",
+      "removed_sha256": "57f23f534efd63b256b4ab57813c156a09aa92dfbce817f77ffea5ac68f6eb53",
+      "dev_removed": 1,
+      "test_removed": 0
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "label": "kd",
+      "source": "data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek.jsonl",
+      "source_sha256": "081951922f17ada1a818e4297f7837826c4af1d776a683180365bf02fc19fc87",
+      "output": "data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek_inductive.jsonl",
+      "output_sha256": "1c2158a2766c845b5e16d771ca8b5062fdf1d531afc9c5fdf3756563948a50f8",
+      "source_rows": 9105,
+      "kept_rows": 8500,
+      "removed_rows": 605,
+      "removed_file": "data/audits/tallip_kd/removed/ukr_restaurant_kd_removed.jsonl",
+      "removed_sha256": "6a60c173f0802bfc00f602ac3e62f274cb584a0b6f8fc78f200a27cd3c5513f2",
+      "dev_removed": 1,
+      "test_removed": 604
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "label": "baseline",
+      "source": "data/subtask_3/ukr/ukr_restaurant_train_v13b.jsonl",
+      "source_sha256": "d820847a19e263d2f212836deea7d14d6d4527ac7885ff3804c64a5a84301312",
+      "output": "data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl",
+      "output_sha256": "46254e55a5bbbea56f6cc3dce4452c19e01b67a25de179a1bcc73fd7199d53b5",
+      "source_rows": 2967,
+      "kept_rows": 2966,
+      "removed_rows": 1,
+      "removed_file": "data/audits/tallip_kd/removed/ukr_restaurant_baseline_removed.jsonl",
+      "removed_sha256": "613d55da4e4a1ad98cfcdf7540f84c417e4059d7f92eb89273d6ccdbd419064f",
+      "dev_removed": 1,
+      "test_removed": 0
+    },
+    {
+      "dataset": "zho_restaurant",
+      "label": "kd",
+      "source": "data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real.jsonl",
+      "source_sha256": "c3deb86252426f968b6965f500df1f1db1eb6b12f56d4630fc70d51236212341",
+      "output": "data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real_inductive.jsonl",
+      "output_sha256": "0622d5925be09a0842eace8b6d88f536925a827c9c960d425e52522de00d403e",
+      "source_rows": 10911,
+      "kept_rows": 9932,
+      "removed_rows": 979,
+      "removed_file": "data/audits/tallip_kd/removed/zho_restaurant_kd_removed.jsonl",
+      "removed_sha256": "ae06b78c1790f42ab48474e843cfc4c4a82ac3fac513828dd7905056551cfe14",
+      "dev_removed": 1,
+      "test_removed": 979
+    }
+  ]
+}

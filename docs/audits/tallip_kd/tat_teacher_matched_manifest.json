@@ -1,0 +1,14 @@
+{
+  "created_at": "2026-07-17T11:31:15.697764+00:00",
+  "protocol": "same 1,240 gold + same 3,915 silver texts/order; teacher labels only",
+  "rows": 5155,
+  "gold_rows": 1240,
+  "silver_rows": 3915,
+  "empty_deepseek_silver_rows": 13,
+  "normalized_dev_test_overlap": 0,
+  "input_sha256": "a0e60e84d1fb10829e90c2bd78e8c5a06826866e244aab113c292c828021d2f9",
+  "silver_sha256": "b155e1da08fb6c4bc562ab40a958678f98d5fc02fa2e4d3f2a472b9924596195",
+  "train_sha256": "f63617623a7a7c39412dc1949040e41225e2f664ff9e774e788c790b66c81e35",
+  "qwen_train_sha256": "f6d0e77f48914277ceaa14511d168328345bef1c3547137fe08bdf31bb63e623",
+  "prompt_metadata": "data/audits/tallip_kd/tat_teacher_matched/deepseek_metadata.json"
+}
