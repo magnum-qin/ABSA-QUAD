@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "status": "frozen",
+  "locked_at": "2026-07-18T23:59:00+09:00",
+  "table_count": 5,
+  "output": {
+    "path": "docs/audits/tallip_kd/tallip_core_tables.md",
+    "sha256": "5d3e2505ac49eee52c8e495acca5eaef7d265667007bda9590e40775ae8d7c63"
+  },
+  "generator": {
+    "path": "scripts/kd/build_tallip_report.py",
+    "sha256": "5dc1dd24c9b04ade2d4752dd9694c06157199867b0435bcdf1e5ff8c71ecb82a"
+  },
+  "inputs": [
+    {
+      "path": "scripts/kd/tallip.yaml",
+      "sha256": "1d09b023b514ea7444a84f1420cd14b18d51d93f0b0c3ce9f47e74c4c7e0a6c6"
+    },
+    {
+      "path": "scripts/kd/official_test.yaml",
+      "sha256": "4f5a49971453993764d4ddd222910b3bedb1dda4812d08ae659b8b26483bd3ff"
+    },
+    {
+      "path": "docs/audits/tallip_kd/teacher_fidelity_metrics.json",
+      "sha256": "b5776fee916ce94bbac451bcea0a167faa2505d509ba126d3cd8c1df531b316c"
+    },
+    {
+      "path": "docs/audits/tallip_kd/inductive_metrics.json",
+      "sha256": "f25d4d0f52cd7e92869e5d6f0531089abe0d1294b5ba292bde4664ef0d116e84"
+    },
+    {
+      "path": "docs/audits/tallip_kd/official_test/official_test_metrics.json",
+      "sha256": "baa82be2c4b857b686327aeeb5e0747cf71d506df2c52e86ef1590b223c5a44f"
+    },
+    {
+      "path": "docs/audits/tallip_kd/ablation_evidence.json",
+      "sha256": "eee8153a3180a1189b813c58b63bdc3898e8340140a63ae963eba85275605618"
+    },
+    {
+      "path": "docs/audits/tallip_kd/tat_teacher_matched_metrics.json",
+      "sha256": "3be8e4a6b6d6efb48ff409d389fef17839fa35a8a64ba28cc1c3ac3f6c5f613d"
+    },
+    {
+      "path": "scripts/kd/registry.yaml",
+      "sha256": "0b3c582cf7d4443cfeb3001352201321eecb72c0ffb3b3f170b4e2fa932f2b06"
+    },
+    {
+      "path": "docs/audits/kd_freeze_report/artifact.json",
+      "sha256": "547e48aa76fa0f939820615c46dd2ea4a2b770ea318f6d492bd8883f130a3fca"
+    },
+    {
+      "path": "docs/EXPERIMENTS.md",
+      "sha256": "ceea8a6e19bcd60f4bca93c5a72b621c06ae00b5c0dafbe77994c0e782cdc4ee"
+    }
+  ],
+  "verification_command": "python scripts/kd/build_tallip_report.py --verify",
+  "update_policy": "Do not update after test-gold inspection without a new protocol version and explicit evidence audit."
+}

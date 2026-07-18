@@ -1,6 +1,6 @@
 # TALLIP KD core evidence tables
 
-Generated from frozen machine-readable artifacts. Tables 1–4 use development-set evidence; Table 5 is a one-shot post-competition evaluation on released official test labels.
+**Status: frozen on 2026-07-18.** Tables 1–4 use development-set evidence; Table 5 is a one-shot post-competition evaluation on released official test labels. Run `python scripts/kd/build_tallip_report.py --verify` before citation.
 
 ## Table 1. Direct teacher fidelity on label-hidden gold dev
 
@@ -15,38 +15,38 @@ Generated from frozen machine-readable artifacts. Tables 1–4 use development-s
 | zho_laptop | 0.2821 | 0.2374 | +0.0447 | [+0.0137, +0.0755] | supported |
 | zho_restaurant | 0.4653 | 0.4060 | +0.0593 | [+0.0240, +0.0941] | supported |
 
-## Table 2. Clean KD five-seed and ensemble results
+## Table 2. Inductive-safe KD five-seed and ensemble results
 
-| Dataset | Clean/original | Seed scores | Mean±SD | Ensemble cF1 |
+| Dataset | Training input | Seed scores | Mean±SD | Ensemble cF1 |
 |---|---|---|---:|---:|
-| eng_laptop | clean | 42:0.3826, 123:0.3610, 456:0.3900, 789:0.3799, 1024:0.3789 | 0.3785±0.0107 | 0.4102 |
-| rus_restaurant | original | 42:0.5714, 123:0.5471, 456:0.5487, 789:0.5578, 1024:0.5513 | 0.5553±0.0099 | 0.6162 |
-| tat_restaurant | original | 42:0.4798, 123:0.4538, 456:0.4681, 789:0.4733, 1024:0.4437 | 0.4637±0.0147 | 0.5327 |
-| ukr_restaurant | clean | 42:0.4448, 123:0.4835, 456:0.4601, 789:0.5016, 1024:0.5353 | 0.4851±0.0355 | 0.5377 |
-| zho_restaurant | clean | 42:0.5391, 123:0.5417, 456:0.5427, 789:0.5405, 1024:0.5361 | 0.5400±0.0026 | 0.5738 |
+| eng_laptop | cleaned | 42:0.3826, 123:0.3610, 456:0.3900, 789:0.3799, 1024:0.3789 | 0.3785±0.0107 | 0.4102 |
+| rus_restaurant | original (zero dev/test overlap) | 42:0.5714, 123:0.5471, 456:0.5487, 789:0.5578, 1024:0.5513 | 0.5553±0.0099 | 0.6162 |
+| tat_restaurant | original (zero dev/test overlap) | 42:0.4798, 123:0.4538, 456:0.4681, 789:0.4733, 1024:0.4437 | 0.4637±0.0147 | 0.5327 |
+| ukr_restaurant | cleaned | 42:0.4448, 123:0.4835, 456:0.4601, 789:0.5016, 1024:0.5353 | 0.4851±0.0355 | 0.5377 |
+| zho_restaurant | cleaned | 42:0.5391, 123:0.5417, 456:0.5427, 789:0.5405, 1024:0.5361 | 0.5400±0.0026 | 0.5738 |
 
-## Table 3. Paired clean comparisons
+## Table 3. Paired dev comparisons under the frozen protocol
 
 | Dataset | Contrast | ΔcF1 | 95% CI | Decision |
 |---|---|---:|---:|---|
-| eng_laptop | clean_minus_baseline | +0.1058 | [+0.0601, +0.1537] | supported |
-| eng_laptop | clean_minus_transductive | -0.0038 | [-0.0444, +0.0351] | inconclusive |
-| rus_restaurant | original_minus_baseline | +0.0895 | [+0.0191, +0.1631] | supported |
-| tat_restaurant | original_minus_baseline | +0.0506 | [-0.0302, +0.1353] | inconclusive |
-| ukr_restaurant | clean_minus_baseline | +0.0472 | [-0.0466, +0.1449] | inconclusive |
-| ukr_restaurant | clean_minus_transductive | -0.0183 | [-0.0738, +0.0292] | inconclusive |
-| zho_restaurant | clean_minus_baseline | +0.0069 | [-0.0204, +0.0349] | inconclusive |
-| zho_restaurant | clean_minus_transductive | +0.0159 | [-0.0075, +0.0398] | inconclusive |
+| eng_laptop | clean KD − baseline | +0.1058 | [+0.0601, +0.1537] | supported |
+| eng_laptop | clean KD − transductive KD | -0.0038 | [-0.0444, +0.0351] | inconclusive |
+| rus_restaurant | inductive-safe KD − baseline | +0.0895 | [+0.0191, +0.1631] | supported |
+| tat_restaurant | inductive-safe KD − baseline | +0.0506 | [-0.0302, +0.1353] | inconclusive |
+| ukr_restaurant | clean KD − baseline | +0.0472 | [-0.0466, +0.1449] | inconclusive |
+| ukr_restaurant | clean KD − transductive KD | -0.0183 | [-0.0738, +0.0292] | inconclusive |
+| zho_restaurant | clean KD − baseline | +0.0069 | [-0.0204, +0.0349] | inconclusive |
+| zho_restaurant | clean KD − transductive KD | +0.0159 | [-0.0075, +0.0398] | inconclusive |
 
 ## Table 4. Ablation claims and evidence grade
 
 | Axis | Controlled evidence | Result | Grade / allowed claim |
 |---|---|---|---|
 | Teacher | 8 datasets × 2 teachers on identical label-hidden gold dev | DeepSeek cF1 is higher in 8/8; supported on eng_restaurant, zho_laptop, zho_restaurant | High for overall robustness; no evidence of a reliable ranking reversal |
-| Teacher downstream | tat, same 1,240 gold + same 3,915 silver texts/order, five paired seeds | DeepSeek 0.5365 vs Qwen 0.5327; Δ=+0.0038, CI [−0.0823,+0.0852] | High matched-control quality; ranking inconclusive |
-| Pool source | rus real/trans/generated, same teacher and cap=3000 | generated > translated > real | High within rus; no universal source ranking |
-| Pool source | zho real vs generated | real +2.3pp | Medium; observational support only |
-| Silver quantity | rus same gen8k pool, paired seeds 42/123, cap3000 vs 7988 | −1.14pp; gate failed | Medium; rejects the planned follow-up, not a full dose-response |
+| Teacher downstream | tat, same 1,240 gold + same 3,915 silver texts/order, five paired seeds | DeepSeek 0.5365 vs Qwen 0.5327; Δ=+0.0038, CI [-0.0823,+0.0852] | High matched-control quality; ranking inconclusive |
+| Pool source | rus real/trans/generated, same teacher and cap=3000 | generated (0.6162) > translated (0.5761) > real (0.5586) | High within rus; no universal source ranking |
+| Pool source | zho real vs generated | real − generated = +2.3pp | Medium; observational support only |
+| Silver quantity | rus same gen8k pool, paired seeds 42/123, cap3000 vs 7988 | -1.14pp; gate failed | Medium; rejects the planned follow-up, not a full dose-response |
 | Translation vs native | ukr translated and native experiments differ in pool construction/quantity | mixed | Low; descriptive only |
 | Information complementarity | synthesis across teacher, pool, and quantity results | plausible moderator | Interpretation, not a causal or universal optimum claim |
 

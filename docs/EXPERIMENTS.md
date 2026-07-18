@@ -1778,7 +1778,7 @@ rus-gen4k 与 tat-qwen 的 adopted train 对 dev/test 规范化文本交集均�
 
 完整 teacher fidelity 结果（DeepSeek prompt 与 Qwen byte-identical 后的最终重跑）：DeepSeek/Qwen cF1 分别为 eng_laptop 0.3575/0.3170、eng_restaurant 0.5529/0.3638、jpn_hotel 0.2146/0.2004、rus 0.3904/0.3649、tat 0.4359/0.3954、ukr 0.3786/0.3598、zho_laptop 0.2821/0.2374、zho_restaurant 0.4653/0.4060。DeepSeek−Qwen 仅在 eng_restaurant、zho_laptop、zho_restaurant 得到统计支持，其余五域 inconclusive；没有任何域支持 Qwen > DeepSeek。Tatar matched downstream control 为 DeepSeek 0.5365 vs Qwen 0.5327，Δ=+0.0038 [−0.0823, +0.0852]，同样 inconclusive。故最终表述为“DeepSeek 整体更稳健，Qwen 在部分域接近；teacher 优势幅度具有域差异”，而非“teacher 排名发生可靠反转”。
 
-可复现入口与最终结果见 `scripts/kd/tallip.yaml`、`scripts/kd/tallip_status.py` 和 `docs/audits/tallip_kd/`；五张核心表由 `scripts/kd/build_tallip_report.py` 生成。永久停止 cap5000、rus cap3000 剩余 seeds 和新的 teacher/pool 网格。
+可复现入口与最终结果见 `scripts/kd/tallip.yaml`、`scripts/kd/tallip_status.py` 和 `docs/audits/tallip_kd/`。五张核心表已由 `tallip_core_tables.lock.json` 固定输出、生成器、协议和全部证据输入的 SHA256；引用前运行 `python scripts/kd/build_tallip_report.py --verify`。默认命令只验证，更新必须显式使用 `--update-lock` 并建立新协议版本。永久停止 cap5000、rus cap3000 剩余 seeds 和新的 teacher/pool 网格。
 
 #### 5.29.7 官方 test 一次性评测（2026-07-18）
 

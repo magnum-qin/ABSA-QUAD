@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-07-18",
+  "rows": [
+    {
+      "id": "teacher_direct",
+      "axis": "Teacher",
+      "controlled_evidence": "8 datasets × 2 teachers on identical label-hidden gold dev",
+      "result_kind": "teacher_direct",
+      "grade_allowed_claim": "High for overall robustness; no evidence of a reliable ranking reversal",
+      "sources": ["docs/audits/tallip_kd/teacher_fidelity_metrics.json"]
+    },
+    {
+      "id": "teacher_downstream_tat",
+      "axis": "Teacher downstream",
+      "controlled_evidence": "tat, same 1,240 gold + same 3,915 silver texts/order, five paired seeds",
+      "result_kind": "teacher_downstream_tat",
+      "grade_allowed_claim": "High matched-control quality; ranking inconclusive",
+      "sources": ["docs/audits/tallip_kd/tat_teacher_matched_metrics.json"]
+    },
+    {
+      "id": "pool_rus",
+      "axis": "Pool source",
+      "controlled_evidence": "rus real/trans/generated, same teacher and cap=3000",
+      "result_kind": "pool_rus",
+      "grade_allowed_claim": "High within rus; no universal source ranking",
+      "sources": ["scripts/kd/registry.yaml"]
+    },
+    {
+      "id": "pool_zho",
+      "axis": "Pool source",
+      "controlled_evidence": "zho real vs generated",
+      "result_kind": "pool_zho",
+      "grade_allowed_claim": "Medium; observational support only",
+      "sources": ["scripts/kd/registry.yaml"]
+    },
+    {
+      "id": "quantity_rus",
+      "axis": "Silver quantity",
+      "controlled_evidence": "rus same gen8k pool, paired seeds 42/123, cap3000 vs 7988",
+      "result_kind": "quantity_rus",
+      "grade_allowed_claim": "Medium; rejects the planned follow-up, not a full dose-response",
+      "sources": ["scripts/kd/registry.yaml", "docs/audits/kd_freeze_report/artifact.json"]
+    },
+    {
+      "id": "translation_native_ukr",
+      "axis": "Translation vs native",
+      "controlled_evidence": "ukr translated and native experiments differ in pool construction/quantity",
+      "result_kind": "literal",
+      "result": "mixed",
+      "grade_allowed_claim": "Low; descriptive only",
+      "sources": ["docs/EXPERIMENTS.md"]
+    },
+    {
+      "id": "information_complementarity",
+      "axis": "Information complementarity",
+      "controlled_evidence": "synthesis across teacher, pool, and quantity results",
+      "result_kind": "literal",
+      "result": "plausible moderator",
+      "grade_allowed_claim": "Interpretation, not a causal or universal optimum claim",
+      "sources": [
+        "docs/audits/tallip_kd/teacher_fidelity_metrics.json",
+        "docs/audits/tallip_kd/tat_teacher_matched_metrics.json",
+        "scripts/kd/registry.yaml"
+      ]
+    }
+  ]
+}

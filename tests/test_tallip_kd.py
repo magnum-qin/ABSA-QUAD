@@ -1,4 +1,5 @@
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -148,6 +149,32 @@ class TallipKDTests(unittest.TestCase):
         self.assertNotIn("test SOTA 对比", readme)
         self.assertNotIn("反超 nchellwig", readme)
         self.assertNotIn("第 5 个经 KD 改善", readme)
+
+    def test_frozen_core_tables_are_reproducible(self):
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts/kd/build_tallip_report.py"), "--verify"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("verified 5 frozen tables", result.stdout)
+
+        lock = json.loads(
+            (ROOT / "docs/audits/tallip_kd/tallip_core_tables.lock.json").read_text()
+        )
+        self.assertEqual(lock["status"], "frozen")
+        self.assertEqual(lock["table_count"], 5)
+        self.assertEqual(len(lock["output"]["sha256"]), 64)
+        paths = {item["path"] for item in lock["inputs"]}
+        self.assertIn("scripts/kd/official_test.yaml", paths)
+        self.assertIn("docs/audits/tallip_kd/ablation_evidence.json", paths)
+
+        tables = (ROOT / lock["output"]["path"]).read_text()
+        self.assertEqual(tables.count("## Table "), 5)
+        self.assertIn("Inductive-safe KD five-seed", tables)
+        self.assertIn("real − generated = +2.3pp", tables)
 
 
 if __name__ == "__main__":

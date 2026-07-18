@@ -49,6 +49,25 @@ No paper LaTeX is modified by this workflow.
   and inconclusive on the other five.
 - Core paper tables: `tallip_core_tables.md`.
 
+## Frozen core tables
+
+The five TALLIP core tables are frozen in `tallip_core_tables.md`. Their output,
+generator, protocols, registry, and every machine-readable evidence input are
+SHA256-pinned by `tallip_core_tables.lock.json`. Table 4 is no longer hardcoded
+in the generator: its evidence rows and source lineage are registered in
+`ablation_evidence.json`, while numeric results are recomputed from the cited
+artifacts.
+
+Verify before copying any value into the paper:
+
+```bash
+python scripts/kd/build_tallip_report.py --verify
+```
+
+The default command is verification-only. Rewriting the tables requires the
+explicit `--update-lock` flag and, after official-test gold inspection, a new
+protocol version plus an evidence audit.
+
 ## One-shot official test
 
 - Protocol and system matrix were frozen before gold retrieval; selection used

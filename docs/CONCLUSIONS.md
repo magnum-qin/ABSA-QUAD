@@ -70,3 +70,7 @@ ukr_restaurant 的 KD−baseline 95% CI 下界大于 0；zho_restaurant 的点�
 [`docs/audits/tallip_kd/tallip_core_tables.md`](audits/tallip_kd/tallip_core_tables.md)
 与
 [`docs/audits/tallip_kd/official_test/official_test_table.md`](audits/tallip_kd/official_test/official_test_table.md)。
+五张核心表已由
+[`tallip_core_tables.lock.json`](audits/tallip_kd/tallip_core_tables.lock.json)
+做 SHA256 冻结；论文引用前必须通过
+`python scripts/kd/build_tallip_report.py --verify`。
