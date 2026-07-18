@@ -1813,6 +1813,22 @@ Tatar matched-pool teacher sensitivity 在 test 上为 DeepSeek 0.4421 vs Qwen 0
 
 可复现协议、冻结哈希、gold 审计、官方原始输出与完整统计位于 `scripts/kd/official_test.yaml`、`scripts/kd/official_test.py` 和 `docs/audits/tallip_kd/official_test/`。从本节完成起永久停止基于 official test 的模型、阈值、teacher、pool 或增强选择。
 
+#### 5.29.8 与 ICONIP V20 的贡献边界（2026-07-18）
+
+ICONIP V20 的研究问题是如何构建并按数据集选择稳定的多语言 DimASQP 学生
+系统；LEADER-DimASQP、Rethink、Hungarian matching、language-specific
+encoder/recipe、five-seed ensemble 及早期增强/配置消融均属于 V20 已有贡献。
+
+TALLIP 固定并复用上述学生系统，新增研究问题是：离线 LLM silver 在什么
+条件下改善学生。可作为新贡献的证据仅包括 8×2 teacher fidelity、matched
+teacher control、pool/quantity 边界、clean-inductive 清理与五种子重训、
+paired bootstrap，以及 dev-locked 的一次性 official-test 复核。相同的任务、
+8 个数据集、学生架构和推理机制必须披露为复用项，不能重复计算 novelty。
+
+完整的逐项差异、prior-publication 建议文本、贡献—证据映射和禁止表述见
+[`TALLIP_VS_ICONIP_V20.md`](TALLIP_VS_ICONIP_V20.md)。TALLIP 不得用 official
+test 与 V20 dev 做跨 split 提升比较，也不得把本研究表述为新 SOTA。
+
 ---
 
 ### 5.21 Jpn 跨基线对比

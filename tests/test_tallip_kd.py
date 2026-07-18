@@ -150,6 +150,43 @@ class TallipKDTests(unittest.TestCase):
         self.assertNotIn("反超 nchellwig", readme)
         self.assertNotIn("第 5 个经 KD 改善", readme)
 
+    def test_tallip_novelty_is_separated_from_iconip_v20(self):
+        boundary = (ROOT / "docs/TALLIP_VS_ICONIP_V20.md").read_text()
+        conclusions = (ROOT / "docs/CONCLUSIONS.md").read_text()
+        experiments = (ROOT / "docs/EXPERIMENTS.md").read_text()
+
+        inherited = [
+            "Rethink",
+            "Hungarian matching",
+            "language-specific encoder",
+            "five-seed ensemble",
+        ]
+        new_evidence = [
+            "8 数据集 × 2 teachers",
+            "matched-pool",
+            "cap3000",
+            "clean-inductive",
+            "paired bootstrap",
+            "official-test",
+        ]
+        for phrase in inherited + new_evidence:
+            self.assertIn(phrase, boundary)
+
+        self.assertIn("不能再次声称为新贡献", boundary)
+        self.assertIn("不声称 SOTA", boundary)
+        self.assertIn("不能重复计算 novelty", experiments)
+        self.assertIn("TALLIP_VS_ICONIP_V20.md", conclusions)
+        self.assertIn("TALLIP_VS_ICONIP_V20.md", (ROOT / "README_AI.md").read_text())
+
+        forbidden_claims = [
+            "TALLIP proposes LEADER-DimASQP",
+            "TALLIP 提出 Rethink",
+            "TALLIP achieves test SOTA",
+        ]
+        public_surface = conclusions + experiments
+        for claim in forbidden_claims:
+            self.assertNotIn(claim, public_surface)
+
     def test_frozen_core_tables_are_reproducible(self):
         result = subprocess.run(
             [sys.executable, str(ROOT / "scripts/kd/build_tallip_report.py"), "--verify"],

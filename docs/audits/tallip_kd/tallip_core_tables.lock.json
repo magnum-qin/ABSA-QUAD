@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "status": "frozen",
-  "locked_at": "2026-07-18T23:59:00+09:00",
+  "locked_at": "2026-07-18T23:27:17+09:00",
   "table_count": 5,
   "output": {
     "path": "docs/audits/tallip_kd/tallip_core_tables.md",
@@ -50,7 +50,7 @@
     },
     {
       "path": "docs/EXPERIMENTS.md",
-      "sha256": "ceea8a6e19bcd60f4bca93c5a72b621c06ae00b5c0dafbe77994c0e782cdc4ee"
+      "sha256": "83f9da34726e722cd337242c2de104acce2b9709a148e73dedcf232767182b61"
     }
   ],
   "verification_command": "python scripts/kd/build_tallip_report.py --verify",

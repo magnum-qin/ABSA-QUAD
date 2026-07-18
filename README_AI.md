@@ -4,6 +4,10 @@
 > 人类文档请见 [README.md](README.md) 和 [docs/](docs/)。
 > KD 结论必须以 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) 为准；历史 dev
 > 记录不得与 official test leaderboard 直接比较。
+> TALLIP novelty 必须以
+> [docs/TALLIP_VS_ICONIP_V20.md](docs/TALLIP_VS_ICONIP_V20.md) 为准：学生架构、
+> language-specific recipe 和 five-seed ensemble 属于 ICONIP V20，不得重复
+> 声称为 TALLIP 新贡献。
 
 ---
 
@@ -270,7 +274,9 @@ paired mean 低于 full-8k，说明 4k 优势不能归因于单纯减量。
 互补覆盖时，KD 更可能有效。直接 fidelity 中 DeepSeek 点估计 8/8 更高，
 但仅三个域获得统计支持；Tatar matched downstream 无可靠排名反转。pool 来源
 无普适排序，同池 gen8k 减量没有改善，现有证据也不支持统一 cap 或甜区。
-统一口径见 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) 和 §5.29.5–5.29.7。
+统一口径见 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) 和 §5.29.5–5.29.7；
+与 ICONIP V20 的贡献边界见
+[docs/TALLIP_VS_ICONIP_V20.md](docs/TALLIP_VS_ICONIP_V20.md)。
 
 ---
 

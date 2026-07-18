@@ -6,6 +6,11 @@
 dev 结果，但论文、README 和汇报不得用 dev 分数与官方 test leaderboard
 作横向比较，也不得把观察性结果写成普适因果规律。
 
+TALLIP 的 novelty 与 ICONIP V20 的边界见
+[`TALLIP_VS_ICONIP_V20.md`](TALLIP_VS_ICONIP_V20.md)：V20 已拥有学生架构、
+language-specific recipe 和多种子推理；TALLIP 只把离线 LLM silver KD、
+teacher/pool/quantity 边界、clean-inductive 与统计/test 闭环作为新增贡献。
+
 ## 证据层级
 
 1. released official test 上的冻结系统与 paired bootstrap；
@@ -65,6 +70,8 @@ ukr_restaurant 的 KD−baseline 95% CI 下界大于 0；zho_restaurant 的点�
 - “silver_cap=3000 是黄金甜区”或“silver 越少/越多越好”；
 - “Tatar 上 Qwen 显著优于 DeepSeek”；
 - “zho_restaurant 是 KD 成功案例”：official test 的 paired 证据不确定。
+- 将 Rethink、Hungarian matching、language-specific encoder 或 five-seed
+  ensemble 再次列为 TALLIP 新贡献；这些属于 ICONIP V20 的既有工作。
 
 数值、置信区间和协议细节见
 [`docs/audits/tallip_kd/tallip_core_tables.md`](audits/tallip_kd/tallip_core_tables.md)

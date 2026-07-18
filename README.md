@@ -172,6 +172,7 @@ Input → 专用 Encoder → [Span BIO, Pair Classifier, V-A Regressor]
 ## Documentation
 
 - [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) — TALLIP KD 最终结论与证据边界（**结论口径最权威**）
+- [docs/TALLIP_VS_ICONIP_V20.md](docs/TALLIP_VS_ICONIP_V20.md) — TALLIP 与 ICONIP V20 的 novelty、复用项及 prior-publication 声明
 - [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) — 完整实验记录与结果分析（含历史假设及 KD 消融 §5.28–5.29）
 - [docs/MODEL.md](docs/MODEL.md) — 模型架构详解
 - [docs/CLI_GUIDE.md](docs/CLI_GUIDE.md) — 命令行操作指南
