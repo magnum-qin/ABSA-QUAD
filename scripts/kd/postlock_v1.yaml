@@ -1,0 +1,122 @@
+schema_version: 1
+
+protocol:
+  name: postlock_dev_only_v1
+  registered_at: "2026-08-02T00:00:00+09:00"
+  purpose: "Post-lock controls for compute exposure and non-LLM self-training"
+  seeds: [42, 123, 456, 789, 1024]
+  build_seed: 20260713
+  bootstrap_seed: 20260713
+  bootstrap_iterations: 10000
+  official_test_evaluation: forbidden
+  model_selection_split: dev_only
+  checkpoint_policy: checkpoint_best.pt
+  threshold_policy: frozen_from_pre_test_system
+  output_root: data/audits/tallip_kd/postlock_v1
+
+gold_repeat:
+  eng_laptop:
+    source_train: data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl
+    target_train: data/subtask_3/eng/eng_laptop_train_v23_deepseek_inductive.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/gold_repeat/eng_laptop.jsonl
+    config: configs/pipeline_eng_laptop_v23_deepseek.yaml
+    dev: data/subtask_3/eng/eng_laptop_dev_task3.jsonl
+    test_text_audit: data/subtask_3/eng/eng_laptop_test_task3.jsonl
+    checkpoint_prefix: postlock_v1_eng_laptop_gold_repeat_seed
+    llm_system: clean
+    vote: 4
+    topk: 0.0
+
+  rus_restaurant:
+    source_train: data/subtask_3/rus/rus_restaurant_train_v13.jsonl
+    target_train: data/subtask_3/rus/rus_restaurant_train_v23_deepseek_gen4k.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/gold_repeat/rus_restaurant.jsonl
+    config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    test_text_audit: data/subtask_3/rus/rus_restaurant_test_task3.jsonl
+    checkpoint_prefix: postlock_v1_rus_restaurant_gold_repeat_seed
+    llm_system: original
+    vote: 3
+    topk: 0.0
+
+  tat_restaurant:
+    source_train: data/subtask_3/tat/tat_restaurant_train_v13.jsonl
+    target_train: data/subtask_3/tat/tat_restaurant_train_v23_qwen.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/gold_repeat/tat_restaurant.jsonl
+    config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
+    test_text_audit: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
+    checkpoint_prefix: postlock_v1_tat_restaurant_gold_repeat_seed
+    llm_system: original
+    vote: 3
+    topk: 0.0
+
+  ukr_restaurant:
+    source_train: data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl
+    target_train: data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek_inductive.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/gold_repeat/ukr_restaurant.jsonl
+    config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
+    test_text_audit: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
+    checkpoint_prefix: postlock_v1_ukr_restaurant_gold_repeat_seed
+    llm_system: clean
+    vote: 3
+    topk: 0.0
+
+  zho_restaurant:
+    source_train: data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl
+    target_train: data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real_inductive.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/gold_repeat/zho_restaurant.jsonl
+    config: configs/pipeline_zho_restaurant_v23_qwen.yaml
+    dev: data/subtask_3/zho/zho_restaurant_dev_task3.jsonl
+    test_text_audit: data/subtask_3/zho/zho_restaurant_test_task3.jsonl
+    checkpoint_prefix: postlock_v1_zho_restaurant_gold_repeat_seed
+    llm_system: clean
+    vote: 3
+    topk: 0.0
+
+self_training:
+  eng_laptop:
+    base_train: data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl
+    llm_reference_train: data/subtask_3/eng/eng_laptop_train_v23_deepseek_inductive.jsonl
+    input: data/audits/tallip_kd/postlock_v1/self_training/eng_laptop_input.jsonl
+    pseudo: data/audits/tallip_kd/postlock_v1/self_training/eng_laptop_pseudo.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/self_training/eng_laptop_train.jsonl
+    config: configs/pipeline_eng_laptop_v23_deepseek.yaml
+    dev: data/subtask_3/eng/eng_laptop_dev_task3.jsonl
+    gold_teacher_prefix: postlock_v1_eng_laptop_gold_repeat_seed
+    checkpoint_prefix: postlock_v1_eng_laptop_self_train_seed
+    pseudo_vote: 3
+    pseudo_topk: 0.0
+    eval_vote: 4
+    eval_topk: 0.0
+
+  rus_restaurant:
+    base_train: data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl
+    llm_reference_train: data/subtask_3/rus/rus_restaurant_train_v23_deepseek_gen4k.jsonl
+    input: data/audits/tallip_kd/postlock_v1/self_training/rus_restaurant_input.jsonl
+    pseudo: data/audits/tallip_kd/postlock_v1/self_training/rus_restaurant_pseudo.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/self_training/rus_restaurant_train.jsonl
+    config: configs/pipeline_rus_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/rus/rus_restaurant_dev_task3.jsonl
+    gold_teacher_prefix: postlock_v1_rus_restaurant_gold_repeat_seed
+    checkpoint_prefix: postlock_v1_rus_restaurant_self_train_seed
+    pseudo_vote: 4
+    pseudo_topk: 0.10
+    eval_vote: 3
+    eval_topk: 0.0
+
+  zho_restaurant:
+    base_train: data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl
+    llm_reference_train: data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real_inductive.jsonl
+    input: data/audits/tallip_kd/postlock_v1/self_training/zho_restaurant_input.jsonl
+    pseudo: data/audits/tallip_kd/postlock_v1/self_training/zho_restaurant_pseudo.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/self_training/zho_restaurant_train.jsonl
+    config: configs/pipeline_zho_restaurant_v23_qwen.yaml
+    dev: data/subtask_3/zho/zho_restaurant_dev_task3.jsonl
+    gold_teacher_prefix: postlock_v1_zho_restaurant_gold_repeat_seed
+    checkpoint_prefix: postlock_v1_zho_restaurant_self_train_seed
+    pseudo_vote: 4
+    pseudo_topk: 0.0
+    eval_vote: 3
+    eval_topk: 0.0

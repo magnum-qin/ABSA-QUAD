@@ -16,14 +16,15 @@ from tallip_common import (  # noqa: E402
 )
 
 
+def load_module(name, relative):
+    spec = importlib.util.spec_from_file_location(name, ROOT / relative)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class TallipKDTests(unittest.TestCase):
     def test_cloud_and_local_teacher_prompts_are_identical(self):
-        def load_module(name, relative):
-            spec = importlib.util.spec_from_file_location(name, ROOT / relative)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-            return module
-
         cloud = load_module("silver_cloud", "scripts/llm_silver_label.py")
         local = load_module("silver_local", "scripts/llm_silver_label_openai.py")
         categories = ["FOOD#QUALITY", "SERVICE#GENERAL"]
@@ -212,6 +213,29 @@ class TallipKDTests(unittest.TestCase):
         self.assertEqual(tables.count("## Table "), 5)
         self.assertIn("Inductive-safe KD five-seed", tables)
         self.assertIn("real − generated = +2.3pp", tables)
+
+    def test_postlock_protocol_is_dev_only_and_repeat_is_deterministic(self):
+        module = load_module("postlock_experiments", "scripts/kd/postlock_experiments.py")
+        manifest = yaml.safe_load((ROOT / "scripts/kd/postlock_v1.yaml").read_text())
+        protocol = manifest["protocol"]
+        self.assertEqual(protocol["official_test_evaluation"], "forbidden")
+        self.assertEqual(protocol["model_selection_split"], "dev_only")
+        self.assertEqual(protocol["seeds"], [42, 123, 456, 789, 1024])
+        self.assertEqual(len(manifest["gold_repeat"]), 5)
+        self.assertEqual(set(manifest["self_training"]), {"eng_laptop", "rus_restaurant", "zho_restaurant"})
+        for spec in manifest["self_training"].values():
+            self.assertNotIn("test", spec)
+            self.assertNotIn("official", " ".join(spec))
+
+        rows = [
+            {"ID": "a", "Text": "A", "Quadruplet": []},
+            {"ID": "b", "Text": "B", "Quadruplet": []},
+        ]
+        first = module.repeat_gold(rows, 5, 7)
+        second = module.repeat_gold(rows, 5, 7)
+        self.assertEqual(first, second)
+        self.assertEqual(len(first), 5)
+        self.assertEqual(len({row["ID"] for row in first}), 5)
 
 
 if __name__ == "__main__":
