@@ -237,6 +237,26 @@ class TallipKDTests(unittest.TestCase):
         self.assertEqual(len(first), 5)
         self.assertEqual(len({row["ID"] for row in first}), 5)
 
+    def test_postlock_precomputed_vote_merge_matches_inference_semantics(self):
+        module = load_module("postlock_vote_merge", "scripts/kd/postlock_experiments.py")
+        predictions = [
+            [{"ID": "x", "Quadruplet": [
+                {"Aspect": "a", "Category": "C#D", "Opinion": "o", "VA": "3#5"}
+            ]}],
+            [{"ID": "x", "Quadruplet": [
+                {"Aspect": "a", "Category": "C#D", "Opinion": "o", "VA": "5#7"}
+            ]}],
+            [{"ID": "x", "Quadruplet": []}],
+        ]
+        merged = module.merge_seed_predictions(predictions, vote_threshold=2)
+        self.assertEqual(merged, [{"ID": "x", "Quadruplet": [
+            {"Aspect": "a", "Category": "C#D", "Opinion": "o", "VA": "4.00#6.00"}
+        ]}])
+
+        predictions[2][0]["ID"] = "wrong"
+        with self.assertRaisesRegex(ValueError, "ID/order mismatch"):
+            module.merge_seed_predictions(predictions, vote_threshold=2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -13,10 +13,12 @@ import argparse
 import copy
 import hashlib
 import json
+import os
 import random
 import statistics
 import subprocess
 import sys
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -39,6 +41,17 @@ def sha256_file(path: str | Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def evict_file_cache(path: str | Path) -> None:
+    """Best-effort eviction of a large, clean checkpoint from the page cache."""
+    if not hasattr(os, "posix_fadvise") or not hasattr(os, "POSIX_FADV_DONTNEED"):
+        return
+    descriptor = os.open(root_path(path), os.O_RDONLY)
+    try:
+        os.posix_fadvise(descriptor, 0, 0, os.POSIX_FADV_DONTNEED)
+    finally:
+        os.close(descriptor)
 
 
 def load_manifest(path: str | Path = DEFAULT_MANIFEST) -> dict:
@@ -418,6 +431,50 @@ def prediction_path(output_root: Path, dataset: str, system: str, seed: int | st
     return output_root / "predictions" / f"{dataset}_{system}_{suffix}.jsonl"
 
 
+def merge_seed_predictions(prediction_sets: list[list[dict]], vote_threshold: int) -> list[dict]:
+    """Merge already-materialized seed predictions using inference.py voting semantics.
+
+    Loading each multi-GB checkpoint in one long-lived Python process can retain
+    enough allocator/page-cache memory for systemd-oomd to terminate inference.
+    The per-seed predictions are already required by this protocol, so merging
+    those JSONL files is equivalent and keeps the ensemble step memory-bounded.
+    """
+    if not prediction_sets:
+        raise ValueError("cannot merge an empty prediction set")
+    row_count = len(prediction_sets[0])
+    if any(len(rows) != row_count for rows in prediction_sets):
+        raise ValueError("seed prediction row counts differ")
+
+    merged = []
+    for index in range(row_count):
+        sample_id = prediction_sets[0][index]["ID"]
+        if any(rows[index]["ID"] != sample_id for rows in prediction_sets[1:]):
+            raise ValueError(f"seed prediction ID/order mismatch at row {index}")
+        quad_votes: dict[tuple[str, str, str], list[tuple[float, float]]] = defaultdict(list)
+        for rows in prediction_sets:
+            for quad in rows[index].get("Quadruplet", []):
+                key = (quad["Aspect"], quad["Category"], quad["Opinion"])
+                valence, arousal = quad["VA"].split("#")
+                quad_votes[key].append((float(valence), float(arousal)))
+
+        final_quads = []
+        for (aspect, category, opinion), values in quad_votes.items():
+            if len(values) < vote_threshold:
+                continue
+            avg_v = max(1.0, min(9.0, sum(v for v, _ in values) / len(values)))
+            avg_a = max(1.0, min(9.0, sum(a for _, a in values) / len(values)))
+            final_quads.append(
+                {
+                    "Aspect": aspect,
+                    "Category": category,
+                    "Opinion": opinion,
+                    "VA": f"{avg_v:.2f}#{avg_a:.2f}",
+                }
+            )
+        merged.append({"ID": sample_id, "Quadruplet": final_quads})
+    return merged
+
+
 def inference_specs(manifest: dict, dataset: str, systems: list[str]) -> list[tuple[str, dict]]:
     resolved = []
     if "gold_repeat" in systems and dataset in manifest["gold_repeat"]:
@@ -503,33 +560,35 @@ def infer(args: argparse.Namespace) -> int:
                 print("$ " + " ".join(command), flush=True)
                 if not args.dry_run and (args.force or not output.exists()):
                     log_path = log_root / f"{dataset}_{system}_seed{seed}_infer.log"
-                    with log_path.open("a", encoding="utf-8") as log:
-                        subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
+                    try:
+                        with log_path.open("a", encoding="utf-8") as log:
+                            subprocess.run(
+                                command,
+                                cwd=ROOT,
+                                stdout=log,
+                                stderr=subprocess.STDOUT,
+                                check=True,
+                            )
+                    finally:
+                        evict_file_cache(ROOT / directory / "checkpoint_best.pt")
             output = prediction_path(output_root, dataset, system, "ensemble")
-            command = [
-                sys.executable,
-                "scripts/inference.py",
-                "--multi_seed_ensemble",
-                "--seed_dirs",
-                *seed_dirs,
-                "--config",
-                spec["config"],
-                "--test_file",
-                spec["dev"],
-                "--output",
-                str(output.relative_to(ROOT)),
-                "--vote_threshold",
-                str(spec["vote"]),
-                "--span_topk_threshold",
-                str(spec["topk"]),
-                "--batch_size",
-                str(args.batch_size),
-            ]
-            print("$ " + " ".join(command), flush=True)
+            seed_outputs = [prediction_path(output_root, dataset, system, seed) for seed in seeds]
+            print(
+                f"merge {len(seed_outputs)} seed predictions -> {output.relative_to(ROOT)} "
+                f"(vote_threshold={spec['vote']})",
+                flush=True,
+            )
             if not args.dry_run and (args.force or not output.exists()):
-                log_path = log_root / f"{dataset}_{system}_ensemble_infer.log"
-                with log_path.open("a", encoding="utf-8") as log:
-                    subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
+                missing_outputs = [str(path.relative_to(ROOT)) for path in seed_outputs if not path.exists()]
+                if missing_outputs:
+                    raise SystemExit(
+                        f"{dataset}/{system}: missing per-seed predictions before merge: {missing_outputs}"
+                    )
+                merged = merge_seed_predictions(
+                    [read_jsonl(path) for path in seed_outputs],
+                    vote_threshold=spec["vote"],
+                )
+                write_jsonl(output, merged)
     return 0
 
 
