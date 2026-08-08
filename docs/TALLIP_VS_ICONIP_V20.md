@@ -1,6 +1,6 @@
 # TALLIP 与 ICONIP V20 的贡献边界
 
-更新日期：2026-07-18。
+更新日期：2026-08-08。
 
 本文档用于约束 TALLIP 稿件的 novelty、相关工作和 prior-publication
 声明。ICONIP V20 的依据是仓库中的冻结稿
@@ -29,10 +29,10 @@ test 复核。**
 | LLM 的角色 | 增强或候选融合属于配置研究，LLM candidate fusion 是已报告负结果之一 | DeepSeek/Qwen 是离线 silver teacher，并直接接受 label-hidden gold-dev fidelity 评测 |
 | 学生系统 | 论文的主要技术贡献 | 从 V20 继承并作为受控实验载体，不作为 TALLIP 新贡献 |
 | 数据范围 | 同一项 SemEval 任务的 8 个数据集 | 仍为同一 8 个数据集；数据集数量本身不是新增贡献 |
-| 主要证据 | dev 上的系统/配置比较与 five-seed ensemble | clean-inductive five-seed、8×2 teacher fidelity、受控消融、paired bootstrap、冻结 official test |
+| 主要证据 | dev 上的系统/配置比较与 five-seed ensemble | clean-inductive five-seed、8×2 teacher fidelity、曝光匹配/自训练控制、paired bootstrap、冻结 official test |
 | 数据完整性 | 按当时比赛开发流程报告 | 统一文本泄漏审计，清理 3 个 KD 输入并补训 clean baseline/KD |
 | 主要结论 | 无普适学生配置；语言专用 encoder 与多种子推理最稳健 | KD 收益有条件；teacher/pool 效果依域而变；不存在普适 silver cap |
-| 交付物 | V20 系统与配置研究 | 原始 teacher 响应、删除明细、SHA256、协议锁和五张冻结证据表 |
+| 交付物 | V20 系统与配置研究 | 原始 teacher 响应、删除明细、SHA256、协议锁和六张冻结证据表 |
 
 ## ICONIP V20 已经拥有的贡献
 
@@ -63,7 +63,10 @@ introduced student” 并引用 V20；V20 的架构消融不应占据 TALLIP 主
 4. **inductive-safe 与统计闭环。** 审计 gold/silver/distill/dev/test，清理并
    重训受影响的 eng/ukr/zho；固定五个 seeds、ensemble 阈值与 10,000 次
    paired bootstrap。
-5. **一次性 official-test 复核与可复现冻结。** test gold 只用于冻结后的
+5. **非 LLM 控制与机制边界。** 在 official-test 结果冻结后，仅使用 dev，补充
+   等训练曝光的 repeated-gold 五种子控制，并在 eng/rus/zho 补充同文本
+   student self-training 控制，以区分 LLM 标注收益、重复曝光和学生伪标签。
+6. **一次性 official-test 复核与可复现冻结。** test gold 只用于冻结后的
    post-competition local evaluation，不用于模型、阈值、teacher、pool 或
    增强选择；保存预测与输入哈希并冻结核心表。
 
@@ -91,7 +94,8 @@ and training protocol”小节，并把篇幅集中到 KD 设计、审计、统�
    in-domain unlabeled text and are not used at inference time.*
 2. *We disentangle teacher, pool, and silver-data effects through direct 8-by-2
    teacher-fidelity evaluation, matched downstream controls, pool comparisons,
-   and a same-pool quantity intervention across eight multilingual domains.*
+   a same-pool quantity intervention, and dev-only exposure-matched and
+   student-self-training controls across eight multilingual domains.*
 3. *We provide an inductive-safe evaluation by auditing train/dev/test overlap,
    retraining all affected five-seed systems, and reporting paired bootstrap
    intervals against matched no-KD baselines.*
@@ -111,8 +115,9 @@ and training protocol”小节，并把篇幅集中到 KD 设计、审计、统�
 > components rather than new contributions. The present manuscript asks a
 > different question: when LLM-labeled silver data improves that fixed student.
 > It adds direct two-teacher fidelity evaluation across eight datasets,
-> teacher/pool/quantity controls, leakage-audited clean-inductive retraining,
-> paired statistical inference, and a dev-locked post-competition evaluation on
+> teacher/pool/quantity controls, exposure-matched and student-self-training
+> controls, leakage-audited clean-inductive retraining, paired statistical
+> inference, and a dev-locked post-competition evaluation on
 > the released official test set. None of these post-V20 KD analyses or official
 > test results appeared in the earlier manuscript.
 
@@ -123,11 +128,13 @@ and training protocol”小节，并把篇幅集中到 KD 设计、审计、统�
 
 | TALLIP 主张 | 直接证据 | 允许的强度 |
 |---|---|---|
-| teacher fidelity 具有域差异 | 核心表 1；Tatar matched control（表 4/5） | DeepSeek 整体更稳健，部分域差异不确定；不声称可靠排名反转 |
+| teacher fidelity 具有域差异 | 核心表 1；Tatar matched control（表 4） | DeepSeek 整体更稳健，部分域差异不确定；不声称可靠排名反转 |
 | clean-inductive KD 的 dev 效果 | 核心表 2–3 | eng/rus supported；tat/ukr/zho dev evidence 不确定 |
 | pool 没有普适排序 | 核心表 4 | rus 为受控证据，zho 为观察性证据；不作跨域因果排序 |
 | 更少 silver 并非 rus gen4k 优势原因 | 核心表 4 | 同池 cap3000 未改善；不推出普适最佳数量 |
-| official test 上的条件性 KD 收益 | 核心表 5 | 五个预注册对照中四个 supported；不声称 SOTA |
+| LLM 标注收益不只是训练曝光 | 核心表 5 | eng/rus/ukr 得到支持；tat/zho 未建立可靠优势 |
+| LLM teacher 相对学生伪标签的增益 | 核心表 5 | eng/rus 得到支持；zho 统计持平，不作全域推广 |
+| official test 上的条件性 KD 收益 | 核心表 6 | 五个预注册对照中四个 supported；不声称 SOTA |
 
 核心表编号以冻结生成物为准，不应手工复制后继续修改数值。
 
@@ -146,6 +153,6 @@ and training protocol”小节，并把篇幅集中到 KD 设计、审计、统�
 ## 写作编排建议
 
 TALLIP 主文应将继承的 V20 学生架构压缩为一个带明确引用的小节。主结果围绕
-五张冻结表展开：teacher fidelity、clean five-seed、paired dev、受控消融和
-official test。V20 的架构/配置消融只用于说明固定学生的来源，必要时放附录；
+六张冻结表展开：teacher fidelity、clean five-seed、paired dev、受控消融、
+post-lock 非 LLM 控制和 official test。V20 的架构/配置消融只用于说明固定学生的来源，必要时放附录；
 否则稿件容易被理解为同一方法的重复配置报告，而不是一个独立的 KD 研究。

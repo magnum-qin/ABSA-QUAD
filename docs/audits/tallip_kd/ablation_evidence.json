@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "as_of": "2026-07-18",
+  "as_of": "2026-08-08",
   "rows": [
     {
       "id": "teacher_direct",
@@ -50,6 +50,30 @@
       "result": "mixed",
       "grade_allowed_claim": "Low; descriptive only",
       "sources": ["docs/EXPERIMENTS.md"]
+    },
+    {
+      "id": "postlock_exposure",
+      "axis": "Training exposure",
+      "controlled_evidence": "five datasets, same row exposure and student recipe; LLM silver replaced by repeated gold",
+      "result_kind": "postlock_exposure",
+      "grade_allowed_claim": "High within dataset; LLM advantage exceeds exposure on eng/rus/ukr only",
+      "sources": [
+        "scripts/kd/postlock_v1.yaml",
+        "docs/audits/tallip_kd/postlock_metrics.json",
+        "docs/audits/tallip_kd/postlock_audit.json"
+      ]
+    },
+    {
+      "id": "postlock_self_training",
+      "axis": "Teacher source",
+      "controlled_evidence": "eng/rus/zho, identical pseudo-label text pool and row count; LLM labels vs student-ensemble labels",
+      "result_kind": "postlock_self_training",
+      "grade_allowed_claim": "High within dataset; LLM-specific value on eng/rus, statistically tied with self-training on zho",
+      "sources": [
+        "scripts/kd/postlock_v1.yaml",
+        "docs/audits/tallip_kd/postlock_metrics.json",
+        "docs/audits/tallip_kd/postlock_audit.json"
+      ]
     },
     {
       "id": "information_complementarity",

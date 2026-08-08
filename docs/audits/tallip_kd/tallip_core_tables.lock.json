@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "status": "frozen",
-  "locked_at": "2026-07-18T23:27:17+09:00",
-  "table_count": 5,
+  "locked_at": "2026-08-08T23:59:00+09:00",
+  "table_count": 6,
   "output": {
     "path": "docs/audits/tallip_kd/tallip_core_tables.md",
-    "sha256": "5d3e2505ac49eee52c8e495acca5eaef7d265667007bda9590e40775ae8d7c63"
+    "sha256": "c2c3be734d342c6ff3598b8941bb6cf361da1f37917ae7965d5ec8e2f585fc3b"
   },
   "generator": {
     "path": "scripts/kd/build_tallip_report.py",
-    "sha256": "5dc1dd24c9b04ade2d4752dd9694c06157199867b0435bcdf1e5ff8c71ecb82a"
+    "sha256": "815c1b35ccaa16100889a13d1f5c610b3648cf0ba305a067ba66e4ca426c6d3e"
   },
   "inputs": [
     {
@@ -33,8 +33,20 @@
       "sha256": "baa82be2c4b857b686327aeeb5e0747cf71d506df2c52e86ef1590b223c5a44f"
     },
     {
+      "path": "scripts/kd/postlock_v1.yaml",
+      "sha256": "0901431fa505317bf403459902a9f57f81a999e9e86b62494b44dc662f49b1f2"
+    },
+    {
+      "path": "docs/audits/tallip_kd/postlock_metrics.json",
+      "sha256": "2b4836d981f394ce70962850ec43be20fe3d5244542e5ba58fd6b11106235a3c"
+    },
+    {
+      "path": "docs/audits/tallip_kd/postlock_audit.json",
+      "sha256": "ec64437f56ad1330bc1e8d33175d887541781f0679aa6a7bd8a286045074212e"
+    },
+    {
       "path": "docs/audits/tallip_kd/ablation_evidence.json",
-      "sha256": "eee8153a3180a1189b813c58b63bdc3898e8340140a63ae963eba85275605618"
+      "sha256": "9e1b55c19e20e70e32fd29bd428cc2a3a3236e47300101ca82fb5e350ef792ba"
     },
     {
       "path": "docs/audits/tallip_kd/tat_teacher_matched_metrics.json",
@@ -42,7 +54,7 @@
     },
     {
       "path": "scripts/kd/registry.yaml",
-      "sha256": "0b3c582cf7d4443cfeb3001352201321eecb72c0ffb3b3f170b4e2fa932f2b06"
+      "sha256": "cb0cc4a1bb43a8271af564653cae81258f69e335123407ad571ec1fc5c650525"
     },
     {
       "path": "docs/audits/kd_freeze_report/artifact.json",
@@ -50,9 +62,9 @@
     },
     {
       "path": "docs/EXPERIMENTS.md",
-      "sha256": "83f9da34726e722cd337242c2de104acce2b9709a148e73dedcf232767182b61"
+      "sha256": "d181cf8866f0aa9646d1fbdec99672156b5c948034fb8776f83ba58d61b79e98"
     }
   ],
   "verification_command": "python scripts/kd/build_tallip_report.py --verify",
-  "update_policy": "Do not update after test-gold inspection without a new protocol version and explicit evidence audit."
+  "update_policy": "Post-lock v1 may append dev-only controls after explicit evidence audit; official-test systems, thresholds, and conclusions remain frozen."
 }

@@ -1,6 +1,6 @@
 # TALLIP KD 最终结论口径
 
-更新日期：2026-07-18。
+更新日期：2026-08-08。
 
 本文档是 KD 结论的单一权威入口。历史实验日志可以保留当时的假设和
 dev 结果，但论文、README 和汇报不得用 dev 分数与官方 test leaderboard
@@ -15,9 +15,11 @@ teacher/pool/quantity 边界、clean-inductive 与统计/test 闭环作为新增
 
 1. released official test 上的冻结系统与 paired bootstrap；
 2. clean-inductive dev 上的五种子结果与 paired bootstrap；
-3. 8×2 teacher fidelity 和 Tatar matched downstream control；
-4. teacher、pool 与 quantity 的受控消融；
-5. 早期 transductive 或跨配置 dev 对比，仅作历史/描述性证据。
+3. post-lock dev-only 的 exposure-matched repeated-gold 与 same-text
+   self-training 五种子对照；
+4. 8×2 teacher fidelity 和 Tatar matched downstream control；
+5. teacher、pool 与 quantity 的受控消融；
+6. 早期 transductive 或跨配置 dev 对比，仅作历史/描述性证据。
 
 official test 是赛后一次性本地评估：系统、预测哈希和阈值均在读取 gold
 前冻结，未用 test 标签选择模型、teacher、pool、数据增强或阈值。
@@ -42,11 +44,30 @@ ukr_restaurant 的 KD−baseline 95% CI 下界大于 0；zho_restaurant 的点�
 
 八个主系统均未超过相应官方 leaderboard 最佳分数，不能声明 test SOTA。
 
+## Post-lock 控制实验
+
+为检验 LLM-KD 的 dev 收益是否只是更多训练行/更新步数造成，五个 adopted
+KD 数据集均按目标训练行数构造 repeated-gold，并沿用相同学生配置、五个
+seeds 和冻结阈值。LLM-KD−repeated-gold 在 eng_laptop、rus_restaurant、
+ukr_restaurant 的 95% CI 下界大于 0；tat_restaurant 与 zho_restaurant 的
+CI 跨 0。因此，当前证据支持“这三个域的收益不能仅由训练曝光解释”，不支持
+把该结论外推到所有域。
+
+eng_laptop、rus_restaurant、zho_restaurant 还在与 LLM silver 完全相同的
+文本和行数上构造了学生 ensemble 伪标签。LLM-KD 相对 self-training 在 eng
+和 rus 分别为 +0.0933 [+0.0476, +0.1407]、+0.1183
+[+0.0531, +0.1854]，得到统计支持；zho 为 −0.0016
+[−0.0294, +0.0256]，统计持平。zho 的 self-training 又可靠优于 repeated-gold
++0.0276 [+0.0079, +0.0463]。这说明 teacher 的额外价值具有明显域依赖性：
+eng/rus 需要 LLM 标签才能获得当前增益，而 zho 的收益可由同文本学生伪标签
+复现，不能宣称 LLM teacher 在该域具有独占贡献。
+
 ## 允许保留的六条结论
 
-1. **KD 的收益具有条件性。** 当前结果与“silver 提供 gold/base 缺失的、
-   且标注较准确的覆盖时更可能有效”一致；信息互补性是解释性机制，尚未被
-   独立操纵为普适因果定律。
+1. **KD 的收益具有条件性，且不能统一归因于训练曝光。** Post-lock 控制在
+   eng/rus/ukr 排除了“仅增加训练行数”这一替代解释，但 tat/zho 证据不确定；
+   结果与“silver 提供 gold/base 缺失且标注较准确的覆盖时更可能有效”一致。
+   信息互补性仍是解释性机制，不是已独立操纵的普适因果定律。
 2. **DeepSeek 整体更稳健，Qwen 在部分域接近。** 直接 teacher fidelity 的
    点估计为 DeepSeek 8/8 更高，但只有 eng_restaurant、zho_laptop 和
    zho_restaurant 的差异得到统计支持，其余五个域不确定。
@@ -62,6 +83,10 @@ ukr_restaurant 的 KD−baseline 95% CI 下界大于 0；zho_restaurant 的点�
 6. **没有普适的 silver 数量最优点。** 最佳 silver 取决于质量、覆盖、
    多样性和 gold:silver 权重；现有证据不支持统一 cap、甜区或 dose-response。
 
+上述结果还支持一个边界条件：**LLM teacher 的额外价值具有域依赖性。**
+eng/rus 的 LLM-KD 显著优于 same-text self-training；zho 两者统计持平。不得把
+“LLM 标签必然优于学生伪标签”写成跨域规律。
+
 ## 已撤回或禁止的表述
 
 - “dev 反超 test SOTA”或任何由跨 split 数字得到的 SOTA 结论；
@@ -70,6 +95,7 @@ ukr_restaurant 的 KD−baseline 95% CI 下界大于 0；zho_restaurant 的点�
 - “silver_cap=3000 是黄金甜区”或“silver 越少/越多越好”；
 - “Tatar 上 Qwen 显著优于 DeepSeek”；
 - “zho_restaurant 是 KD 成功案例”：official test 的 paired 证据不确定。
+- “LLM teacher 在所有域都优于 self-training”：zho 的 matched-text 对照持平。
 - 将 Rethink、Hungarian matching、language-specific encoder 或 five-seed
   ensemble 再次列为 TALLIP 新贡献；这些属于 ICONIP V20 的既有工作。
 
@@ -77,7 +103,7 @@ ukr_restaurant 的 KD−baseline 95% CI 下界大于 0；zho_restaurant 的点�
 [`docs/audits/tallip_kd/tallip_core_tables.md`](audits/tallip_kd/tallip_core_tables.md)
 与
 [`docs/audits/tallip_kd/official_test/official_test_table.md`](audits/tallip_kd/official_test/official_test_table.md)。
-五张核心表已由
+六张核心表已由
 [`tallip_core_tables.lock.json`](audits/tallip_kd/tallip_core_tables.lock.json)
 做 SHA256 冻结；论文引用前必须通过
 `python scripts/kd/build_tallip_report.py --verify`。

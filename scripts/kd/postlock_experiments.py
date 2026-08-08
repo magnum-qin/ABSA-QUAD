@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-"""Build, train, infer, and audit post-lock dev-only KD controls.
+"""Build, train, infer, audit, and report post-lock dev-only KD controls.
 
-The post-lock protocol is deliberately isolated from the frozen official-test
-evidence. This module currently implements the exposure-matched repeated-gold
-control. Self-training is registered in the manifest and is implemented after
-the repeated-gold jobs have started.
+The post-lock protocol is deliberately isolated from frozen official-test
+evidence. It covers exposure-matched repeated-gold controls and same-text
+student self-training controls under fixed pre-test thresholds.
 """
 
 from __future__ import annotations
@@ -596,11 +595,251 @@ def load_prediction(path: Path) -> list[dict] | None:
     return read_jsonl(path) if path.exists() else None
 
 
+def compact_metrics(metrics: dict) -> dict:
+    """Drop per-example bootstrap internals from the durable public report."""
+    return {key: value for key, value in metrics.items() if not key.startswith("_")}
+
+
+def sha256_json(value: object) -> str:
+    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def checked_bootstrap(
+    check_id: str,
+    gold: list[dict],
+    pred_a: list[dict],
+    pred_b: list[dict],
+    protocol: dict,
+    checks: list[dict],
+) -> dict:
+    """Run a paired bootstrap twice and require byte-equivalent statistics."""
+    kwargs = {
+        "iterations": protocol["bootstrap_iterations"],
+        "seed": protocol["bootstrap_seed"],
+    }
+    first = paired_bootstrap(gold, pred_a, pred_b, **kwargs)
+    second = paired_bootstrap(gold, pred_a, pred_b, **kwargs)
+    if first != second:
+        raise RuntimeError(f"non-reproducible paired bootstrap: {check_id}")
+    checks.append(
+        {
+            "id": check_id,
+            "exact_repeat": True,
+            "result_sha256": sha256_json(first),
+        }
+    )
+    return first
+
+
+def validate_prediction_rows(path: Path, gold: list[dict]) -> dict:
+    """Validate one prediction file at the dev-example grain."""
+    rows = read_jsonl(path)
+    gold_ids = [str(row["ID"]) for row in gold]
+    prediction_ids = [str(row.get("ID")) for row in rows]
+    if prediction_ids != gold_ids:
+        raise ValueError(f"{path}: prediction IDs/order do not match dev")
+    if len(set(prediction_ids)) != len(prediction_ids):
+        raise ValueError(f"{path}: duplicate prediction IDs")
+    invalid_rows = 0
+    invalid_quads = 0
+    for row in rows:
+        if set(row) - {"ID", "Quadruplet"} or not isinstance(row.get("Quadruplet"), list):
+            invalid_rows += 1
+            continue
+        for quad in row["Quadruplet"]:
+            if set(quad) != {"Aspect", "Category", "Opinion", "VA"}:
+                invalid_quads += 1
+                continue
+            try:
+                valence, arousal = (float(value) for value in str(quad["VA"]).split("#"))
+            except (TypeError, ValueError):
+                invalid_quads += 1
+                continue
+            if not (1.0 <= valence <= 9.0 and 1.0 <= arousal <= 9.0):
+                invalid_quads += 1
+    if invalid_rows or invalid_quads:
+        raise ValueError(
+            f"{path}: invalid rows={invalid_rows}, invalid quadruplets={invalid_quads}"
+        )
+    return {
+        "path": str(path.relative_to(ROOT)),
+        "sha256": sha256_file(path),
+        "rows": len(rows),
+        "unique_ids": len(set(prediction_ids)),
+        "id_order_matches_dev": True,
+        "invalid_rows": 0,
+        "invalid_quadruplets": 0,
+    }
+
+
+def build_result_audit(manifest: dict, report: dict, bootstrap_checks: list[dict]) -> dict:
+    """Audit all post-lock predictions, thresholds, and checkpoint lineage."""
+    protocol = manifest["protocol"]
+    output_root = root_path(protocol["output_root"])
+    seeds = protocol["seeds"]
+    expected_predictions = set()
+    checkpoint_records = []
+    prediction_records = []
+    ensemble_records = []
+    threshold_records = []
+
+    for dataset, gold_spec in manifest["gold_repeat"].items():
+        gold = read_jsonl(gold_spec["dev"])
+        for system, spec in inference_specs(
+            manifest, dataset, ["gold_repeat", "self_training"]
+        ):
+            seed_rows = []
+            for seed in seeds:
+                directory = ROOT / "checkpoints" / f"{spec['checkpoint_prefix']}{seed}"
+                best = directory / "checkpoint_best.pt"
+                marker = directory / "training_complete.json"
+                if not best.exists() or not marker.exists():
+                    raise FileNotFoundError(f"missing completed best checkpoint: {directory}")
+                completion = json.loads(marker.read_text(encoding="utf-8"))
+                if int(completion.get("seed", -1)) != seed:
+                    raise ValueError(f"{marker}: completion seed mismatch")
+                best_stat = best.stat()
+                checkpoint_records.append(
+                    {
+                        "dataset": dataset,
+                        "system": system,
+                        "seed": seed,
+                        "checkpoint": str(best.relative_to(ROOT)),
+                        "checkpoint_bytes": best_stat.st_size,
+                        "checkpoint_mtime_ns": best_stat.st_mtime_ns,
+                        "completion_marker": str(marker.relative_to(ROOT)),
+                        "completion_marker_sha256": sha256_file(marker),
+                    }
+                )
+                evict_file_cache(best)
+
+                prediction = prediction_path(output_root, dataset, system, seed)
+                expected_predictions.add(prediction.resolve())
+                record = validate_prediction_rows(prediction, gold)
+                record.update({"dataset": dataset, "system": system, "seed": seed})
+                prediction_records.append(record)
+                seed_rows.append(read_jsonl(prediction))
+
+            ensemble = prediction_path(output_root, dataset, system, "ensemble")
+            expected_predictions.add(ensemble.resolve())
+            ensemble_record = validate_prediction_rows(ensemble, gold)
+            actual_ensemble = read_jsonl(ensemble)
+            rebuilt = merge_seed_predictions(seed_rows, vote_threshold=spec["vote"])
+            if rebuilt != actual_ensemble:
+                raise ValueError(f"{dataset}/{system}: ensemble does not match fixed-vote merge")
+            ensemble_record.update(
+                {
+                    "dataset": dataset,
+                    "system": system,
+                    "seed": "ensemble",
+                    "rebuilt_from_seed_predictions": True,
+                }
+            )
+            prediction_records.append(ensemble_record)
+            ensemble_records.append(
+                {
+                    "dataset": dataset,
+                    "system": system,
+                    "vote": spec["vote"],
+                    "topk": spec["topk"],
+                    "seed_prediction_count": len(seed_rows),
+                    "exact_rebuild": True,
+                    "output": str(ensemble.relative_to(ROOT)),
+                }
+            )
+            threshold_records.append(
+                {
+                    "dataset": dataset,
+                    "system": system,
+                    "single_seed_vote": 1,
+                    "ensemble_vote": spec["vote"],
+                    "topk": spec["topk"],
+                    "source": "scripts/kd/postlock_v1.yaml",
+                }
+            )
+
+    actual_predictions = {
+        path.resolve() for path in (output_root / "predictions").glob("*.jsonl")
+    }
+    if actual_predictions != expected_predictions:
+        missing = sorted(str(path) for path in expected_predictions - actual_predictions)
+        extra = sorted(str(path) for path in actual_predictions - expected_predictions)
+        raise ValueError(f"prediction inventory mismatch: missing={missing}, extra={extra}")
+    if len(checkpoint_records) != 40 or len(prediction_records) != 48:
+        raise ValueError(
+            f"unexpected inventory: checkpoints={len(checkpoint_records)}, "
+            f"predictions={len(prediction_records)}"
+        )
+
+    checkpoint_dirs = {
+        (ROOT / record["checkpoint"]).parent for record in checkpoint_records
+    }
+    non_best = sorted(
+        str(path.relative_to(ROOT))
+        for directory in checkpoint_dirs
+        for path in directory.glob("checkpoint_*.pt")
+        if path.name != "checkpoint_best.pt"
+    )
+    comparisons = sum(
+        len(item["systems"]) + len(item.get("control_comparisons", {}))
+        for item in report["datasets"].values()
+    )
+    if comparisons != len(bootstrap_checks):
+        raise ValueError(
+            f"bootstrap audit mismatch: report={comparisons}, checks={len(bootstrap_checks)}"
+        )
+
+    return {
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "protocol": protocol["name"],
+        "manifest": {
+            "path": str(DEFAULT_MANIFEST.relative_to(ROOT)),
+            "sha256": sha256_file(DEFAULT_MANIFEST),
+        },
+        "scope": {
+            "split": protocol["model_selection_split"],
+            "official_test_evaluation": protocol["official_test_evaluation"],
+            "checkpoint_policy": protocol["checkpoint_policy"],
+            "threshold_policy": protocol["threshold_policy"],
+        },
+        "summary": {
+            "prediction_files_expected": 48,
+            "prediction_files_validated": len(prediction_records),
+            "best_checkpoints_expected": 40,
+            "best_checkpoints_validated": len(checkpoint_records),
+            "ensemble_outputs_rebuilt": len(ensemble_records),
+            "bootstrap_comparisons_repeated": len(bootstrap_checks),
+            "all_prediction_ids_and_order_match_dev": True,
+            "all_ensemble_rebuilds_exact": True,
+            "all_bootstrap_repeats_exact": all(
+                item["exact_repeat"] for item in bootstrap_checks
+            ),
+            "all_checkpoint_sources_are_best": all(
+                record["checkpoint"].endswith("/checkpoint_best.pt")
+                for record in checkpoint_records
+            ),
+            "retention_policy_compliant": not non_best,
+        },
+        "thresholds": threshold_records,
+        "bootstrap": {
+            "iterations": protocol["bootstrap_iterations"],
+            "seed": protocol["bootstrap_seed"],
+            "checks": bootstrap_checks,
+        },
+        "ensembles": ensemble_records,
+        "predictions": prediction_records,
+        "checkpoints": checkpoint_records,
+        "non_best_checkpoint_files": non_best,
+    }
+
+
 def collect(args: argparse.Namespace) -> int:
     manifest = load_manifest(args.manifest)
     protocol = manifest["protocol"]
     seeds = protocol["seeds"]
     output_root = root_path(protocol["output_root"])
+    publish_root = root_path(protocol["publish_root"])
     inductive_root = ROOT / "data/audits/tallip_kd/inductive_predictions"
     dataset_names = list(manifest["gold_repeat"]) if args.datasets == ["all"] else args.datasets
     report = {
@@ -609,13 +848,28 @@ def collect(args: argparse.Namespace) -> int:
         "split": "dev_only",
         "bootstrap_seed": protocol["bootstrap_seed"],
         "bootstrap_iterations": protocol["bootstrap_iterations"],
+        "comparison_basis": (
+            "same dev examples; fixed pre-test thresholds; LLM-KD predictions were frozen "
+            "before this post-lock protocol"
+        ),
         "datasets": {},
     }
+    bootstrap_checks = []
     table = [
         "# Post-lock dev-only control results",
         "",
-        "| Dataset | System | Five-seed mean±SD | Ensemble cF1 | LLM KD − control [95% CI] | Decision |",
-        "|---|---|---:|---:|---:|---|",
+        "All comparisons use the same gold dev examples, fixed pre-test thresholds, "
+        "10,000 paired bootstrap resamples, and seed 20260713. Official-test labels are forbidden.",
+        "",
+        "| Dataset | Control | Five-seed mean±SD | Ensemble cF1 | LLM KD − control [95% CI] | Decision | Evidence grade / allowed claim |",
+        "|---|---|---:|---:|---:|---|---|",
+    ]
+    control_table = [
+        "",
+        "## Self-training versus exposure-matched repeated gold",
+        "",
+        "| Dataset | Self-training − repeated gold [95% CI] | Decision | Allowed claim |",
+        "|---|---:|---|---|",
     ]
     for dataset in dataset_names:
         if dataset not in manifest["gold_repeat"]:
@@ -631,6 +885,7 @@ def collect(args: argparse.Namespace) -> int:
             "dev": gold_spec["dev"],
             "llm_kd_prediction": str(llm_path.relative_to(ROOT)),
             "systems": {},
+            "control_comparisons": {},
         }
         systems = ["gold_repeat"]
         if dataset in manifest["self_training"]:
@@ -646,17 +901,18 @@ def collect(args: argparse.Namespace) -> int:
                 if rows is not None:
                     seed_scores.append({"seed": seed, "cF1": evaluate_records(gold, rows)["cF1"]})
             ensemble_metrics = evaluate_records(gold, ensemble)
-            comparison = paired_bootstrap(
+            comparison = checked_bootstrap(
+                f"{dataset}:llm_kd_minus_{system}",
                 gold,
                 llm,
                 ensemble,
-                iterations=protocol["bootstrap_iterations"],
-                seed=protocol["bootstrap_seed"],
+                protocol,
+                bootstrap_checks,
             )
             values = [item["cF1"] for item in seed_scores]
             summary = {
                 "prediction": str(ensemble_path.relative_to(ROOT)),
-                "ensemble": ensemble_metrics,
+                "ensemble": compact_metrics(ensemble_metrics),
                 "single_seeds": seed_scores,
                 "single_mean": statistics.mean(values) if values else None,
                 "single_sd": statistics.stdev(values) if len(values) > 1 else 0.0,
@@ -664,17 +920,81 @@ def collect(args: argparse.Namespace) -> int:
             }
             dataset_report["systems"][system] = summary
             low, high = comparison["ci95"]
+            if comparison["classification"] == "supported":
+                allowed = (
+                    "High: LLM benefit exceeds exposure"
+                    if system == "gold_repeat"
+                    else "High: LLM teacher adds value over student pseudo-labels"
+                )
+            else:
+                allowed = (
+                    "High: no reliable LLM advantage over exposure"
+                    if system == "gold_repeat"
+                    else "High: no reliable LLM advantage over student pseudo-labels"
+                )
             table.append(
                 f"| {dataset} | {system} | {summary['single_mean']:.4f}±{summary['single_sd']:.4f} | "
                 f"{ensemble_metrics['cF1']:.4f} | {comparison['delta_a_minus_b']:+.4f} "
-                f"[{low:+.4f}, {high:+.4f}] | {comparison['classification']} |"
+                f"[{low:+.4f}, {high:+.4f}] | {comparison['classification']} | {allowed} |"
+            )
+        if {"gold_repeat", "self_training"} <= set(dataset_report["systems"]):
+            repeated = load_prediction(
+                prediction_path(output_root, dataset, "gold_repeat", "ensemble")
+            )
+            self_trained = load_prediction(
+                prediction_path(output_root, dataset, "self_training", "ensemble")
+            )
+            comparison = checked_bootstrap(
+                f"{dataset}:self_training_minus_gold_repeat",
+                gold,
+                self_trained,
+                repeated,
+                protocol,
+                bootstrap_checks,
+            )
+            dataset_report["control_comparisons"][
+                "self_training_minus_gold_repeat"
+            ] = comparison
+            low, high = comparison["ci95"]
+            allowed = {
+                "supported": "student pseudo-labels improve over repeated exposure",
+                "harmful": "student pseudo-labels harm relative to repeated exposure",
+                "inconclusive": "no reliable difference between the two non-LLM controls",
+            }[comparison["classification"]]
+            control_table.append(
+                f"| {dataset} | {comparison['delta_a_minus_b']:+.4f} "
+                f"[{low:+.4f}, {high:+.4f}] | {comparison['classification']} | {allowed} |"
             )
         report["datasets"][dataset] = dataset_report
+    report["bootstrap_reproducibility"] = {
+        "comparison_count": len(bootstrap_checks),
+        "all_exact_repeats": True,
+        "checks": bootstrap_checks,
+    }
+    table.extend(control_table)
+    audit = build_result_audit(manifest, report, bootstrap_checks)
     metrics_path = output_root / "postlock_metrics.json"
     table_path = output_root / "postlock_table.md"
+    audit_path = output_root / "postlock_audit.json"
     metrics_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     table_path.write_text("\n".join(table) + "\n", encoding="utf-8")
+    audit_path.write_text(json.dumps(audit, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    publish_root.mkdir(parents=True, exist_ok=True)
+    (publish_root / "postlock_metrics.json").write_text(
+        metrics_path.read_text(encoding="utf-8"), encoding="utf-8"
+    )
+    (publish_root / "postlock_table.md").write_text(
+        table_path.read_text(encoding="utf-8"), encoding="utf-8"
+    )
+    (publish_root / "postlock_audit.json").write_text(
+        audit_path.read_text(encoding="utf-8"), encoding="utf-8"
+    )
     print("\n".join(table))
+    print(
+        f"audit: predictions={audit['summary']['prediction_files_validated']}/48, "
+        f"best={audit['summary']['best_checkpoints_validated']}/40, "
+        f"bootstrap={audit['summary']['bootstrap_comparisons_repeated']} exact repeats"
+    )
     return 0
 
 

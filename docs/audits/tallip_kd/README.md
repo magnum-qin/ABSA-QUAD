@@ -1,8 +1,8 @@
 # TALLIP KD evidence closure
 
-Status as of 2026-07-18: audit, 25 clean-inductive training jobs, frozen
-inference, the complete 8x2 teacher-fidelity evaluation, and the one-shot
-official-test evaluation are finished.
+Status as of 2026-08-08: audit, 25 clean-inductive training jobs, frozen
+inference, the complete 8x2 teacher-fidelity evaluation, the one-shot
+official-test evaluation, and 40 post-lock dev-only control jobs are finished.
 
 ## Frozen protocol
 
@@ -12,6 +12,8 @@ official-test evaluation are finished.
 - KD ensemble thresholds: eng_laptop vote 4; ukr_restaurant vote 3;
   zho_restaurant vote 3; all use top-k 0.
 - No cap5000, no remaining rus cap3000 seeds, and no new teacher/pool grid.
+- Post-lock controls are dev-only; official-test evaluation and selection are
+  forbidden by `scripts/kd/postlock_v1.yaml`.
 
 ## Confirmed leakage and remediation
 
@@ -49,14 +51,39 @@ No paper LaTeX is modified by this workflow.
   and inconclusive on the other five.
 - Core paper tables: `tallip_core_tables.md`.
 
+## Post-lock controls
+
+- Training: 25/25 exposure-matched repeated-gold and 15/15 same-text
+  self-training jobs complete; 40/40 `checkpoint_best.pt` files and completion
+  markers retained.
+- Inference: 48/48 prediction files have exact dev ID/row/order coverage; all
+  eight ensembles reproduce exactly from the five seed files and frozen votes.
+- Statistics: 11 paired comparisons use 10,000 example-level resamples and seed
+  20260713; every comparison was repeated and matched exactly.
+- Exposure control: LLM-KD is supported over repeated gold on eng_laptop,
+  rus_restaurant, and ukr_restaurant; tat_restaurant and zho_restaurant are
+  inconclusive.
+- Same-text control: LLM-KD is supported over student self-training on eng and
+  rus; zho is statistically tied. On zho, self-training is supported over
+  repeated gold.
+- Cleanup: 60 `checkpoint_latest.pt`/`checkpoint_epoch*.pt` files were deleted,
+  freeing 365,233,267,664 bytes; all best checkpoints, predictions, and audits
+  remain.
+- Evidence: `postlock_audit.json`, `postlock_metrics.json`, and
+  `postlock_table.md`.
+
 ## Frozen core tables
 
-The five TALLIP core tables are frozen in `tallip_core_tables.md`. Their output,
+The six TALLIP core tables are frozen in `tallip_core_tables.md`. Their output,
 generator, protocols, registry, and every machine-readable evidence input are
 SHA256-pinned by `tallip_core_tables.lock.json`. Table 4 is no longer hardcoded
 in the generator: its evidence rows and source lineage are registered in
 `ablation_evidence.json`, while numeric results are recomputed from the cited
 artifacts.
+
+Table 5 adds the post-lock dev-only controls; the one-shot official-test table
+is Table 6. This append-only evidence update does not alter any frozen test
+system, prediction, threshold, or conclusion.
 
 Verify before copying any value into the paper:
 
@@ -65,8 +92,9 @@ python scripts/kd/build_tallip_report.py --verify
 ```
 
 The default command is verification-only. Rewriting the tables requires the
-explicit `--update-lock` flag and, after official-test gold inspection, a new
-protocol version plus an evidence audit.
+explicit `--update-lock` flag. After official-test gold inspection, only a new
+dev-only protocol plus an explicit evidence audit may append evidence; frozen
+test choices cannot change.
 
 ## One-shot official test
 

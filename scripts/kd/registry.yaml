@@ -22,6 +22,113 @@ defaults:
   gemma_model: "unsloth/gemma-4-31B-it-qat-GGUF"
   deepseek_model: "deepseek-v4-pro"
 
+# ---- TALLIP POST-LOCK DEV-ONLY CONTROLS ----
+# These controls are not runnable through scripts/kd/pipeline.py and never use
+# official-test labels. Full lineage is in postlock_v1.yaml and the audit below.
+postlock_controls:
+  protocol: postlock_dev_only_v1
+  manifest: scripts/kd/postlock_v1.yaml
+  evidence: docs/audits/tallip_kd/postlock_metrics.json
+  audit: docs/audits/tallip_kd/postlock_audit.json
+  seeds: [42, 123, 456, 789, 1024]
+  bootstrap: {iterations: 10000, seed: 20260713}
+  checkpoint_policy: checkpoint_best.pt
+  official_test_evaluation: forbidden
+  status: complete
+  arms:
+    eng_laptop_gold_repeat:
+      dataset: eng_laptop
+      control: exposure_matched_repeated_gold
+      train_file: data/audits/tallip_kd/postlock_v1/gold_repeat/eng_laptop.jsonl
+      train_rows: 22595
+      checkpoint_prefix: postlock_v1_eng_laptop_gold_repeat_seed
+      eval: {vote: 4, topk: 0.0}
+      seed_mean: 0.2971190901
+      seed_sd: 0.0054913063
+      ensemble_result: 0.3154371828
+      llm_kd_minus_control: {delta: 0.0947968434, ci95: [0.0493915845, 0.1426327869], decision: supported}
+    rus_restaurant_gold_repeat:
+      dataset: rus_restaurant
+      control: exposure_matched_repeated_gold
+      train_file: data/audits/tallip_kd/postlock_v1/gold_repeat/rus_restaurant.jsonl
+      train_rows: 4240
+      checkpoint_prefix: postlock_v1_rus_restaurant_gold_repeat_seed
+      eval: {vote: 3, topk: 0.0}
+      seed_mean: 0.4897209492
+      seed_sd: 0.0099061693
+      ensemble_result: 0.5238204559
+      llm_kd_minus_control: {delta: 0.0924136239, ci95: [0.0247137020, 0.1633624745], decision: supported}
+    tat_restaurant_gold_repeat:
+      dataset: tat_restaurant
+      control: exposure_matched_repeated_gold
+      train_file: data/audits/tallip_kd/postlock_v1/gold_repeat/tat_restaurant.jsonl
+      train_rows: 5155
+      checkpoint_prefix: postlock_v1_tat_restaurant_gold_repeat_seed
+      eval: {vote: 3, topk: 0.0}
+      seed_mean: 0.4580792808
+      seed_sd: 0.0180773232
+      ensemble_result: 0.5256269620
+      llm_kd_minus_control: {delta: 0.0070852910, ci95: [-0.0621312051, 0.0754328251], decision: inconclusive}
+    ukr_restaurant_gold_repeat:
+      dataset: ukr_restaurant
+      control: exposure_matched_repeated_gold
+      train_file: data/audits/tallip_kd/postlock_v1/gold_repeat/ukr_restaurant.jsonl
+      train_rows: 8500
+      checkpoint_prefix: postlock_v1_ukr_restaurant_gold_repeat_seed
+      eval: {vote: 3, topk: 0.0}
+      seed_mean: 0.4121663133
+      seed_sd: 0.0186878840
+      ensemble_result: 0.4641269485
+      llm_kd_minus_control: {delta: 0.0736087369, ci95: [0.0036420380, 0.1507427016], decision: supported}
+    zho_restaurant_gold_repeat:
+      dataset: zho_restaurant
+      control: exposure_matched_repeated_gold
+      train_file: data/audits/tallip_kd/postlock_v1/gold_repeat/zho_restaurant.jsonl
+      train_rows: 9932
+      checkpoint_prefix: postlock_v1_zho_restaurant_gold_repeat_seed
+      eval: {vote: 3, topk: 0.0}
+      seed_mean: 0.5083819105
+      seed_sd: 0.0041603963
+      ensemble_result: 0.5478301099
+      llm_kd_minus_control: {delta: 0.0259765737, ci95: [-0.0027521629, 0.0543480231], decision: inconclusive}
+    eng_laptop_self_training:
+      dataset: eng_laptop
+      control: same_text_student_self_training
+      train_file: data/audits/tallip_kd/postlock_v1/self_training/eng_laptop_train.jsonl
+      train_rows: 22595
+      checkpoint_prefix: postlock_v1_eng_laptop_self_train_seed
+      eval: {vote: 4, topk: 0.0}
+      seed_mean: 0.2972650304
+      seed_sd: 0.0066742312
+      ensemble_result: 0.3169410160
+      llm_kd_minus_control: {delta: 0.0932930102, ci95: [0.0475670700, 0.1407455179], decision: supported}
+    rus_restaurant_self_training:
+      dataset: rus_restaurant
+      control: same_text_student_self_training
+      train_file: data/audits/tallip_kd/postlock_v1/self_training/rus_restaurant_train.jsonl
+      train_rows: 4240
+      checkpoint_prefix: postlock_v1_rus_restaurant_self_train_seed
+      eval: {vote: 3, topk: 0.0}
+      seed_mean: 0.4766819789
+      seed_sd: 0.0170698221
+      ensemble_result: 0.4979819963
+      llm_kd_minus_control: {delta: 0.1182520835, ci95: [0.0530684306, 0.1853819068], decision: supported}
+    zho_restaurant_self_training:
+      dataset: zho_restaurant
+      control: same_text_student_self_training
+      train_file: data/audits/tallip_kd/postlock_v1/self_training/zho_restaurant_train.jsonl
+      train_rows: 9932
+      checkpoint_prefix: postlock_v1_zho_restaurant_self_train_seed
+      eval: {vote: 3, topk: 0.0}
+      seed_mean: 0.5504832221
+      seed_sd: 0.0095766496
+      ensemble_result: 0.5754419944
+      llm_kd_minus_control: {delta: -0.0016353109, ci95: [-0.0293819885, 0.0256499508], decision: inconclusive}
+  self_training_minus_gold_repeat:
+    eng_laptop: {delta: 0.0015038332, ci95: [-0.0174473649, 0.0215135214], decision: inconclusive}
+    rus_restaurant: {delta: -0.0258384596, ci95: [-0.0773174392, 0.0228832022], decision: inconclusive}
+    zho_restaurant: {delta: 0.0276118846, ci95: [0.0079349854, 0.0463397163], decision: supported}
+
 experiments:
 
   # ---- TALLIP CLEAN-INDUCTIVE RERUNS (never overwrite original V23 checkpoints) ----

@@ -197,22 +197,27 @@ class TallipKDTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("verified 5 frozen tables", result.stdout)
+        self.assertIn("verified 6 frozen tables", result.stdout)
 
         lock = json.loads(
             (ROOT / "docs/audits/tallip_kd/tallip_core_tables.lock.json").read_text()
         )
         self.assertEqual(lock["status"], "frozen")
-        self.assertEqual(lock["table_count"], 5)
+        self.assertEqual(lock["table_count"], 6)
         self.assertEqual(len(lock["output"]["sha256"]), 64)
         paths = {item["path"] for item in lock["inputs"]}
         self.assertIn("scripts/kd/official_test.yaml", paths)
         self.assertIn("docs/audits/tallip_kd/ablation_evidence.json", paths)
+        self.assertIn("scripts/kd/postlock_v1.yaml", paths)
+        self.assertIn("docs/audits/tallip_kd/postlock_metrics.json", paths)
+        self.assertIn("docs/audits/tallip_kd/postlock_audit.json", paths)
 
         tables = (ROOT / lock["output"]["path"]).read_text()
-        self.assertEqual(tables.count("## Table "), 5)
+        self.assertEqual(tables.count("## Table "), 6)
         self.assertIn("Inductive-safe KD five-seed", tables)
         self.assertIn("real − generated = +2.3pp", tables)
+        self.assertIn("Post-lock dev-only controls", tables)
+        self.assertIn("One-shot official Task-3 test evaluation", tables)
 
     def test_postlock_protocol_is_dev_only_and_repeat_is_deterministic(self):
         module = load_module("postlock_experiments", "scripts/kd/postlock_experiments.py")
@@ -220,6 +225,7 @@ class TallipKDTests(unittest.TestCase):
         protocol = manifest["protocol"]
         self.assertEqual(protocol["official_test_evaluation"], "forbidden")
         self.assertEqual(protocol["model_selection_split"], "dev_only")
+        self.assertEqual(protocol["publish_root"], "docs/audits/tallip_kd")
         self.assertEqual(protocol["seeds"], [42, 123, 456, 789, 1024])
         self.assertEqual(len(manifest["gold_repeat"]), 5)
         self.assertEqual(set(manifest["self_training"]), {"eng_laptop", "rus_restaurant", "zho_restaurant"})
@@ -256,6 +262,92 @@ class TallipKDTests(unittest.TestCase):
         predictions[2][0]["ID"] = "wrong"
         with self.assertRaisesRegex(ValueError, "ID/order mismatch"):
             module.merge_seed_predictions(predictions, vote_threshold=2)
+
+    def test_postlock_audit_and_conclusions_are_complete(self):
+        audit = json.loads(
+            (ROOT / "docs/audits/tallip_kd/postlock_audit.json").read_text()
+        )
+        summary = audit["summary"]
+        self.assertEqual(summary["prediction_files_validated"], 48)
+        self.assertEqual(summary["best_checkpoints_validated"], 40)
+        self.assertEqual(summary["ensemble_outputs_rebuilt"], 8)
+        self.assertEqual(summary["bootstrap_comparisons_repeated"], 11)
+        for key in (
+            "all_prediction_ids_and_order_match_dev",
+            "all_ensemble_rebuilds_exact",
+            "all_bootstrap_repeats_exact",
+            "all_checkpoint_sources_are_best",
+            "retention_policy_compliant",
+        ):
+            self.assertTrue(summary[key], key)
+        self.assertEqual(audit["non_best_checkpoint_files"], [])
+        self.assertEqual(audit["scope"]["official_test_evaluation"], "forbidden")
+        self.assertEqual(audit["bootstrap"]["iterations"], 10000)
+        self.assertEqual(audit["bootstrap"]["seed"], 20260713)
+
+        report = json.loads(
+            (ROOT / "docs/audits/tallip_kd/postlock_metrics.json").read_text()
+        )
+        expected_exposure = {
+            "eng_laptop": "supported",
+            "rus_restaurant": "supported",
+            "tat_restaurant": "inconclusive",
+            "ukr_restaurant": "supported",
+            "zho_restaurant": "inconclusive",
+        }
+        for dataset, decision in expected_exposure.items():
+            self.assertEqual(
+                report["datasets"][dataset]["systems"]["gold_repeat"]
+                ["llm_kd_minus_control"]["classification"],
+                decision,
+            )
+        self.assertEqual(
+            report["datasets"]["eng_laptop"]["systems"]["self_training"]
+            ["llm_kd_minus_control"]["classification"],
+            "supported",
+        )
+        self.assertEqual(
+            report["datasets"]["rus_restaurant"]["systems"]["self_training"]
+            ["llm_kd_minus_control"]["classification"],
+            "supported",
+        )
+        self.assertEqual(
+            report["datasets"]["zho_restaurant"]["systems"]["self_training"]
+            ["llm_kd_minus_control"]["classification"],
+            "inconclusive",
+        )
+
+        registry = yaml.safe_load((ROOT / "scripts/kd/registry.yaml").read_text())
+        controls = registry["postlock_controls"]
+        self.assertEqual(controls["status"], "complete")
+        self.assertEqual(len(controls["arms"]), 8)
+        self.assertEqual(controls["official_test_evaluation"], "forbidden")
+        manifest = yaml.safe_load((ROOT / controls["manifest"]).read_text())
+        for arm in controls["arms"].values():
+            dataset = arm["dataset"]
+            if arm["control"] == "exposure_matched_repeated_gold":
+                system = "gold_repeat"
+                spec = manifest["gold_repeat"][dataset]
+                vote, topk = spec["vote"], spec["topk"]
+            else:
+                system = "self_training"
+                spec = manifest["self_training"][dataset]
+                vote, topk = spec["eval_vote"], spec["eval_topk"]
+            result = report["datasets"][dataset]["systems"][system]
+            comparison = result["llm_kd_minus_control"]
+            self.assertEqual(arm["train_file"], spec["output_train"])
+            self.assertEqual(arm["checkpoint_prefix"], spec["checkpoint_prefix"])
+            self.assertEqual(arm["eval"], {"vote": vote, "topk": topk})
+            self.assertAlmostEqual(arm["seed_mean"], result["single_mean"])
+            self.assertAlmostEqual(arm["seed_sd"], result["single_sd"])
+            self.assertAlmostEqual(arm["ensemble_result"], result["ensemble"]["cF1"])
+            registered = arm["llm_kd_minus_control"]
+            self.assertAlmostEqual(registered["delta"], comparison["delta_a_minus_b"])
+            for registered_bound, result_bound in zip(
+                registered["ci95"], comparison["ci95"]
+            ):
+                self.assertAlmostEqual(registered_bound, result_bound)
+            self.assertEqual(registered["decision"], comparison["classification"])
 
 
 if __name__ == "__main__":

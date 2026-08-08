@@ -14,6 +14,9 @@ import yaml
 from tallip_common import ROOT, load_manifest, root_path
 
 
+TABLE_COUNT = 6
+
+
 def load_optional(path: str) -> dict | None:
     resolved = root_path(path)
     return json.loads(resolved.read_text(encoding="utf-8")) if resolved.exists() else None
@@ -172,7 +175,7 @@ def ablation_result(kind: str, row: dict, teacher: dict, tat: dict,
 
 
 def ablation_table(spec: dict, teacher: dict, tat: dict,
-                   registry: dict, freeze: dict) -> list[str]:
+                   registry: dict, freeze: dict, postlock: dict) -> list[str]:
     lines = [
         "## Table 4. Ablation claims and evidence grade", "",
         "| Axis | Controlled evidence | Result | Grade / allowed claim |",
@@ -186,7 +189,34 @@ def ablation_table(spec: dict, teacher: dict, tat: dict,
         for source in row["sources"]:
             if not root_path(source).exists():
                 raise FileNotFoundError(f"Missing ablation source: {source}")
-        result = ablation_result(row["result_kind"], row, teacher, tat, registry, freeze)
+        if row["result_kind"] == "postlock_exposure":
+            supported = [
+                dataset for dataset, item in postlock["datasets"].items()
+                if item["systems"]["gold_repeat"]["llm_kd_minus_control"]["classification"]
+                == "supported"
+            ]
+            inconclusive = sorted(set(postlock["datasets"]) - set(supported))
+            result = (
+                f"supported on {', '.join(supported)}; inconclusive on "
+                f"{', '.join(inconclusive)}"
+            )
+        elif row["result_kind"] == "postlock_self_training":
+            comparisons = {
+                dataset: item["systems"]["self_training"]["llm_kd_minus_control"]
+                for dataset, item in postlock["datasets"].items()
+                if "self_training" in item["systems"]
+            }
+            supported = [
+                dataset for dataset, comparison in comparisons.items()
+                if comparison["classification"] == "supported"
+            ]
+            tied = [
+                dataset for dataset, comparison in comparisons.items()
+                if comparison["classification"] == "inconclusive"
+            ]
+            result = f"LLM KD supported on {', '.join(supported)}; tied on {', '.join(tied)}"
+        else:
+            result = ablation_result(row["result_kind"], row, teacher, tat, registry, freeze)
         lines.append(
             f"| {row['axis']} | {row['controlled_evidence']} | {result} | "
             f"{row['grade_allowed_claim']} |"
@@ -194,9 +224,68 @@ def ablation_table(spec: dict, teacher: dict, tat: dict,
     return lines
 
 
+def postlock_table(report: dict, audit: dict) -> list[str]:
+    summary = audit["summary"]
+    required = (
+        summary["prediction_files_validated"] == 48,
+        summary["best_checkpoints_validated"] == 40,
+        summary["all_prediction_ids_and_order_match_dev"],
+        summary["all_ensemble_rebuilds_exact"],
+        summary["all_bootstrap_repeats_exact"],
+        summary["all_checkpoint_sources_are_best"],
+        summary["retention_policy_compliant"],
+    )
+    if not all(required):
+        raise ValueError("post-lock evidence audit is incomplete")
+    lines = [
+        "## Table 5. Post-lock dev-only controls for exposure and teacher source", "",
+        "These controls use fixed pre-test thresholds and never evaluate or select on official test labels.", "",
+        "| Dataset | Control | Five-seed mean±SD | Ensemble cF1 | LLM KD − control | 95% CI | Evidence / allowed claim |",
+        "|---|---|---:|---:|---:|---:|---|",
+    ]
+    for dataset, item in report["datasets"].items():
+        for system, result in item["systems"].items():
+            comparison = result["llm_kd_minus_control"]
+            low, high = comparison["ci95"]
+            if comparison["classification"] == "supported":
+                allowed = (
+                    "High; benefit exceeds exposure"
+                    if system == "gold_repeat"
+                    else "High; LLM teacher adds value"
+                )
+            else:
+                allowed = (
+                    "High; reliable exposure-adjusted advantage not established"
+                    if system == "gold_repeat"
+                    else "High; systems statistically tied"
+                )
+            lines.append(
+                f"| {dataset} | {system} | {result['single_mean']:.4f}±{result['single_sd']:.4f} | "
+                f"{result['ensemble']['cF1']:.4f} | {comparison['delta_a_minus_b']:+.4f} | "
+                f"[{low:+.4f}, {high:+.4f}] | {allowed} |"
+            )
+    lines.extend([
+        "", "### 5b. Student self-training versus repeated-gold exposure", "",
+        "| Dataset | Self-training − repeated gold | 95% CI | Decision |",
+        "|---|---:|---:|---|",
+    ])
+    for dataset, item in report["datasets"].items():
+        comparison = item.get("control_comparisons", {}).get(
+            "self_training_minus_gold_repeat"
+        )
+        if not comparison:
+            continue
+        low, high = comparison["ci95"]
+        lines.append(
+            f"| {dataset} | {comparison['delta_a_minus_b']:+.4f} | "
+            f"[{low:+.4f}, {high:+.4f}] | {comparison['classification']} |"
+        )
+    return lines
+
+
 def official_test_table(report: dict | None) -> list[str]:
     lines = [
-        "## Table 5. One-shot official Task-3 test evaluation", "",
+        "## Table 6. One-shot official Task-3 test evaluation", "",
         "Post-competition local evaluation. Systems and prediction hashes were frozen from dev before gold retrieval.", "",
         "| Dataset | Frozen main system | Official test cF1 |",
         "|---|---|---:|",
@@ -227,19 +316,25 @@ def build_report(args: argparse.Namespace) -> tuple[str, list[Path]]:
     qwen_full = load_optional(args.qwen_full)
     inductive = load_optional(args.inductive)
     official_test = load_optional(args.official_test)
+    postlock = load_optional(args.postlock)
+    postlock_audit = load_optional(args.postlock_audit)
     ablation = load_optional(args.ablation)
     tat = load_optional(args.tat_matched)
     freeze = load_optional(args.freeze_artifact)
     registry = yaml.safe_load(root_path(args.registry).read_text(encoding="utf-8"))
-    if not all((teacher, inductive, official_test, ablation, tat, freeze, registry)):
+    if not all((
+        teacher, inductive, official_test, postlock, postlock_audit,
+        ablation, tat, freeze, registry,
+    )):
         raise RuntimeError("Frozen core tables require all final evidence artifacts")
     lines = [
         "# TALLIP KD core evidence tables", "",
-        "**Status: frozen on 2026-07-18.** Tables 1–4 use development-set evidence; "
-        "Table 5 is a one-shot post-competition evaluation on released official test labels. "
+        "**Status: frozen on 2026-08-08.** Tables 1–5 use development-set evidence; "
+        "Table 6 is a one-shot post-competition evaluation on released official test labels. "
         "Run `python scripts/kd/build_tallip_report.py --verify` before citation.", "",
         *teacher_table(teacher, teacher_pilot, qwen_full), "", *inductive_tables(inductive), "",
-        *ablation_table(ablation, teacher, tat, registry, freeze), "",
+        *ablation_table(ablation, teacher, tat, registry, freeze, postlock), "",
+        *postlock_table(postlock, postlock_audit), "",
         *official_test_table(official_test), "",
     ]
     input_names = [
@@ -249,6 +344,9 @@ def build_report(args: argparse.Namespace) -> tuple[str, list[Path]]:
             args.teacher,
             args.inductive,
             args.official_test,
+            "scripts/kd/postlock_v1.yaml",
+            args.postlock,
+            args.postlock_audit,
             args.ablation,
             args.tat_matched,
             args.registry,
@@ -279,7 +377,7 @@ def update_lock(args: argparse.Namespace, report: str, inputs: list[Path]) -> No
         "schema_version": 1,
         "status": "frozen",
         "locked_at": locked_at,
-        "table_count": 5,
+        "table_count": TABLE_COUNT,
         "output": {"path": relative(output), "sha256": sha256_file(output)},
         "generator": {"path": relative(generator), "sha256": sha256_file(generator)},
         "inputs": [
@@ -287,7 +385,10 @@ def update_lock(args: argparse.Namespace, report: str, inputs: list[Path]) -> No
             for path in inputs
         ],
         "verification_command": "python scripts/kd/build_tallip_report.py --verify",
-        "update_policy": "Do not update after test-gold inspection without a new protocol version and explicit evidence audit."
+        "update_policy": (
+            "Post-lock v1 may append dev-only controls after explicit evidence audit; "
+            "official-test systems, thresholds, and conclusions remain frozen."
+        )
     }
     lock_path = root_path(args.lock)
     lock_path.write_text(json.dumps(lock, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -299,8 +400,8 @@ def verify_lock(args: argparse.Namespace, report: str) -> None:
     if not lock_path.exists():
         raise FileNotFoundError(f"Missing core-table lock: {relative(lock_path)}")
     lock = json.loads(lock_path.read_text(encoding="utf-8"))
-    if lock.get("status") != "frozen" or lock.get("table_count") != 5:
-        raise ValueError("Core-table lock is not a five-table frozen manifest")
+    if lock.get("status") != "frozen" or lock.get("table_count") != TABLE_COUNT:
+        raise ValueError(f"Core-table lock is not a {TABLE_COUNT}-table frozen manifest")
     checks = [lock["generator"], *lock["inputs"], lock["output"]]
     errors = []
     for item in checks:
@@ -325,6 +426,8 @@ def main() -> int:
     parser.add_argument("--qwen-full", default="docs/audits/tallip_kd/qwen_full_fidelity_metrics.json")
     parser.add_argument("--inductive", default="docs/audits/tallip_kd/inductive_metrics.json")
     parser.add_argument("--official-test", default="docs/audits/tallip_kd/official_test/official_test_metrics.json")
+    parser.add_argument("--postlock", default="docs/audits/tallip_kd/postlock_metrics.json")
+    parser.add_argument("--postlock-audit", default="docs/audits/tallip_kd/postlock_audit.json")
     parser.add_argument("--ablation", default="docs/audits/tallip_kd/ablation_evidence.json")
     parser.add_argument("--tat-matched", default="docs/audits/tallip_kd/tat_teacher_matched_metrics.json")
     parser.add_argument("--registry", default="scripts/kd/registry.yaml")

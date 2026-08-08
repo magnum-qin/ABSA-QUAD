@@ -1,6 +1,6 @@
 # TALLIP KD core evidence tables
 
-**Status: frozen on 2026-07-18.** Tables 1–4 use development-set evidence; Table 5 is a one-shot post-competition evaluation on released official test labels. Run `python scripts/kd/build_tallip_report.py --verify` before citation.
+**Status: frozen on 2026-08-08.** Tables 1–5 use development-set evidence; Table 6 is a one-shot post-competition evaluation on released official test labels. Run `python scripts/kd/build_tallip_report.py --verify` before citation.
 
 ## Table 1. Direct teacher fidelity on label-hidden gold dev
 
@@ -48,9 +48,34 @@
 | Pool source | zho real vs generated | real − generated = +2.3pp | Medium; observational support only |
 | Silver quantity | rus same gen8k pool, paired seeds 42/123, cap3000 vs 7988 | -1.14pp; gate failed | Medium; rejects the planned follow-up, not a full dose-response |
 | Translation vs native | ukr translated and native experiments differ in pool construction/quantity | mixed | Low; descriptive only |
+| Training exposure | five datasets, same row exposure and student recipe; LLM silver replaced by repeated gold | supported on eng_laptop, rus_restaurant, ukr_restaurant; inconclusive on tat_restaurant, zho_restaurant | High within dataset; LLM advantage exceeds exposure on eng/rus/ukr only |
+| Teacher source | eng/rus/zho, identical pseudo-label text pool and row count; LLM labels vs student-ensemble labels | LLM KD supported on eng_laptop, rus_restaurant; tied on zho_restaurant | High within dataset; LLM-specific value on eng/rus, statistically tied with self-training on zho |
 | Information complementarity | synthesis across teacher, pool, and quantity results | plausible moderator | Interpretation, not a causal or universal optimum claim |
 
-## Table 5. One-shot official Task-3 test evaluation
+## Table 5. Post-lock dev-only controls for exposure and teacher source
+
+These controls use fixed pre-test thresholds and never evaluate or select on official test labels.
+
+| Dataset | Control | Five-seed mean±SD | Ensemble cF1 | LLM KD − control | 95% CI | Evidence / allowed claim |
+|---|---|---:|---:|---:|---:|---|
+| eng_laptop | gold_repeat | 0.2971±0.0055 | 0.3154 | +0.0948 | [+0.0494, +0.1426] | High; benefit exceeds exposure |
+| eng_laptop | self_training | 0.2973±0.0067 | 0.3169 | +0.0933 | [+0.0476, +0.1407] | High; LLM teacher adds value |
+| rus_restaurant | gold_repeat | 0.4897±0.0099 | 0.5238 | +0.0924 | [+0.0247, +0.1634] | High; benefit exceeds exposure |
+| rus_restaurant | self_training | 0.4767±0.0171 | 0.4980 | +0.1183 | [+0.0531, +0.1854] | High; LLM teacher adds value |
+| tat_restaurant | gold_repeat | 0.4581±0.0181 | 0.5256 | +0.0071 | [-0.0621, +0.0754] | High; reliable exposure-adjusted advantage not established |
+| ukr_restaurant | gold_repeat | 0.4122±0.0187 | 0.4641 | +0.0736 | [+0.0036, +0.1507] | High; benefit exceeds exposure |
+| zho_restaurant | gold_repeat | 0.5084±0.0042 | 0.5478 | +0.0260 | [-0.0028, +0.0543] | High; reliable exposure-adjusted advantage not established |
+| zho_restaurant | self_training | 0.5505±0.0096 | 0.5754 | -0.0016 | [-0.0294, +0.0256] | High; systems statistically tied |
+
+### 5b. Student self-training versus repeated-gold exposure
+
+| Dataset | Self-training − repeated gold | 95% CI | Decision |
+|---|---:|---:|---|
+| eng_laptop | +0.0015 | [-0.0174, +0.0215] | inconclusive |
+| rus_restaurant | -0.0258 | [-0.0773, +0.0229] | inconclusive |
+| zho_restaurant | +0.0276 | [+0.0079, +0.0463] | supported |
+
+## Table 6. One-shot official Task-3 test evaluation
 
 Post-competition local evaluation. Systems and prediction hashes were frozen from dev before gold retrieval.
 

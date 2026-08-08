@@ -13,6 +13,7 @@ protocol:
   checkpoint_policy: checkpoint_best.pt
   threshold_policy: frozen_from_pre_test_system
   output_root: data/audits/tallip_kd/postlock_v1
+  publish_root: docs/audits/tallip_kd
 
 gold_repeat:
   eng_laptop:
