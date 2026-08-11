@@ -265,6 +265,29 @@ class TallipKDTests(unittest.TestCase):
                 spec["gold_teacher_prefix"].startswith("postlock_v1_"), dataset
             )
 
+    def test_postlock_analysis_adjustments_and_complementarity_inputs(self):
+        module = load_module(
+            "tallip_postlock_analysis",
+            "scripts/kd/tallip_postlock_analysis.py",
+        )
+        self.assertEqual(module.holm_adjust([0.01, 0.02, 0.5]), [0.03, 0.04, 0.5])
+        self.assertEqual(module.bh_adjust([0.01, 0.02, 0.5]), [0.03, 0.03, 0.5])
+        analysis = module.build_complementarity()
+        self.assertEqual(set(analysis["datasets"]), set(module.ADOPTED))
+        for dataset, item in analysis["datasets"].items():
+            grain = item["grain"]
+            self.assertEqual(
+                grain["base_rows"] + grain["silver_rows"],
+                grain["llm_train_rows"],
+                dataset,
+            )
+            validity = item["silver_label_validity"]
+            self.assertEqual(validity["empty_rows"], 0, dataset)
+            self.assertEqual(validity["invalid_explicit_aspect_substrings"], 0, dataset)
+            self.assertEqual(validity["invalid_explicit_opinion_substrings"], 0, dataset)
+            self.assertEqual(validity["categories_absent_from_gold_train_inventory"], 0, dataset)
+            self.assertEqual(validity["invalid_va_format_or_range"], 0, dataset)
+
     def test_postlock_precomputed_vote_merge_matches_inference_semantics(self):
         module = load_module("postlock_vote_merge", "scripts/kd/postlock_experiments.py")
         predictions = [
