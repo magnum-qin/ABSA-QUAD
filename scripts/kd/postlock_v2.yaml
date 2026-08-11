@@ -1,0 +1,75 @@
+schema_version: 1
+
+protocol:
+  name: postlock_dev_only_v2
+  registered_at: "2026-08-11T00:00:00+09:00"
+  purpose: "Complete same-text student self-training controls for Tatar and Ukrainian"
+  seeds: [42, 123, 456, 789, 1024]
+  build_seed: 20260713
+  bootstrap_seed: 20260713
+  bootstrap_iterations: 10000
+  official_test_evaluation: forbidden
+  model_selection_split: dev_only
+  checkpoint_policy: checkpoint_best.pt
+  threshold_policy: frozen_from_postlock_v1
+  output_root: data/audits/tallip_kd/postlock_v2
+  publish_root: docs/audits/tallip_kd
+  artifact_prefix: postlock_v2
+
+# The v1 repeated-gold arms are reused without retraining. They serve both as
+# exposure controls and as the fixed student teachers for pseudo labeling.
+gold_repeat:
+  tat_restaurant:
+    source_train: data/subtask_3/tat/tat_restaurant_train_v13.jsonl
+    target_train: data/subtask_3/tat/tat_restaurant_train_v23_qwen.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/gold_repeat/tat_restaurant.jsonl
+    config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
+    test_text_audit: data/subtask_3/tat/tat_restaurant_test_task3.jsonl
+    checkpoint_prefix: postlock_v1_tat_restaurant_gold_repeat_seed
+    llm_system: original
+    vote: 3
+    topk: 0.0
+
+  ukr_restaurant:
+    source_train: data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl
+    target_train: data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek_inductive.jsonl
+    output_train: data/audits/tallip_kd/postlock_v1/gold_repeat/ukr_restaurant.jsonl
+    config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
+    test_text_audit: data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl
+    checkpoint_prefix: postlock_v1_ukr_restaurant_gold_repeat_seed
+    llm_system: clean
+    vote: 3
+    topk: 0.0
+
+self_training:
+  tat_restaurant:
+    base_train: data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl
+    llm_reference_train: data/subtask_3/tat/tat_restaurant_train_v23_qwen.jsonl
+    input: data/audits/tallip_kd/postlock_v2/self_training/tat_restaurant_input.jsonl
+    pseudo: data/audits/tallip_kd/postlock_v2/self_training/tat_restaurant_pseudo.jsonl
+    output_train: data/audits/tallip_kd/postlock_v2/self_training/tat_restaurant_train.jsonl
+    config: configs/pipeline_tat_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/tat/tat_restaurant_dev_task3.jsonl
+    gold_teacher_prefix: postlock_v1_tat_restaurant_gold_repeat_seed
+    checkpoint_prefix: postlock_v2_tat_restaurant_self_train_seed
+    pseudo_vote: 3
+    pseudo_topk: 0.0
+    eval_vote: 3
+    eval_topk: 0.0
+
+  ukr_restaurant:
+    base_train: data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl
+    llm_reference_train: data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek_inductive.jsonl
+    input: data/audits/tallip_kd/postlock_v2/self_training/ukr_restaurant_input.jsonl
+    pseudo: data/audits/tallip_kd/postlock_v2/self_training/ukr_restaurant_pseudo.jsonl
+    output_train: data/audits/tallip_kd/postlock_v2/self_training/ukr_restaurant_train.jsonl
+    config: configs/pipeline_ukr_restaurant_v23_deepseek.yaml
+    dev: data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl
+    gold_teacher_prefix: postlock_v1_ukr_restaurant_gold_repeat_seed
+    checkpoint_prefix: postlock_v2_ukr_restaurant_self_train_seed
+    pseudo_vote: 3
+    pseudo_topk: 0.0
+    eval_vote: 3
+    eval_topk: 0.0

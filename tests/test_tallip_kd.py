@@ -243,6 +243,28 @@ class TallipKDTests(unittest.TestCase):
         self.assertEqual(len(first), 5)
         self.assertEqual(len({row["ID"] for row in first}), 5)
 
+    def test_postlock_v2_completes_self_training_matrix_without_test_selection(self):
+        manifest = yaml.safe_load((ROOT / "scripts/kd/postlock_v2.yaml").read_text())
+        protocol = manifest["protocol"]
+        self.assertEqual(protocol["name"], "postlock_dev_only_v2")
+        self.assertEqual(protocol["official_test_evaluation"], "forbidden")
+        self.assertEqual(protocol["model_selection_split"], "dev_only")
+        self.assertEqual(protocol["threshold_policy"], "frozen_from_postlock_v1")
+        self.assertEqual(protocol["artifact_prefix"], "postlock_v2")
+        self.assertEqual(protocol["seeds"], [42, 123, 456, 789, 1024])
+        self.assertEqual(
+            set(manifest["self_training"]),
+            {"tat_restaurant", "ukr_restaurant"},
+        )
+        for dataset, spec in manifest["self_training"].items():
+            self.assertNotIn("test", spec)
+            self.assertNotIn("official", " ".join(spec))
+            self.assertEqual((spec["pseudo_vote"], spec["pseudo_topk"]), (3, 0.0))
+            self.assertEqual((spec["eval_vote"], spec["eval_topk"]), (3, 0.0))
+            self.assertTrue(
+                spec["gold_teacher_prefix"].startswith("postlock_v1_"), dataset
+            )
+
     def test_postlock_precomputed_vote_merge_matches_inference_semantics(self):
         module = load_module("postlock_vote_merge", "scripts/kd/postlock_experiments.py")
         predictions = [

@@ -673,7 +673,12 @@ def validate_prediction_rows(path: Path, gold: list[dict]) -> dict:
     }
 
 
-def build_result_audit(manifest: dict, report: dict, bootstrap_checks: list[dict]) -> dict:
+def build_result_audit(
+    manifest: dict,
+    manifest_path: str | Path,
+    report: dict,
+    bootstrap_checks: list[dict],
+) -> dict:
     """Audit all post-lock predictions, thresholds, and checkpoint lineage."""
     protocol = manifest["protocol"]
     output_root = root_path(protocol["output_root"])
@@ -683,6 +688,13 @@ def build_result_audit(manifest: dict, report: dict, bootstrap_checks: list[dict
     prediction_records = []
     ensemble_records = []
     threshold_records = []
+
+    arm_count = sum(
+        len(inference_specs(manifest, dataset, ["gold_repeat", "self_training"]))
+        for dataset in manifest["gold_repeat"]
+    )
+    expected_checkpoint_count = arm_count * len(seeds)
+    expected_prediction_count = arm_count * (len(seeds) + 1)
 
     for dataset, gold_spec in manifest["gold_repeat"].items():
         gold = read_jsonl(gold_spec["dev"])
@@ -755,7 +767,7 @@ def build_result_audit(manifest: dict, report: dict, bootstrap_checks: list[dict
                     "single_seed_vote": 1,
                     "ensemble_vote": spec["vote"],
                     "topk": spec["topk"],
-                    "source": "scripts/kd/postlock_v1.yaml",
+                    "source": str(root_path(manifest_path).relative_to(ROOT)),
                 }
             )
 
@@ -766,7 +778,10 @@ def build_result_audit(manifest: dict, report: dict, bootstrap_checks: list[dict
         missing = sorted(str(path) for path in expected_predictions - actual_predictions)
         extra = sorted(str(path) for path in actual_predictions - expected_predictions)
         raise ValueError(f"prediction inventory mismatch: missing={missing}, extra={extra}")
-    if len(checkpoint_records) != 40 or len(prediction_records) != 48:
+    if (
+        len(checkpoint_records) != expected_checkpoint_count
+        or len(prediction_records) != expected_prediction_count
+    ):
         raise ValueError(
             f"unexpected inventory: checkpoints={len(checkpoint_records)}, "
             f"predictions={len(prediction_records)}"
@@ -794,8 +809,8 @@ def build_result_audit(manifest: dict, report: dict, bootstrap_checks: list[dict
         "created_at": datetime.now(timezone.utc).isoformat(),
         "protocol": protocol["name"],
         "manifest": {
-            "path": str(DEFAULT_MANIFEST.relative_to(ROOT)),
-            "sha256": sha256_file(DEFAULT_MANIFEST),
+            "path": str(root_path(manifest_path).relative_to(ROOT)),
+            "sha256": sha256_file(manifest_path),
         },
         "scope": {
             "split": protocol["model_selection_split"],
@@ -804,9 +819,9 @@ def build_result_audit(manifest: dict, report: dict, bootstrap_checks: list[dict
             "threshold_policy": protocol["threshold_policy"],
         },
         "summary": {
-            "prediction_files_expected": 48,
+            "prediction_files_expected": expected_prediction_count,
             "prediction_files_validated": len(prediction_records),
-            "best_checkpoints_expected": 40,
+            "best_checkpoints_expected": expected_checkpoint_count,
             "best_checkpoints_validated": len(checkpoint_records),
             "ensemble_outputs_rebuilt": len(ensemble_records),
             "bootstrap_comparisons_repeated": len(bootstrap_checks),
@@ -840,6 +855,7 @@ def collect(args: argparse.Namespace) -> int:
     seeds = protocol["seeds"]
     output_root = root_path(protocol["output_root"])
     publish_root = root_path(protocol["publish_root"])
+    artifact_prefix = protocol.get("artifact_prefix", "postlock")
     inductive_root = ROOT / "data/audits/tallip_kd/inductive_predictions"
     dataset_names = list(manifest["gold_repeat"]) if args.datasets == ["all"] else args.datasets
     report = {
@@ -972,7 +988,7 @@ def collect(args: argparse.Namespace) -> int:
         "checks": bootstrap_checks,
     }
     table.extend(control_table)
-    audit = build_result_audit(manifest, report, bootstrap_checks)
+    audit = build_result_audit(manifest, args.manifest, report, bootstrap_checks)
     metrics_path = output_root / "postlock_metrics.json"
     table_path = output_root / "postlock_table.md"
     audit_path = output_root / "postlock_audit.json"
@@ -980,19 +996,21 @@ def collect(args: argparse.Namespace) -> int:
     table_path.write_text("\n".join(table) + "\n", encoding="utf-8")
     audit_path.write_text(json.dumps(audit, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     publish_root.mkdir(parents=True, exist_ok=True)
-    (publish_root / "postlock_metrics.json").write_text(
+    (publish_root / f"{artifact_prefix}_metrics.json").write_text(
         metrics_path.read_text(encoding="utf-8"), encoding="utf-8"
     )
-    (publish_root / "postlock_table.md").write_text(
+    (publish_root / f"{artifact_prefix}_table.md").write_text(
         table_path.read_text(encoding="utf-8"), encoding="utf-8"
     )
-    (publish_root / "postlock_audit.json").write_text(
+    (publish_root / f"{artifact_prefix}_audit.json").write_text(
         audit_path.read_text(encoding="utf-8"), encoding="utf-8"
     )
     print("\n".join(table))
     print(
-        f"audit: predictions={audit['summary']['prediction_files_validated']}/48, "
-        f"best={audit['summary']['best_checkpoints_validated']}/40, "
+        f"audit: predictions={audit['summary']['prediction_files_validated']}/"
+        f"{audit['summary']['prediction_files_expected']}, "
+        f"best={audit['summary']['best_checkpoints_validated']}/"
+        f"{audit['summary']['best_checkpoints_expected']}, "
         f"bootstrap={audit['summary']['bootstrap_comparisons_repeated']} exact repeats"
     )
     return 0
