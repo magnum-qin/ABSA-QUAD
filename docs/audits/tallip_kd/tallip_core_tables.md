@@ -1,6 +1,6 @@
 # TALLIP KD core evidence tables
 
-**Status: frozen on 2026-08-08.** Tables 1–5 use development-set evidence; Table 6 is a one-shot post-competition evaluation on released official test labels. Run `python scripts/kd/build_tallip_report.py --verify` before citation.
+**Status: frozen on 2026-08-13.** Tables 1–5 use development-set evidence; Table 6 is a one-shot post-competition evaluation on released official test labels. Run `python scripts/kd/build_tallip_report.py --verify` before citation.
 
 ## Table 1. Direct teacher fidelity on label-hidden gold dev
 
@@ -49,8 +49,8 @@
 | Silver quantity | rus same gen8k pool, paired seeds 42/123, cap3000 vs 7988 | -1.14pp; gate failed | Medium; rejects the planned follow-up, not a full dose-response |
 | Translation vs native | ukr translated and native experiments differ in pool construction/quantity | mixed | Low; descriptive only |
 | Training exposure | five datasets, same row exposure and student recipe; LLM silver replaced by repeated gold | supported on eng_laptop, rus_restaurant, ukr_restaurant; inconclusive on tat_restaurant, zho_restaurant | High within dataset; LLM advantage exceeds exposure on eng/rus/ukr only |
-| Teacher source | eng/rus/zho, identical pseudo-label text pool and row count; LLM labels vs student-ensemble labels | LLM KD supported on eng_laptop, rus_restaurant; tied on zho_restaurant | High within dataset; LLM-specific value on eng/rus, statistically tied with self-training on zho |
-| Information complementarity | synthesis across teacher, pool, and quantity results | plausible moderator | Interpretation, not a causal or universal optimum claim |
+| Teacher source | five adopted datasets, identical pseudo-label text pool and row count; LLM labels vs student-ensemble labels | LLM KD supported on eng_laptop, rus_restaurant; reliable difference not established on tat_restaurant, ukr_restaurant, zho_restaurant | High within dataset; no universal cross-domain teacher-source claim |
+| Information complementarity | five adopted domains: measured silver validity, category/lexical coverage, distribution divergence, dev slices, and row-level repaired/harmed errors | descriptive patterns are consistent with a moderator but are not monotonic across all domains | Medium/descriptive; interpretation, not a causal law or universal optimum claim |
 
 ## Table 5. Post-lock dev-only controls for exposure and teacher source
 
@@ -63,9 +63,11 @@ These controls use fixed pre-test thresholds and never evaluate or select on off
 | rus_restaurant | gold_repeat | 0.4897±0.0099 | 0.5238 | +0.0924 | [+0.0247, +0.1634] | High; benefit exceeds exposure |
 | rus_restaurant | self_training | 0.4767±0.0171 | 0.4980 | +0.1183 | [+0.0531, +0.1854] | High; LLM teacher adds value |
 | tat_restaurant | gold_repeat | 0.4581±0.0181 | 0.5256 | +0.0071 | [-0.0621, +0.0754] | High; reliable exposure-adjusted advantage not established |
+| tat_restaurant | self_training | 0.4268±0.0098 | 0.4758 | +0.0569 | [-0.0203, +0.1402] | High; reliable teacher-source advantage not established |
 | ukr_restaurant | gold_repeat | 0.4122±0.0187 | 0.4641 | +0.0736 | [+0.0036, +0.1507] | High; benefit exceeds exposure |
+| ukr_restaurant | self_training | 0.4525±0.0198 | 0.4940 | +0.0438 | [-0.0231, +0.1069] | High; reliable teacher-source advantage not established |
 | zho_restaurant | gold_repeat | 0.5084±0.0042 | 0.5478 | +0.0260 | [-0.0028, +0.0543] | High; reliable exposure-adjusted advantage not established |
-| zho_restaurant | self_training | 0.5505±0.0096 | 0.5754 | -0.0016 | [-0.0294, +0.0256] | High; systems statistically tied |
+| zho_restaurant | self_training | 0.5505±0.0096 | 0.5754 | -0.0016 | [-0.0294, +0.0256] | High; reliable teacher-source advantage not established |
 
 ### 5b. Student self-training versus repeated-gold exposure
 
@@ -73,7 +75,44 @@ These controls use fixed pre-test thresholds and never evaluate or select on off
 |---|---:|---:|---|
 | eng_laptop | +0.0015 | [-0.0174, +0.0215] | inconclusive |
 | rus_restaurant | -0.0258 | [-0.0773, +0.0229] | inconclusive |
+| tat_restaurant | -0.0498 | [-0.1085, +0.0143] | inconclusive |
+| ukr_restaurant | +0.0298 | [-0.0245, +0.0867] | inconclusive |
 | zho_restaurant | +0.0276 | [+0.0079, +0.0463] | supported |
+
+### 5c. Direct complementarity and error measurements
+
+These are descriptive dev-only measurements, not proof of a universal causal moderator.
+
+| Dataset | Silver rows | Dev span coverage Δ A/O | Category JSD Δ silver−base | Repaired / harmed dev rows | KD−baseline cF1 |
+|---|---:|---:|---:|---:|---:|
+| eng_laptop | 7547 | +21 / +38 | -0.0141 | 71 / 44 | +0.1058 |
+| rus_restaurant | 3000 | -4 / +0 | +0.0503 | 20 / 19 | +0.0895 |
+| tat_restaurant | 3915 | -9 / +4 | +0.0571 | 16 / 20 | +0.0506 |
+| ukr_restaurant | 5534 | +4 / +9 | +0.0241 | 22 / 18 | +0.0472 |
+| zho_restaurant | 3882 | -30 / -56 | -0.0009 | 130 / 112 | +0.0069 |
+
+### 5d. Multiplicity robustness
+
+Holm and BH corrections are applied separately within each pre-declared family. The official-test family is post-hoc and cannot alter frozen choices.
+
+| Family | n | Raw CI excludes zero | Holm p<.05 | BH p<.05 |
+|---|---:|---:|---:|---:|
+| teacher_fidelity_8x2 | 8 | 3 | 3 | 3 |
+| adopted_kd_vs_baseline_dev | 5 | 2 | 1 | 2 |
+| exposure_control_dev | 5 | 3 | 2 | 2 |
+| same_text_self_training_dev | 5 | 2 | 2 | 2 |
+| frozen_official_test_posthoc | 5 | 4 | 3 | 3 |
+
+### 5e. Resource and deployment audit
+
+| Item | Audited value |
+|---|---|
+| Post-lock training | 134.98 logged run-wall hours on one RTX 4090 (includes checkpoint I/O) |
+| Retained post-lock best checkpoints | 50 files, 301.54 GiB |
+| DeepSeek fidelity coverage / timed rows | 1344 / 1344; 0 errors |
+| Qwen fidelity coverage / timed rows | 1344 / 1264; 0 errors |
+| Historical provider tokens / monetary cost | unavailable; not estimated |
+| LLM calls at student inference | 0 |
 
 ## Table 6. One-shot official Task-3 test evaluation
 

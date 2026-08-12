@@ -1,0 +1,1524 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-08-13",
+  "protocol": "postlock_dev_only_v1+v2",
+  "source_audits": [
+    {
+      "path": "docs/audits/tallip_kd/postlock_audit.json",
+      "sha256": "ec64437f56ad1330bc1e8d33175d887541781f0679aa6a7bd8a286045074212e"
+    },
+    {
+      "path": "docs/audits/tallip_kd/postlock_v2_audit.json",
+      "sha256": "c196a17b793de10314c4792cb1beefbeb9c1d9da6a11f74c4ee4dbf1ce22a380"
+    }
+  ],
+  "scope": {
+    "split": "dev_only",
+    "official_test_evaluation": "forbidden",
+    "checkpoint_policy": "checkpoint_best.pt",
+    "threshold_policy": "frozen_from_pre_test_system"
+  },
+  "summary": {
+    "prediction_files_expected": 60,
+    "prediction_files_validated": 60,
+    "best_checkpoints_expected": 50,
+    "best_checkpoints_validated": 50,
+    "ensemble_outputs_rebuilt": 10,
+    "bootstrap_comparisons_repeated": 15,
+    "all_prediction_ids_and_order_match_dev": true,
+    "all_ensemble_rebuilds_exact": true,
+    "all_bootstrap_repeats_exact": true,
+    "all_checkpoint_sources_are_best": true,
+    "retention_policy_compliant": true
+  },
+  "thresholds": [
+    {
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "single_seed_vote": 1,
+      "ensemble_vote": 4,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v1.yaml"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "single_seed_vote": 1,
+      "ensemble_vote": 4,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v1.yaml"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "single_seed_vote": 1,
+      "ensemble_vote": 3,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v1.yaml"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "single_seed_vote": 1,
+      "ensemble_vote": 3,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v1.yaml"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "single_seed_vote": 1,
+      "ensemble_vote": 3,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v1.yaml"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "single_seed_vote": 1,
+      "ensemble_vote": 3,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v1.yaml"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "single_seed_vote": 1,
+      "ensemble_vote": 3,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v1.yaml"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "single_seed_vote": 1,
+      "ensemble_vote": 3,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v1.yaml"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "single_seed_vote": 1,
+      "ensemble_vote": 3,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v2.yaml"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "single_seed_vote": 1,
+      "ensemble_vote": 3,
+      "topk": 0.0,
+      "source": "scripts/kd/postlock_v2.yaml"
+    }
+  ],
+  "bootstrap": {
+    "iterations": 10000,
+    "seed": 20260713,
+    "checks": [
+      {
+        "id": "eng_laptop:llm_kd_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "0049d1075607dcce7f20f51cf1e6c9c18fd5952c862ce376eab7abcf4469fc86"
+      },
+      {
+        "id": "eng_laptop:llm_kd_minus_self_training",
+        "exact_repeat": true,
+        "result_sha256": "63cd61adf27d80fceb8afdb5a5e2469e85dd501bfef83fdd593f7f50ae4ef0ca"
+      },
+      {
+        "id": "eng_laptop:self_training_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "fce44cb6a046ba574ca0c8d915e209f6a61016093893a9b381bcaa6f6837f264"
+      },
+      {
+        "id": "rus_restaurant:llm_kd_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "83ef249224eb4239e80c45bf8f66f40cf426ba2fdcf20358d0af9e77307fc741"
+      },
+      {
+        "id": "rus_restaurant:llm_kd_minus_self_training",
+        "exact_repeat": true,
+        "result_sha256": "aaac2329890bd5e2f766e6724e4ce1518334c3605d054bea91c768efd6752b5e"
+      },
+      {
+        "id": "rus_restaurant:self_training_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "955c45845a31ca7adb13e2e360772ad0c7d11e9d99dec30251dff067b801184a"
+      },
+      {
+        "id": "tat_restaurant:llm_kd_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "7fd871432ddaface1ce53769f13c28374dd01252f49397560bf0adda7f3cd73e"
+      },
+      {
+        "id": "ukr_restaurant:llm_kd_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "2283f24092816239288f2baee547d72856ec01f1127fb7ff032a24e1569337ef"
+      },
+      {
+        "id": "zho_restaurant:llm_kd_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "3d47663d4637b1b567191e4259328649fca5d2b8320403879fbaab2534c2072a"
+      },
+      {
+        "id": "zho_restaurant:llm_kd_minus_self_training",
+        "exact_repeat": true,
+        "result_sha256": "9188f14290c19c81e906298109757dde2b85c8c63ad0dd959db7df30aac641bc"
+      },
+      {
+        "id": "zho_restaurant:self_training_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "bec16660688d5a02dd3c99f4ba22d886e6887fdffd8c8d179b45b9da7e3a72ec"
+      },
+      {
+        "id": "tat_restaurant:llm_kd_minus_self_training",
+        "exact_repeat": true,
+        "result_sha256": "94605d6e937422fa978a23701d5d91a46091a6147f46e349699d545ddf094c72"
+      },
+      {
+        "id": "tat_restaurant:self_training_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "a58b5f7b1841617d1bcdf4487adf1fc65e0f12015fa930493254659336a2105f"
+      },
+      {
+        "id": "ukr_restaurant:llm_kd_minus_self_training",
+        "exact_repeat": true,
+        "result_sha256": "d989b7fdc7179236c2aabc9e34e5ba6bf64222eb0ef6b4403da2ace4360ee9c8"
+      },
+      {
+        "id": "ukr_restaurant:self_training_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "9758e3285ec1ab8fef9bcb2a0d4761726ca042ea7dec7fe711e782ed9f2f078b"
+      }
+    ]
+  },
+  "ensembles": [
+    {
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "vote": 4,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_gold_repeat_ensemble.jsonl"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "vote": 4,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_self_training_ensemble.jsonl"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "vote": 3,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_gold_repeat_ensemble.jsonl"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "vote": 3,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_self_training_ensemble.jsonl"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "vote": 3,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v1/predictions/tat_restaurant_gold_repeat_ensemble.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "vote": 3,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v1/predictions/ukr_restaurant_gold_repeat_ensemble.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "vote": 3,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_gold_repeat_ensemble.jsonl"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "vote": 3,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_self_training_ensemble.jsonl"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "vote": 3,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_self_training_ensemble.jsonl"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "vote": 3,
+      "topk": 0.0,
+      "seed_prediction_count": 5,
+      "exact_rebuild": true,
+      "output": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_self_training_ensemble.jsonl"
+    }
+  ],
+  "predictions": [
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_gold_repeat_seed42.jsonl",
+      "sha256": "f6973c9fbe19decd65c510c763db7ec6ecab9135246e7eada86c27cc4d3e2108",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_gold_repeat_seed123.jsonl",
+      "sha256": "4bfeece19c0f1df3b231f8ec69523f6deffb0a5c1922673ffe643e17c5ede021",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_gold_repeat_seed456.jsonl",
+      "sha256": "4086ccd74be1e451f7e6833b669a8e774298cb5e51c99846f6167b236fb79271",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_gold_repeat_seed789.jsonl",
+      "sha256": "cf858c6154d86c1edfcff9738bdd2464703367d28210207bfaf5960a59c66fc7",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_gold_repeat_seed1024.jsonl",
+      "sha256": "b7bf5776da207ac350c7be9ff14b6157c93cb01adcbfd1dcf4547bfd3dde0471",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_gold_repeat_ensemble.jsonl",
+      "sha256": "b517e6edc5c037a46f152c24b71a250d94cf2727b791862680ba79d4fb63f5e8",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_self_training_seed42.jsonl",
+      "sha256": "e975b9007612f643e4d5000b034ac3c3451f3af3598a1567fee73dc49dc3d675",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_self_training_seed123.jsonl",
+      "sha256": "aa28878c7b8ea90dedba13af5bfbc6828738924691fb5546d6107517607217b9",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_self_training_seed456.jsonl",
+      "sha256": "ff05f9f3ede8dd6be94b9d624ac143c96112d4851e60951adc1a8c95040f458b",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_self_training_seed789.jsonl",
+      "sha256": "c9901779667e596f0a2a37c0ce1e93dcb4f95e22e68ad976093913fbb66c09ea",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_self_training_seed1024.jsonl",
+      "sha256": "e0187fe2f79e5c5ba134293983d1f09383dd9fedb8094532c7039235ccd8565c",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_self_training_ensemble.jsonl",
+      "sha256": "81dc7ed770d86d2fb648d33194820006b5f9e5f20616ebf8d7fb0c96d4475d76",
+      "rows": 200,
+      "unique_ids": 200,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_gold_repeat_seed42.jsonl",
+      "sha256": "8fb3ef6f2c93ef804294a107fa2a95912383d60da56a0c9ac1575153951846fb",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_gold_repeat_seed123.jsonl",
+      "sha256": "172454531cca0a6c19e99c5f5198b8cc10c35f264b9629050dd01692682f872d",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_gold_repeat_seed456.jsonl",
+      "sha256": "60b0143934c675a18edc72509a6c10a3ed6d96b47cc8c89dabf36624a0e2480c",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_gold_repeat_seed789.jsonl",
+      "sha256": "542634b7430d32e2d78147ef0ccec971c9970459e0b5505fbc3752ffa4c62f6e",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_gold_repeat_seed1024.jsonl",
+      "sha256": "a384146f90d0c3c123a13edeebd09a552fe38dd56f406d55606d413332dace09",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_gold_repeat_ensemble.jsonl",
+      "sha256": "e6444a3bee9f17449ecc21d8e11c8627ca6168888a9925fe6c7cda2b3d241acc",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_self_training_seed42.jsonl",
+      "sha256": "c5d57d7c45e1fafc170bd7b69031c608833c8bc8e7ca91498177c1da30ca13b8",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_self_training_seed123.jsonl",
+      "sha256": "8b3786e2016e35bc9ec732e93212a81f80b254d15084f9495c077bf28886d446",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_self_training_seed456.jsonl",
+      "sha256": "246a54bfe298ceefdcc5e9d2e4d241686aa8a9d9256ae50c6d19688271626946",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_self_training_seed789.jsonl",
+      "sha256": "0efa00389bc2f08e1584b3bdc1a274c3b5c80de6b8b91af42b1c579b2f71bf7a",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_self_training_seed1024.jsonl",
+      "sha256": "083303f957181cc33903a8833d4dd09ec6b33f1cea44db27108ccc7f113697be",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_self_training_ensemble.jsonl",
+      "sha256": "e8bec1bac92ae555d2d920926243c809baa06688509032d66ca27daa7ae1db64",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/tat_restaurant_gold_repeat_seed42.jsonl",
+      "sha256": "044dd1c70db03a905b52ae50871b181658c18c4b05a9f37f1abb7f5e5ad9df26",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/tat_restaurant_gold_repeat_seed123.jsonl",
+      "sha256": "c58d86d803e6aabad12cd33b404d82ccd412e60fb56a6df225a436f9d08afd21",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/tat_restaurant_gold_repeat_seed456.jsonl",
+      "sha256": "4b9b7d6601e93c6d50335fd1b4f5a6f3b2a754323658c803c7d83c3d9891d9ae",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/tat_restaurant_gold_repeat_seed789.jsonl",
+      "sha256": "527735f43035ff7a07b425ed4ee0ef487a57f1258370c6ca3087ac91dbed7ae2",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/tat_restaurant_gold_repeat_seed1024.jsonl",
+      "sha256": "6ebce6e554c2c116509b6db3503648ff099a0b715d0f29829c495bb16a110451",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/tat_restaurant_gold_repeat_ensemble.jsonl",
+      "sha256": "ef78e0a6eb95a17c0accf3d9cd5ca4f3e17cd702a437be4f805a8617d5699ea4",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/ukr_restaurant_gold_repeat_seed42.jsonl",
+      "sha256": "f26608d1c2642e1b4aee7d63a4f6a49e7d904517732c08afd79e433453fb0d3b",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/ukr_restaurant_gold_repeat_seed123.jsonl",
+      "sha256": "05d1dec0492947e6ac919ccc9811d3deeaeccbec14492d40d35a9c1dc691ec7c",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/ukr_restaurant_gold_repeat_seed456.jsonl",
+      "sha256": "007df2bfaae7fc82a4b3c4a653669dca260554b01e384c3d7c33a59be73dbafe",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/ukr_restaurant_gold_repeat_seed789.jsonl",
+      "sha256": "8dd5edc5c114238b99ec19be3d4dff6108fea052146bba76572c6ae7a21cb03a",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/ukr_restaurant_gold_repeat_seed1024.jsonl",
+      "sha256": "08a9a8834b6b94a4b3836609132b16182574ce0c397cd0f7656c45f7a561f341",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/ukr_restaurant_gold_repeat_ensemble.jsonl",
+      "sha256": "7f0eb44b180f0a670adbc9e34f3fac8ab4cda592e1e142c2cd755f5abffb2de2",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_gold_repeat_seed42.jsonl",
+      "sha256": "3fe302a3dc5b9fe27d318bf01b8609a7e0ceb9b6ae1ac445c36a36018e778b32",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_gold_repeat_seed123.jsonl",
+      "sha256": "f5f01787855723f042efd2d6e2d06e3e4e006fa01af16c9226dfdcaa3648bed9",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_gold_repeat_seed456.jsonl",
+      "sha256": "e627d4ddd9d9da9e05d025e747a77b08e25ac9b1f4adbbb15af836693b72ed9a",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_gold_repeat_seed789.jsonl",
+      "sha256": "20bdda05a6bb967a14c05fe62a9c31a41a541a70974576558f61d981527fbaf6",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_gold_repeat_seed1024.jsonl",
+      "sha256": "a97990517c91d46d5555f8b3dae398a169c576d083d8337f52bf8d494410a4e3",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_gold_repeat_ensemble.jsonl",
+      "sha256": "7102d09090d72ce287260365922f38b64a380dd58b02199ca9841cd5ea9460da",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_self_training_seed42.jsonl",
+      "sha256": "34b777b0191ca4e80f855ea5040d8734fe6934388193acc495d6d39098d0483e",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_self_training_seed123.jsonl",
+      "sha256": "c717e42d47433ceda0db40d39d972c54a7f64a115fdd69f6f44fcab921f031a1",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_self_training_seed456.jsonl",
+      "sha256": "056cc96ac1a30ad10c8871185dca9f6127d99495f4cc1617c58f5f6b9eb6449d",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_self_training_seed789.jsonl",
+      "sha256": "0e3c6feca65a33a9d06d46132ca66240c10137122e790a0d67a604361c40dad1",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_self_training_seed1024.jsonl",
+      "sha256": "d40c252ab439faf65c44678657666724380dab631818600a9aa4b865994f5091",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_self_training_ensemble.jsonl",
+      "sha256": "275b15be0425633770bb00578f920659193da7975166aac8dfe1a29e69302d27",
+      "rows": 300,
+      "unique_ids": 300,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_self_training_seed42.jsonl",
+      "sha256": "9db90c28a9da74d3aad9d081dcdb9ebef3102f937f964124bb7c28fdd80356fb",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_self_training_seed123.jsonl",
+      "sha256": "522f404797428c5acc44e23dc428c6bd331990ab10185438c76490cb756eb35a",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_self_training_seed456.jsonl",
+      "sha256": "f71a1f42665af78cef1e301758341871892e1de08178f65cf1eba60ced2120d1",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_self_training_seed789.jsonl",
+      "sha256": "e6bd4750b0208866d496b247dd46ad4995665087c58721be5ae429999762062e",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_self_training_seed1024.jsonl",
+      "sha256": "e2e4cc204d812f3665177da32ade151fcc9aaf2b282b39c603db55bee6ee82d2",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_self_training_ensemble.jsonl",
+      "sha256": "4dd7d09d5569c2cf37a8e92d0d392f467bfd1eb5072b8edb944c4599204a10f4",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_self_training_seed42.jsonl",
+      "sha256": "b631274f773abbb233e0ab7adf20bd9aba48fa857bb26c8b7f53170c3aa43941",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 42
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_self_training_seed123.jsonl",
+      "sha256": "4c1cbe2ae774bc8a8a225267d8ea58719d9260781ec1f0d662c260f99d6384fc",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 123
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_self_training_seed456.jsonl",
+      "sha256": "0b621536727683925722cf2a7161eeefe6c6319c54a14506a064bd165ef502a3",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 456
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_self_training_seed789.jsonl",
+      "sha256": "47c23be27f9a4c6a7b3843a52cfa514da50245055c8905fef69d3ffe2d439115",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 789
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_self_training_seed1024.jsonl",
+      "sha256": "2ade20b659942621bb7d107534ee8c2dcc64eed706b1ce984c92514bf22c8531",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 1024
+    },
+    {
+      "path": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_self_training_ensemble.jsonl",
+      "sha256": "acef045eb964be25d0104f7342662c4b683d427fa272f2c3a1dd57a83119e1ad",
+      "rows": 48,
+      "unique_ids": 48,
+      "id_order_matches_dev": true,
+      "invalid_rows": 0,
+      "invalid_quadruplets": 0,
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": "ensemble",
+      "rebuilt_from_seed_predictions": true
+    }
+  ],
+  "checkpoints": [
+    {
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544362,
+      "checkpoint_mtime_ns": 1785643894443107506,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed42/training_complete.json",
+      "completion_marker_sha256": "f2b90adab1e294fee265b2f2df1c9e7b06f701f4c2dddf229c57e4ce1518da4a"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544426,
+      "checkpoint_mtime_ns": 1785651914211186137,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed123/training_complete.json",
+      "completion_marker_sha256": "df2a08c1d135040eee6225abab3b09ca1ff4a21d54227bf6dd39da6a7e239c0e"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544362,
+      "checkpoint_mtime_ns": 1785659761613814180,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed456/training_complete.json",
+      "completion_marker_sha256": "fce9f926b83e93a4910069d0d47f7a40d221e9fd3dd03b5379e3ea4c7bfc8fe0"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544426,
+      "checkpoint_mtime_ns": 1785668358753784957,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed789/training_complete.json",
+      "completion_marker_sha256": "0ba98b24b59cd5f7dc28a49f2d5afc9c1182d56ce6e2a7ac8ef838a6805d0117"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544362,
+      "checkpoint_mtime_ns": 1785681980082320448,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_gold_repeat_seed1024/training_complete.json",
+      "completion_marker_sha256": "a823913c3d34e6e2bf1836cbb9177c6c9d9ad79b67f80c45f48afa9d5e5b714d"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_self_train_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544362,
+      "checkpoint_mtime_ns": 1785889340499155311,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_self_train_seed42/training_complete.json",
+      "completion_marker_sha256": "518f85d6e3fb3cc5f35cb4c17bf7f804c8ba113a0af129b7293cde254c99d7ba"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_self_train_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544426,
+      "checkpoint_mtime_ns": 1785907091950927087,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_self_train_seed123/training_complete.json",
+      "completion_marker_sha256": "42e71a33f882be5eef453bcdf3503298281de610ea921102aedbe4a887cd6c96"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_self_train_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544362,
+      "checkpoint_mtime_ns": 1785921023001771778,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_self_train_seed456/training_complete.json",
+      "completion_marker_sha256": "cd257d52d5dfb9781d2e5f6f95d279c7f254cf876520c25165a094ee4c58eb11"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_self_train_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544426,
+      "checkpoint_mtime_ns": 1785940683483835026,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_self_train_seed789/training_complete.json",
+      "completion_marker_sha256": "9dc726ff466752509bf9473e59e4b0780908ee870e4c1f4c730664f77555ec09"
+    },
+    {
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v1_eng_laptop_self_train_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 3201544362,
+      "checkpoint_mtime_ns": 1785947729100460354,
+      "completion_marker": "checkpoints/postlock_v1_eng_laptop_self_train_seed1024/training_complete.json",
+      "completion_marker_sha256": "a20a6b43253b182edbb7706f452471f9a55dd283a402df85f640fda7f428afba"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012949,
+      "checkpoint_mtime_ns": 1785690136838705089,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed42/training_complete.json",
+      "completion_marker_sha256": "f3ac10fc587d00473645c2923e854bc8c8470c2d89409cd903ea43f5f918a447"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012949,
+      "checkpoint_mtime_ns": 1785698075924139524,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed123/training_complete.json",
+      "completion_marker_sha256": "dabfb20591da1e8e32901c2b367dd32406b19e50ae2d9f04c6c6319d42dbb8e5"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012885,
+      "checkpoint_mtime_ns": 1785707312408928723,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed456/training_complete.json",
+      "completion_marker_sha256": "42d593ad368306086d46c90d90d200355c5fd15c91fee9695bd2dd85ed7b025c"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 9405010301,
+      "checkpoint_mtime_ns": 1785714063029841977,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed789/training_complete.json",
+      "completion_marker_sha256": "7c300a11f5129fc60b02d06ecb80f1f033f306a5afef3411ae76c92d658d61e9"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 9405010237,
+      "checkpoint_mtime_ns": 1785723519032671075,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_gold_repeat_seed1024/training_complete.json",
+      "completion_marker_sha256": "c80804ca0a4f8a64c2a5ee717b65f87c51cc58367cd0317e3cda21ca941bfa1e"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_self_train_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012949,
+      "checkpoint_mtime_ns": 1785957771914166869,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_self_train_seed42/training_complete.json",
+      "completion_marker_sha256": "7f4f32419d16be5998bff9407bec8a68d4e75d885eaf32385f84d6b896336b5f"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_self_train_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 9405008037,
+      "checkpoint_mtime_ns": 1785967465635391114,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_self_train_seed123/training_complete.json",
+      "completion_marker_sha256": "379eb8def2ed0903fca87d7c1e33bf5d1aa5d2e8a9a62b5235df20fc3a65b94a"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_self_train_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 9405010237,
+      "checkpoint_mtime_ns": 1785977543909338212,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_self_train_seed456/training_complete.json",
+      "completion_marker_sha256": "f38fe0900a16d97bce211914b31d76441080fd739005f1e741f0d56e0b19e155"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_self_train_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 9405010301,
+      "checkpoint_mtime_ns": 1785983803473228494,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_self_train_seed789/training_complete.json",
+      "completion_marker_sha256": "3c916d1bd8b90bf2db9f510e19bf9ecd31b9413db76953cb8cd96a0e4da1d0fe"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v1_rus_restaurant_self_train_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 9405010237,
+      "checkpoint_mtime_ns": 1785991245153239177,
+      "completion_marker": "checkpoints/postlock_v1_rus_restaurant_self_train_seed1024/training_complete.json",
+      "completion_marker_sha256": "ebed50159a006ec891adec4d48e327dda00e52341759c4a63620a62c09d1776b"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 9405010301,
+      "checkpoint_mtime_ns": 1785740348307280517,
+      "completion_marker": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed42/training_complete.json",
+      "completion_marker_sha256": "87042eec19f3896bbec444e69a183c06fa75425337b16e7365718381d89f4ad3"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012949,
+      "checkpoint_mtime_ns": 1785746504144541014,
+      "completion_marker": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed123/training_complete.json",
+      "completion_marker_sha256": "3a2e98a99fe33b8b53f340009e2a0c9d3ad535e2d37a60f2773b5ab897a3cb53"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012885,
+      "checkpoint_mtime_ns": 1785755971466706626,
+      "completion_marker": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed456/training_complete.json",
+      "completion_marker_sha256": "45346578d0a8f89b5c33355615d290a686787cb8989525394e0a3fe40caedc22"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012949,
+      "checkpoint_mtime_ns": 1785764027509188002,
+      "completion_marker": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed789/training_complete.json",
+      "completion_marker_sha256": "625923ba00f45329a69b582e7dd7eb4c7dcc3ff1783b2dca75de4430de6f8dd8"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012885,
+      "checkpoint_mtime_ns": 1785777882596324350,
+      "completion_marker": "checkpoints/postlock_v1_tat_restaurant_gold_repeat_seed1024/training_complete.json",
+      "completion_marker_sha256": "f47b63180be99f7fd3509cce71bffed48b92df3fa60d5289e72947adfa2e5488"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 4711344546,
+      "checkpoint_mtime_ns": 1785790461001640005,
+      "completion_marker": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed42/training_complete.json",
+      "completion_marker_sha256": "737aae5dec0aeae9ad084589d50174af31e2cb72dce6c794a1fcc2a51830947d"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 4711344610,
+      "checkpoint_mtime_ns": 1785798177979614238,
+      "completion_marker": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed123/training_complete.json",
+      "completion_marker_sha256": "d4341bec8c5e6d4224bb68fef73340ea97779b3af701dfe9fc290d060caf41e8"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 4711344546,
+      "checkpoint_mtime_ns": 1785802938393935844,
+      "completion_marker": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed456/training_complete.json",
+      "completion_marker_sha256": "74fc32ac4422e5db3ed5aa3fc494b4569e9a783e09ecc07b70671e3ddace0214"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 4711344546,
+      "checkpoint_mtime_ns": 1785812405622107841,
+      "completion_marker": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed789/training_complete.json",
+      "completion_marker_sha256": "122d18fea2cdde1ddaff1da67b2aebc85ab98a48f6e92170069e36c958966941"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 4711344546,
+      "checkpoint_mtime_ns": 1785818938169548150,
+      "completion_marker": "checkpoints/postlock_v1_ukr_restaurant_gold_repeat_seed1024/training_complete.json",
+      "completion_marker_sha256": "ebcda1c95b0e71cb70104b53602877facec7bfd5124a444d979f9db7d5af69a7"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 5655108669,
+      "checkpoint_mtime_ns": 1785826368147725540,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed42/training_complete.json",
+      "completion_marker_sha256": "75f455ad1775835fec39735cd979a7080b67a81bbdd0d840b08eedaf840ee14f"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 5655104013,
+      "checkpoint_mtime_ns": 1785836791327528976,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed123/training_complete.json",
+      "completion_marker_sha256": "286a8772df6a96a63a4cb5423e2685e6b760e9dd225030f0dbf6262cef6f312a"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 5655106213,
+      "checkpoint_mtime_ns": 1785848421647670829,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed456/training_complete.json",
+      "completion_marker_sha256": "eff3e3598668db92c5361990a4af66f87cdca0cbe761b4616a2aa1cbb8bea17a"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 5655106277,
+      "checkpoint_mtime_ns": 1785856595421386884,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed789/training_complete.json",
+      "completion_marker_sha256": "ced20881bbe39cf73f45f292efc748bdd76b1470b8a3ed80a5563f356276d594"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 5655108605,
+      "checkpoint_mtime_ns": 1785865790705746422,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_gold_repeat_seed1024/training_complete.json",
+      "completion_marker_sha256": "3ec527eaba7663616365f5cd0796492caa96293bd2b5fa05f06bd9a8de3a9493"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_self_train_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 5655108669,
+      "checkpoint_mtime_ns": 1785998300060032697,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_self_train_seed42/training_complete.json",
+      "completion_marker_sha256": "0a66972eca1315489afddce5905c8f00b175fd8e9ce28f9933373389c82796ab"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_self_train_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 5655108669,
+      "checkpoint_mtime_ns": 1786008066256679657,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_self_train_seed123/training_complete.json",
+      "completion_marker_sha256": "383fcb45946d9a58bc1777c3680865f4b24d6dfe18dc7c13ed6c0eb9ec336885"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_self_train_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 5655108605,
+      "checkpoint_mtime_ns": 1786019223149132104,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_self_train_seed456/training_complete.json",
+      "completion_marker_sha256": "e5928b9f1b1e1d8b48c93e326c491784dd6975dc6c7b71fd1c5b7ef6c3d9931f"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_self_train_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 5655108669,
+      "checkpoint_mtime_ns": 1786037510345008396,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_self_train_seed789/training_complete.json",
+      "completion_marker_sha256": "6b04c17c5c78ba435f619357c70c3703b4441e0cfc243af19d8a8de52ee5a93d"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v1_zho_restaurant_self_train_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 5655108605,
+      "checkpoint_mtime_ns": 1786047309786728504,
+      "completion_marker": "checkpoints/postlock_v1_zho_restaurant_self_train_seed1024/training_complete.json",
+      "completion_marker_sha256": "b2e1c72dde616a3614d9561d6d941ac3b8940a8198cd92387681f44502653c63"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v2_tat_restaurant_self_train_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012949,
+      "checkpoint_mtime_ns": 1786553195375293351,
+      "completion_marker": "checkpoints/postlock_v2_tat_restaurant_self_train_seed42/training_complete.json",
+      "completion_marker_sha256": "42630e794a6167218471f741ed64a278ba2f942756bb3bf0c2db37331b3c5305"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v2_tat_restaurant_self_train_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012949,
+      "checkpoint_mtime_ns": 1786553210938372319,
+      "completion_marker": "checkpoints/postlock_v2_tat_restaurant_self_train_seed123/training_complete.json",
+      "completion_marker_sha256": "b03d4651bf8d5aa3072fdfa4ac3bb3c948444f402f9fbcb53090067c32c60417"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v2_tat_restaurant_self_train_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012885,
+      "checkpoint_mtime_ns": 1786553275065696668,
+      "completion_marker": "checkpoints/postlock_v2_tat_restaurant_self_train_seed456/training_complete.json",
+      "completion_marker_sha256": "335bb85fbcd84c0eda349a1c579abfdacb9b3dea7707f1bcf381885a000b3d41"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v2_tat_restaurant_self_train_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012949,
+      "checkpoint_mtime_ns": 1786553367819163154,
+      "completion_marker": "checkpoints/postlock_v2_tat_restaurant_self_train_seed789/training_complete.json",
+      "completion_marker_sha256": "50fe0212d933ffcb17adffe27b72b16f1c812df78ab77a6bb53bf5a1d5130061"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v2_tat_restaurant_self_train_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 9405012885,
+      "checkpoint_mtime_ns": 1786553507554861085,
+      "completion_marker": "checkpoints/postlock_v2_tat_restaurant_self_train_seed1024/training_complete.json",
+      "completion_marker_sha256": "aa45f92fa72ff2c05302b9cadadc52f4f556bd7f4c2ee5695506415825073b3f"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 42,
+      "checkpoint": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed42/checkpoint_best.pt",
+      "checkpoint_bytes": 4711344546,
+      "checkpoint_mtime_ns": 1786553579780380044,
+      "completion_marker": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed42/training_complete.json",
+      "completion_marker_sha256": "db4e9c82bbc5d92abd1d1e5767e27fa0b10efb3ef6172cf3498ed663aa98cdce"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 123,
+      "checkpoint": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed123/checkpoint_best.pt",
+      "checkpoint_bytes": 4711344610,
+      "checkpoint_mtime_ns": 1786553641000985577,
+      "completion_marker": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed123/training_complete.json",
+      "completion_marker_sha256": "7c5c410a56e63a0da64eb787fc21c5a4481aefd35040c90a4d0866f79b87fa47"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 456,
+      "checkpoint": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed456/checkpoint_best.pt",
+      "checkpoint_bytes": 4711344546,
+      "checkpoint_mtime_ns": 1786553679583934342,
+      "completion_marker": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed456/training_complete.json",
+      "completion_marker_sha256": "a346388f37d13f664675aee1fa0cad773afc54f5d9b76a7b98514da18b369623"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 789,
+      "checkpoint": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed789/checkpoint_best.pt",
+      "checkpoint_bytes": 4711343113,
+      "checkpoint_mtime_ns": 1786553726694032713,
+      "completion_marker": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed789/training_complete.json",
+      "completion_marker_sha256": "9c0f69890507d87a94fc892d6fec2eb74caa1a763e17adac01c9367abacd1fc2"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seed": 1024,
+      "checkpoint": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed1024/checkpoint_best.pt",
+      "checkpoint_bytes": 4711343113,
+      "checkpoint_mtime_ns": 1786553777259144358,
+      "completion_marker": "checkpoints/postlock_v2_ukr_restaurant_self_train_seed1024/training_complete.json",
+      "completion_marker_sha256": "cfb3905f97cb937e52722ec5925b3dd7d55362adad63cff9da886942d748e535"
+    }
+  ],
+  "non_best_checkpoint_files": []
+}

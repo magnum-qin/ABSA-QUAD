@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "status": "frozen",
-  "locked_at": "2026-08-08T23:59:00+09:00",
+  "locked_at": "2026-08-13T02:20:00+09:00",
   "table_count": 6,
   "output": {
     "path": "docs/audits/tallip_kd/tallip_core_tables.md",
-    "sha256": "c2c3be734d342c6ff3598b8941bb6cf361da1f37917ae7965d5ec8e2f585fc3b"
+    "sha256": "e1a4220e0a66c3e04aea2779153bf19fd6001c17c6666aae9e545e09039c2283"
   },
   "generator": {
     "path": "scripts/kd/build_tallip_report.py",
-    "sha256": "815c1b35ccaa16100889a13d1f5c610b3648cf0ba305a067ba66e4ca426c6d3e"
+    "sha256": "e02f65a60c8a69f5693378185147282a36c2afadeaf6fe4d7594f7ca05314380"
   },
   "inputs": [
     {
@@ -37,6 +37,14 @@
       "sha256": "0901431fa505317bf403459902a9f57f81a999e9e86b62494b44dc662f49b1f2"
     },
     {
+      "path": "scripts/kd/postlock_v2.yaml",
+      "sha256": "4439fd31c26cc58772d1fef453d36fa87578dbdfd2bbbff76dc7ec75bb69ea3a"
+    },
+    {
+      "path": "scripts/kd/tallip_postlock_analysis.py",
+      "sha256": "1366204d69c10dcc60fdad769f5f617af444eae032ecacf67a9bdf48a82c7eca"
+    },
+    {
       "path": "docs/audits/tallip_kd/postlock_metrics.json",
       "sha256": "2b4836d981f394ce70962850ec43be20fe3d5244542e5ba58fd6b11106235a3c"
     },
@@ -45,8 +53,36 @@
       "sha256": "ec64437f56ad1330bc1e8d33175d887541781f0679aa6a7bd8a286045074212e"
     },
     {
+      "path": "docs/audits/tallip_kd/postlock_v2_metrics.json",
+      "sha256": "116274099e18cabb764f8472dbfc90c17ae6a3bf8b7a3e65de73dd7379d5de77"
+    },
+    {
+      "path": "docs/audits/tallip_kd/postlock_v2_audit.json",
+      "sha256": "c196a17b793de10314c4792cb1beefbeb9c1d9da6a11f74c4ee4dbf1ce22a380"
+    },
+    {
+      "path": "docs/audits/tallip_kd/postlock_complete_metrics.json",
+      "sha256": "83d4ff715bb40ee714712afb4aa2dc7e58381516d89bffb288e1ca18989dc19e"
+    },
+    {
+      "path": "docs/audits/tallip_kd/postlock_complete_audit.json",
+      "sha256": "5940b30eb2a7860fa713c0c97b0b61d3b9708ada1e95335d99004e6d7405c35e"
+    },
+    {
+      "path": "docs/audits/tallip_kd/complementarity_error_analysis.json",
+      "sha256": "dcf3679451ed142f4047b6329a881c6aab35352dbc4a60cfa0ff88e15f322b2a"
+    },
+    {
+      "path": "docs/audits/tallip_kd/statistical_robustness.json",
+      "sha256": "ae6f9f79016cae8479afc2f2666cd42d1738b9a481ea615955c30e0f03fca76e"
+    },
+    {
+      "path": "docs/audits/tallip_kd/cost_efficiency.json",
+      "sha256": "a2ed92b1bd2134df360756601a207bdcab2f797857d476d08f41a30a087cff32"
+    },
+    {
       "path": "docs/audits/tallip_kd/ablation_evidence.json",
-      "sha256": "9e1b55c19e20e70e32fd29bd428cc2a3a3236e47300101ca82fb5e350ef792ba"
+      "sha256": "77b316c81be19c5be8ca0471c14e364b34237392463c9d02342cbd95eb46da32"
     },
     {
       "path": "docs/audits/tallip_kd/tat_teacher_matched_metrics.json",
@@ -54,7 +90,7 @@
     },
     {
       "path": "scripts/kd/registry.yaml",
-      "sha256": "cb0cc4a1bb43a8271af564653cae81258f69e335123407ad571ec1fc5c650525"
+      "sha256": "ab67b2ce591e76ade002574559e3bcc8009da07f0d372a6e8ebeb1dc0c2196a4"
     },
     {
       "path": "docs/audits/kd_freeze_report/artifact.json",
@@ -62,9 +98,9 @@
     },
     {
       "path": "docs/EXPERIMENTS.md",
-      "sha256": "d181cf8866f0aa9646d1fbdec99672156b5c948034fb8776f83ba58d61b79e98"
+      "sha256": "2ef11b7edc34bb57d2544f053910eb4bc7068417e08e89c63c8ce52676c0b146"
     }
   ],
   "verification_command": "python scripts/kd/build_tallip_report.py --verify",
-  "update_policy": "Post-lock v1 may append dev-only controls after explicit evidence audit; official-test systems, thresholds, and conclusions remain frozen."
+  "update_policy": "Post-lock v1+v2 dev-only controls and their analyses are complete; official-test systems, thresholds, and conclusions remain frozen, and future official-test selection is forbidden."
 }

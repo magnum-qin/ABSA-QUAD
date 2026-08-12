@@ -1,0 +1,476 @@
+{
+  "created_at": "2026-08-12T17:00:00.583775+00:00",
+  "protocol": "postlock_dev_only_v2",
+  "split": "dev_only",
+  "bootstrap_seed": 20260713,
+  "bootstrap_iterations": 10000,
+  "comparison_basis": "same dev examples; fixed pre-test thresholds; LLM-KD predictions were frozen before this post-lock protocol",
+  "datasets": {
+    "tat_restaurant": {
+      "dev": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+      "llm_kd_prediction": "data/audits/tallip_kd/inductive_predictions/tat_restaurant_original_ensemble.jsonl",
+      "systems": {
+        "gold_repeat": {
+          "prediction": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_gold_repeat_ensemble.jsonl",
+          "ensemble": {
+            "cPrecision": 0.5709396311843002,
+            "cRecall": 0.4869779207160208,
+            "cF1": 0.5256269620426891,
+            "exact_precision": 0.632183908045977,
+            "exact_recall": 0.5392156862745098,
+            "exact_f1": 0.5820105820105821,
+            "tp_categorical": 55,
+            "fp_categorical": 32,
+            "fn_categorical": 47,
+            "va_mae": 0.698909090909091,
+            "va_rmse": 0.9237108953464922,
+            "va_coordinate_n": 110,
+            "aspect_span": {
+              "precision": 0.8714285714285714,
+              "recall": 0.7261904761904762,
+              "f1": 0.7922077922077921,
+              "tp": 61,
+              "fp": 9,
+              "fn": 23
+            },
+            "opinion_span": {
+              "precision": 0.7681159420289855,
+              "recall": 0.5824175824175825,
+              "f1": 0.6625,
+              "tp": 53,
+              "fp": 16,
+              "fn": 38
+            },
+            "category_span": {
+              "precision": 0.8723404255319149,
+              "recall": 0.7192982456140351,
+              "f1": 0.7884615384615385,
+              "tp": 41,
+              "fp": 6,
+              "fn": 16
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 7,
+              "error_rate": 0.0,
+              "empty_rate": 0.14583333333333334
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.46020152320394814
+            },
+            {
+              "seed": 123,
+              "cF1": 0.48223841392654415
+            },
+            {
+              "seed": 456,
+              "cF1": 0.4340034326914138
+            },
+            {
+              "seed": 789,
+              "cF1": 0.44870269725420064
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.46525033700185275
+            }
+          ],
+          "single_mean": 0.4580792808155919,
+          "single_sd": 0.018077323187051225,
+          "llm_kd_minus_control": {
+            "metric": "official_task3_cF1",
+            "iterations": 10000,
+            "seed": 20260713,
+            "score_a": 0.5327122530267433,
+            "score_b": 0.5256269620426891,
+            "delta_a_minus_b": 0.007085290984054193,
+            "ci95": [
+              -0.06213120514557942,
+              0.07543282510399718
+            ],
+            "classification": "inconclusive"
+          }
+        },
+        "self_training": {
+          "prediction": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_self_training_ensemble.jsonl",
+          "ensemble": {
+            "cPrecision": 0.50749764252755,
+            "cRecall": 0.4477920375243089,
+            "cF1": 0.4757790398695782,
+            "exact_precision": 0.5666666666666667,
+            "exact_recall": 0.5,
+            "exact_f1": 0.53125,
+            "tp_categorical": 51,
+            "fp_categorical": 39,
+            "fn_categorical": 51,
+            "va_mae": 0.7612745098039218,
+            "va_rmse": 0.9917329850950255,
+            "va_coordinate_n": 102,
+            "aspect_span": {
+              "precision": 0.9130434782608695,
+              "recall": 0.75,
+              "f1": 0.8235294117647057,
+              "tp": 63,
+              "fp": 6,
+              "fn": 21
+            },
+            "opinion_span": {
+              "precision": 0.7333333333333333,
+              "recall": 0.6043956043956044,
+              "f1": 0.6626506024096385,
+              "tp": 55,
+              "fp": 20,
+              "fn": 36
+            },
+            "category_span": {
+              "precision": 0.9148936170212766,
+              "recall": 0.7543859649122807,
+              "f1": 0.8269230769230769,
+              "tp": 43,
+              "fp": 4,
+              "fn": 14
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 6,
+              "error_rate": 0.0,
+              "empty_rate": 0.125
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.43008110237740754
+            },
+            {
+              "seed": 123,
+              "cF1": 0.40937904897191796
+            },
+            {
+              "seed": 456,
+              "cF1": 0.430360109331306
+            },
+            {
+              "seed": 789,
+              "cF1": 0.43095763681649835
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.4332844162219128
+            }
+          ],
+          "single_mean": 0.4268124627438085,
+          "single_sd": 0.009826779317529555,
+          "llm_kd_minus_control": {
+            "metric": "official_task3_cF1",
+            "iterations": 10000,
+            "seed": 20260713,
+            "score_a": 0.5327122530267433,
+            "score_b": 0.4757790398695782,
+            "delta_a_minus_b": 0.0569332131571651,
+            "ci95": [
+              -0.02034902264952927,
+              0.14024659265342795
+            ],
+            "classification": "inconclusive"
+          }
+        }
+      },
+      "control_comparisons": {
+        "self_training_minus_gold_repeat": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.4757790398695782,
+          "score_b": 0.5256269620426891,
+          "delta_a_minus_b": -0.0498479221731109,
+          "ci95": [
+            -0.10850074929740777,
+            0.014263671969329553
+          ],
+          "classification": "inconclusive"
+        }
+      }
+    },
+    "ukr_restaurant": {
+      "dev": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+      "llm_kd_prediction": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_clean_ensemble.jsonl",
+      "systems": {
+        "gold_repeat": {
+          "prediction": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_gold_repeat_ensemble.jsonl",
+          "ensemble": {
+            "cPrecision": 0.4596641893899172,
+            "cRecall": 0.46867721271128815,
+            "cF1": 0.4641269485102077,
+            "exact_precision": 0.5096153846153846,
+            "exact_recall": 0.5196078431372549,
+            "exact_f1": 0.5145631067961166,
+            "tp_categorical": 53,
+            "fp_categorical": 51,
+            "fn_categorical": 49,
+            "va_mae": 0.7085849056603772,
+            "va_rmse": 0.8942526129953753,
+            "va_coordinate_n": 106,
+            "aspect_span": {
+              "precision": 0.8552631578947368,
+              "recall": 0.7738095238095238,
+              "f1": 0.8125,
+              "tp": 65,
+              "fp": 11,
+              "fn": 19
+            },
+            "opinion_span": {
+              "precision": 0.6428571428571429,
+              "recall": 0.5934065934065934,
+              "f1": 0.6171428571428572,
+              "tp": 54,
+              "fp": 30,
+              "fn": 37
+            },
+            "category_span": {
+              "precision": 0.8703703703703703,
+              "recall": 0.8245614035087719,
+              "f1": 0.8468468468468469,
+              "tp": 47,
+              "fp": 7,
+              "fn": 10
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 0,
+              "error_rate": 0.0,
+              "empty_rate": 0.0
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.42765245751704056
+            },
+            {
+              "seed": 123,
+              "cF1": 0.43339169979112985
+            },
+            {
+              "seed": 456,
+              "cF1": 0.3878679985994966
+            },
+            {
+              "seed": 789,
+              "cF1": 0.40153487322499587
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.41038453752461684
+            }
+          ],
+          "single_mean": 0.4121663133314559,
+          "single_sd": 0.018687884007262977,
+          "llm_kd_minus_control": {
+            "metric": "official_task3_cF1",
+            "iterations": 10000,
+            "seed": 20260713,
+            "score_a": 0.5377356854184874,
+            "score_b": 0.4641269485102077,
+            "delta_a_minus_b": 0.07360873690827968,
+            "ci95": [
+              0.003642038047134081,
+              0.15074270162866482
+            ],
+            "classification": "supported"
+          }
+        },
+        "self_training": {
+          "prediction": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_self_training_ensemble.jsonl",
+          "ensemble": {
+            "cPrecision": 0.4869002683499657,
+            "cRecall": 0.5012208644779058,
+            "cF1": 0.493956793978226,
+            "exact_precision": 0.5428571428571428,
+            "exact_recall": 0.5588235294117647,
+            "exact_f1": 0.5507246376811593,
+            "tp_categorical": 57,
+            "fp_categorical": 48,
+            "fn_categorical": 45,
+            "va_mae": 0.7552631578947367,
+            "va_rmse": 0.925089848647241,
+            "va_coordinate_n": 114,
+            "aspect_span": {
+              "precision": 0.8734177215189873,
+              "recall": 0.8214285714285714,
+              "f1": 0.8466257668711655,
+              "tp": 69,
+              "fp": 10,
+              "fn": 15
+            },
+            "opinion_span": {
+              "precision": 0.6547619047619048,
+              "recall": 0.6043956043956044,
+              "f1": 0.6285714285714286,
+              "tp": 55,
+              "fp": 29,
+              "fn": 36
+            },
+            "category_span": {
+              "precision": 0.864406779661017,
+              "recall": 0.8947368421052632,
+              "f1": 0.8793103448275862,
+              "tp": 51,
+              "fp": 8,
+              "fn": 6
+            },
+            "null_slice": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "rare_category_slice": null,
+            "coverage": {
+              "gold_rows": 48,
+              "prediction_rows": 48,
+              "missing_ids": [],
+              "extra_ids": [],
+              "error_rows": 0,
+              "empty_rows": 1,
+              "error_rate": 0.0,
+              "empty_rate": 0.020833333333333332
+            }
+          },
+          "single_seeds": [
+            {
+              "seed": 42,
+              "cF1": 0.4315175524365127
+            },
+            {
+              "seed": 123,
+              "cF1": 0.477391662717973
+            },
+            {
+              "seed": 456,
+              "cF1": 0.4597339890100543
+            },
+            {
+              "seed": 789,
+              "cF1": 0.4327612022802011
+            },
+            {
+              "seed": 1024,
+              "cF1": 0.4609891063582884
+            }
+          ],
+          "single_mean": 0.4524787025606059,
+          "single_sd": 0.019836023857481212,
+          "llm_kd_minus_control": {
+            "metric": "official_task3_cF1",
+            "iterations": 10000,
+            "seed": 20260713,
+            "score_a": 0.5377356854184874,
+            "score_b": 0.493956793978226,
+            "delta_a_minus_b": 0.04377889144026137,
+            "ci95": [
+              -0.02309964021186853,
+              0.1068518986311262
+            ],
+            "classification": "inconclusive"
+          }
+        }
+      },
+      "control_comparisons": {
+        "self_training_minus_gold_repeat": {
+          "metric": "official_task3_cF1",
+          "iterations": 10000,
+          "seed": 20260713,
+          "score_a": 0.493956793978226,
+          "score_b": 0.4641269485102077,
+          "delta_a_minus_b": 0.029829845468018312,
+          "ci95": [
+            -0.024511203245334918,
+            0.08669676628198618
+          ],
+          "classification": "inconclusive"
+        }
+      }
+    }
+  },
+  "bootstrap_reproducibility": {
+    "comparison_count": 6,
+    "all_exact_repeats": true,
+    "checks": [
+      {
+        "id": "tat_restaurant:llm_kd_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "7fd871432ddaface1ce53769f13c28374dd01252f49397560bf0adda7f3cd73e"
+      },
+      {
+        "id": "tat_restaurant:llm_kd_minus_self_training",
+        "exact_repeat": true,
+        "result_sha256": "94605d6e937422fa978a23701d5d91a46091a6147f46e349699d545ddf094c72"
+      },
+      {
+        "id": "tat_restaurant:self_training_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "a58b5f7b1841617d1bcdf4487adf1fc65e0f12015fa930493254659336a2105f"
+      },
+      {
+        "id": "ukr_restaurant:llm_kd_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "2283f24092816239288f2baee547d72856ec01f1127fb7ff032a24e1569337ef"
+      },
+      {
+        "id": "ukr_restaurant:llm_kd_minus_self_training",
+        "exact_repeat": true,
+        "result_sha256": "d989b7fdc7179236c2aabc9e34e5ba6bf64222eb0ef6b4403da2ace4360ee9c8"
+      },
+      {
+        "id": "ukr_restaurant:self_training_minus_gold_repeat",
+        "exact_repeat": true,
+        "result_sha256": "9758e3285ec1ab8fef9bcb2a0d4761726ca042ea7dec7fe711e782ed9f2f078b"
+      }
+    ]
+  }
+}

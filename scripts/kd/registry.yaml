@@ -24,12 +24,17 @@ defaults:
 
 # ---- TALLIP POST-LOCK DEV-ONLY CONTROLS ----
 # These controls are not runnable through scripts/kd/pipeline.py and never use
-# official-test labels. Full lineage is in postlock_v1.yaml and the audit below.
+# official-test labels. v1 trained all repeated-gold plus eng/rus/zho self-training;
+# v2 completed the same-text self-training matrix on tat/ukr.
 postlock_controls:
-  protocol: postlock_dev_only_v1
-  manifest: scripts/kd/postlock_v1.yaml
-  evidence: docs/audits/tallip_kd/postlock_metrics.json
-  audit: docs/audits/tallip_kd/postlock_audit.json
+  protocol: postlock_dev_only_v1+v2
+  manifests: [scripts/kd/postlock_v1.yaml, scripts/kd/postlock_v2.yaml]
+  source_evidence: [docs/audits/tallip_kd/postlock_metrics.json, docs/audits/tallip_kd/postlock_v2_metrics.json]
+  evidence: docs/audits/tallip_kd/postlock_complete_metrics.json
+  audit: docs/audits/tallip_kd/postlock_complete_audit.json
+  complementarity: docs/audits/tallip_kd/complementarity_error_analysis.json
+  multiplicity: docs/audits/tallip_kd/statistical_robustness.json
+  cost_efficiency: docs/audits/tallip_kd/cost_efficiency.json
   seeds: [42, 123, 456, 789, 1024]
   bootstrap: {iterations: 10000, seed: 20260713}
   checkpoint_policy: checkpoint_best.pt
@@ -113,6 +118,28 @@ postlock_controls:
       seed_sd: 0.0170698221
       ensemble_result: 0.4979819963
       llm_kd_minus_control: {delta: 0.1182520835, ci95: [0.0530684306, 0.1853819068], decision: supported}
+    tat_restaurant_self_training:
+      dataset: tat_restaurant
+      control: same_text_student_self_training
+      train_file: data/audits/tallip_kd/postlock_v2/self_training/tat_restaurant_train.jsonl
+      train_rows: 5155
+      checkpoint_prefix: postlock_v2_tat_restaurant_self_train_seed
+      eval: {vote: 3, topk: 0.0}
+      seed_mean: 0.4268124627
+      seed_sd: 0.0098267793
+      ensemble_result: 0.4757790399
+      llm_kd_minus_control: {delta: 0.0569332132, ci95: [-0.0203490226, 0.1402465927], decision: inconclusive}
+    ukr_restaurant_self_training:
+      dataset: ukr_restaurant
+      control: same_text_student_self_training
+      train_file: data/audits/tallip_kd/postlock_v2/self_training/ukr_restaurant_train.jsonl
+      train_rows: 8500
+      checkpoint_prefix: postlock_v2_ukr_restaurant_self_train_seed
+      eval: {vote: 3, topk: 0.0}
+      seed_mean: 0.4524787026
+      seed_sd: 0.0198360239
+      ensemble_result: 0.4939567940
+      llm_kd_minus_control: {delta: 0.0437788914, ci95: [-0.0230996402, 0.1068518986], decision: inconclusive}
     zho_restaurant_self_training:
       dataset: zho_restaurant
       control: same_text_student_self_training
@@ -127,6 +154,8 @@ postlock_controls:
   self_training_minus_gold_repeat:
     eng_laptop: {delta: 0.0015038332, ci95: [-0.0174473649, 0.0215135214], decision: inconclusive}
     rus_restaurant: {delta: -0.0258384596, ci95: [-0.0773174392, 0.0228832022], decision: inconclusive}
+    tat_restaurant: {delta: -0.0498479222, ci95: [-0.1085007493, 0.0142636720], decision: inconclusive}
+    ukr_restaurant: {delta: 0.0298298455, ci95: [-0.0245112032, 0.0866967663], decision: inconclusive}
     zho_restaurant: {delta: 0.0276118846, ci95: [0.0079349854, 0.0463397163], decision: supported}
 
 experiments:

@@ -1,6 +1,6 @@
 # TALLIP KD 最终结论口径
 
-更新日期：2026-08-08。
+更新日期：2026-08-13。
 
 本文档是 KD 结论的单一权威入口。历史实验日志可以保留当时的假设和
 dev 结果，但论文、README 和汇报不得用 dev 分数与官方 test leaderboard
@@ -53,19 +53,34 @@ ukr_restaurant 的 95% CI 下界大于 0；tat_restaurant 与 zho_restaurant 的
 CI 跨 0。因此，当前证据支持“这三个域的收益不能仅由训练曝光解释”，不支持
 把该结论外推到所有域。
 
-eng_laptop、rus_restaurant、zho_restaurant 还在与 LLM silver 完全相同的
-文本和行数上构造了学生 ensemble 伪标签。LLM-KD 相对 self-training 在 eng
-和 rus 分别为 +0.0933 [+0.0476, +0.1407]、+0.1183
-[+0.0531, +0.1854]，得到统计支持；zho 为 −0.0016
-[−0.0294, +0.0256]，统计持平。zho 的 self-training 又可靠优于 repeated-gold
-+0.0276 [+0.0079, +0.0463]。这说明 teacher 的额外价值具有明显域依赖性：
-eng/rus 需要 LLM 标签才能获得当前增益，而 zho 的收益可由同文本学生伪标签
-复现，不能宣称 LLM teacher 在该域具有独占贡献。
+五个 adopted 数据集均在与 LLM silver 完全相同的文本和行数上构造了学生
+ensemble 伪标签。LLM-KD 相对 self-training 在 eng 和 rus 分别为 +0.0933
+[+0.0476, +0.1407]、+0.1183 [+0.0531, +0.1854]，得到统计支持；tat、ukr、
+zho 分别为 +0.0569 [−0.0203, +0.1402]、+0.0438
+[−0.0231, +0.1069]、−0.0016 [−0.0294, +0.0256]，均为 inconclusive。
+zho 的 self-training 又可靠优于 repeated-gold +0.0276
+[+0.0079, +0.0463]；tat/ukr 的两个非 LLM control 之间也无可靠差异。
+五域同文本对照因此将结论收敛为：只有 eng/rus 建立了 LLM teacher 的额外
+标签价值，tat/ukr/zho 没有；不能把 teacher-source 优势外推为跨域规律。
+
+分族多重比较校正进一步收紧表述。same-text family 的 eng/rus 在 Holm 与 BH
+校正后仍显著，tat/ukr/zho 均不显著。Exposure family 中 eng/rus 保持 Holm
+显著；ukr 的单项 95% CI 下界虽大于 0，但 Holm p=0.1542，因此只能说单项
+分析支持，不能说在五域 family-wise 校正后仍得到支持。一次性 official-test
+family 中 eng/tat/ukr 保持 Holm 显著，rus 不保持，zho 仍不确定；该分析是
+post-hoc robustness check，绝不改变任何冻结 test 选择。
+
+五域直接描述性分析还测量了 silver 标签有效性、类别分布 JSD、dev
+aspect/opinion 类型覆盖、row-level repaired/harmed 和 error slices。eng 的
+span 覆盖增量与 KD dev 增益均最大；zho 的直接 teacher fidelity 最高，却是
+KD dev 增益最小且 span 覆盖下降。这些非单调模式支持“质量、覆盖、互补性
+共同作用”的解释，但不能证明单一指标或普适因果机制。
 
 ## 允许保留的六条结论
 
-1. **KD 的收益具有条件性，且不能统一归因于训练曝光。** Post-lock 控制在
-   eng/rus/ukr 排除了“仅增加训练行数”这一替代解释，但 tat/zho 证据不确定；
+1. **KD 的收益具有条件性，且不能统一归因于训练曝光。** 单项 post-lock
+   控制在 eng/rus/ukr 排除了“仅增加训练行数”这一替代解释，但 tat/zho
+   证据不确定；五域 Holm 校正后只有 eng/rus 保持显著。
    结果与“silver 提供 gold/base 缺失且标注较准确的覆盖时更可能有效”一致。
    信息互补性仍是解释性机制，不是已独立操纵的普适因果定律。
 2. **DeepSeek 整体更稳健，Qwen 在部分域接近。** 直接 teacher fidelity 的
@@ -84,8 +99,9 @@ eng/rus 需要 LLM 标签才能获得当前增益，而 zho 的收益可由同�
    多样性和 gold:silver 权重；现有证据不支持统一 cap、甜区或 dose-response。
 
 上述结果还支持一个边界条件：**LLM teacher 的额外价值具有域依赖性。**
-eng/rus 的 LLM-KD 显著优于 same-text self-training；zho 两者统计持平。不得把
-“LLM 标签必然优于学生伪标签”写成跨域规律。
+eng/rus 的 LLM-KD 显著优于 same-text self-training，并在五域 Holm 校正后
+保持；tat/ukr/zho 均未建立可靠优势。不得把“LLM 标签必然优于学生伪标签”
+写成跨域规律。
 
 ## 已撤回或禁止的表述
 
@@ -95,7 +111,8 @@ eng/rus 的 LLM-KD 显著优于 same-text self-training；zho 两者统计持平
 - “silver_cap=3000 是黄金甜区”或“silver 越少/越多越好”；
 - “Tatar 上 Qwen 显著优于 DeepSeek”；
 - “zho_restaurant 是 KD 成功案例”：official test 的 paired 证据不确定。
-- “LLM teacher 在所有域都优于 self-training”：zho 的 matched-text 对照持平。
+- “LLM teacher 在所有域都优于 self-training”：tat/ukr/zho 的 matched-text
+  对照均未建立可靠优势。
 - 将 Rethink、Hungarian matching、language-specific encoder 或 five-seed
   ensemble 再次列为 TALLIP 新贡献；这些属于 ICONIP V20 的既有工作。
 
@@ -103,7 +120,7 @@ eng/rus 的 LLM-KD 显著优于 same-text self-training；zho 两者统计持平
 [`docs/audits/tallip_kd/tallip_core_tables.md`](audits/tallip_kd/tallip_core_tables.md)
 与
 [`docs/audits/tallip_kd/official_test/official_test_table.md`](audits/tallip_kd/official_test/official_test_table.md)。
-六张核心表已由
+六张核心表及五域 post-lock 补充分析已由
 [`tallip_core_tables.lock.json`](audits/tallip_kd/tallip_core_tables.lock.json)
 做 SHA256 冻结；论文引用前必须通过
 `python scripts/kd/build_tallip_report.py --verify`。

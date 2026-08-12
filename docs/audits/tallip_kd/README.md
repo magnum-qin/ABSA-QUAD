@@ -1,8 +1,8 @@
 # TALLIP KD evidence closure
 
-Status as of 2026-08-08: audit, 25 clean-inductive training jobs, frozen
+Status as of 2026-08-13: audit, 25 clean-inductive training jobs, frozen
 inference, the complete 8x2 teacher-fidelity evaluation, the one-shot
-official-test evaluation, and 40 post-lock dev-only control jobs are finished.
+official-test evaluation, and 50 post-lock dev-only control jobs are finished.
 
 ## Frozen protocol
 
@@ -13,7 +13,7 @@ official-test evaluation, and 40 post-lock dev-only control jobs are finished.
   zho_restaurant vote 3; all use top-k 0.
 - No cap5000, no remaining rus cap3000 seeds, and no new teacher/pool grid.
 - Post-lock controls are dev-only; official-test evaluation and selection are
-  forbidden by `scripts/kd/postlock_v1.yaml`.
+  forbidden by `scripts/kd/postlock_v1.yaml` and `postlock_v2.yaml`.
 
 ## Confirmed leakage and remediation
 
@@ -53,24 +53,34 @@ No paper LaTeX is modified by this workflow.
 
 ## Post-lock controls
 
-- Training: 25/25 exposure-matched repeated-gold and 15/15 same-text
-  self-training jobs complete; 40/40 `checkpoint_best.pt` files and completion
+- Training: 25/25 exposure-matched repeated-gold and 25/25 same-text
+  self-training jobs complete; 50/50 `checkpoint_best.pt` files and completion
   markers retained.
-- Inference: 48/48 prediction files have exact dev ID/row/order coverage; all
-  eight ensembles reproduce exactly from the five seed files and frozen votes.
-- Statistics: 11 paired comparisons use 10,000 example-level resamples and seed
+- Inference: 60/60 prediction files have exact dev ID/row/order coverage; all
+  ten ensembles reproduce exactly from the five seed files and frozen votes.
+- Statistics: 15 post-lock paired comparisons use 10,000 example-level resamples and seed
   20260713; every comparison was repeated and matched exactly.
 - Exposure control: LLM-KD is supported over repeated gold on eng_laptop,
   rus_restaurant, and ukr_restaurant; tat_restaurant and zho_restaurant are
   inconclusive.
 - Same-text control: LLM-KD is supported over student self-training on eng and
-  rus; zho is statistically tied. On zho, self-training is supported over
-  repeated gold.
+  rus, including after five-domain Holm/BH correction; tat, ukr, and zho are
+  inconclusive. On zho, self-training is supported over repeated gold.
+- Direct analysis: all adopted silver inputs pass span/category/VA validity;
+  category distribution, lexical coverage, and repaired/harmed patterns are
+  non-monotonic across domains, supporting a multi-factor interpretation only.
+- Multiplicity: five separately defined families cover teacher fidelity,
+  adopted-KD dev, exposure, same-text self-training, and frozen official test.
+- Cost: final fidelity coverage is 1,344 rows per teacher; Qwen timing metadata
+  covers 1,264 rows. Historical token/billing data are unavailable and no
+  monetary estimate is fabricated; student inference makes zero LLM calls.
 - Cleanup: 60 `checkpoint_latest.pt`/`checkpoint_epoch*.pt` files were deleted,
   freeing 365,233,267,664 bytes; all best checkpoints, predictions, and audits
-  remain.
-- Evidence: `postlock_audit.json`, `postlock_metrics.json`, and
-  `postlock_table.md`.
+  remain. v2 additionally removed 40 such names (282,327,138,180 logical bytes;
+  202,340,503,552 filesystem bytes freed after hardlink accounting).
+- Evidence: `postlock_complete_audit.json`, `postlock_complete_metrics.json`,
+  `complementarity_error_analysis.json`, `statistical_robustness.json`, and
+  `cost_efficiency.json`.
 
 ## Frozen core tables
 
@@ -81,9 +91,10 @@ in the generator: its evidence rows and source lineage are registered in
 `ablation_evidence.json`, while numeric results are recomputed from the cited
 artifacts.
 
-Table 5 adds the post-lock dev-only controls; the one-shot official-test table
-is Table 6. This append-only evidence update does not alter any frozen test
-system, prediction, threshold, or conclusion.
+Table 5 adds the complete five-domain post-lock dev-only controls, direct
+descriptive analysis, multiplicity summary, and resource audit; the one-shot
+official-test table is Table 6. This evidence update does not alter any frozen
+test system, prediction, threshold, or selection.
 
 Verify before copying any value into the paper:
 

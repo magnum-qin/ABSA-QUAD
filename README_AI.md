@@ -274,7 +274,11 @@ paired mean 低于 full-8k，说明 4k 优势不能归因于单纯减量。
 互补覆盖时，KD 更可能有效。直接 fidelity 中 DeepSeek 点估计 8/8 更高，
 但仅三个域获得统计支持；Tatar matched downstream 无可靠排名反转。pool 来源
 无普适排序，同池 gen8k 减量没有改善，现有证据也不支持统一 cap 或甜区。
-统一口径见 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) 和 §5.29.5–5.29.7；
+五域 same-text self-training 控制中，仅 eng/rus 建立 LLM teacher 的额外价值，
+且在 Holm 校正后保持；tat/ukr/zho 尚未建立可靠差异。repeated-gold 控制的
+单项分析支持 eng/rus/ukr，但五域 Holm 校正后仅 eng/rus 保持。因此不得把
+非显著结果写成统计等效，也不得声称 LLM teacher 在所有域都更优。
+统一口径见 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) 和 §5.29.5–5.29.9；
 与 ICONIP V20 的贡献边界见
 [docs/TALLIP_VS_ICONIP_V20.md](docs/TALLIP_VS_ICONIP_V20.md)。
 

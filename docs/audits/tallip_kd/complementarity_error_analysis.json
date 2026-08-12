@@ -1,0 +1,593 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-08-13",
+  "scope": "five adopted KD datasets; dev-only model comparisons",
+  "interpretation_limit": "Coverage and error transitions are direct descriptive measurements; with five domains they do not establish a universal causal moderator.",
+  "cross_domain_summary": {
+    "largest_kd_dev_gain": "eng_laptop",
+    "smallest_kd_dev_gain": "zho_restaurant",
+    "largest_combined_dev_span_coverage_gain": "eng_laptop",
+    "highest_teacher_fidelity": "zho_restaurant",
+    "silver_category_distribution_closer_to_dev_than_base": [
+      "eng_laptop",
+      "zho_restaurant"
+    ],
+    "silver_improves_both_dev_aspect_and_opinion_type_coverage": [
+      "eng_laptop",
+      "ukr_restaurant"
+    ],
+    "allowed_interpretation": "The measured fidelity, distribution, and lexical-coverage descriptors are non-monotonic across five domains. They support a multi-factor quality/coverage/complementarity interpretation, not a single causal score or universal ordering."
+  },
+  "datasets": {
+    "eng_laptop": {
+      "sources": {
+        "base_train": "data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl",
+        "base_sha256": "0bdddb1accff1a911770916c46dbedfe6ccdc03478605db0921a8ca60cb010f4",
+        "llm_train": "data/subtask_3/eng/eng_laptop_train_v23_deepseek_inductive.jsonl",
+        "llm_train_sha256": "6d1a9b14eaffcc98222143fdc9763eab666c02fec2ffd68c7c62bf609a47595c",
+        "dev": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "dev_sha256": "c3a622060eba7b770a70bdf789c1ec5fddf5ec780877b88c5e8bfca5a3f87ab9",
+        "llm_prediction": "data/audits/tallip_kd/inductive_predictions/eng_laptop_clean_ensemble.jsonl",
+        "llm_prediction_sha256": "0e9a770c7390429799e4e72bcdbb52ce32dfdb35762cd9b2edc7d94801cd5bc2",
+        "baseline_prediction": "data/audits/tallip_kd/inductive_predictions/eng_laptop_baseline_ensemble.jsonl",
+        "baseline_prediction_sha256": "c9aebd9c5609b42720640aba83c09e3feb4ae8e1f689b64c44fe87b9991609fb"
+      },
+      "grain": {
+        "base_rows": 15048,
+        "silver_rows": 7547,
+        "llm_train_rows": 22595,
+        "dev_rows": 200
+      },
+      "teacher": "deepseek",
+      "teacher_fidelity_cF1": 0.35745320780897666,
+      "silver_label_validity": {
+        "quadruplets": 24715,
+        "empty_rows": 0,
+        "invalid_explicit_aspect_substrings": 0,
+        "invalid_explicit_opinion_substrings": 0,
+        "categories_absent_from_gold_train_inventory": 0,
+        "invalid_va_format_or_range": 0
+      },
+      "category_complementarity": {
+        "base_unique_categories": 121,
+        "silver_unique_categories": 110,
+        "dev_unique_categories": 49,
+        "dev_categories_covered_by_base": 46,
+        "dev_categories_covered_by_silver": 45,
+        "silver_categories_absent_from_base": 0,
+        "novel_silver_categories_present_in_dev": 0,
+        "rare_category_definition": "base frequency <= 5 quadruplets",
+        "dev_rare_quadruplets": 9,
+        "dev_rare_quadruplets_with_category_in_silver": 1,
+        "rare_dev_quadruplet_category_coverage": 0.1111111111111111,
+        "base_to_dev_js_divergence": 0.2050884844611458,
+        "silver_to_dev_js_divergence": 0.19097164524552893
+      },
+      "lexical_complementarity": {
+        "silver_aspect_types": 2774,
+        "silver_aspect_novel_vs_base": 2401,
+        "silver_aspect_novelty_rate": 0.8655371304974766,
+        "silver_opinion_types": 8215,
+        "silver_opinion_novel_vs_base": 7640,
+        "silver_opinion_novelty_rate": 0.9300060864272672,
+        "dev_aspect_types_covered_by_base": 60,
+        "dev_aspect_types_covered_by_silver": 81,
+        "dev_opinion_types_covered_by_base": 85,
+        "dev_opinion_types_covered_by_silver": 123
+      },
+      "error_transition": {
+        "definition": "row-level official cF1: LLM-KD higher/lower/equal than baseline",
+        "repaired_rows": 71,
+        "harmed_rows": 44,
+        "tied_rows": 85,
+        "net_repaired_minus_harmed": 27,
+        "example_repaired_ids": [
+          "lap26_asqp_dev_1",
+          "lap26_asqp_dev_6",
+          "lap26_asqp_dev_10",
+          "lap26_asqp_dev_17",
+          "lap26_asqp_dev_20",
+          "lap26_asqp_dev_24",
+          "lap26_asqp_dev_25",
+          "lap26_asqp_dev_32",
+          "lap26_asqp_dev_33",
+          "lap26_asqp_dev_34"
+        ],
+        "example_harmed_ids": [
+          "lap26_asqp_dev_15",
+          "lap26_asqp_dev_21",
+          "lap26_asqp_dev_27",
+          "lap26_asqp_dev_29",
+          "lap26_asqp_dev_30",
+          "lap26_asqp_dev_31",
+          "lap26_asqp_dev_50",
+          "lap26_asqp_dev_54",
+          "lap26_asqp_dev_55",
+          "lap26_asqp_dev_63"
+        ]
+      },
+      "dev_slices": {
+        "all": {
+          "rows": 200,
+          "llm_kd_cF1": 0.41023402619279414,
+          "baseline_cF1": 0.3044758226801787,
+          "delta": 0.10575820351261545
+        },
+        "implicit_aspect_or_opinion": {
+          "rows": 0,
+          "llm_kd_cF1": null,
+          "baseline_cF1": null,
+          "delta": null
+        },
+        "rare_category": {
+          "rows": 8,
+          "llm_kd_cF1": 0.21985390169992441,
+          "baseline_cF1": 0.0623786518902099,
+          "delta": 0.1574752498097145
+        },
+        "multi_quadruplet": {
+          "rows": 93,
+          "llm_kd_cF1": 0.3649568787495166,
+          "baseline_cF1": 0.2438559886609024,
+          "delta": 0.12110089008861419
+        }
+      }
+    },
+    "rus_restaurant": {
+      "sources": {
+        "base_train": "data/subtask_3/rus/rus_restaurant_train_alltasks.jsonl",
+        "base_sha256": "a81c2e737a0ed8e3fcfee48864403a3339ab388b7ed545436f45a11ae878b92a",
+        "llm_train": "data/subtask_3/rus/rus_restaurant_train_v23_deepseek_gen4k.jsonl",
+        "llm_train_sha256": "2d1d30bc2c50e6d39e39b78f16046a6013ce49de4ecaa9055f121baf229ff3ea",
+        "dev": "data/subtask_3/rus/rus_restaurant_dev_task3.jsonl",
+        "dev_sha256": "04d1a5711e462d401283f946dfe3653773ce80d19b5cc59efa654b4e7c835624",
+        "llm_prediction": "data/audits/tallip_kd/inductive_predictions/rus_restaurant_original_ensemble.jsonl",
+        "llm_prediction_sha256": "bf7f8a573054c5b051e8583ba0e04f0b1865e9e5ec4123ae8a323d4a18a233c2",
+        "baseline_prediction": "predictions/v15_sweep/v15_rus_vote4_topk0.10.jsonl",
+        "baseline_prediction_sha256": "2d74563103f441177d4371252a170009a6f65ba3cd502c478b8b0bfd9b1abe0e"
+      },
+      "grain": {
+        "base_rows": 1240,
+        "silver_rows": 3000,
+        "llm_train_rows": 4240,
+        "dev_rows": 48
+      },
+      "teacher": "deepseek",
+      "teacher_fidelity_cF1": 0.390385272627259,
+      "silver_label_validity": {
+        "quadruplets": 7440,
+        "empty_rows": 0,
+        "invalid_explicit_aspect_substrings": 0,
+        "invalid_explicit_opinion_substrings": 0,
+        "categories_absent_from_gold_train_inventory": 0,
+        "invalid_va_format_or_range": 0
+      },
+      "category_complementarity": {
+        "base_unique_categories": 12,
+        "silver_unique_categories": 12,
+        "dev_unique_categories": 7,
+        "dev_categories_covered_by_base": 7,
+        "dev_categories_covered_by_silver": 7,
+        "silver_categories_absent_from_base": 0,
+        "novel_silver_categories_present_in_dev": 0,
+        "rare_category_definition": "base frequency <= 5 quadruplets",
+        "dev_rare_quadruplets": 0,
+        "dev_rare_quadruplets_with_category_in_silver": 0,
+        "rare_dev_quadruplet_category_coverage": null,
+        "base_to_dev_js_divergence": 0.03681807735710858,
+        "silver_to_dev_js_divergence": 0.08708164626207311
+      },
+      "lexical_complementarity": {
+        "silver_aspect_types": 1793,
+        "silver_aspect_novel_vs_base": 1575,
+        "silver_aspect_novelty_rate": 0.8784160624651423,
+        "silver_opinion_types": 4018,
+        "silver_opinion_novel_vs_base": 3666,
+        "silver_opinion_novelty_rate": 0.9123942259830762,
+        "dev_aspect_types_covered_by_base": 44,
+        "dev_aspect_types_covered_by_silver": 40,
+        "dev_opinion_types_covered_by_base": 33,
+        "dev_opinion_types_covered_by_silver": 33
+      },
+      "error_transition": {
+        "definition": "row-level official cF1: LLM-KD higher/lower/equal than baseline",
+        "repaired_rows": 20,
+        "harmed_rows": 19,
+        "tied_rows": 9,
+        "net_repaired_minus_harmed": 1,
+        "example_repaired_ids": [
+          "1206:9_1",
+          "1336:4_2",
+          "3236:1_4",
+          "3236:2_5",
+          "10106:4_9",
+          "10287:1_13",
+          "10731:4_15",
+          "11657:6_18",
+          "12094:4_19",
+          "13133:3_21"
+        ],
+        "example_harmed_ids": [
+          "1077:4_0",
+          "1408:5_3",
+          "3480:1_6",
+          "3480:2_7",
+          "3552:4_8",
+          "10139:9_10",
+          "10195:4_11",
+          "10403:8_14",
+          "10915:12_16",
+          "14407:1_24"
+        ]
+      },
+      "dev_slices": {
+        "all": {
+          "rows": 48,
+          "llm_kd_cF1": 0.6162340798353403,
+          "baseline_cF1": 0.5267369887665554,
+          "delta": 0.0894970910687849
+        },
+        "implicit_aspect_or_opinion": {
+          "rows": 0,
+          "llm_kd_cF1": null,
+          "baseline_cF1": null,
+          "delta": null
+        },
+        "rare_category": {
+          "rows": 0,
+          "llm_kd_cF1": null,
+          "baseline_cF1": null,
+          "delta": null
+        },
+        "multi_quadruplet": {
+          "rows": 24,
+          "llm_kd_cF1": 0.6438299320524857,
+          "baseline_cF1": 0.5538514024729878,
+          "delta": 0.08997852957949792
+        }
+      }
+    },
+    "tat_restaurant": {
+      "sources": {
+        "base_train": "data/subtask_3/tat/tat_restaurant_train_alltasks.jsonl",
+        "base_sha256": "1f374e08dfd3fac61d9ca6935e185958f889a24a6690dacec6ff6497d4d54917",
+        "llm_train": "data/subtask_3/tat/tat_restaurant_train_v23_qwen.jsonl",
+        "llm_train_sha256": "f6d0e77f48914277ceaa14511d168328345bef1c3547137fe08bdf31bb63e623",
+        "dev": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+        "dev_sha256": "9c9b9eb1a2ab7ac5d40dada5e80e3509e7a702e153b549b7d86c74e22bd10a4c",
+        "llm_prediction": "data/audits/tallip_kd/inductive_predictions/tat_restaurant_original_ensemble.jsonl",
+        "llm_prediction_sha256": "3d5036c6dbffc73101185f76b591312775f0951484801ea86493111410b7ecc0",
+        "baseline_prediction": "predictions/v15_sweep/v15_tat_vote3_topk0.20.jsonl",
+        "baseline_prediction_sha256": "96e17521715eb146ea6aa932d64005211bdec8886b47156b8c06ab9c0d467a8b"
+      },
+      "grain": {
+        "base_rows": 1240,
+        "silver_rows": 3915,
+        "llm_train_rows": 5155,
+        "dev_rows": 48
+      },
+      "teacher": "qwen",
+      "teacher_fidelity_cF1": 0.3953954433075769,
+      "silver_label_validity": {
+        "quadruplets": 7507,
+        "empty_rows": 0,
+        "invalid_explicit_aspect_substrings": 0,
+        "invalid_explicit_opinion_substrings": 0,
+        "categories_absent_from_gold_train_inventory": 0,
+        "invalid_va_format_or_range": 0
+      },
+      "category_complementarity": {
+        "base_unique_categories": 12,
+        "silver_unique_categories": 12,
+        "dev_unique_categories": 7,
+        "dev_categories_covered_by_base": 7,
+        "dev_categories_covered_by_silver": 7,
+        "silver_categories_absent_from_base": 0,
+        "novel_silver_categories_present_in_dev": 0,
+        "rare_category_definition": "base frequency <= 5 quadruplets",
+        "dev_rare_quadruplets": 0,
+        "dev_rare_quadruplets_with_category_in_silver": 0,
+        "rare_dev_quadruplet_category_coverage": null,
+        "base_to_dev_js_divergence": 0.03681807735710858,
+        "silver_to_dev_js_divergence": 0.09388267313402074
+      },
+      "lexical_complementarity": {
+        "silver_aspect_types": 2168,
+        "silver_aspect_novel_vs_base": 2028,
+        "silver_aspect_novelty_rate": 0.9354243542435424,
+        "silver_opinion_types": 3197,
+        "silver_opinion_novel_vs_base": 2963,
+        "silver_opinion_novelty_rate": 0.9268063809821708,
+        "dev_aspect_types_covered_by_base": 38,
+        "dev_aspect_types_covered_by_silver": 29,
+        "dev_opinion_types_covered_by_base": 29,
+        "dev_opinion_types_covered_by_silver": 33
+      },
+      "error_transition": {
+        "definition": "row-level official cF1: LLM-KD higher/lower/equal than baseline",
+        "repaired_rows": 16,
+        "harmed_rows": 20,
+        "tied_rows": 12,
+        "net_repaired_minus_harmed": -4,
+        "example_repaired_ids": [
+          "1408:5_3",
+          "3552:4_8",
+          "10287:1_13",
+          "10403:8_14",
+          "10731:4_15",
+          "10915:12_16",
+          "11657:6_18",
+          "13133:3_21",
+          "14209:15_23",
+          "15687:0_29"
+        ],
+        "example_harmed_ids": [
+          "1077:4_0",
+          "1336:4_2",
+          "3236:1_4",
+          "3480:1_6",
+          "3480:2_7",
+          "10139:9_10",
+          "10195:4_11",
+          "12094:4_19",
+          "12360:6_20",
+          "14407:1_24"
+        ]
+      },
+      "dev_slices": {
+        "all": {
+          "rows": 48,
+          "llm_kd_cF1": 0.5327122530267433,
+          "baseline_cF1": 0.4820721598266662,
+          "delta": 0.05064009320007712
+        },
+        "implicit_aspect_or_opinion": {
+          "rows": 0,
+          "llm_kd_cF1": null,
+          "baseline_cF1": null,
+          "delta": null
+        },
+        "rare_category": {
+          "rows": 0,
+          "llm_kd_cF1": null,
+          "baseline_cF1": null,
+          "delta": null
+        },
+        "multi_quadruplet": {
+          "rows": 24,
+          "llm_kd_cF1": 0.5769974780318045,
+          "baseline_cF1": 0.5251133684980924,
+          "delta": 0.05188410953371203
+        }
+      }
+    },
+    "ukr_restaurant": {
+      "sources": {
+        "base_train": "data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl",
+        "base_sha256": "46254e55a5bbbea56f6cc3dce4452c19e01b67a25de179a1bcc73fd7199d53b5",
+        "llm_train": "data/subtask_3/ukr/ukr_restaurant_train_v23_deepseek_inductive.jsonl",
+        "llm_train_sha256": "1c2158a2766c845b5e16d771ca8b5062fdf1d531afc9c5fdf3756563948a50f8",
+        "dev": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "dev_sha256": "2daa110ba03d4dfaa4aa91da01e61d22da495d4ad65a00a0178dd3f28b5608a0",
+        "llm_prediction": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_clean_ensemble.jsonl",
+        "llm_prediction_sha256": "98f3e3cfd476e7aea1bf95209bbabe251319c0237ed084c41e4701c3eee71af5",
+        "baseline_prediction": "data/audits/tallip_kd/inductive_predictions/ukr_restaurant_baseline_ensemble.jsonl",
+        "baseline_prediction_sha256": "4baebb4b38ba615b23fd7293ffebdd7e0a58b9d8c5676b239931ced4fb9adc7d"
+      },
+      "grain": {
+        "base_rows": 2966,
+        "silver_rows": 5534,
+        "llm_train_rows": 8500,
+        "dev_rows": 48
+      },
+      "teacher": "deepseek",
+      "teacher_fidelity_cF1": 0.3786164263558055,
+      "silver_label_validity": {
+        "quadruplets": 18638,
+        "empty_rows": 0,
+        "invalid_explicit_aspect_substrings": 0,
+        "invalid_explicit_opinion_substrings": 0,
+        "categories_absent_from_gold_train_inventory": 0,
+        "invalid_va_format_or_range": 0
+      },
+      "category_complementarity": {
+        "base_unique_categories": 12,
+        "silver_unique_categories": 12,
+        "dev_unique_categories": 7,
+        "dev_categories_covered_by_base": 7,
+        "dev_categories_covered_by_silver": 7,
+        "silver_categories_absent_from_base": 0,
+        "novel_silver_categories_present_in_dev": 0,
+        "rare_category_definition": "base frequency <= 5 quadruplets",
+        "dev_rare_quadruplets": 0,
+        "dev_rare_quadruplets_with_category_in_silver": 0,
+        "rare_dev_quadruplet_category_coverage": null,
+        "base_to_dev_js_divergence": 0.041072542624441356,
+        "silver_to_dev_js_divergence": 0.06514278045937977
+      },
+      "lexical_complementarity": {
+        "silver_aspect_types": 4310,
+        "silver_aspect_novel_vs_base": 4030,
+        "silver_aspect_novelty_rate": 0.9350348027842227,
+        "silver_opinion_types": 5265,
+        "silver_opinion_novel_vs_base": 4790,
+        "silver_opinion_novelty_rate": 0.9097815764482431,
+        "dev_aspect_types_covered_by_base": 43,
+        "dev_aspect_types_covered_by_silver": 47,
+        "dev_opinion_types_covered_by_base": 32,
+        "dev_opinion_types_covered_by_silver": 41
+      },
+      "error_transition": {
+        "definition": "row-level official cF1: LLM-KD higher/lower/equal than baseline",
+        "repaired_rows": 22,
+        "harmed_rows": 18,
+        "tied_rows": 8,
+        "net_repaired_minus_harmed": 4,
+        "example_repaired_ids": [
+          "1077:4_0",
+          "1336:4_2",
+          "3236:1_4",
+          "3236:2_5",
+          "3480:1_6",
+          "10106:4_9",
+          "10139:9_10",
+          "10403:8_14",
+          "10915:12_16",
+          "12094:4_19"
+        ],
+        "example_harmed_ids": [
+          "1206:9_1",
+          "1408:5_3",
+          "3480:2_7",
+          "3552:4_8",
+          "10195:4_11",
+          "10195:9_12",
+          "10287:1_13",
+          "10731:4_15",
+          "11657:6_18",
+          "13133:3_21"
+        ]
+      },
+      "dev_slices": {
+        "all": {
+          "rows": 48,
+          "llm_kd_cF1": 0.5377356854184874,
+          "baseline_cF1": 0.490497021515886,
+          "delta": 0.0472386639026014
+        },
+        "implicit_aspect_or_opinion": {
+          "rows": 0,
+          "llm_kd_cF1": null,
+          "baseline_cF1": null,
+          "delta": null
+        },
+        "rare_category": {
+          "rows": 0,
+          "llm_kd_cF1": null,
+          "baseline_cF1": null,
+          "delta": null
+        },
+        "multi_quadruplet": {
+          "rows": 24,
+          "llm_kd_cF1": 0.5271332190388446,
+          "baseline_cF1": 0.4315117817333449,
+          "delta": 0.09562143730549966
+        }
+      }
+    },
+    "zho_restaurant": {
+      "sources": {
+        "base_train": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+        "base_sha256": "6c3290734269f2bd4852daf57339fec7436af46cb93e3821c67f5926fd133849",
+        "llm_train": "data/subtask_3/zho/zho_restaurant_train_v23_deepseek_real_inductive.jsonl",
+        "llm_train_sha256": "0622d5925be09a0842eace8b6d88f536925a827c9c960d425e52522de00d403e",
+        "dev": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "dev_sha256": "f1f44388802ea74490374138f9f976dbcb8346a3184c0da7e4c4c3bcec6d2ea9",
+        "llm_prediction": "data/audits/tallip_kd/inductive_predictions/zho_restaurant_clean_ensemble.jsonl",
+        "llm_prediction_sha256": "656b94e30aa462f7fd1eaf8247c2c213d373e8800a453b3639d4e3cb154815d6",
+        "baseline_prediction": "predictions/v16_missing_sweep/v16_zho_restaurant_vote4_topk0.0.jsonl",
+        "baseline_prediction_sha256": "a64df61f808e928e4d02b1bc8841bba2b00bf8f0a9fc4541bb0c1670619bb170"
+      },
+      "grain": {
+        "base_rows": 6050,
+        "silver_rows": 3882,
+        "llm_train_rows": 9932,
+        "dev_rows": 300
+      },
+      "teacher": "deepseek",
+      "teacher_fidelity_cF1": 0.46528585080801654,
+      "silver_label_validity": {
+        "quadruplets": 21910,
+        "empty_rows": 0,
+        "invalid_explicit_aspect_substrings": 0,
+        "invalid_explicit_opinion_substrings": 0,
+        "categories_absent_from_gold_train_inventory": 0,
+        "invalid_va_format_or_range": 0
+      },
+      "category_complementarity": {
+        "base_unique_categories": 12,
+        "silver_unique_categories": 12,
+        "dev_unique_categories": 13,
+        "dev_categories_covered_by_base": 12,
+        "dev_categories_covered_by_silver": 12,
+        "silver_categories_absent_from_base": 0,
+        "novel_silver_categories_present_in_dev": 0,
+        "rare_category_definition": "base frequency <= 5 quadruplets",
+        "dev_rare_quadruplets": 1,
+        "dev_rare_quadruplets_with_category_in_silver": 0,
+        "rare_dev_quadruplet_category_coverage": 0.0,
+        "base_to_dev_js_divergence": 0.03301705403309612,
+        "silver_to_dev_js_divergence": 0.032132010437302
+      },
+      "lexical_complementarity": {
+        "silver_aspect_types": 5787,
+        "silver_aspect_novel_vs_base": 5248,
+        "silver_aspect_novelty_rate": 0.906860203905305,
+        "silver_opinion_types": 10516,
+        "silver_opinion_novel_vs_base": 9729,
+        "silver_opinion_novelty_rate": 0.9251616584252568,
+        "dev_aspect_types_covered_by_base": 165,
+        "dev_aspect_types_covered_by_silver": 135,
+        "dev_opinion_types_covered_by_base": 231,
+        "dev_opinion_types_covered_by_silver": 175
+      },
+      "error_transition": {
+        "definition": "row-level official cF1: LLM-KD higher/lower/equal than baseline",
+        "repaired_rows": 130,
+        "harmed_rows": 112,
+        "tied_rows": 58,
+        "net_repaired_minus_harmed": 18,
+        "example_repaired_ids": [
+          "R10016:S004",
+          "R5969:S000",
+          "R10000:S023",
+          "R5847:S000",
+          "R7943:S000",
+          "R5827:S000",
+          "R5857:S000",
+          "R5722:S000",
+          "R6082:S001",
+          "R8374:S000"
+        ],
+        "example_harmed_ids": [
+          "R10040:S001",
+          "R6121:S000",
+          "R6153:S005",
+          "R9436:S012",
+          "R7821:S000",
+          "R10121:S004",
+          "R9257:S002",
+          "R10000:S003",
+          "R7185:S000",
+          "R8641:S000"
+        ]
+      },
+      "dev_slices": {
+        "all": {
+          "rows": 300,
+          "llm_kd_cF1": 0.573806683545832,
+          "baseline_cF1": 0.5669438101693828,
+          "delta": 0.006862873376449197
+        },
+        "implicit_aspect_or_opinion": {
+          "rows": 0,
+          "llm_kd_cF1": null,
+          "baseline_cF1": null,
+          "delta": null
+        },
+        "rare_category": {
+          "rows": 1,
+          "llm_kd_cF1": 0.0,
+          "baseline_cF1": 0.0,
+          "delta": 0.0
+        },
+        "multi_quadruplet": {
+          "rows": 202,
+          "llm_kd_cF1": 0.5950521329348708,
+          "baseline_cF1": 0.5818399152407293,
+          "delta": 0.013212217694141493
+        }
+      }
+    }
+  }
+}

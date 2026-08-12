@@ -1778,7 +1778,7 @@ rus-gen4k 与 tat-qwen 的 adopted train 对 dev/test 规范化文本交集均�
 
 完整 teacher fidelity 结果（DeepSeek prompt 与 Qwen byte-identical 后的最终重跑）：DeepSeek/Qwen cF1 分别为 eng_laptop 0.3575/0.3170、eng_restaurant 0.5529/0.3638、jpn_hotel 0.2146/0.2004、rus 0.3904/0.3649、tat 0.4359/0.3954、ukr 0.3786/0.3598、zho_laptop 0.2821/0.2374、zho_restaurant 0.4653/0.4060。DeepSeek−Qwen 仅在 eng_restaurant、zho_laptop、zho_restaurant 得到统计支持，其余五域 inconclusive；没有任何域支持 Qwen > DeepSeek。Tatar matched downstream control 为 DeepSeek 0.5365 vs Qwen 0.5327，Δ=+0.0038 [−0.0823, +0.0852]，同样 inconclusive。故最终表述为“DeepSeek 整体更稳健，Qwen 在部分域接近；teacher 优势幅度具有域差异”，而非“teacher 排名发生可靠反转”。
 
-可复现入口与最终结果见 `scripts/kd/tallip.yaml`、`scripts/kd/tallip_status.py` 和 `docs/audits/tallip_kd/`。原五张核心表在 2026-07-18 冻结；post-lock dev-only control 按独立协议完成审计后追加为 Table 5，原 official-test 表顺延为 Table 6。六张表由 `tallip_core_tables.lock.json` 固定输出、生成器、协议和全部证据输入的 SHA256；引用前运行 `python scripts/kd/build_tallip_report.py --verify`。默认命令只验证，更新必须显式使用 `--update-lock`。永久停止 cap5000、rus cap3000 剩余 seeds 和新的 teacher/pool 网格。
+可复现入口与最终结果见 `scripts/kd/tallip.yaml`、`scripts/kd/tallip_status.py` 和 `docs/audits/tallip_kd/`。原五张核心表在 2026-07-18 冻结；post-lock dev-only controls 由 v1+v2 两个结果前注册协议完成五域矩阵并追加为 Table 5，原 official-test 表顺延为 Table 6。六张表于 2026-08-13 重新锁定，由 `tallip_core_tables.lock.json` 固定输出、生成器、协议和全部证据输入的 SHA256；引用前运行 `python scripts/kd/build_tallip_report.py --verify`。默认命令只验证，更新必须显式使用 `--update-lock`。永久停止 cap5000、rus cap3000 剩余 seeds 和新的 teacher/pool 网格。
 
 #### 5.29.7 官方 test 一次性评测（2026-07-18）
 
@@ -1832,7 +1832,7 @@ Post-lock 的 exposure-matched repeated-gold 与 same-text self-training control
 [`TALLIP_VS_ICONIP_V20.md`](TALLIP_VS_ICONIP_V20.md)。TALLIP 不得用 official
 test 与 V20 dev 做跨 split 提升比较，也不得把本研究表述为新 SOTA。
 
-#### 5.29.9 Post-lock exposure / self-training controls（2026-08-02—2026-08-08）
+#### 5.29.9 Post-lock exposure / self-training controls（2026-08-02—2026-08-13）
 
 **研究问题**：adopted LLM-KD 的提升是否仅来自更多训练行/更新步数；如果在
 完全相同的 silver 文本上使用学生 ensemble 自己的伪标签，是否能获得同等收益？
@@ -1859,34 +1859,62 @@ teacher、pool 或数据增强选择。
 KD−baseline 的问题不同：post-lock 表专门检验训练曝光这一替代解释，不替换
 §5.29.7 的一次性 test 结论。
 
-**Same-text self-training**：仅在 eng/rus/zho 上，取 LLM 臂所用 silver 的完全
-相同文本和顺序，去掉 LLM 标签，由 repeated-gold 五种子 ensemble 生成伪标签；
+**Same-text self-training**：在五个 adopted 数据集上，取 LLM 臂所用 silver
+的完全相同文本和顺序，去掉 LLM 标签，由 repeated-gold 五种子 ensemble 生成伪标签；
 再以相同行数、学生 config、seeds 和阈值训练。空预测保留为合法 no-quad 标签，
-不做基于 dev 的过滤。伪标签非空率为 eng 92.3%、rus 82.8%、zho 96.7%。
+不做基于 dev 的过滤。伪标签非空率为 eng 92.3%、rus 82.8%、tat 75.9%、
+ukr 89.3%、zho 96.7%。
 
 | Dataset | Self-training mean±SD | Ensemble | LLM-KD − self [95% CI] | 判定 |
 |---|---:|---:|---:|---|
 | eng_laptop | 0.2973±0.0067 | 0.3169 | +0.0933 [+0.0476, +0.1407] | supported |
 | rus_restaurant | 0.4767±0.0171 | 0.4980 | +0.1183 [+0.0531, +0.1854] | supported |
+| tat_restaurant | 0.4268±0.0098 | 0.4758 | +0.0569 [−0.0203, +0.1402] | inconclusive |
+| ukr_restaurant | 0.4525±0.0198 | 0.4940 | +0.0438 [−0.0231, +0.1069] | inconclusive |
 | zho_restaurant | 0.5505±0.0096 | 0.5754 | −0.0016 [−0.0294, +0.0256] | inconclusive |
 
 补充的 self-training−repeated-gold paired bootstrap 为：eng +0.0015
-[−0.0174, +0.0215]、rus −0.0258 [−0.0773, +0.0229]，均 inconclusive；
-zho +0.0276 [+0.0079, +0.0463]，supported。由此可写：eng/rus 的当前收益
-需要 LLM teacher 提供的标签信息，普通学生自训练不能复现；zho 的 self-training
-可复现 LLM-KD 水平，LLM teacher 在该域没有表现出独占价值。不能外推为
-“LLM 总优于 self-training”或“self-training 普遍足够”。
+[−0.0174, +0.0215]、rus −0.0258 [−0.0773, +0.0229]、tat −0.0498
+[−0.1085, +0.0143]、ukr +0.0298 [−0.0245, +0.0867]，均 inconclusive；
+zho +0.0276 [+0.0079, +0.0463]，supported。由此可写：只有 eng/rus 的
+LLM-KD 可靠优于 same-text self-training；tat/ukr/zho 均未建立 LLM teacher
+相对学生伪标签的独占价值。不能外推为“LLM 总优于 self-training”或
+“self-training 普遍足够”。
 
-**审计与保留策略**：48/48 个 dev 预测均与 gold dev 的 ID、行数和顺序完全
-一致；8 个 ensemble 均可由五个单 seed 预测按冻结阈值精确重建；40/40 个训练
-目录均保留 `checkpoint_best.pt` 与完成标记。11 组 10,000 次 paired bootstrap
+**Direct complementarity / error analysis**：五域 silver 的显式 aspect、
+opinion、category inventory 与 VA 格式检查均为 0 异常；随后直接计算
+base/silver 对 dev 的 category JSD、aspect/opinion 类型覆盖、row-level
+repaired/harmed 和 multi-quad/rare/implicit slices。eng 的 dev span 覆盖增量
+为 +21/+38，且 KD dev 增益最大；zho 的 direct teacher fidelity 最高，但
+span 覆盖变化为 −30/−56，KD dev 增益最小。跨域指标不呈单调关系，因此这些
+结果仅支持“质量、覆盖与互补性共同作用”的描述性解释，不证明单一因果指标。
+
+**Multiplicity**：对 teacher fidelity（8）、adopted KD dev（5）、exposure
+control（5）、same-text control（5）和冻结 official test（5）分别做 Holm
+FWER 与 BH FDR。same-text family 中 eng/rus 在两种校正后保持显著；exposure
+family 中 eng/rus 保持 Holm 显著，ukr 的单项 CI 虽下界大于 0，但 Holm
+p=0.1542；official-test family 中 eng/tat/ukr 保持 Holm 显著，rus 不保持。
+official-test multiplicity 是事后稳健性分析，不改变冻结系统或原单项 CI。
+
+**Cost / efficiency**：8×2 fidelity 的最终 validated coverage 为每个 teacher
+1,344 条、0 error；Qwen 的保留 timing metadata 只覆盖 1,264 条，吞吐率只按
+这 1,264 条计算，不将其误称为最终覆盖。历史 silver token 数和账单未保留，
+因此不虚构货币成本；学生部署阶段 LLM 调用为 0。post-lock 训练时长按日志
+wall time 报告并明确包含 checkpoint I/O，不能作为跨硬件速度基准。
+
+**审计与保留策略**：60/60 个 dev 预测均与 gold dev 的 ID、行数和顺序完全
+一致；10 个 ensemble 均可由五个单 seed 预测按冻结阈值精确重建；50/50 个训练
+目录均保留 `checkpoint_best.pt` 与完成标记。15 组 10,000 次 paired bootstrap
 以 seed=20260713 重复两次，结果逐字段完全一致。训练收尾后删除 60 个
-`checkpoint_latest.pt`/`checkpoint_epoch*.pt`，释放 365,233,267,664 bytes，
-全部 best、预测和审计证据保留。
+v1 `checkpoint_latest.pt`/`checkpoint_epoch*.pt`，释放 365,233,267,664 bytes；
+v2 又删除 40 个此类文件名，逻辑大小 282,327,138,180 bytes，因 hardlink
+去重实际释放 202,340,503,552 bytes。全部 best、预测和审计证据保留。
 
-权威证据：`scripts/kd/postlock_v1.yaml`、`scripts/kd/postlock_experiments.py`、
-`docs/audits/tallip_kd/postlock_audit.json`、`postlock_metrics.json` 和
-`postlock_table.md`。本节完成后不再增加常规 KD/augmentation 训练网格。
+权威证据：`scripts/kd/postlock_v1.yaml`、`postlock_v2.yaml`、
+`scripts/kd/postlock_experiments.py`、`tallip_postlock_analysis.py`，以及
+`docs/audits/tallip_kd/postlock_complete_{metrics,audit}.json`、
+`complementarity_error_analysis.json`、`statistical_robustness.json` 和
+`cost_efficiency.json`。本节完成后不再增加常规 KD/augmentation 训练网格。
 
 ---
 

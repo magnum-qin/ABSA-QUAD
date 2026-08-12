@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "as_of": "2026-08-08",
+  "as_of": "2026-08-11",
   "rows": [
     {
       "id": "teacher_direct",
@@ -59,33 +59,33 @@
       "grade_allowed_claim": "High within dataset; LLM advantage exceeds exposure on eng/rus/ukr only",
       "sources": [
         "scripts/kd/postlock_v1.yaml",
-        "docs/audits/tallip_kd/postlock_metrics.json",
-        "docs/audits/tallip_kd/postlock_audit.json"
+        "scripts/kd/postlock_v2.yaml",
+        "docs/audits/tallip_kd/postlock_complete_metrics.json",
+        "docs/audits/tallip_kd/postlock_complete_audit.json"
       ]
     },
     {
       "id": "postlock_self_training",
       "axis": "Teacher source",
-      "controlled_evidence": "eng/rus/zho, identical pseudo-label text pool and row count; LLM labels vs student-ensemble labels",
+      "controlled_evidence": "five adopted datasets, identical pseudo-label text pool and row count; LLM labels vs student-ensemble labels",
       "result_kind": "postlock_self_training",
-      "grade_allowed_claim": "High within dataset; LLM-specific value on eng/rus, statistically tied with self-training on zho",
+      "grade_allowed_claim": "High within dataset; no universal cross-domain teacher-source claim",
       "sources": [
         "scripts/kd/postlock_v1.yaml",
-        "docs/audits/tallip_kd/postlock_metrics.json",
-        "docs/audits/tallip_kd/postlock_audit.json"
+        "scripts/kd/postlock_v2.yaml",
+        "docs/audits/tallip_kd/postlock_complete_metrics.json",
+        "docs/audits/tallip_kd/postlock_complete_audit.json"
       ]
     },
     {
       "id": "information_complementarity",
       "axis": "Information complementarity",
-      "controlled_evidence": "synthesis across teacher, pool, and quantity results",
+      "controlled_evidence": "five adopted domains: measured silver validity, category/lexical coverage, distribution divergence, dev slices, and row-level repaired/harmed errors",
       "result_kind": "literal",
-      "result": "plausible moderator",
-      "grade_allowed_claim": "Interpretation, not a causal or universal optimum claim",
+      "result": "descriptive patterns are consistent with a moderator but are not monotonic across all domains",
+      "grade_allowed_claim": "Medium/descriptive; interpretation, not a causal law or universal optimum claim",
       "sources": [
-        "docs/audits/tallip_kd/teacher_fidelity_metrics.json",
-        "docs/audits/tallip_kd/tat_teacher_matched_metrics.json",
-        "scripts/kd/registry.yaml"
+        "docs/audits/tallip_kd/complementarity_error_analysis.json"
       ]
     }
   ]

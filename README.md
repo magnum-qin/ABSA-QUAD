@@ -49,9 +49,16 @@ Output: [(thai food, FOOD#QUALITY, delicious, 7.5#6.2),
 
 现有证据与以下解释一致：当 **silver 提供 gold/base 缺失且标注较准确的互补覆盖**时，KD 更可能有效。该机制不是已独立验证的普适因果定律。Teacher 标注质量和 pool 效果均随域变化，没有固定的 teacher 或 real/translated/generated 排序；现有证据也不支持统一的 silver 数量最优点。
 
+五个 adopted KD 数据集的 post-lock 控制进一步区分了“更多训练曝光”与
+“teacher 标签价值”：LLM-KD 相对 same-text self-training 仅在 eng_laptop、
+rus_restaurant 建立可靠优势，并在五域 Holm 校正后保持；tat、ukr、zho
+尚未建立可靠差异。repeated-gold 暴露控制的单项分析支持 eng/rus/ukr，
+但五域 Holm 校正后只有 eng/rus 保持。因此不能宣称 LLM teacher 在所有域
+都优于学生伪标签，也不能把非显著结果解释为统计等效。
+
 rus_restaurant 的 4k 生成批次（silver cap=3000）达到 **0.6162**，另一批完整 8k silver 为 **0.5858**。在同一 8k silver 上做 cap=3000 paired-seed 对照后，mean 反而从 0.5467 降至 0.5353（−1.14pp），未通过 +1.5pp gate；因此 4k 优势更可能来自生成批次质量，而非单纯“silver 更少”。
 
-反例：强 gold（eng_restaurant）和强 native encoder（jpn）在现有 KD 配方下没有获益。完整证据收敛见 [docs/EXPERIMENTS.md §5.29.5–5.29.7](docs/EXPERIMENTS.md)；最终统一口径见 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md)。
+反例：强 gold（eng_restaurant）和强 native encoder（jpn）在现有 KD 配方下没有获益。完整证据收敛见 [docs/EXPERIMENTS.md §5.29.5–5.29.9](docs/EXPERIMENTS.md)；最终统一口径见 [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md)。
 
 ## Setup
 

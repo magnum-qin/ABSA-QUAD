@@ -209,14 +209,25 @@ class TallipKDTests(unittest.TestCase):
         self.assertIn("scripts/kd/official_test.yaml", paths)
         self.assertIn("docs/audits/tallip_kd/ablation_evidence.json", paths)
         self.assertIn("scripts/kd/postlock_v1.yaml", paths)
+        self.assertIn("scripts/kd/postlock_v2.yaml", paths)
         self.assertIn("docs/audits/tallip_kd/postlock_metrics.json", paths)
         self.assertIn("docs/audits/tallip_kd/postlock_audit.json", paths)
+        self.assertIn("docs/audits/tallip_kd/postlock_v2_metrics.json", paths)
+        self.assertIn("docs/audits/tallip_kd/postlock_v2_audit.json", paths)
+        self.assertIn("docs/audits/tallip_kd/postlock_complete_metrics.json", paths)
+        self.assertIn("docs/audits/tallip_kd/postlock_complete_audit.json", paths)
+        self.assertIn("docs/audits/tallip_kd/complementarity_error_analysis.json", paths)
+        self.assertIn("docs/audits/tallip_kd/statistical_robustness.json", paths)
+        self.assertIn("docs/audits/tallip_kd/cost_efficiency.json", paths)
 
         tables = (ROOT / lock["output"]["path"]).read_text()
         self.assertEqual(tables.count("## Table "), 6)
         self.assertIn("Inductive-safe KD five-seed", tables)
         self.assertIn("real − generated = +2.3pp", tables)
         self.assertIn("Post-lock dev-only controls", tables)
+        self.assertIn("Direct complementarity and error measurements", tables)
+        self.assertIn("Multiplicity robustness", tables)
+        self.assertIn("Resource and deployment audit", tables)
         self.assertIn("One-shot official Task-3 test evaluation", tables)
 
     def test_postlock_protocol_is_dev_only_and_repeat_is_deterministic(self):
@@ -274,6 +285,21 @@ class TallipKDTests(unittest.TestCase):
         self.assertEqual(module.bh_adjust([0.01, 0.02, 0.5]), [0.03, 0.03, 0.5])
         analysis = module.build_complementarity()
         self.assertEqual(set(analysis["datasets"]), set(module.ADOPTED))
+        cross_domain = analysis["cross_domain_summary"]
+        self.assertEqual(cross_domain["largest_kd_dev_gain"], "eng_laptop")
+        self.assertEqual(cross_domain["smallest_kd_dev_gain"], "zho_restaurant")
+        self.assertEqual(
+            cross_domain["largest_combined_dev_span_coverage_gain"], "eng_laptop"
+        )
+        self.assertEqual(cross_domain["highest_teacher_fidelity"], "zho_restaurant")
+        self.assertEqual(
+            set(cross_domain["silver_category_distribution_closer_to_dev_than_base"]),
+            {"eng_laptop", "zho_restaurant"},
+        )
+        self.assertEqual(
+            set(cross_domain["silver_improves_both_dev_aspect_and_opinion_type_coverage"]),
+            {"eng_laptop", "ukr_restaurant"},
+        )
         for dataset, item in analysis["datasets"].items():
             grain = item["grain"]
             self.assertEqual(
@@ -365,17 +391,24 @@ class TallipKDTests(unittest.TestCase):
         registry = yaml.safe_load((ROOT / "scripts/kd/registry.yaml").read_text())
         controls = registry["postlock_controls"]
         self.assertEqual(controls["status"], "complete")
-        self.assertEqual(len(controls["arms"]), 8)
+        self.assertEqual(controls["protocol"], "postlock_dev_only_v1+v2")
+        self.assertEqual(len(controls["arms"]), 10)
         self.assertEqual(controls["official_test_evaluation"], "forbidden")
-        manifest = yaml.safe_load((ROOT / controls["manifest"]).read_text())
+        manifests = [
+            yaml.safe_load((ROOT / path).read_text()) for path in controls["manifests"]
+        ]
+        report = json.loads((ROOT / controls["evidence"]).read_text())
         for arm in controls["arms"].values():
             dataset = arm["dataset"]
             if arm["control"] == "exposure_matched_repeated_gold":
                 system = "gold_repeat"
-                spec = manifest["gold_repeat"][dataset]
+                spec = manifests[0]["gold_repeat"][dataset]
                 vote, topk = spec["vote"], spec["topk"]
             else:
                 system = "self_training"
+                manifest = next(
+                    item for item in manifests if dataset in item["self_training"]
+                )
                 spec = manifest["self_training"][dataset]
                 vote, topk = spec["eval_vote"], spec["eval_topk"]
             result = report["datasets"][dataset]["systems"][system]
@@ -393,6 +426,103 @@ class TallipKDTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(registered_bound, result_bound)
             self.assertEqual(registered["decision"], comparison["classification"])
+
+    def test_complete_postlock_closure_is_five_domain_and_audited(self):
+        audit = json.loads(
+            (ROOT / "docs/audits/tallip_kd/postlock_complete_audit.json").read_text()
+        )
+        summary = audit["summary"]
+        self.assertEqual(summary["prediction_files_expected"], 60)
+        self.assertEqual(summary["prediction_files_validated"], 60)
+        self.assertEqual(summary["best_checkpoints_expected"], 50)
+        self.assertEqual(summary["best_checkpoints_validated"], 50)
+        self.assertEqual(summary["ensemble_outputs_rebuilt"], 10)
+        self.assertEqual(summary["bootstrap_comparisons_repeated"], 15)
+        for key in (
+            "all_prediction_ids_and_order_match_dev",
+            "all_ensemble_rebuilds_exact",
+            "all_bootstrap_repeats_exact",
+            "all_checkpoint_sources_are_best",
+            "retention_policy_compliant",
+        ):
+            self.assertTrue(summary[key], key)
+        self.assertEqual(audit["non_best_checkpoint_files"], [])
+        self.assertEqual(audit["scope"]["official_test_evaluation"], "forbidden")
+
+        report = json.loads(
+            (ROOT / "docs/audits/tallip_kd/postlock_complete_metrics.json").read_text()
+        )
+        adopted = {
+            "eng_laptop", "rus_restaurant", "tat_restaurant",
+            "ukr_restaurant", "zho_restaurant",
+        }
+        self.assertEqual(set(report["datasets"]), adopted)
+        for dataset, item in report["datasets"].items():
+            self.assertEqual(set(item["systems"]), {"gold_repeat", "self_training"})
+            self.assertIn("self_training_minus_gold_repeat", item["control_comparisons"])
+            self.assertEqual(len(item["systems"]["self_training"]["single_seeds"]), 5)
+
+        complementarity = json.loads(
+            (ROOT / "docs/audits/tallip_kd/complementarity_error_analysis.json").read_text()
+        )
+        self.assertEqual(set(complementarity["datasets"]), adopted)
+        for dataset, item in complementarity["datasets"].items():
+            validity = item["silver_label_validity"]
+            self.assertEqual(validity["empty_rows"], 0, dataset)
+            self.assertEqual(validity["invalid_explicit_aspect_substrings"], 0, dataset)
+            self.assertEqual(validity["invalid_explicit_opinion_substrings"], 0, dataset)
+            self.assertEqual(validity["categories_absent_from_gold_train_inventory"], 0, dataset)
+            self.assertEqual(validity["invalid_va_format_or_range"], 0, dataset)
+
+        statistics_report = json.loads(
+            (ROOT / "docs/audits/tallip_kd/statistical_robustness.json").read_text()
+        )
+        self.assertEqual(statistics_report["method"]["iterations"], 10000)
+        self.assertEqual(statistics_report["method"]["seed"], 20260713)
+        self.assertEqual(
+            {name: len(items) for name, items in statistics_report["families"].items()},
+            {
+                "teacher_fidelity_8x2": 8,
+                "adopted_kd_vs_baseline_dev": 5,
+                "exposure_control_dev": 5,
+                "same_text_self_training_dev": 5,
+                "frozen_official_test_posthoc": 5,
+            },
+        )
+        for items in statistics_report["families"].values():
+            for item in items:
+                self.assertIn("holm_adjusted_p", item)
+                self.assertIn("bh_adjusted_p", item)
+        official = json.loads(
+            (ROOT / "docs/audits/tallip_kd/official_test/official_test_metrics.json").read_text()
+        )
+        archived = {
+            item["dataset"]: item
+            for item in official["comparisons"]
+            if item["role"] == "adopted_kd_vs_baseline"
+        }
+        posthoc = statistics_report["families"]["frozen_official_test_posthoc"]
+        self.assertEqual({item["dataset"] for item in posthoc}, set(archived))
+        for item in posthoc:
+            prior = archived[item["dataset"]]
+            self.assertAlmostEqual(item["delta_a_minus_b"], prior["delta_a_minus_b"])
+            self.assertEqual(item["classification"], prior["classification"])
+
+        cost = json.loads(
+            (ROOT / "docs/audits/tallip_kd/cost_efficiency.json").read_text()
+        )
+        self.assertEqual(len(cost["postlock_training"]), 10)
+        self.assertEqual(cost["deployment"]["teacher_calls_at_student_inference"], 0)
+        for provider in ("deepseek", "qwen"):
+            self.assertEqual(cost["teacher_fidelity"][provider]["annotated_rows"], 1344)
+            self.assertIsNone(cost["teacher_fidelity"][provider]["token_usage"])
+            self.assertIsNone(cost["teacher_fidelity"][provider]["monetary_cost"])
+        self.assertEqual(
+            cost["teacher_fidelity"]["deepseek"]["timed_processed_rows"], 1344
+        )
+        self.assertEqual(
+            cost["teacher_fidelity"]["qwen"]["timed_processed_rows"], 1264
+        )
 
 
 if __name__ == "__main__":

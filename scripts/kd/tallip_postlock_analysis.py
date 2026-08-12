@@ -110,7 +110,9 @@ def js_divergence(left: Counter, right: Counter) -> float | None:
     if not keys or not left_total or not right_total:
         return None
     result = 0.0
-    for key in keys:
+    # Stable accumulation order is required for byte-identical frozen JSON
+    # across Python processes with different hash randomization seeds.
+    for key in sorted(keys):
         p = left[key] / left_total
         q = right[key] / right_total
         midpoint = (p + q) / 2
@@ -363,14 +365,66 @@ def build_complementarity() -> dict:
                 "multi_quadruplet": slice_metrics(dev, llm_pred, baseline_pred, multi),
             },
         }
+    span_coverage_delta = {
+        dataset: (
+            item["lexical_complementarity"]["dev_aspect_types_covered_by_silver"]
+            - item["lexical_complementarity"]["dev_aspect_types_covered_by_base"]
+            + item["lexical_complementarity"]["dev_opinion_types_covered_by_silver"]
+            - item["lexical_complementarity"]["dev_opinion_types_covered_by_base"]
+        )
+        for dataset, item in datasets.items()
+    }
+    category_alignment_gain = {
+        dataset: (
+            item["category_complementarity"]["base_to_dev_js_divergence"]
+            - item["category_complementarity"]["silver_to_dev_js_divergence"]
+        )
+        for dataset, item in datasets.items()
+    }
+    dev_gain = {
+        dataset: item["dev_slices"]["all"]["delta"]
+        for dataset, item in datasets.items()
+    }
+    fidelity = {
+        dataset: item["teacher_fidelity_cF1"]
+        for dataset, item in datasets.items()
+    }
+    cross_domain_summary = {
+        "largest_kd_dev_gain": max(dev_gain, key=dev_gain.get),
+        "smallest_kd_dev_gain": min(dev_gain, key=dev_gain.get),
+        "largest_combined_dev_span_coverage_gain": max(
+            span_coverage_delta, key=span_coverage_delta.get
+        ),
+        "highest_teacher_fidelity": max(fidelity, key=fidelity.get),
+        "silver_category_distribution_closer_to_dev_than_base": [
+            dataset for dataset, value in category_alignment_gain.items() if value > 0
+        ],
+        "silver_improves_both_dev_aspect_and_opinion_type_coverage": [
+            dataset
+            for dataset, item in datasets.items()
+            if (
+                item["lexical_complementarity"]["dev_aspect_types_covered_by_silver"]
+                > item["lexical_complementarity"]["dev_aspect_types_covered_by_base"]
+                and item["lexical_complementarity"]["dev_opinion_types_covered_by_silver"]
+                > item["lexical_complementarity"]["dev_opinion_types_covered_by_base"]
+            )
+        ],
+        "allowed_interpretation": (
+            "The measured fidelity, distribution, and lexical-coverage descriptors "
+            "are non-monotonic across five domains. They support a multi-factor "
+            "quality/coverage/complementarity interpretation, not a single causal "
+            "score or universal ordering."
+        ),
+    }
     return {
         "schema_version": 1,
-        "as_of": "2026-08-11",
+        "as_of": "2026-08-13",
         "scope": "five adopted KD datasets; dev-only model comparisons",
         "interpretation_limit": (
             "Coverage and error transitions are direct descriptive measurements; "
             "with five domains they do not establish a universal causal moderator."
         ),
+        "cross_domain_summary": cross_domain_summary,
         "datasets": datasets,
     }
 
@@ -529,11 +583,15 @@ def build_statistics(complete: dict) -> dict:
             continue
         dataset = comparison["dataset"]
         spec = official["datasets"][dataset]
+        gold_path = str(
+            Path(official_manifest["protocol"]["gold_root"])
+            / official_manifest["datasets"][dataset]["gold"]
+        )
         frozen_test.append(
             comparison_item(
                 f"{dataset}:official_frozen_{comparison['a']}_minus_{comparison['b']}",
                 dataset,
-                official_manifest["datasets"][dataset]["local_test"],
+                gold_path,
                 spec["systems"][comparison["a"]]["prediction"],
                 spec["systems"][comparison["b"]]["prediction"],
             )
@@ -544,7 +602,7 @@ def build_statistics(complete: dict) -> dict:
         add_adjustments(items)
     return {
         "schema_version": 1,
-        "as_of": "2026-08-11",
+        "as_of": "2026-08-13",
         "method": {
             "resampling": "paired example-level bootstrap",
             "iterations": ITERATIONS,
@@ -566,7 +624,7 @@ LOG_TIMESTAMP = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) - INFO -
 PARAMETERS = re.compile(r"Total parameters: ([\d,]+)")
 
 
-def active_training_seconds(path: Path) -> tuple[float, int | None]:
+def observed_training_seconds(path: Path) -> tuple[float, int | None]:
     if not path.exists():
         return 0.0, None
     total = 0.0
@@ -603,8 +661,13 @@ def build_cost_efficiency(complementarity: dict) -> dict:
                 if version == "v2" and system_key == "gold_repeat":
                     continue
                 log = root / f"{dataset}_{suffix}_train.log"
-                seconds, parameters = active_training_seconds(log)
+                seconds, parameters = observed_training_seconds(log)
                 config = load_yaml(spec["config"])
+                best_paths = [
+                    ROOT / "checkpoints" / f"{spec['checkpoint_prefix']}{seed}"
+                    / "checkpoint_best.pt"
+                    for seed in manifest["protocol"]["seeds"]
+                ]
                 controls.append(
                     {
                         "protocol": manifest["protocol"]["name"],
@@ -615,46 +678,78 @@ def build_cost_efficiency(complementarity: dict) -> dict:
                         "parameters": parameters,
                         "batch_size": config["training"]["batch_size"],
                         "max_epochs": config["training"]["num_epochs"],
-                        "observed_active_training_hours": seconds / 3600,
+                        "checkpoint_storage": (
+                            "local NVMe staging then archive"
+                            if version == "v2"
+                            else "workspace filesystem"
+                        ),
+                        "observed_run_wall_hours": seconds / 3600,
+                        "retained_best_checkpoint_bytes": sum(
+                            path.stat().st_size for path in best_paths if path.exists()
+                        ),
+                        "best_checkpoints_found": sum(path.exists() for path in best_paths),
                         "log": str(log.relative_to(ROOT)),
                     }
                 )
 
     provider_totals = {}
     for provider in ("deepseek", "qwen"):
-        processed = errors = 0
+        validated_rows = timed_processed_rows = errors = 0
         wall_seconds = 0.0
         requested_models = set()
         for dataset in load_yaml("scripts/kd/tallip.yaml")["datasets"]:
             path = ROOT / f"data/audits/tallip_kd/teacher_fidelity/metadata/{dataset}_{provider}.json"
             metadata = json.loads(path.read_text(encoding="utf-8"))
-            processed += metadata["processed"]
+            timed_processed_rows += metadata["processed"]
             errors += metadata["errors"]
             requested_models.add(metadata["requested_model"])
+            validated = (
+                ROOT
+                / "data/audits/tallip_kd/teacher_fidelity/validated"
+                / f"{dataset}_{provider}.jsonl"
+            )
+            validated_rows += sum(1 for _ in validated.open(encoding="utf-8"))
             start = datetime.fromisoformat(metadata["started_at"])
             end = datetime.fromisoformat(metadata["completed_at"])
             wall_seconds += (end - start).total_seconds()
         provider_totals[provider] = {
             "requested_models": sorted(requested_models),
-            "annotated_rows": processed,
+            "annotated_rows": validated_rows,
+            "timed_processed_rows": timed_processed_rows,
             "errors": errors,
             "summed_dataset_wall_seconds": wall_seconds,
-            "effective_rows_per_second": processed / wall_seconds if wall_seconds else None,
+            "effective_timed_rows_per_second": (
+                timed_processed_rows / wall_seconds if wall_seconds else None
+            ),
             "token_usage": None,
             "monetary_cost": None,
-            "cost_caveat": "historical raw responses did not retain provider token-usage fields",
+            "cost_caveat": (
+                "historical raw responses did not retain provider token-usage fields; "
+                "throughput uses only rows represented by the retained timing metadata"
+            ),
         }
 
     adopted_silver = {
         dataset: {
             "teacher": TEACHERS[dataset],
             "silver_rows": item["grain"]["silver_rows"],
+            "dev_delta_cF1": item["dev_slices"]["all"]["delta"],
+            "dev_delta_cF1_per_1000_silver_rows": (
+                item["dev_slices"]["all"]["delta"]
+                / (item["grain"]["silver_rows"] / 1000)
+            ),
         }
         for dataset, item in complementarity["datasets"].items()
     }
     return {
         "schema_version": 1,
-        "as_of": "2026-08-11",
+        "as_of": "2026-08-13",
+        "scope": (
+            "Measured provider throughput for the 8x2 fidelity campaign, adopted "
+            "silver row counts, logged post-lock control training wall time, and "
+            "student deployment requirements. Historical silver-generation billing "
+            "and original adopted-KD run wall time are unavailable."
+        ),
         "hardware": "single NVIDIA GeForce RTX 4090 (24 GB) for recorded post-lock runs",
         "teacher_fidelity": provider_totals,
         "adopted_silver_inventory": adopted_silver,
@@ -666,8 +761,10 @@ def build_cost_efficiency(complementarity: dict) -> dict:
         },
         "limitations": [
             "Historical silver-generation token counts and billing records were not stored; no monetary estimate is fabricated.",
-            "Observed active training hours are parsed from timestamped logs and are hardware/workload specific.",
+            "Observed training-run wall hours are parsed from timestamped logs, include checkpoint I/O, and are hardware/workload specific.",
             "Teacher-fidelity wall time uses concurrent dataset jobs and is reported as summed per-dataset wall time, not elapsed campaign makespan.",
+            "Delta per 1,000 silver rows is descriptive only and is not comparable as a causal efficiency estimate across datasets with different baselines and domains.",
+            "Post-lock v2 used local NVMe checkpoint staging before archival, so v1/v2 wall times should not be interpreted as a controlled storage-speed comparison.",
         ],
     }
 
@@ -676,6 +773,7 @@ def build_complete_postlock() -> tuple[dict, dict]:
     v1 = load_json("docs/audits/tallip_kd/postlock_metrics.json")
     v2 = load_json("docs/audits/tallip_kd/postlock_v2_metrics.json")
     complete = copy.deepcopy(v1)
+    complete["created_at"] = max(v1["created_at"], v2["created_at"])
     complete["protocol"] = "postlock_dev_only_v1+v2"
     complete["protocols"] = [v1["protocol"], v2["protocol"]]
     for dataset in ("tat_restaurant", "ukr_restaurant"):
@@ -707,7 +805,7 @@ def build_complete_postlock() -> tuple[dict, dict]:
     checks = complete["bootstrap_reproducibility"]["checks"]
     audit = {
         "schema_version": 1,
-        "as_of": "2026-08-11",
+        "as_of": "2026-08-13",
         "protocol": complete["protocol"],
         "source_audits": [
             {"path": "docs/audits/tallip_kd/postlock_audit.json", "sha256": sha256("docs/audits/tallip_kd/postlock_audit.json")},
@@ -771,19 +869,55 @@ def markdown_outputs(
     comp = [
         "# Five-domain information complementarity and error analysis", "",
         "Descriptive dev-only measurements; they do not establish a universal causal moderator.", "",
-        "| Dataset | Teacher fidelity | Silver rows | Rare-dev coverage | Silver→dev JSD | Repaired / harmed rows | All-dev KD ΔcF1 |",
+        "| Dataset | Teacher fidelity | Silver rows | Dev span coverage Δ A/O | Category JSD Δ silver−base | Repaired / harmed rows | All-dev KD ΔcF1 |",
         "|---|---:|---:|---:|---:|---:|---:|",
     ]
     for dataset, item in complementarity["datasets"].items():
         category = item["category_complementarity"]
+        lexical = item["lexical_complementarity"]
         transition = item["error_transition"]
         delta = item["dev_slices"]["all"]["delta"]
-        rare = category["rare_dev_quadruplet_category_coverage"]
-        rare_text = f"{rare:.1%}" if rare is not None else "— (no rare dev quads)"
+        aspect_delta = (
+            lexical["dev_aspect_types_covered_by_silver"]
+            - lexical["dev_aspect_types_covered_by_base"]
+        )
+        opinion_delta = (
+            lexical["dev_opinion_types_covered_by_silver"]
+            - lexical["dev_opinion_types_covered_by_base"]
+        )
+        js_delta = (
+            category["silver_to_dev_js_divergence"]
+            - category["base_to_dev_js_divergence"]
+        )
         comp.append(
             f"| {dataset} | {item['teacher_fidelity_cF1']:.4f} | {item['grain']['silver_rows']} | "
-            f"{rare_text} | {category['silver_to_dev_js_divergence']:.4f} | "
+            f"{aspect_delta:+d} / {opinion_delta:+d} | {js_delta:+.4f} | "
             f"{transition['repaired_rows']} / {transition['harmed_rows']} | {delta:+.4f} |"
+        )
+    summary = complementarity["cross_domain_summary"]
+    comp.extend([
+        "",
+        f"Largest KD dev gain: {summary['largest_kd_dev_gain']}; largest combined "
+        f"dev span-coverage gain: {summary['largest_combined_dev_span_coverage_gain']}; "
+        f"highest direct teacher fidelity: {summary['highest_teacher_fidelity']}.",
+        "",
+        summary["allowed_interpretation"],
+        "",
+        "## Dev error slices", "",
+        "| Dataset | All rows / Δ | Multi-quad rows / Δ | Rare-category rows / Δ | Implicit rows / Δ |",
+        "|---|---:|---:|---:|---:|",
+    ])
+    def slice_cell(value: dict) -> str:
+        delta = "—" if value["delta"] is None else f"{value['delta']:+.4f}"
+        return f"{value['rows']} / {delta}"
+
+    for dataset, item in complementarity["datasets"].items():
+        slices = item["dev_slices"]
+        comp.append(
+            f"| {dataset} | {slice_cell(slices['all'])} | "
+            f"{slice_cell(slices['multi_quadruplet'])} | "
+            f"{slice_cell(slices['rare_category'])} | "
+            f"{slice_cell(slices['implicit_aspect_or_opinion'])} |"
         )
 
     stats = [
@@ -808,27 +942,39 @@ def markdown_outputs(
     resource = [
         "# KD cost and efficiency inventory", "",
         "Token usage and monetary billing were not retained historically; no cost is fabricated.", "",
-        "| Provider | Fidelity rows | Errors | Summed wall time (s) | Rows/s | Token/cost status |",
-        "|---|---:|---:|---:|---:|---|",
+        "| Provider | Validated rows | Timed rows | Errors | Summed timed wall (s) | Timed rows/s | Token/cost status |",
+        "|---|---:|---:|---:|---:|---:|---|",
     ]
     for provider, item in cost["teacher_fidelity"].items():
         resource.append(
-            f"| {provider} | {item['annotated_rows']} | {item['errors']} | "
-            f"{item['summed_dataset_wall_seconds']:.1f} | {item['effective_rows_per_second']:.2f} | unavailable |"
+            f"| {provider} | {item['annotated_rows']} | {item['timed_processed_rows']} | "
+            f"{item['errors']} | {item['summed_dataset_wall_seconds']:.1f} | "
+            f"{item['effective_timed_rows_per_second']:.2f} | unavailable |"
         )
     resource.extend([
-        "", "| Dataset | System | Encoder | Parameters | 5-seed active hours |",
-        "|---|---|---|---:|---:|",
+        "", "| Dataset | Teacher | Silver rows | Dev ΔcF1 | Descriptive Δ per 1k silver |",
+        "|---|---|---:|---:|---:|",
+    ])
+    for dataset, item in cost["adopted_silver_inventory"].items():
+        resource.append(
+            f"| {dataset} | {item['teacher']} | {item['silver_rows']} | "
+            f"{item['dev_delta_cF1']:+.4f} | "
+            f"{item['dev_delta_cF1_per_1000_silver_rows']:+.4f} |"
+        )
+    resource.extend([
+        "", "| Dataset | System | Encoder | Parameters | 5-seed run-wall hours | Retained best GiB |",
+        "|---|---|---|---:|---:|---:|",
     ])
     for item in cost["postlock_training"]:
         resource.append(
             f"| {item['dataset']} | {item['system']} | {item['encoder']} | "
-            f"{item['parameters'] or '—'} | {item['observed_active_training_hours']:.2f} |"
+            f"{item['parameters'] or '—'} | {item['observed_run_wall_hours']:.2f} | "
+            f"{item['retained_best_checkpoint_bytes'] / (1024 ** 3):.2f} |"
         )
     return {
         "postlock_complete_table.md": "\n".join(controls) + "\n",
         "complementarity_error_analysis.md": "\n".join(comp) + "\n",
-        "statistical_robustness.md": "\n".join(stats) + "\n",
+        "statistical_robustness.md": "\n".join(stats).rstrip() + "\n",
         "cost_efficiency.md": "\n".join(resource) + "\n",
     }
 

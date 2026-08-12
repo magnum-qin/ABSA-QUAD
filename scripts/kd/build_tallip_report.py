@@ -210,11 +210,14 @@ def ablation_table(spec: dict, teacher: dict, tat: dict,
                 dataset for dataset, comparison in comparisons.items()
                 if comparison["classification"] == "supported"
             ]
-            tied = [
+            inconclusive = [
                 dataset for dataset, comparison in comparisons.items()
                 if comparison["classification"] == "inconclusive"
             ]
-            result = f"LLM KD supported on {', '.join(supported)}; tied on {', '.join(tied)}"
+            result = (
+                f"LLM KD supported on {', '.join(supported)}; reliable difference not "
+                f"established on {', '.join(inconclusive)}"
+            )
         else:
             result = ablation_result(row["result_kind"], row, teacher, tat, registry, freeze)
         lines.append(
@@ -224,11 +227,16 @@ def ablation_table(spec: dict, teacher: dict, tat: dict,
     return lines
 
 
-def postlock_table(report: dict, audit: dict) -> list[str]:
+def postlock_table(report: dict, audit: dict, complementarity: dict,
+                   statistics_report: dict, cost: dict) -> list[str]:
     summary = audit["summary"]
     required = (
-        summary["prediction_files_validated"] == 48,
-        summary["best_checkpoints_validated"] == 40,
+        summary["prediction_files_expected"] == 60,
+        summary["prediction_files_validated"] == summary["prediction_files_expected"],
+        summary["best_checkpoints_expected"] == 50,
+        summary["best_checkpoints_validated"] == summary["best_checkpoints_expected"],
+        summary["ensemble_outputs_rebuilt"] == 10,
+        summary["bootstrap_comparisons_repeated"] == 15,
         summary["all_prediction_ids_and_order_match_dev"],
         summary["all_ensemble_rebuilds_exact"],
         summary["all_bootstrap_repeats_exact"],
@@ -257,7 +265,7 @@ def postlock_table(report: dict, audit: dict) -> list[str]:
                 allowed = (
                     "High; reliable exposure-adjusted advantage not established"
                     if system == "gold_repeat"
-                    else "High; systems statistically tied"
+                    else "High; reliable teacher-source advantage not established"
                 )
             lines.append(
                 f"| {dataset} | {system} | {result['single_mean']:.4f}±{result['single_sd']:.4f} | "
@@ -280,6 +288,71 @@ def postlock_table(report: dict, audit: dict) -> list[str]:
             f"| {dataset} | {comparison['delta_a_minus_b']:+.4f} | "
             f"[{low:+.4f}, {high:+.4f}] | {comparison['classification']} |"
         )
+    lines.extend([
+        "", "### 5c. Direct complementarity and error measurements", "",
+        "These are descriptive dev-only measurements, not proof of a universal causal moderator.", "",
+        "| Dataset | Silver rows | Dev span coverage Δ A/O | Category JSD Δ silver−base | Repaired / harmed dev rows | KD−baseline cF1 |",
+        "|---|---:|---:|---:|---:|---:|",
+    ])
+    for dataset, item in complementarity["datasets"].items():
+        category = item["category_complementarity"]
+        lexical = item["lexical_complementarity"]
+        transition = item["error_transition"]
+        aspect_delta = (
+            lexical["dev_aspect_types_covered_by_silver"]
+            - lexical["dev_aspect_types_covered_by_base"]
+        )
+        opinion_delta = (
+            lexical["dev_opinion_types_covered_by_silver"]
+            - lexical["dev_opinion_types_covered_by_base"]
+        )
+        js_delta = (
+            category["silver_to_dev_js_divergence"]
+            - category["base_to_dev_js_divergence"]
+        )
+        lines.append(
+            f"| {dataset} | {item['grain']['silver_rows']} | "
+            f"{aspect_delta:+d} / {opinion_delta:+d} | {js_delta:+.4f} | "
+            f"{transition['repaired_rows']} / {transition['harmed_rows']} | "
+            f"{item['dev_slices']['all']['delta']:+.4f} |"
+        )
+    lines.extend([
+        "", "### 5d. Multiplicity robustness", "",
+        "Holm and BH corrections are applied separately within each pre-declared family. "
+        "The official-test family is post-hoc and cannot alter frozen choices.", "",
+        "| Family | n | Raw CI excludes zero | Holm p<.05 | BH p<.05 |",
+        "|---|---:|---:|---:|---:|",
+    ])
+    for family, items in statistics_report["families"].items():
+        raw = sum(row["classification"] != "inconclusive" for row in items)
+        holm = sum(row["holm_reject_0.05"] for row in items)
+        bh = sum(row["bh_reject_0.05"] for row in items)
+        lines.append(f"| {family} | {len(items)} | {raw} | {holm} | {bh} |")
+    training_hours = sum(
+        item["observed_run_wall_hours"]
+        for item in cost["postlock_training"]
+    )
+    retained_best_bytes = sum(
+        item["retained_best_checkpoint_bytes"]
+        for item in cost["postlock_training"]
+    )
+    lines.extend([
+        "", "### 5e. Resource and deployment audit", "",
+        "| Item | Audited value |",
+        "|---|---|",
+        f"| Post-lock training | {training_hours:.2f} logged run-wall hours on one RTX 4090 (includes checkpoint I/O) |",
+        f"| Retained post-lock best checkpoints | 50 files, {retained_best_bytes / (1024 ** 3):.2f} GiB |",
+        f"| DeepSeek fidelity coverage / timed rows | "
+        f"{cost['teacher_fidelity']['deepseek']['annotated_rows']} / "
+        f"{cost['teacher_fidelity']['deepseek']['timed_processed_rows']}; "
+        f"{cost['teacher_fidelity']['deepseek']['errors']} errors |",
+        f"| Qwen fidelity coverage / timed rows | "
+        f"{cost['teacher_fidelity']['qwen']['annotated_rows']} / "
+        f"{cost['teacher_fidelity']['qwen']['timed_processed_rows']}; "
+        f"{cost['teacher_fidelity']['qwen']['errors']} errors |",
+        "| Historical provider tokens / monetary cost | unavailable; not estimated |",
+        f"| LLM calls at student inference | {cost['deployment']['teacher_calls_at_student_inference']} |",
+    ])
     return lines
 
 
@@ -318,23 +391,27 @@ def build_report(args: argparse.Namespace) -> tuple[str, list[Path]]:
     official_test = load_optional(args.official_test)
     postlock = load_optional(args.postlock)
     postlock_audit = load_optional(args.postlock_audit)
+    complementarity = load_optional(args.complementarity)
+    statistics_report = load_optional(args.statistics)
+    cost = load_optional(args.cost)
     ablation = load_optional(args.ablation)
     tat = load_optional(args.tat_matched)
     freeze = load_optional(args.freeze_artifact)
     registry = yaml.safe_load(root_path(args.registry).read_text(encoding="utf-8"))
     if not all((
         teacher, inductive, official_test, postlock, postlock_audit,
+        complementarity, statistics_report, cost,
         ablation, tat, freeze, registry,
     )):
         raise RuntimeError("Frozen core tables require all final evidence artifacts")
     lines = [
         "# TALLIP KD core evidence tables", "",
-        "**Status: frozen on 2026-08-08.** Tables 1–5 use development-set evidence; "
+        "**Status: frozen on 2026-08-13.** Tables 1–5 use development-set evidence; "
         "Table 6 is a one-shot post-competition evaluation on released official test labels. "
         "Run `python scripts/kd/build_tallip_report.py --verify` before citation.", "",
         *teacher_table(teacher, teacher_pilot, qwen_full), "", *inductive_tables(inductive), "",
         *ablation_table(ablation, teacher, tat, registry, freeze, postlock), "",
-        *postlock_table(postlock, postlock_audit), "",
+        *postlock_table(postlock, postlock_audit, complementarity, statistics_report, cost), "",
         *official_test_table(official_test), "",
     ]
     input_names = [
@@ -345,8 +422,17 @@ def build_report(args: argparse.Namespace) -> tuple[str, list[Path]]:
             args.inductive,
             args.official_test,
             "scripts/kd/postlock_v1.yaml",
+            "scripts/kd/postlock_v2.yaml",
+            "scripts/kd/tallip_postlock_analysis.py",
+            args.postlock_v1,
+            args.postlock_v1_audit,
+            args.postlock_v2,
+            args.postlock_v2_audit,
             args.postlock,
             args.postlock_audit,
+            args.complementarity,
+            args.statistics,
+            args.cost,
             args.ablation,
             args.tat_matched,
             args.registry,
@@ -386,8 +472,9 @@ def update_lock(args: argparse.Namespace, report: str, inputs: list[Path]) -> No
         ],
         "verification_command": "python scripts/kd/build_tallip_report.py --verify",
         "update_policy": (
-            "Post-lock v1 may append dev-only controls after explicit evidence audit; "
-            "official-test systems, thresholds, and conclusions remain frozen."
+            "Post-lock v1+v2 dev-only controls and their analyses are complete; "
+            "official-test systems, thresholds, and conclusions remain frozen, and "
+            "future official-test selection is forbidden."
         )
     }
     lock_path = root_path(args.lock)
@@ -426,8 +513,15 @@ def main() -> int:
     parser.add_argument("--qwen-full", default="docs/audits/tallip_kd/qwen_full_fidelity_metrics.json")
     parser.add_argument("--inductive", default="docs/audits/tallip_kd/inductive_metrics.json")
     parser.add_argument("--official-test", default="docs/audits/tallip_kd/official_test/official_test_metrics.json")
-    parser.add_argument("--postlock", default="docs/audits/tallip_kd/postlock_metrics.json")
-    parser.add_argument("--postlock-audit", default="docs/audits/tallip_kd/postlock_audit.json")
+    parser.add_argument("--postlock-v1", default="docs/audits/tallip_kd/postlock_metrics.json")
+    parser.add_argument("--postlock-v1-audit", default="docs/audits/tallip_kd/postlock_audit.json")
+    parser.add_argument("--postlock-v2", default="docs/audits/tallip_kd/postlock_v2_metrics.json")
+    parser.add_argument("--postlock-v2-audit", default="docs/audits/tallip_kd/postlock_v2_audit.json")
+    parser.add_argument("--postlock", default="docs/audits/tallip_kd/postlock_complete_metrics.json")
+    parser.add_argument("--postlock-audit", default="docs/audits/tallip_kd/postlock_complete_audit.json")
+    parser.add_argument("--complementarity", default="docs/audits/tallip_kd/complementarity_error_analysis.json")
+    parser.add_argument("--statistics", default="docs/audits/tallip_kd/statistical_robustness.json")
+    parser.add_argument("--cost", default="docs/audits/tallip_kd/cost_efficiency.json")
     parser.add_argument("--ablation", default="docs/audits/tallip_kd/ablation_evidence.json")
     parser.add_argument("--tat-matched", default="docs/audits/tallip_kd/tat_teacher_matched_metrics.json")
     parser.add_argument("--registry", default="scripts/kd/registry.yaml")

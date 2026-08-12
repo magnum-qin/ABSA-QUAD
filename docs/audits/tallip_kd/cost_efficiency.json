@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-08-13",
+  "scope": "Measured provider throughput for the 8x2 fidelity campaign, adopted silver row counts, logged post-lock control training wall time, and student deployment requirements. Historical silver-generation billing and original adopted-KD run wall time are unavailable.",
+  "hardware": "single NVIDIA GeForce RTX 4090 (24 GB) for recorded post-lock runs",
+  "teacher_fidelity": {
+    "deepseek": {
+      "requested_models": [
+        "deepseek-v4-pro"
+      ],
+      "annotated_rows": 1344,
+      "timed_processed_rows": 1344,
+      "errors": 0,
+      "summed_dataset_wall_seconds": 225.80283400000002,
+      "effective_timed_rows_per_second": 5.9520953576694255,
+      "token_usage": null,
+      "monetary_cost": null,
+      "cost_caveat": "historical raw responses did not retain provider token-usage fields; throughput uses only rows represented by the retained timing metadata"
+    },
+    "qwen": {
+      "requested_models": [
+        "unsloth/Qwen3.6-35B-A3B-MTP-GGUF"
+      ],
+      "annotated_rows": 1344,
+      "timed_processed_rows": 1264,
+      "errors": 0,
+      "summed_dataset_wall_seconds": 1020.9648320000001,
+      "effective_timed_rows_per_second": 1.2380446028918652,
+      "token_usage": null,
+      "monetary_cost": null,
+      "cost_caveat": "historical raw responses did not retain provider token-usage fields; throughput uses only rows represented by the retained timing metadata"
+    }
+  },
+  "adopted_silver_inventory": {
+    "eng_laptop": {
+      "teacher": "deepseek",
+      "silver_rows": 7547,
+      "dev_delta_cF1": 0.10575820351261545,
+      "dev_delta_cF1_per_1000_silver_rows": 0.01401327726415999
+    },
+    "rus_restaurant": {
+      "teacher": "deepseek",
+      "silver_rows": 3000,
+      "dev_delta_cF1": 0.0894970910687849,
+      "dev_delta_cF1_per_1000_silver_rows": 0.029832363689594965
+    },
+    "tat_restaurant": {
+      "teacher": "qwen",
+      "silver_rows": 3915,
+      "dev_delta_cF1": 0.05064009320007712,
+      "dev_delta_cF1_per_1000_silver_rows": 0.01293488970627768
+    },
+    "ukr_restaurant": {
+      "teacher": "deepseek",
+      "silver_rows": 5534,
+      "dev_delta_cF1": 0.0472386639026014,
+      "dev_delta_cF1_per_1000_silver_rows": 0.008536079490892917
+    },
+    "zho_restaurant": {
+      "teacher": "deepseek",
+      "silver_rows": 3882,
+      "dev_delta_cF1": 0.006862873376449197,
+      "dev_delta_cF1_per_1000_silver_rows": 0.0017678705245876343
+    }
+  },
+  "postlock_training": [
+    {
+      "protocol": "postlock_dev_only_v1",
+      "dataset": "eng_laptop",
+      "system": "gold_repeat",
+      "seeds": 5,
+      "encoder": "microsoft/deberta-v3-base",
+      "parameters": 202771798,
+      "batch_size": 8,
+      "max_epochs": 30,
+      "checkpoint_storage": "workspace filesystem",
+      "observed_run_wall_hours": 13.406391944444444,
+      "retained_best_checkpoint_bytes": 16007721938,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_train.log"
+    },
+    {
+      "protocol": "postlock_dev_only_v1",
+      "dataset": "rus_restaurant",
+      "system": "gold_repeat",
+      "seeds": 5,
+      "encoder": "xlm-roberta-large",
+      "parameters": 592918508,
+      "batch_size": 4,
+      "max_epochs": 30,
+      "checkpoint_storage": "workspace filesystem",
+      "observed_run_wall_hours": 10.858344722222222,
+      "retained_best_checkpoint_bytes": 47025059321,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_train.log"
+    },
+    {
+      "protocol": "postlock_dev_only_v1",
+      "dataset": "tat_restaurant",
+      "system": "gold_repeat",
+      "seeds": 5,
+      "encoder": "xlm-roberta-large",
+      "parameters": 592918508,
+      "batch_size": 4,
+      "max_epochs": 30,
+      "checkpoint_storage": "workspace filesystem",
+      "observed_run_wall_hours": 15.283088333333334,
+      "retained_best_checkpoint_bytes": 47025061969,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_train.log"
+    },
+    {
+      "protocol": "postlock_dev_only_v1",
+      "dataset": "ukr_restaurant",
+      "system": "gold_repeat",
+      "seeds": 5,
+      "encoder": "microsoft/mdeberta-v3-base",
+      "parameters": 297125356,
+      "batch_size": 8,
+      "max_epochs": 30,
+      "checkpoint_storage": "workspace filesystem",
+      "observed_run_wall_hours": 10.973962222222223,
+      "retained_best_checkpoint_bytes": 23556722794,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_train.log"
+    },
+    {
+      "protocol": "postlock_dev_only_v1",
+      "dataset": "zho_restaurant",
+      "system": "gold_repeat",
+      "seeds": 5,
+      "encoder": "hfl/chinese-roberta-wwm-ext-large",
+      "parameters": 358550508,
+      "batch_size": 4,
+      "max_epochs": 30,
+      "checkpoint_storage": "workspace filesystem",
+      "observed_run_wall_hours": 13.53163638888889,
+      "retained_best_checkpoint_bytes": 28275533777,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_train.log"
+    },
+    {
+      "protocol": "postlock_dev_only_v1",
+      "dataset": "eng_laptop",
+      "system": "self_training",
+      "seeds": 5,
+      "encoder": "microsoft/deberta-v3-base",
+      "parameters": 202771798,
+      "batch_size": 8,
+      "max_epochs": 30,
+      "checkpoint_storage": "workspace filesystem",
+      "observed_run_wall_hours": 18.33660722222222,
+      "retained_best_checkpoint_bytes": 16007721938,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_self_training_train.log"
+    },
+    {
+      "protocol": "postlock_dev_only_v1",
+      "dataset": "rus_restaurant",
+      "system": "self_training",
+      "seeds": 5,
+      "encoder": "xlm-roberta-large",
+      "parameters": 592918508,
+      "batch_size": 4,
+      "max_epochs": 30,
+      "checkpoint_storage": "workspace filesystem",
+      "observed_run_wall_hours": 11.373889722222222,
+      "retained_best_checkpoint_bytes": 47025051761,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_self_training_train.log"
+    },
+    {
+      "protocol": "postlock_dev_only_v1",
+      "dataset": "zho_restaurant",
+      "system": "self_training",
+      "seeds": 5,
+      "encoder": "hfl/chinese-roberta-wwm-ext-large",
+      "parameters": 358550508,
+      "batch_size": 4,
+      "max_epochs": 30,
+      "checkpoint_storage": "workspace filesystem",
+      "observed_run_wall_hours": 16.433249444444442,
+      "retained_best_checkpoint_bytes": 28275543217,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_self_training_train.log"
+    },
+    {
+      "protocol": "postlock_dev_only_v2",
+      "dataset": "tat_restaurant",
+      "system": "self_training",
+      "seeds": 5,
+      "encoder": "xlm-roberta-large",
+      "parameters": 592918508,
+      "batch_size": 4,
+      "max_epochs": 30,
+      "checkpoint_storage": "local NVMe staging then archive",
+      "observed_run_wall_hours": 13.928169722222222,
+      "retained_best_checkpoint_bytes": 47025064617,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v2/logs/tat_restaurant_self_training_train.log"
+    },
+    {
+      "protocol": "postlock_dev_only_v2",
+      "dataset": "ukr_restaurant",
+      "system": "self_training",
+      "seeds": 5,
+      "encoder": "microsoft/mdeberta-v3-base",
+      "parameters": 297125356,
+      "batch_size": 8,
+      "max_epochs": 30,
+      "checkpoint_storage": "local NVMe staging then archive",
+      "observed_run_wall_hours": 10.850885833333333,
+      "retained_best_checkpoint_bytes": 23556719928,
+      "best_checkpoints_found": 5,
+      "log": "data/audits/tallip_kd/postlock_v2/logs/ukr_restaurant_self_training_train.log"
+    }
+  ],
+  "deployment": {
+    "teacher_calls_at_student_inference": 0,
+    "student_seed_models_per_frozen_ensemble": 5,
+    "claim": "LLMs are offline annotators only; deployment uses student checkpoints"
+  },
+  "limitations": [
+    "Historical silver-generation token counts and billing records were not stored; no monetary estimate is fabricated.",
+    "Observed training-run wall hours are parsed from timestamped logs, include checkpoint I/O, and are hardware/workload specific.",
+    "Teacher-fidelity wall time uses concurrent dataset jobs and is reported as summed per-dataset wall time, not elapsed campaign makespan.",
+    "Delta per 1,000 silver rows is descriptive only and is not comparable as a causal efficiency estimate across datasets with different baselines and domains.",
+    "Post-lock v2 used local NVMe checkpoint staging before archival, so v1/v2 wall times should not be interpreted as a controlled storage-speed comparison."
+  ]
+}
