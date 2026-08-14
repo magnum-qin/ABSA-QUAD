@@ -2,13 +2,269 @@
 
 ## An Inductive-Safe Study of Offline Structured Distillation for Multilingual Dimensional Aspect Sentiment Quad Prediction
 
-**Draft status:** Sections 3--8, working manuscript, 2026-08-15.
+**Draft status:** Full working manuscript, 2026-08-15.
 
 > Editorial note: this Markdown file is the editable source draft and is not the
-> ICONIP manuscript. Bracketed `[CITE: ...]` markers are unresolved bibliography
-> tasks, not submission-ready citations. Numerical results must be imported from
-> `docs/audits/tallip_kd/tallip_core_tables.md` after its verification command
-> passes.
+> ICONIP manuscript. Bracketed `CITE: key` markers resolve to
+> `docs/TALLIP_REFERENCES.md`; they must be converted to the target bibliography
+> syntax only after the TALLIP template is fixed. Numerical results must be
+> imported from `docs/audits/tallip_kd/tallip_core_tables.md` after its
+> verification command passes.
+
+## Abstract
+
+Large language models (LLMs) can label unlabeled text for a smaller
+task-specific student, moving teacher cost out of deployment. Yet multilingual
+structured-prediction gains may reflect teacher quality, pool composition,
+additional training exposure, split overlap, or development-set selection. We
+study these factors in offline structured label distillation for Dimensional
+Aspect Sentiment Quad Prediction (DimASQP), which jointly predicts aspect and
+opinion spans, categories, and continuous valence and arousal, while fixing a
+previously introduced student. We evaluate two LLM teachers on label-hidden
+development sets from eight language--domain datasets, audit training inputs
+for development/test overlap, and train five seeds on five clean-inductive
+adopted domains. Exposure-matched repeated-gold and same-text self-training
+controls test alternatives to LLM supervision; paired bootstrap inference,
+multiplicity correction, and a pre-evaluation test lock limit selection-driven
+claims. Across the five domains, LLM distillation improves macro cF1 over the
+frozen baseline by 0.0600 (95% CI [0.0291, 0.0911]), over repeated-gold exposure
+by 0.0588 [0.0318, 0.0853], and over same-text self-training by 0.0621 [0.0351,
+0.0888]. These average effects are heterogeneous: a reliable per-domain
+advantage over self-training is established only for English laptop and Russian
+restaurant. DeepSeek has the higher direct-fidelity point estimate on all eight
+datasets, but only three differences survive Holm correction. A one-shot
+evaluation on released official test labels supports four of five adopted KD
+contrasts before correction and three afterward. Ablations provide no universal
+ranking of teacher, pool source, or silver-data quantity. Offline LLM
+supervision is therefore a conditional tool, not a domain-independent recipe,
+and requires inductive data hygiene and matched controls.
+
+## 1 Introduction
+
+Aspect-based sentiment analysis seeks more than a document-level judgment: it
+identifies what is being discussed, which property is evaluated, and how the
+evaluation is expressed. Aspect Sentiment Quad Prediction (ASQP) unifies these
+decisions by predicting aspect terms, aspect categories, opinion terms, and
+sentiment polarity as linked structures rather than independent labels
+[CITE: cai2021acos; zhang2021asqp]. Dimensional Aspect Sentiment Quad Prediction
+(DimASQP) makes the task finer-grained by replacing coarse polarity with
+continuous valence and arousal. Its outputs must therefore be correct both as a
+set of symbolic structures and as locations in an affective space. The recent
+DimABSA resource and SemEval-2026 Task 3 instantiate this problem across six
+languages and multiple review domains [CITE: lee2026dimabsa; yu2026semeval].
+Such coverage is valuable, but collecting exact spans, long-tailed categories,
+and calibrated numerical ratings is expensive, particularly where native
+annotators or domain specialists are scarce.
+
+One attractive response is to use an LLM as an offline annotator. Given an
+unlabeled in-domain sentence, a teacher can emit a complete structured label;
+the resulting *silver* examples are mixed with human-labeled *gold* examples to
+train a much smaller student. The teacher is then absent from inference. This
+arrangement differs from serving an LLM directly and from classical
+logit-transfer distillation: it uses hard, task-level responses that remain
+available as ordinary training data [CITE: hinton2015distilling;
+hsieh2023distilling; golde2023fabricator]. It is especially appealing when a
+compact encoder must run repeatedly or locally, because the marginal LLM cost
+is paid during data construction rather than deployment.
+
+The simplicity of the pipeline hides a difficult evaluation question: when a
+student improves, what supplied the improvement? Teacher annotations may add
+correct structures that are missing from the gold set, but teacher fidelity can
+vary with language, domain, category inventory, and output schema. A generated,
+translated, or naturally occurring text pool can change lexical coverage and
+label distribution independently of label quality. More rows also mean more
+optimizer exposure even when their labels add no information. A student may
+benefit just as much from its own pseudo-labels on the same texts. Finally,
+training pools assembled from public or generated sources can overlap with
+development or test sentences. Downstream scores alone confound these
+mechanisms, while a teacher's direct annotation score does not guarantee that
+its errors and coverage are useful to a particular student
+[CITE: ding2023annotator; zhang2023llmaaa].
+
+These ambiguities are amplified in a multilingual benchmark with small
+development sets. Reusing one development split for encoder selection,
+augmentation, checkpointing, thresholds, and ablations invites selection
+optimism. Comparing many teachers, pools, datasets, and inference variants also
+creates a multiplicity problem. Meanwhile, exact text leakage can make a
+nominally inductive result partly transductive. Prior work has documented both
+the effects of train--evaluation overlap and the need for evaluation designs
+that match the statistical test to paired NLP outputs [CITE:
+lee2022deduplicating; dror2018hitchhiker]. A credible silver-data study should
+therefore audit the data path, measure teacher behavior directly, construct
+controls for alternative explanations, quantify uncertainty, and freeze test
+decisions before inspecting held-out labels.
+
+We apply that evidence chain to offline DimASQP distillation. First, we measure
+DeepSeek and Qwen on the same label-hidden gold development sentences for all
+eight task datasets. Second, we normalize and audit gold, silver, distillation,
+development, and test inputs, remove detected overlap from three adopted
+training sets, and preserve deletion-level provenance. Third, we run five
+student seeds in each of five adopted KD domains with frozen ensemble rules.
+For each domain, a repeated-gold control matches training-row exposure, and a
+student self-training control additionally matches the silver texts and row
+count. Teacher, pool, and quantity comparisons are separated according to how
+well they control the remaining factors. Paired example-level bootstrap
+intervals, task-macro effects, Holm family-wise correction, and
+Benjamini--Hochberg false-discovery correction make the inferential scope
+explicit. Official test predictions and their hashes are fixed before the
+released labels are read.
+
+The resulting picture is neither “silver always helps” nor “the highest-scoring
+teacher always wins.” The five-domain macro effect is positive against the
+frozen baseline, repeated-gold exposure, and same-text self-training, but
+single-domain support is uneven. In the strongest teacher-source test, only the
+English laptop and Russian restaurant gains remain supported after correcting
+within the five-domain family. DeepSeek's direct fidelity is numerically higher
+on all eight datasets, yet most individual teacher gaps remain uncertain, and
+direct fidelity is not a monotonic predictor of downstream gain. The frozen
+official-test analysis supports conditional transfer in four adopted domains
+before multiplicity correction and three afterward, while the Chinese
+restaurant contrast is inconclusive. These results motivate a narrower and more
+useful claim: LLM-labeled silver can improve a fixed structured student on
+average, but teacher identity, pool source, and sample count are insufficient
+universal selection rules.
+
+Our contributions are fourfold:
+
+1. We formulate an offline structured LLM-to-student distillation protocol for
+   multilingual DimASQP while keeping the previously introduced student and
+   inference procedure fixed.
+2. We directly evaluate two teachers on eight label-hidden development sets and
+   disentangle teacher, pool, quantity, exposure, and same-text pseudo-label
+   effects through matched controls.
+3. We provide an inductive-safe and multiplicity-aware evaluation with five
+   seeds, paired bootstrap inference, deletion-level provenance, and frozen
+   official-test decision rules.
+4. We show reliable average gains but substantial domain heterogeneity, and
+   identify the limits of teacher fidelity, pool source, and silver quantity as
+   universal selection rules.
+
+## 2 Related Work
+
+### 2.1 Structured and Dimensional Aspect-Based Sentiment Analysis
+
+Aspect-based sentiment analysis has progressed from predicting individual
+sentiment elements to extracting their relations jointly. ACOS quadruple
+extraction explicitly includes aspect, category, opinion, and categorical
+sentiment, including implicit aspects and opinions [CITE: cai2021acos]. ASQP
+casts the same linked prediction problem as conditional generation, showing the
+appeal of end-to-end structured output over pipelines whose errors propagate
+between subtasks [CITE: zhang2021asqp]. Both formulations retain discrete
+sentiment polarity.
+
+DimABSA instead represents sentiment with continuous valence--arousal ratings
+and provides multilingual, multidomain annotations that combine these ratings
+with traditional ABSA elements [CITE: lee2026dimabsa]. SemEval-2026 Task 3
+defines regression, triplet, and quadruplet subtasks and introduces continuous
+F1 to combine structural correctness with valence--arousal error [CITE:
+yu2026semeval]. Participating systems span encoder-based extraction,
+instruction-tuned generation, hybrid pipelines, and ensembling. Some also use
+LLMs or LLM-generated annotations, establishing the practical relevance of
+generated supervision but not, by itself, separating annotation quality from
+pool or selection effects [CITE: alshawi2026classics].
+
+Our earlier ICONIP work introduced the LEADER-DimASQP student, dataset-specific
+encoder and training recipes, and five-seed inference [CITE: qin2026leader].
+The present paper does not re-claim those architectural components. It fixes
+them as experimental infrastructure and studies whether, when, and why
+LLM-labeled training examples improve that student. This separation is
+important because architecture selection and supervision-source selection
+otherwise share the same development signal.
+
+### 2.2 Distillation, Pseudo-Labeling, and LLM-Generated Supervision
+
+Knowledge distillation traditionally compresses the predictive behavior of a
+large teacher into a smaller student, often through softened output
+distributions [CITE: hinton2015distilling]. Pseudo-labeling and self-training
+instead use a model's hard predictions as targets on unlabeled inputs [CITE:
+lee2013pseudolabel]. The two ideas overlap operationally but answer different
+questions: classical KD asks how to transfer a teacher's predictive knowledge,
+whereas self-training asks whether a learner can exploit additional unlabeled
+examples using its own decisions.
+
+LLMs broaden response-based distillation because their textual outputs can
+become labels, rationales, or complete generated datasets. Distilling
+step-by-step uses LLM-produced rationales as additional supervision for smaller
+models, and other work studies cost-aware transfer or tool support for creating
+labeled data with teacher LLMs [CITE: hsieh2023distilling;
+dasgupta2023cost; golde2023fabricator]. LLMaAA incorporates LLM annotation into
+an active-learning loop and reweights noisy pseudo-labels, demonstrating that
+student utility depends on annotation and training design rather than teacher
+size alone [CITE: zhang2023llmaaa].
+
+Our setting uses neither teacher logits nor rationales. The teacher emits hard
+DimASQP structures constrained by the task schema, and the student trains on
+the accepted rows together with its inherited gold/base data. We therefore use
+*offline structured label distillation* to distinguish the protocol from
+logit-based compression, direct LLM inference, and pure text augmentation. We
+also compare LLM labels with two controls that standard KD reports often omit:
+repeated gold matches row exposure, while student pseudo-labels on the identical
+silver texts ask whether the LLM is adding label information beyond ordinary
+self-training.
+
+### 2.3 LLM Annotation in Multilingual and Low-Resource Settings
+
+LLMs are attractive annotators because one interface can scale across tasks and
+reduce the amount of manual labeling. Broad evaluations have examined their
+fitness as general-purpose annotators, while human--LLM allocation methods use
+uncertainty to reserve difficult examples for people [CITE: ding2023annotator;
+li2023coannotating]. These studies also caution against treating syntactic
+validity or aggregate accuracy as a substitute for task-specific reliability.
+For structured DimASQP, a response can be valid JSON yet still omit an opinion,
+misplace a span boundary, choose a frequent category, or miscalibrate the
+valence--arousal scale.
+
+Multilingual annotation adds another layer of variation. Evidence from
+low-resource classification shows that strong LLM annotators can lag
+task-specific models outside high-resource languages [CITE:
+jadhav2025limitations]. Annotation instructions, model disagreement, cultural
+context, and language imbalance can also introduce systematic annotation bias
+[CITE: cui2025bias]. Resource level alone does not determine the direction of
+that effect: domain vocabulary, category inventories, few-shot examples, and
+the student's representation all matter.
+
+We consequently avoid equating a low-resource language with a large expected
+KD gain. Our teacher-fidelity experiment hides the gold labels and sends the
+same examples to both teachers in each of eight datasets. It reports not only
+the official cF1 but structural components, matched-quad numerical errors,
+invalid responses, empty outputs, `NULL` behavior, and rare-category coverage.
+The downstream matched-text control then asks a separate question: even when
+two label sources see identical texts, does the LLM supervision improve the
+fixed student? Keeping these two levels separate prevents student accuracy from
+being used as a proxy for teacher annotation quality.
+
+### 2.4 Leakage-Aware and Statistical Evaluation of Silver Data
+
+Silver-data experiments are vulnerable to leakage at several stages. Public or
+generated pools may duplicate development/test text, and benchmark material may
+also enter opaque model pretraining. Deduplication research shows that
+train--evaluation overlap can inflate measured performance and bias selection
+[CITE: lee2022deduplicating]. Contamination audits have further shown that the
+problem extends across benchmarks and can cross language boundaries [CITE:
+sainz2024contamination; yao2024crosslingual]. Our audit cannot determine the
+unknown pretraining contents of proprietary teachers. It addresses the
+controllable leakage path instead: every registered training-side source is
+checked against the task development and test splits by exact text, normalized
+text, and source identifier, with every deletion and file hash retained.
+
+Evaluation also needs to respect paired outputs and repeated comparisons.
+Bootstrap resampling provides a practical way to estimate uncertainty for
+nonlinear corpus metrics, and NLP-specific guidance emphasizes selecting tests
+that match the task and experimental design [CITE: koehn2004statistical;
+dror2018hitchhiker]. Once results are inspected across multiple datasets or
+contrasts, unadjusted significance statements no longer control the probability
+of false positives. Holm's sequential procedure controls the family-wise error
+rate, while Benjamini--Hochberg controls the false discovery rate under its
+stated conditions [CITE: holm1979; benjamini1995].
+
+Our protocol combines these ideas in an audit-and-freeze design. We use paired
+example-level bootstrap intervals and p-values, group comparisons into declared
+families for multiplicity correction, and report an equal-weight fixed-task
+macro effect without converting it into a universal language claim. Most
+importantly, the released official test labels are accessed only after systems,
+thresholds, predictions, and hashes are frozen. The test evaluation can then
+check whether a development conclusion transfers; it cannot become a new
+source for teacher, pool, augmentation, or threshold selection.
 
 ## 3 Task and Offline Structured Distillation
 
@@ -27,7 +283,7 @@ where (a_i) is an aspect span or `NULL`, (o_i) is an opinion span or
 The two continuous labels (V_i,A_i\in[1,9]) represent valence and arousal,
 respectively. A sentence can contain no opinion, one opinion, or multiple
 opinions; the cardinality (m) is therefore unknown at prediction time.
-[CITE: DimABSA/SemEval-2026 task overview]
+[CITE: lee2026dimabsa; yu2026semeval]
 
 We use the official Task-3 continuous F1 (cF1) as the primary metric. A
 predicted quad is eligible for matching when its categorical triple
@@ -51,7 +307,7 @@ empty outputs, and invalid outputs.
 ### 3.2 Fixed Student Model
 
 Our experiments build on the LEADER-DimASQP student introduced in our earlier
-ICONIP study [CITE: ICONIP-V20]. We treat that model and its dataset-specific
+ICONIP study [CITE: qin2026leader]. We treat that model and its dataset-specific
 training recipes as inherited experimental infrastructure rather than as a new
 contribution of the present work. Fixing the student is essential here: the
 object of study is the supervision supplied by LLM-labeled silver data, not a
@@ -143,8 +399,8 @@ self-training controls, and paired inference on frozen predictions.
 
 ### 4.1 Datasets and Evaluation Roles
 
-We study all eight datasets from SemEval-2026 Task 3 [CITE: DimABSA/SemEval-2026
-task overview]. They span English, Japanese, Russian, Tatar, Ukrainian, and
+We study all eight datasets from SemEval-2026 Task 3 [CITE: yu2026semeval]. They
+span English, Japanese, Russian, Tatar, Ukrainian, and
 Chinese, with laptop, restaurant, and hotel domains. Table 2 reports the raw
 gold split sizes. All eight datasets participate in direct teacher-fidelity
 evaluation. Five datasets---English laptop and the Russian, Tatar, Ukrainian,
@@ -680,7 +936,7 @@ revision, and billing metadata at collection time.
 ### 6.5 Relation to Our Prior ICONIP Study
 
 Our ICONIP V20 work introduced LEADER-DimASQP, language- and dataset-specific
-encoder/recipe selection, and five-seed inference [CITE: ICONIP-V20]. The
+encoder/recipe selection, and five-seed inference [CITE: qin2026leader]. The
 present study reuses those components to hold student capacity and decoding
 policy as stable as possible. It does not claim Rethink, Hungarian matching,
 language-specific encoders, or ensembling as new contributions.
@@ -761,7 +1017,7 @@ latency comparisons that the retained evidence cannot support.
 ### 7.4 Bias, Data Governance, and Human Oversight
 
 LLM-generated labels can reproduce language, regional, cultural, and domain
-biases from the teacher [CITE: multilingual LLM annotation bias]. This concern
+biases from the teacher [CITE: cui2025bias; jadhav2025limitations]. This concern
 is particularly important for Tatar and Ukrainian, where both teacher
 competence and evaluation sample size are less certain than aggregate cF1 may
 suggest. Automatic schema validation catches malformed spans and categories but
