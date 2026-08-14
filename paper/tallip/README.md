@@ -9,6 +9,8 @@ the Markdown changes materially.
 
 - `tallip_submission.tex`: one-column `manuscript,review` file for initial
   review.
+- `tallip_submission_anonymous.tex`: double-anonymous fallback; use it only if
+  the live Manuscript Central workflow explicitly requests anonymization.
 - `tallip_acmsmall.tex`: TALLIP journal-layout audit using `acmsmall`.
 - `tallip_common.tex`: title, authors, abstract, CCS concepts, and shared
   front/back matter.
@@ -28,6 +30,17 @@ A conventional TeX installation can instead use `latexmk -pdf`.
 Use a TeX installation with the current `acmart` release. The final local audit
 used CTAN `acmart` v2.19 (2026-06-27); Tectonic's default bundle may lag behind
 CTAN, so its class search path must be overridden when necessary.
+
+To generate isolated identified/anonymous review PDFs, minimal source archives,
+and a SHA256 manifest, run from the repository root:
+
+```bash
+python scripts/paper/package_tallip_submission.py
+```
+
+The generated `artifacts/tallip_submission/` directory is ignored by Git. The
+anonymous source replaces only the marked identifying-metadata block; the prior
+ICONIP citation remains intact and is phrased in the third person.
 
 ## Submission-format audit
 

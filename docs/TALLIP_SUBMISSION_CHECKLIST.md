@@ -33,6 +33,9 @@ repository-verified items from declarations that only the authors can make.
 - [x] No ICONIP table or figure is reproduced; the student is identified as an
   inherited component.
 - [x] Cover-letter and detailed prior-publication drafts are prepared.
+- [x] A repeatable packager can generate identified/anonymous review PDFs,
+  minimal source archives, perform an anonymous-metadata audit, and record
+  SHA256 hashes.
 - [x] No manuscript LaTeX outside `paper/tallip/` has been modified by the
   TALLIP workflow.
 
@@ -105,6 +108,9 @@ before submission:
   `.env.local`, checkpoints, logs, raw provider credentials, and official gold
   labels unless the portal explicitly requests them.
 - [ ] Open the packaged source in a clean directory and compile it once.
+- [ ] Regenerate the package from a clean final commit with
+  `python scripts/paper/package_tallip_submission.py`; confirm
+  `"source_dirty": false` in `PACKAGE_INFO.json`.
 - [ ] Record SHA256 values for the uploaded manuscript PDF, cover letter,
   related-work statement, and source archive.
 

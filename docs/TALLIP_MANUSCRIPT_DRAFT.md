@@ -160,7 +160,7 @@ LLMs or LLM-generated annotations, establishing the practical relevance of
 generated supervision but not, by itself, separating annotation quality from
 pool or selection effects [CITE: alshawi2026classics].
 
-Our earlier ICONIP work introduced the LEADER-DimASQP student, dataset-specific
+The earlier ICONIP work introduced the LEADER-DimASQP student, dataset-specific
 encoder and training recipes, and five-seed inference [CITE: qin2026leader].
 The present paper does not re-claim those architectural components. It fixes
 them as experimental infrastructure and studies whether, when, and why
@@ -303,7 +303,7 @@ empty outputs, and invalid outputs.
 
 ### 3.2 Fixed Student Model
 
-Our experiments build on the LEADER-DimASQP student introduced in our earlier
+The experiments build on the LEADER-DimASQP student introduced in an earlier
 ICONIP study [CITE: qin2026leader]. We treat that model and its dataset-specific
 training recipes as inherited experimental infrastructure rather than as a new
 contribution of the present work. Fixing the student is essential here: the
@@ -930,9 +930,9 @@ retained, so we cannot reconstruct a defensible monetary cost for all silver
 generation. Future experiments should store tokens, wall time, retries, model
 revision, and billing metadata at collection time.
 
-### 6.5 Relation to Our Prior ICONIP Study
+### 6.5 Relation to the Prior ICONIP Study
 
-Our ICONIP V20 work introduced LEADER-DimASQP, language- and dataset-specific
+The ICONIP V20 work introduced LEADER-DimASQP, language- and dataset-specific
 encoder/recipe selection, and five-seed inference [CITE: qin2026leader]. The
 present study reuses those components to hold student capacity and decoding
 policy as stable as possible. It does not claim Rethink, Hungarian matching,

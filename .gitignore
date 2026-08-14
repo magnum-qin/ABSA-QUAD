@@ -45,4 +45,5 @@ Thumbs.db
 *.tmp
 *.temp
 predictions/
+/artifacts/tallip_submission/
 .claude/settings.local.json
