@@ -27,3 +27,11 @@ Token usage and monetary billing were not retained historically; no cost is fabr
 | zho_restaurant | self_training | hfl/chinese-roberta-wwm-ext-large | 358550508 | 16.43 | 26.33 |
 | tat_restaurant | self_training | xlm-roberta-large | 592918508 | 13.93 | 43.80 |
 | ukr_restaurant | self_training | microsoft/mdeberta-v3-base | 297125356 | 10.85 | 21.94 |
+
+| Dataset | Encoder | 5-model forward seconds | Ensemble output rows/s | Scope |
+|---|---|---:|---:|---|
+| eng_laptop | microsoft/deberta-v3-base | 7.56 | 26.46 | model-forward only |
+| rus_restaurant | xlm-roberta-large | 4.16 | 11.55 | model-forward only |
+| tat_restaurant | xlm-roberta-large | 4.33 | 11.08 | model-forward only |
+| ukr_restaurant | microsoft/mdeberta-v3-base | 4.46 | 10.77 | model-forward only |
+| zho_restaurant | hfl/chinese-roberta-wwm-ext-large | 17.50 | 17.14 | model-forward only |

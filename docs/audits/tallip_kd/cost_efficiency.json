@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "as_of": "2026-08-13",
+  "as_of": "2026-08-14",
   "scope": "Measured provider throughput for the 8x2 fidelity campaign, adopted silver row counts, logged post-lock control training wall time, and student deployment requirements. Historical silver-generation billing and original adopted-KD run wall time are unavailable.",
   "hardware": "single NVIDIA GeForce RTX 4090 (24 GB) for recorded post-lock runs",
   "teacher_fidelity": {
@@ -215,6 +215,298 @@
       "log": "data/audits/tallip_kd/postlock_v2/logs/ukr_restaurant_self_training_train.log"
     }
   ],
+  "student_inference": [
+    {
+      "dataset": "eng_laptop",
+      "system": "five_seed_gold_repeat_ensemble",
+      "encoder": "microsoft/deberta-v3-base",
+      "batch_size": 16,
+      "logs": [
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed42_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed123_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed456_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed789_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed1024_infer.log"
+      ],
+      "log_sha256": {
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed42_infer.log": "17d56e4a0b2ca586613c32f687c1286b8b8f8dbb906d61b11a8a3fb5d0b5750e",
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed123_infer.log": "c1666b7a77cb3ede007b983777fcd836b6a474c9c8edbe6eb8c1c687354a5fdc",
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed456_infer.log": "ed4c2b46cca63846719d400848a104ed2edc496eecf06dc521c20eb976dd4ec1",
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed789_infer.log": "4830bbda92ad791cd1cd53f17a10c89355fd0fcfa3b6e1935545ce11daebc197",
+        "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed1024_infer.log": "7bef9e3217e6a5eb7956d4b62d79542e252afca41e3cd578896cf31dd971d378"
+      },
+      "models": 5,
+      "rows": 200,
+      "model_rates": [
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed42_infer.log",
+          "batches": 13,
+          "final_tqdm_batches_per_second": 8.25,
+          "estimated_forward_seconds": 1.5757575757575757
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed123_infer.log",
+          "batches": 13,
+          "final_tqdm_batches_per_second": 8.67,
+          "estimated_forward_seconds": 1.4994232987312572
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed456_infer.log",
+          "batches": 13,
+          "final_tqdm_batches_per_second": 8.65,
+          "estimated_forward_seconds": 1.5028901734104045
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed789_infer.log",
+          "batches": 13,
+          "final_tqdm_batches_per_second": 8.75,
+          "estimated_forward_seconds": 1.4857142857142858
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/eng_laptop_gold_repeat_seed1024_infer.log",
+          "batches": 13,
+          "final_tqdm_batches_per_second": 8.69,
+          "estimated_forward_seconds": 1.4959723820483315
+        }
+      ],
+      "estimated_total_model_forward_seconds": 7.5597577156618545,
+      "ensemble_output_rows_per_second": 26.455874317989313,
+      "aggregate_model_rows_per_second": 132.27937158994655,
+      "measurement_scope": "tqdm-derived CUDA model-forward loop only; excludes checkpoint loading, tokenizer construction, dataloader setup, voting, and output serialization"
+    },
+    {
+      "dataset": "rus_restaurant",
+      "system": "five_seed_gold_repeat_ensemble",
+      "encoder": "xlm-roberta-large",
+      "batch_size": 16,
+      "logs": [
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed42_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed123_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed456_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed789_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed1024_infer.log"
+      ],
+      "log_sha256": {
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed42_infer.log": "57e88c87b5835ddaaf3c72e77163ef16789a855d17d5d6ae2f3239f83fc573ee",
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed123_infer.log": "ceb92ec66612f06068fd877a5802d0176dc37b79d77b96bbe7352035a4cefd2a",
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed456_infer.log": "802576785959b2dc480169f80bd93b4151be867476e365b7a3c03906255f82d0",
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed789_infer.log": "cc485c5ad4dc93d0bbdbc9cb9934a5a9a7bd21b1fb657de9a54e574989868783",
+        "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed1024_infer.log": "94e350ffdd5f1f0ca0f9eb40aa9cd68e31e5c869345338ebcfd4256243aa08aa"
+      },
+      "models": 5,
+      "rows": 48,
+      "model_rates": [
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed42_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.67,
+          "estimated_forward_seconds": 0.8174386920980926
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed123_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.25,
+          "estimated_forward_seconds": 0.9230769230769231
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed456_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.62,
+          "estimated_forward_seconds": 0.8287292817679558
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed789_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.98,
+          "estimated_forward_seconds": 0.7537688442211056
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/rus_restaurant_gold_repeat_seed1024_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.6,
+          "estimated_forward_seconds": 0.8333333333333333
+        }
+      ],
+      "estimated_total_model_forward_seconds": 4.15634707449741,
+      "ensemble_output_rows_per_second": 11.548602448173607,
+      "aggregate_model_rows_per_second": 57.74301224086803,
+      "measurement_scope": "tqdm-derived CUDA model-forward loop only; excludes checkpoint loading, tokenizer construction, dataloader setup, voting, and output serialization"
+    },
+    {
+      "dataset": "tat_restaurant",
+      "system": "five_seed_gold_repeat_ensemble",
+      "encoder": "xlm-roberta-large",
+      "batch_size": 16,
+      "logs": [
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed42_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed123_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed456_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed789_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed1024_infer.log"
+      ],
+      "log_sha256": {
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed42_infer.log": "c57700e2b1bca003ec794341857816f893e1d4917e49cf8a762e2f6c3d304c93",
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed123_infer.log": "d9537d1c59d8eb61750c203e6e5ebff3e8efe201497207e27131b8e360be5588",
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed456_infer.log": "408af7d28e5cadcf7bc9e1d7d4fc5206716f69367f3c133552c72e9539cc8b07",
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed789_infer.log": "0b6c99446cc17d9fcb88fe321966a51d01b3d18f2bdb9e6d2fb61f7a9a24f73a",
+        "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed1024_infer.log": "63b77e7a8be4483522bd98a93cdd17febd4a17288ded20741ee4947b11e309ab"
+      },
+      "models": 5,
+      "rows": 48,
+      "model_rates": [
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed42_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.38,
+          "estimated_forward_seconds": 0.8875739644970414
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed123_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.55,
+          "estimated_forward_seconds": 0.8450704225352114
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed456_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.46,
+          "estimated_forward_seconds": 0.8670520231213873
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed789_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.43,
+          "estimated_forward_seconds": 0.8746355685131195
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/tat_restaurant_gold_repeat_seed1024_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.49,
+          "estimated_forward_seconds": 0.8595988538681948
+        }
+      ],
+      "estimated_total_model_forward_seconds": 4.333930832534954,
+      "ensemble_output_rows_per_second": 11.075395952252514,
+      "aggregate_model_rows_per_second": 55.37697976126257,
+      "measurement_scope": "tqdm-derived CUDA model-forward loop only; excludes checkpoint loading, tokenizer construction, dataloader setup, voting, and output serialization"
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "system": "five_seed_gold_repeat_ensemble",
+      "encoder": "microsoft/mdeberta-v3-base",
+      "batch_size": 16,
+      "logs": [
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed42_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed123_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed456_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed789_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed1024_infer.log"
+      ],
+      "log_sha256": {
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed42_infer.log": "3ec7c6830eb0d7d6825de9104f4b2d2ab00b5d3a9b9a1ba651f61ce5045fb4ef",
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed123_infer.log": "80f06572de0caddf43eb0e674db8112932fa4aee172da95b891077f4f0132a0e",
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed456_infer.log": "5799c83f6b2ef3d9b3a84ccfba1bf0d84810d1f6b60281223c858416a86f990c",
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed789_infer.log": "2d577d7564cfe131526086c28b7594326172bb3a00ba2c4f8e0011d706c4c6c0",
+        "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed1024_infer.log": "b18f2aa265c9c0b2b7afe66a997012e2098f75ce15452d911c843c12761c4b1a"
+      },
+      "models": 5,
+      "rows": 48,
+      "model_rates": [
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed42_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.18,
+          "estimated_forward_seconds": 0.9433962264150942
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed123_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.5,
+          "estimated_forward_seconds": 0.8571428571428571
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed456_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.36,
+          "estimated_forward_seconds": 0.8928571428571429
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed789_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.42,
+          "estimated_forward_seconds": 0.8771929824561404
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/ukr_restaurant_gold_repeat_seed1024_infer.log",
+          "batches": 3,
+          "final_tqdm_batches_per_second": 3.38,
+          "estimated_forward_seconds": 0.8875739644970414
+        }
+      ],
+      "estimated_total_model_forward_seconds": 4.458163173368276,
+      "ensemble_output_rows_per_second": 10.766766072345117,
+      "aggregate_model_rows_per_second": 53.83383036172559,
+      "measurement_scope": "tqdm-derived CUDA model-forward loop only; excludes checkpoint loading, tokenizer construction, dataloader setup, voting, and output serialization"
+    },
+    {
+      "dataset": "zho_restaurant",
+      "system": "five_seed_gold_repeat_ensemble",
+      "encoder": "hfl/chinese-roberta-wwm-ext-large",
+      "batch_size": 16,
+      "logs": [
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed42_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed123_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed456_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed789_infer.log",
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed1024_infer.log"
+      ],
+      "log_sha256": {
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed42_infer.log": "6fa057bba61105ba692fb8fb04460f44e2242448862743c8dfaadd11701fed05",
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed123_infer.log": "f4b2e79daabef50d812f69430fd42b8f4887e584a40e26dbfb4b662956da904e",
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed456_infer.log": "9f13af655ac85c8c1a9af951404bd6fa8b38dff18c263f576f3e65bd6da405b1",
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed789_infer.log": "d7c9ba7a72c8ab24e6adef735e94aab5ffb96309211c9299c2b0a44fa5b7c497",
+        "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed1024_infer.log": "b00d716dd956267c2f74d62180ac1480f1c09cf36b3bce4d48a7271cb86ed6a8"
+      },
+      "models": 5,
+      "rows": 300,
+      "model_rates": [
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed42_infer.log",
+          "batches": 19,
+          "final_tqdm_batches_per_second": 5.05,
+          "estimated_forward_seconds": 3.7623762376237626
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed123_infer.log",
+          "batches": 19,
+          "final_tqdm_batches_per_second": 5.49,
+          "estimated_forward_seconds": 3.4608378870673953
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed456_infer.log",
+          "batches": 19,
+          "final_tqdm_batches_per_second": 5.24,
+          "estimated_forward_seconds": 3.6259541984732824
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed789_infer.log",
+          "batches": 19,
+          "final_tqdm_batches_per_second": 6.0,
+          "estimated_forward_seconds": 3.1666666666666665
+        },
+        {
+          "log": "data/audits/tallip_kd/postlock_v1/logs/zho_restaurant_gold_repeat_seed1024_infer.log",
+          "batches": 19,
+          "final_tqdm_batches_per_second": 5.45,
+          "estimated_forward_seconds": 3.4862385321100917
+        }
+      ],
+      "estimated_total_model_forward_seconds": 17.5020735219412,
+      "ensemble_output_rows_per_second": 17.140826178333082,
+      "aggregate_model_rows_per_second": 85.70413089166541,
+      "measurement_scope": "tqdm-derived CUDA model-forward loop only; excludes checkpoint loading, tokenizer construction, dataloader setup, voting, and output serialization"
+    }
+  ],
   "deployment": {
     "teacher_calls_at_student_inference": 0,
     "student_seed_models_per_frozen_ensemble": 5,
@@ -225,6 +517,7 @@
     "Observed training-run wall hours are parsed from timestamped logs, include checkpoint I/O, and are hardware/workload specific.",
     "Teacher-fidelity wall time uses concurrent dataset jobs and is reported as summed per-dataset wall time, not elapsed campaign makespan.",
     "Delta per 1,000 silver rows is descriptive only and is not comparable as a causal efficiency estimate across datasets with different baselines and domains.",
-    "Post-lock v2 used local NVMe checkpoint staging before archival, so v1/v2 wall times should not be interpreted as a controlled storage-speed comparison."
+    "Post-lock v2 used local NVMe checkpoint staging before archival, so v1/v2 wall times should not be interpreted as a controlled storage-speed comparison.",
+    "Student inference rates are reconstructed from retained tqdm model-forward logs and exclude model loading and other end-to-end overhead."
   ]
 }

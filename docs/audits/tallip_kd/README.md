@@ -1,6 +1,6 @@
 # TALLIP KD evidence closure
 
-Status as of 2026-08-13: audit, 25 clean-inductive training jobs, frozen
+Status as of 2026-08-14: audit, 25 clean-inductive training jobs, frozen
 inference, the complete 8x2 teacher-fidelity evaluation, the one-shot
 official-test evaluation, and 50 post-lock dev-only control jobs are finished.
 
@@ -69,11 +69,20 @@ No paper LaTeX is modified by this workflow.
 - Direct analysis: all adopted silver inputs pass span/category/VA validity;
   category distribution, lexical coverage, and repaired/harmed patterns are
   non-monotonic across domains, supporting a multi-factor interpretation only.
-- Multiplicity: five separately defined families cover teacher fidelity,
-  adopted-KD dev, exposure, same-text self-training, and frozen official test.
+- Multiplicity: six separately defined families cover teacher fidelity,
+  adopted-KD dev, exposure, same-text self-training, self-training versus
+  exposure, and frozen official test.
+- Fixed-task macro bootstrap: equal-weight five-domain deltas are +0.0600 for
+  KD versus baseline, +0.0588 versus repeated gold, and +0.0621 versus
+  same-text self-training; all three 95% CIs exclude zero. This is an average
+  over the fixed adopted set, not proof of a per-domain universal gain.
+- Exploratory correlations/slices: five-domain Spearman CIs all span zero;
+  within-domain length tertiles and single/multi-quad slices are heterogeneous.
 - Cost: final fidelity coverage is 1,344 rows per teacher; Qwen timing metadata
   covers 1,264 rows. Historical token/billing data are unavailable and no
   monetary estimate is fabricated; student inference makes zero LLM calls.
+  Retained dev logs imply 10.77--26.46 ensemble output rows/s for the five-model
+  CUDA forward loops, excluding model loading, voting, and serialization.
 - Cleanup: 60 `checkpoint_latest.pt`/`checkpoint_epoch*.pt` files were deleted,
   freeing 365,233,267,664 bytes; all best checkpoints, predictions, and audits
   remain. v2 additionally removed 40 such names (282,327,138,180 logical bytes;

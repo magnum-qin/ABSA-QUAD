@@ -1,12 +1,13 @@
 {
   "schema_version": 1,
-  "as_of": "2026-08-13",
+  "as_of": "2026-08-14",
   "method": {
     "resampling": "paired example-level bootstrap",
     "iterations": 10000,
     "seed": 20260713,
     "p_value": "two-sided centered-bootstrap tail probability with +1 correction",
-    "families": "Holm FWER and Benjamini-Hochberg FDR applied separately per named family"
+    "families": "Holm FWER and Benjamini-Hochberg FDR applied separately per named family",
+    "macro_average": "fixed-task macro cF1; equal dataset weights with paired example resampling within dataset"
   },
   "scope_caveat": "Multiplicity diagnostics are post-hoc robustness analyses. They do not alter frozen systems or authorize official-test selection.",
   "families": {
@@ -478,6 +479,108 @@
         "bh_reject_0.05": false
       }
     ],
+    "self_training_vs_exposure_dev": [
+      {
+        "id": "eng_laptop:self_training_minus_gold_repeat",
+        "dataset": "eng_laptop",
+        "gold": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "prediction_a": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_self_training_ensemble.jsonl",
+        "prediction_b": "data/audits/tallip_kd/postlock_v1/predictions/eng_laptop_gold_repeat_ensemble.jsonl",
+        "score_a": 0.31694101599777924,
+        "score_b": 0.3154371828024786,
+        "delta_a_minus_b": 0.001503833195300619,
+        "ci95": [
+          -0.01744736486518712,
+          0.021513521422176326
+        ],
+        "bootstrap_p_two_sided": 0.8826117388261174,
+        "classification": "inconclusive",
+        "holm_adjusted_p": 0.8826117388261174,
+        "bh_adjusted_p": 0.8826117388261174,
+        "holm_reject_0.05": false,
+        "bh_reject_0.05": false
+      },
+      {
+        "id": "rus_restaurant:self_training_minus_gold_repeat",
+        "dataset": "rus_restaurant",
+        "gold": "data/subtask_3/rus/rus_restaurant_dev_task3.jsonl",
+        "prediction_a": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_self_training_ensemble.jsonl",
+        "prediction_b": "data/audits/tallip_kd/postlock_v1/predictions/rus_restaurant_gold_repeat_ensemble.jsonl",
+        "score_a": 0.49798199633193424,
+        "score_b": 0.5238204559292768,
+        "delta_a_minus_b": -0.0258384595973426,
+        "ci95": [
+          -0.07731743915684995,
+          0.02288320221006294
+        ],
+        "bootstrap_p_two_sided": 0.31316868313168683,
+        "classification": "inconclusive",
+        "holm_adjusted_p": 0.8618138186181381,
+        "bh_adjusted_p": 0.39146085391460855,
+        "holm_reject_0.05": false,
+        "bh_reject_0.05": false
+      },
+      {
+        "id": "tat_restaurant:self_training_minus_gold_repeat",
+        "dataset": "tat_restaurant",
+        "gold": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+        "prediction_a": "data/audits/tallip_kd/postlock_v2/predictions/tat_restaurant_self_training_ensemble.jsonl",
+        "prediction_b": "data/audits/tallip_kd/postlock_v1/predictions/tat_restaurant_gold_repeat_ensemble.jsonl",
+        "score_a": 0.4757790398695782,
+        "score_b": 0.5256269620426891,
+        "delta_a_minus_b": -0.0498479221731109,
+        "ci95": [
+          -0.10850074929740777,
+          0.014263671969329553
+        ],
+        "bootstrap_p_two_sided": 0.11088891110888911,
+        "classification": "inconclusive",
+        "holm_adjusted_p": 0.44355564443555645,
+        "bh_adjusted_p": 0.2772222777722228,
+        "holm_reject_0.05": false,
+        "bh_reject_0.05": false
+      },
+      {
+        "id": "ukr_restaurant:self_training_minus_gold_repeat",
+        "dataset": "ukr_restaurant",
+        "gold": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "prediction_a": "data/audits/tallip_kd/postlock_v2/predictions/ukr_restaurant_self_training_ensemble.jsonl",
+        "prediction_b": "data/audits/tallip_kd/postlock_v1/predictions/ukr_restaurant_gold_repeat_ensemble.jsonl",
+        "score_a": 0.493956793978226,
+        "score_b": 0.4641269485102077,
+        "delta_a_minus_b": 0.029829845468018312,
+        "ci95": [
+          -0.024511203245334918,
+          0.08669676628198618
+        ],
+        "bootstrap_p_two_sided": 0.2872712728727127,
+        "classification": "inconclusive",
+        "holm_adjusted_p": 0.8618138186181381,
+        "bh_adjusted_p": 0.39146085391460855,
+        "holm_reject_0.05": false,
+        "bh_reject_0.05": false
+      },
+      {
+        "id": "zho_restaurant:self_training_minus_gold_repeat",
+        "dataset": "zho_restaurant",
+        "gold": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "prediction_a": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_self_training_ensemble.jsonl",
+        "prediction_b": "data/audits/tallip_kd/postlock_v1/predictions/zho_restaurant_gold_repeat_ensemble.jsonl",
+        "score_a": 0.5754419944148853,
+        "score_b": 0.5478301098566778,
+        "delta_a_minus_b": 0.02761188455820751,
+        "ci95": [
+          0.0079349854322994,
+          0.04633971630939555
+        ],
+        "bootstrap_p_two_sided": 0.0051994800519948,
+        "classification": "supported",
+        "holm_adjusted_p": 0.025997400259974,
+        "bh_adjusted_p": 0.025997400259974,
+        "holm_reject_0.05": true,
+        "bh_reject_0.05": true
+      }
+    ],
     "frozen_official_test_posthoc": [
       {
         "id": "eng_laptop:official_frozen_eng_laptop_clean_kd_minus_eng_laptop_clean_baseline",
@@ -580,5 +683,103 @@
         "bh_reject_0.05": false
       }
     ]
+  },
+  "macro_average": {
+    "adopted_kd_vs_baseline_dev": {
+      "metric": "macro_average_official_task3_cF1",
+      "task_population": "fixed adopted datasets; equal weight per dataset",
+      "resampling": "paired examples independently within each dataset",
+      "datasets": [
+        "eng_laptop",
+        "rus_restaurant",
+        "tat_restaurant",
+        "ukr_restaurant",
+        "zho_restaurant"
+      ],
+      "n_datasets": 5,
+      "iterations": 10000,
+      "seed": 20260713,
+      "macro_score_a": 0.5341445456038394,
+      "macro_score_b": 0.4741451605917338,
+      "macro_delta_a_minus_b": 0.05999938501210561,
+      "ci95": [
+        0.029067048622687636,
+        0.09113812459550133
+      ],
+      "bootstrap_p_two_sided": 0.00029997000299970003,
+      "classification": "supported"
+    },
+    "exposure_control_dev": {
+      "metric": "macro_average_official_task3_cF1",
+      "task_population": "fixed adopted datasets; equal weight per dataset",
+      "resampling": "paired examples independently within each dataset",
+      "datasets": [
+        "eng_laptop",
+        "rus_restaurant",
+        "tat_restaurant",
+        "ukr_restaurant",
+        "zho_restaurant"
+      ],
+      "n_datasets": 5,
+      "iterations": 10000,
+      "seed": 20260713,
+      "macro_score_a": 0.5341445456038394,
+      "macro_score_b": 0.475368331828266,
+      "macro_delta_a_minus_b": 0.058776213775573405,
+      "ci95": [
+        0.03177156744320917,
+        0.08528233902129072
+      ],
+      "bootstrap_p_two_sided": 9.999000099990002e-05,
+      "classification": "supported"
+    },
+    "same_text_self_training_dev": {
+      "metric": "macro_average_official_task3_cF1",
+      "task_population": "fixed adopted datasets; equal weight per dataset",
+      "resampling": "paired examples independently within each dataset",
+      "datasets": [
+        "eng_laptop",
+        "rus_restaurant",
+        "tat_restaurant",
+        "ukr_restaurant",
+        "zho_restaurant"
+      ],
+      "n_datasets": 5,
+      "iterations": 10000,
+      "seed": 20260713,
+      "macro_score_a": 0.5341445456038394,
+      "macro_score_b": 0.4720201681184806,
+      "macro_delta_a_minus_b": 0.06212437748535882,
+      "ci95": [
+        0.035076193351868463,
+        0.08876722620856012
+      ],
+      "bootstrap_p_two_sided": 9.999000099990002e-05,
+      "classification": "supported"
+    },
+    "self_training_vs_exposure_dev": {
+      "metric": "macro_average_official_task3_cF1",
+      "task_population": "fixed adopted datasets; equal weight per dataset",
+      "resampling": "paired examples independently within each dataset",
+      "datasets": [
+        "eng_laptop",
+        "rus_restaurant",
+        "tat_restaurant",
+        "ukr_restaurant",
+        "zho_restaurant"
+      ],
+      "n_datasets": 5,
+      "iterations": 10000,
+      "seed": 20260713,
+      "macro_score_a": 0.4720201681184806,
+      "macro_score_b": 0.475368331828266,
+      "macro_delta_a_minus_b": -0.0033481637097854122,
+      "ci95": [
+        -0.02258831275538413,
+        0.016964988457559692
+      ],
+      "bootstrap_p_two_sided": 0.7450254974502549,
+      "classification": "inconclusive"
+    }
   }
 }

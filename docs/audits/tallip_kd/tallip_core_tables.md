@@ -1,6 +1,6 @@
 # TALLIP KD core evidence tables
 
-**Status: frozen on 2026-08-13.** Tables 1–5 use development-set evidence; Table 6 is a one-shot post-competition evaluation on released official test labels. Run `python scripts/kd/build_tallip_report.py --verify` before citation.
+**Status: frozen on 2026-08-14.** Tables 1–5 use development-set evidence; Table 6 is a one-shot post-competition evaluation on released official test labels. Run `python scripts/kd/build_tallip_report.py --verify` before citation.
 
 ## Table 1. Direct teacher fidelity on label-hidden gold dev
 
@@ -91,6 +91,14 @@ These are descriptive dev-only measurements, not proof of a universal causal mod
 | ukr_restaurant | 5534 | +4 / +9 | +0.0241 | 22 / 18 | +0.0472 |
 | zho_restaurant | 3882 | -30 / -56 | -0.0009 | 130 / 112 | +0.0069 |
 
+Exploratory five-domain correlations (10,000 dataset-level bootstrap resamples; descriptive only):
+
+| Descriptor vs KD dev gain | Spearman ρ | 95% CI |
+|---|---:|---:|
+| Teacher fidelity | -0.7000 | [-1.0000, +0.8750] |
+| Span-coverage gain | +0.7000 | [-0.8750, +1.0000] |
+| Category-alignment gain | +0.1000 | [-1.0000, +1.0000] |
+
 ### 5d. Multiplicity robustness
 
 Holm and BH corrections are applied separately within each pre-declared family. The official-test family is post-hoc and cannot alter frozen choices.
@@ -101,7 +109,17 @@ Holm and BH corrections are applied separately within each pre-declared family. 
 | adopted_kd_vs_baseline_dev | 5 | 2 | 1 | 2 |
 | exposure_control_dev | 5 | 3 | 2 | 2 |
 | same_text_self_training_dev | 5 | 2 | 2 | 2 |
+| self_training_vs_exposure_dev | 5 | 1 | 1 | 1 |
 | frozen_official_test_posthoc | 5 | 4 | 3 | 3 |
+
+Fixed-task macro averages give each adopted dataset equal weight and resample paired examples within dataset.
+
+| Macro family | ΔcF1 | 95% CI | Decision |
+|---|---:|---:|---|
+| adopted_kd_vs_baseline_dev | +0.0600 | [+0.0291, +0.0911] | supported |
+| exposure_control_dev | +0.0588 | [+0.0318, +0.0853] | supported |
+| same_text_self_training_dev | +0.0621 | [+0.0351, +0.0888] | supported |
+| self_training_vs_exposure_dev | -0.0033 | [-0.0226, +0.0170] | inconclusive |
 
 ### 5e. Resource and deployment audit
 
@@ -113,6 +131,16 @@ Holm and BH corrections are applied separately within each pre-declared family. 
 | Qwen fidelity coverage / timed rows | 1344 / 1264; 0 errors |
 | Historical provider tokens / monetary cost | unavailable; not estimated |
 | LLM calls at student inference | 0 |
+
+Five-seed ensemble model-forward throughput reconstructed from retained dev inference logs; loading and serialization are excluded.
+
+| Dataset | Encoder | Ensemble output rows/s |
+|---|---|---:|
+| eng_laptop | microsoft/deberta-v3-base | 26.46 |
+| rus_restaurant | xlm-roberta-large | 11.55 |
+| tat_restaurant | xlm-roberta-large | 11.08 |
+| ukr_restaurant | microsoft/mdeberta-v3-base | 10.77 |
+| zho_restaurant | hfl/chinese-roberta-wwm-ext-large | 17.14 |
 
 ## Table 6. One-shot official Task-3 test evaluation
 

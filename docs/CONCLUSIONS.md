@@ -1,6 +1,6 @@
 # TALLIP KD 最终结论口径
 
-更新日期：2026-08-13。
+更新日期：2026-08-14。
 
 本文档是 KD 结论的单一权威入口。历史实验日志可以保留当时的假设和
 dev 结果，但论文、README 和汇报不得用 dev 分数与官方 test leaderboard
@@ -75,6 +75,20 @@ aspect/opinion 类型覆盖、row-level repaired/harmed 和 error slices。eng �
 span 覆盖增量与 KD dev 增益均最大；zho 的直接 teacher fidelity 最高，却是
 KD dev 增益最小且 span 覆盖下降。这些非单调模式支持“质量、覆盖、互补性
 共同作用”的解释，但不能证明单一指标或普适因果机制。
+
+固定五个 adopted 数据集并给予每个数据集相同权重的 macro bootstrap 进一步
+给出整体效应：KD−baseline 为 +0.0600 [0.0291, 0.0911]，KD−repeated-gold
+为 +0.0588 [0.0318, 0.0853]，KD−same-text self-training 为 +0.0621
+[0.0351, 0.0888]，三者的 macro CI 均高于 0；self-training−repeated-gold
+为 −0.0033 [−0.0226, 0.0170]，证据不确定。这支持“在预注册五域集合上的
+平均 KD 收益”，但不表示五个域分别都显著，也不能外推到未观测语言或任务。
+
+五域探索性 Spearman 分析显示，teacher fidelity 与 KD dev 增益 ρ=−0.70，
+95% bootstrap CI [−1.00, 0.875]；span 覆盖增量与 KD 增益 ρ=+0.70，CI
+[−0.875, 1.00]；category alignment 为 ρ=+0.10，CI [−1.00, 1.00]。
+由于仅 n=5 且全部 CI 很宽，这些结果不能建立 moderator，只进一步说明不能
+用 direct fidelity 或任何单一覆盖指标预测下游收益。句长、单/多四元组切片
+同样呈跨域异质性，不支持统一的“长句更受益”等规律。
 
 ## 允许保留的六条结论
 

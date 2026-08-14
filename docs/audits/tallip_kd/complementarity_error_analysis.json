@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "as_of": "2026-08-13",
+  "as_of": "2026-08-14",
   "scope": "five adopted KD datasets; dev-only model comparisons",
   "interpretation_limit": "Coverage and error transitions are direct descriptive measurements; with five domains they do not establish a universal causal moderator.",
   "cross_domain_summary": {
@@ -16,6 +16,65 @@
       "eng_laptop",
       "ukr_restaurant"
     ],
+    "exploratory_spearman": {
+      "teacher_fidelity_vs_kd_gain": {
+        "datasets": [
+          "eng_laptop",
+          "rus_restaurant",
+          "tat_restaurant",
+          "ukr_restaurant",
+          "zho_restaurant"
+        ],
+        "n_datasets": 5,
+        "rho": -0.7,
+        "ci95": [
+          -1.0,
+          0.875
+        ],
+        "valid_resamples": 10000,
+        "attempted_resamples": 10016,
+        "seed": 20260713,
+        "interpretation": "exploratory; five domains are insufficient for a universal moderator claim"
+      },
+      "span_coverage_gain_vs_kd_gain": {
+        "datasets": [
+          "eng_laptop",
+          "rus_restaurant",
+          "tat_restaurant",
+          "ukr_restaurant",
+          "zho_restaurant"
+        ],
+        "n_datasets": 5,
+        "rho": 0.7,
+        "ci95": [
+          -0.875,
+          1.0
+        ],
+        "valid_resamples": 10000,
+        "attempted_resamples": 10016,
+        "seed": 20260713,
+        "interpretation": "exploratory; five domains are insufficient for a universal moderator claim"
+      },
+      "category_alignment_gain_vs_kd_gain": {
+        "datasets": [
+          "eng_laptop",
+          "rus_restaurant",
+          "tat_restaurant",
+          "ukr_restaurant",
+          "zho_restaurant"
+        ],
+        "n_datasets": 5,
+        "rho": 0.1,
+        "ci95": [
+          -1.0,
+          1.0
+        ],
+        "valid_resamples": 10000,
+        "attempted_resamples": 10016,
+        "seed": 20260713,
+        "interpretation": "exploratory; five domains are insufficient for a universal moderator claim"
+      }
+    },
     "allowed_interpretation": "The measured fidelity, distribution, and lexical-coverage descriptors are non-monotonic across five domains. They support a multi-factor quality/coverage/complementarity interpretation, not a single causal score or universal ordering."
   },
   "datasets": {
@@ -125,11 +184,44 @@
           "baseline_cF1": 0.0623786518902099,
           "delta": 0.1574752498097145
         },
+        "single_quadruplet": {
+          "rows": 107,
+          "llm_kd_cF1": 0.49023147322988087,
+          "baseline_cF1": 0.4086748922156172,
+          "delta": 0.08155658101426366
+        },
         "multi_quadruplet": {
           "rows": 93,
           "llm_kd_cF1": 0.3649568787495166,
           "baseline_cF1": 0.2438559886609024,
           "delta": 0.12110089008861419
+        },
+        "length_definition": "within-dataset rank tertiles of NFKC/casefold/whitespace-normalized character count",
+        "length_tertiles": {
+          "short": {
+            "min_normalized_chars": 16,
+            "max_normalized_chars": 39,
+            "rows": 67,
+            "llm_kd_cF1": 0.5831898667892856,
+            "baseline_cF1": 0.5261035407966669,
+            "delta": 0.05708632599261876
+          },
+          "medium": {
+            "min_normalized_chars": 40,
+            "max_normalized_chars": 69,
+            "rows": 67,
+            "llm_kd_cF1": 0.3610695955637594,
+            "baseline_cF1": 0.27467648956970786,
+            "delta": 0.08639310599405153
+          },
+          "long": {
+            "min_normalized_chars": 69,
+            "max_normalized_chars": 222,
+            "rows": 66,
+            "llm_kd_cF1": 0.3313784722799987,
+            "baseline_cF1": 0.1843424752373411,
+            "delta": 0.14703599704265763
+          }
         }
       }
     },
@@ -239,11 +331,44 @@
           "baseline_cF1": null,
           "delta": null
         },
+        "single_quadruplet": {
+          "rows": 24,
+          "llm_kd_cF1": 0.543794967765334,
+          "baseline_cF1": 0.45217235107386544,
+          "delta": 0.09162261669146854
+        },
         "multi_quadruplet": {
           "rows": 24,
           "llm_kd_cF1": 0.6438299320524857,
           "baseline_cF1": 0.5538514024729878,
           "delta": 0.08997852957949792
+        },
+        "length_definition": "within-dataset rank tertiles of NFKC/casefold/whitespace-normalized character count",
+        "length_tertiles": {
+          "short": {
+            "min_normalized_chars": 15,
+            "max_normalized_chars": 66,
+            "rows": 16,
+            "llm_kd_cF1": 0.5935137131364978,
+            "baseline_cF1": 0.534967695574782,
+            "delta": 0.058546017561715846
+          },
+          "medium": {
+            "min_normalized_chars": 71,
+            "max_normalized_chars": 117,
+            "rows": 16,
+            "llm_kd_cF1": 0.5779411646084055,
+            "baseline_cF1": 0.5139759280968361,
+            "delta": 0.06396523651156938
+          },
+          "long": {
+            "min_normalized_chars": 118,
+            "max_normalized_chars": 403,
+            "rows": 16,
+            "llm_kd_cF1": 0.6585205544152016,
+            "baseline_cF1": 0.5307024884275293,
+            "delta": 0.1278180659876723
+          }
         }
       }
     },
@@ -353,11 +478,44 @@
           "baseline_cF1": null,
           "delta": null
         },
+        "single_quadruplet": {
+          "rows": 24,
+          "llm_kd_cF1": 0.4148968431076177,
+          "baseline_cF1": 0.3854058387121515,
+          "delta": 0.029491004395466203
+        },
         "multi_quadruplet": {
           "rows": 24,
           "llm_kd_cF1": 0.5769974780318045,
           "baseline_cF1": 0.5251133684980924,
           "delta": 0.05188410953371203
+        },
+        "length_definition": "within-dataset rank tertiles of NFKC/casefold/whitespace-normalized character count",
+        "length_tertiles": {
+          "short": {
+            "min_normalized_chars": 13,
+            "max_normalized_chars": 60,
+            "rows": 16,
+            "llm_kd_cF1": 0.6568787226839641,
+            "baseline_cF1": 0.5954744823289814,
+            "delta": 0.06140424035498271
+          },
+          "medium": {
+            "min_normalized_chars": 68,
+            "max_normalized_chars": 127,
+            "rows": 16,
+            "llm_kd_cF1": 0.5963820005825817,
+            "baseline_cF1": 0.5235077454611161,
+            "delta": 0.07287425512146561
+          },
+          "long": {
+            "min_normalized_chars": 128,
+            "max_normalized_chars": 440,
+            "rows": 16,
+            "llm_kd_cF1": 0.3570241960101825,
+            "baseline_cF1": 0.35524695288717106,
+            "delta": 0.0017772431230114183
+          }
         }
       }
     },
@@ -467,11 +625,44 @@
           "baseline_cF1": null,
           "delta": null
         },
+        "single_quadruplet": {
+          "rows": 24,
+          "llm_kd_cF1": 0.5628674575776407,
+          "baseline_cF1": 0.6428755576207844,
+          "delta": -0.08000810004314374
+        },
         "multi_quadruplet": {
           "rows": 24,
           "llm_kd_cF1": 0.5271332190388446,
           "baseline_cF1": 0.4315117817333449,
           "delta": 0.09562143730549966
+        },
+        "length_definition": "within-dataset rank tertiles of NFKC/casefold/whitespace-normalized character count",
+        "length_tertiles": {
+          "short": {
+            "min_normalized_chars": 15,
+            "max_normalized_chars": 65,
+            "rows": 16,
+            "llm_kd_cF1": 0.5541334295229688,
+            "baseline_cF1": 0.5088531224429274,
+            "delta": 0.04528030708004149
+          },
+          "medium": {
+            "min_normalized_chars": 65,
+            "max_normalized_chars": 114,
+            "rows": 16,
+            "llm_kd_cF1": 0.5656963203276979,
+            "baseline_cF1": 0.6245610054103459,
+            "delta": -0.05886468508264797
+          },
+          "long": {
+            "min_normalized_chars": 115,
+            "max_normalized_chars": 428,
+            "rows": 16,
+            "llm_kd_cF1": 0.5032724494173036,
+            "baseline_cF1": 0.34303017027787236,
+            "delta": 0.1602422791394313
+          }
         }
       }
     },
@@ -581,11 +772,44 @@
           "baseline_cF1": 0.0,
           "delta": 0.0
         },
+        "single_quadruplet": {
+          "rows": 98,
+          "llm_kd_cF1": 0.4451481946875582,
+          "baseline_cF1": 0.4665330278366011,
+          "delta": -0.021384833149042937
+        },
         "multi_quadruplet": {
           "rows": 202,
           "llm_kd_cF1": 0.5950521329348708,
           "baseline_cF1": 0.5818399152407293,
           "delta": 0.013212217694141493
+        },
+        "length_definition": "within-dataset rank tertiles of NFKC/casefold/whitespace-normalized character count",
+        "length_tertiles": {
+          "short": {
+            "min_normalized_chars": 10,
+            "max_normalized_chars": 26,
+            "rows": 100,
+            "llm_kd_cF1": 0.6927588210738244,
+            "baseline_cF1": 0.6920477840256638,
+            "delta": 0.0007110370481605566
+          },
+          "medium": {
+            "min_normalized_chars": 26,
+            "max_normalized_chars": 45,
+            "rows": 100,
+            "llm_kd_cF1": 0.5764957601554344,
+            "baseline_cF1": 0.5311513510392081,
+            "delta": 0.04534440911622628
+          },
+          "long": {
+            "min_normalized_chars": 45,
+            "max_normalized_chars": 100,
+            "rows": 100,
+            "llm_kd_cF1": 0.5032634495064744,
+            "baseline_cF1": 0.5238493326453126,
+            "delta": -0.020585883138838246
+          }
         }
       }
     }

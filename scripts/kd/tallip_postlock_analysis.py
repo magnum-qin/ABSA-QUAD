@@ -104,6 +104,109 @@ def ratio(numerator: int, denominator: int) -> float | None:
     return numerator / denominator if denominator else None
 
 
+def percentile(values: list[float], q: float) -> float:
+    """Linearly interpolated percentile over a non-empty sorted copy."""
+    if not values:
+        raise ValueError("percentile requires at least one value")
+    ordered = sorted(values)
+    position = (len(ordered) - 1) * q
+    low, high = math.floor(position), math.ceil(position)
+    if low == high:
+        return ordered[low]
+    return ordered[low] * (high - position) + ordered[high] * (position - low)
+
+
+def average_ranks(values: list[float]) -> list[float]:
+    """Return one-based average ranks, including deterministic tie handling."""
+    order = sorted(range(len(values)), key=lambda index: (values[index], index))
+    ranks = [0.0] * len(values)
+    start = 0
+    while start < len(order):
+        end = start + 1
+        while end < len(order) and values[order[end]] == values[order[start]]:
+            end += 1
+        rank = ((start + 1) + end) / 2
+        for index in order[start:end]:
+            ranks[index] = rank
+        start = end
+    return ranks
+
+
+def spearman(values_x: list[float], values_y: list[float]) -> float | None:
+    if len(values_x) != len(values_y) or len(values_x) < 2:
+        raise ValueError("Spearman inputs must have the same length >= 2")
+    ranks_x, ranks_y = average_ranks(values_x), average_ranks(values_y)
+    mean_x, mean_y = statistics.mean(ranks_x), statistics.mean(ranks_y)
+    centered_x = [value - mean_x for value in ranks_x]
+    centered_y = [value - mean_y for value in ranks_y]
+    scale = math.sqrt(
+        sum(value * value for value in centered_x)
+        * sum(value * value for value in centered_y)
+    )
+    if not scale:
+        return None
+    return sum(x * y for x, y in zip(centered_x, centered_y)) / scale
+
+
+def spearman_bootstrap(
+    labels: list[str], values_x: list[float], values_y: list[float]
+) -> dict:
+    """Exploratory dataset-level Spearman correlation with percentile CI.
+
+    With only five adopted domains, this is intentionally descriptive. Resamples
+    with a constant rank vector are undefined and are redrawn; the attempt count
+    is retained so the exclusion is auditable.
+    """
+    observed = spearman(values_x, values_y)
+    if observed is None:
+        raise ValueError("observed Spearman correlation is undefined")
+    rng = random.Random(SEED)
+    estimates = []
+    attempts = 0
+    while len(estimates) < ITERATIONS:
+        attempts += 1
+        indices = [rng.randrange(len(labels)) for _ in labels]
+        estimate = spearman(
+            [values_x[index] for index in indices],
+            [values_y[index] for index in indices],
+        )
+        if estimate is not None:
+            estimates.append(estimate)
+        if attempts > ITERATIONS * 20:
+            raise RuntimeError("too many undefined Spearman bootstrap resamples")
+    return {
+        "datasets": labels,
+        "n_datasets": len(labels),
+        "rho": observed,
+        "ci95": [percentile(estimates, 0.025), percentile(estimates, 0.975)],
+        "valid_resamples": len(estimates),
+        "attempted_resamples": attempts,
+        "seed": SEED,
+        "interpretation": "exploratory; five domains are insufficient for a universal moderator claim",
+    }
+
+
+def ranked_length_tertiles(rows: list[dict]) -> dict[str, dict]:
+    """Split each dev set into near-equal within-dataset normalized-char tertiles."""
+    lengths = [len(normalize_span(row.get("Text", ""))) for row in rows]
+    order = sorted(range(len(rows)), key=lambda index: (lengths[index], index))
+    cut1 = (len(order) + 2) // 3
+    cut2 = (2 * len(order) + 2) // 3
+    groups = {
+        "short": order[:cut1],
+        "medium": order[cut1:cut2],
+        "long": order[cut2:],
+    }
+    return {
+        name: {
+            "indices": indices,
+            "min_normalized_chars": min((lengths[index] for index in indices), default=None),
+            "max_normalized_chars": max((lengths[index] for index in indices), default=None),
+        }
+        for name, indices in groups.items()
+    }
+
+
 def js_divergence(left: Counter, right: Counter) -> float | None:
     keys = set(left) | set(right)
     left_total, right_total = sum(left.values()), sum(right.values())
@@ -285,6 +388,11 @@ def build_complementarity() -> dict:
             index for index, row in enumerate(dev)
             if len(row.get("Quadruplet") or []) >= 2
         ]
+        single = [
+            index for index, row in enumerate(dev)
+            if len(row.get("Quadruplet") or []) == 1
+        ]
+        length_tertiles = ranked_length_tertiles(dev)
         teacher = TEACHERS[dataset]
         teacher_cf1 = fidelity["datasets"][dataset]["teachers"][teacher]["cF1"]
         datasets[dataset] = {
@@ -362,7 +470,19 @@ def build_complementarity() -> dict:
                 "all": slice_metrics(dev, llm_pred, baseline_pred, list(range(len(dev)))),
                 "implicit_aspect_or_opinion": slice_metrics(dev, llm_pred, baseline_pred, implicit),
                 "rare_category": slice_metrics(dev, llm_pred, baseline_pred, rare),
+                "single_quadruplet": slice_metrics(dev, llm_pred, baseline_pred, single),
                 "multi_quadruplet": slice_metrics(dev, llm_pred, baseline_pred, multi),
+                "length_definition": (
+                    "within-dataset rank tertiles of NFKC/casefold/whitespace-normalized character count"
+                ),
+                "length_tertiles": {
+                    name: {
+                        "min_normalized_chars": group["min_normalized_chars"],
+                        "max_normalized_chars": group["max_normalized_chars"],
+                        **slice_metrics(dev, llm_pred, baseline_pred, group["indices"]),
+                    }
+                    for name, group in length_tertiles.items()
+                },
             },
         }
     span_coverage_delta = {
@@ -389,6 +509,24 @@ def build_complementarity() -> dict:
         dataset: item["teacher_fidelity_cF1"]
         for dataset, item in datasets.items()
     }
+    labels = list(ADOPTED)
+    correlations = {
+        "teacher_fidelity_vs_kd_gain": spearman_bootstrap(
+            labels,
+            [fidelity[dataset] for dataset in labels],
+            [dev_gain[dataset] for dataset in labels],
+        ),
+        "span_coverage_gain_vs_kd_gain": spearman_bootstrap(
+            labels,
+            [span_coverage_delta[dataset] for dataset in labels],
+            [dev_gain[dataset] for dataset in labels],
+        ),
+        "category_alignment_gain_vs_kd_gain": spearman_bootstrap(
+            labels,
+            [category_alignment_gain[dataset] for dataset in labels],
+            [dev_gain[dataset] for dataset in labels],
+        ),
+    }
     cross_domain_summary = {
         "largest_kd_dev_gain": max(dev_gain, key=dev_gain.get),
         "smallest_kd_dev_gain": min(dev_gain, key=dev_gain.get),
@@ -409,6 +547,7 @@ def build_complementarity() -> dict:
                 > item["lexical_complementarity"]["dev_opinion_types_covered_by_base"]
             )
         ],
+        "exploratory_spearman": correlations,
         "allowed_interpretation": (
             "The measured fidelity, distribution, and lexical-coverage descriptors "
             "are non-monotonic across five domains. They support a multi-factor "
@@ -418,7 +557,7 @@ def build_complementarity() -> dict:
     }
     return {
         "schema_version": 1,
-        "as_of": "2026-08-13",
+        "as_of": "2026-08-14",
         "scope": "five adopted KD datasets; dev-only model comparisons",
         "interpretation_limit": (
             "Coverage and error transitions are direct descriptive measurements; "
@@ -517,6 +656,56 @@ def comparison_item(
     }
 
 
+def fixed_task_macro_bootstrap(items: list[dict]) -> dict:
+    """Macro-average cF1 contrast over fixed tasks, resampling rows within task."""
+    prepared = []
+    for item in items:
+        gold = read_jsonl(item["gold"])
+        counts_a = evaluate_records(gold, read_jsonl(item["prediction_a"]))["_row_counts"]
+        counts_b = evaluate_records(gold, read_jsonl(item["prediction_b"]))["_row_counts"]
+        prepared.append((item["dataset"], counts_a, counts_b))
+    score_a = statistics.mean(
+        metrics_from_counts(sum_counts(counts_a))["cF1"]
+        for _, counts_a, _ in prepared
+    )
+    score_b = statistics.mean(
+        metrics_from_counts(sum_counts(counts_b))["cF1"]
+        for _, _, counts_b in prepared
+    )
+    observed = score_a - score_b
+    rng = random.Random(SEED)
+    deltas = []
+    for _ in range(ITERATIONS):
+        task_deltas = []
+        for _, counts_a, counts_b in prepared:
+            indices = [rng.randrange(len(counts_a)) for _ in counts_a]
+            sampled_a = metrics_from_counts(
+                sum_counts(counts_a[index] for index in indices)
+            )["cF1"]
+            sampled_b = metrics_from_counts(
+                sum_counts(counts_b[index] for index in indices)
+            )["cF1"]
+            task_deltas.append(sampled_a - sampled_b)
+        deltas.append(statistics.mean(task_deltas))
+    low, high = percentile(deltas, 0.025), percentile(deltas, 0.975)
+    null_extreme = sum(abs(delta - observed) >= abs(observed) for delta in deltas)
+    return {
+        "metric": "macro_average_official_task3_cF1",
+        "task_population": "fixed adopted datasets; equal weight per dataset",
+        "resampling": "paired examples independently within each dataset",
+        "datasets": [dataset for dataset, _, _ in prepared],
+        "n_datasets": len(prepared),
+        "iterations": ITERATIONS,
+        "seed": SEED,
+        "macro_score_a": score_a,
+        "macro_score_b": score_b,
+        "macro_delta_a_minus_b": observed,
+        "ci95": [low, high],
+        "bootstrap_p_two_sided": (null_extreme + 1) / (ITERATIONS + 1),
+        "classification": "supported" if low > 0 else "harmful" if high < 0 else "inconclusive",
+    }
+
+
 def build_statistics(complete: dict) -> dict:
     tallip = load_yaml("scripts/kd/tallip.yaml")
     inductive = load_json("docs/audits/tallip_kd/inductive_metrics.json")
@@ -553,7 +742,7 @@ def build_statistics(complete: dict) -> dict:
         )
     families["adopted_kd_vs_baseline_dev"] = dev_kd
 
-    exposure, self_training = [], []
+    exposure, self_training, self_vs_repeat = [], [], []
     for dataset in ADOPTED:
         spec = complete["datasets"][dataset]
         exposure.append(
@@ -574,8 +763,18 @@ def build_statistics(complete: dict) -> dict:
                 spec["systems"]["self_training"]["prediction"],
             )
         )
+        self_vs_repeat.append(
+            comparison_item(
+                f"{dataset}:self_training_minus_gold_repeat",
+                dataset,
+                spec["dev"],
+                spec["systems"]["self_training"]["prediction"],
+                spec["systems"]["gold_repeat"]["prediction"],
+            )
+        )
     families["exposure_control_dev"] = exposure
     families["same_text_self_training_dev"] = self_training
+    families["self_training_vs_exposure_dev"] = self_vs_repeat
 
     frozen_test = []
     for comparison in official["comparisons"]:
@@ -600,9 +799,18 @@ def build_statistics(complete: dict) -> dict:
 
     for items in families.values():
         add_adjustments(items)
+    macro_families = {
+        name: fixed_task_macro_bootstrap(families[name])
+        for name in (
+            "adopted_kd_vs_baseline_dev",
+            "exposure_control_dev",
+            "same_text_self_training_dev",
+            "self_training_vs_exposure_dev",
+        )
+    }
     return {
         "schema_version": 1,
-        "as_of": "2026-08-13",
+        "as_of": "2026-08-14",
         "method": {
             "resampling": "paired example-level bootstrap",
             "iterations": ITERATIONS,
@@ -611,17 +819,25 @@ def build_statistics(complete: dict) -> dict:
                 "two-sided centered-bootstrap tail probability with +1 correction"
             ),
             "families": "Holm FWER and Benjamini-Hochberg FDR applied separately per named family",
+            "macro_average": (
+                "fixed-task macro cF1; equal dataset weights with paired example resampling within dataset"
+            ),
         },
         "scope_caveat": (
             "Multiplicity diagnostics are post-hoc robustness analyses. They do not "
             "alter frozen systems or authorize official-test selection."
         ),
         "families": families,
+        "macro_average": macro_families,
     }
 
 
 LOG_TIMESTAMP = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) - INFO -")
 PARAMETERS = re.compile(r"Total parameters: ([\d,]+)")
+TQDM_FINAL = re.compile(
+    r"Generating predictions:\s+100%\|[^|]*\|\s*(\d+)/(\d+)\s*"
+    r"\[[^\]]*,\s*([0-9]+(?:\.[0-9]+)?)it/s\]"
+)
 
 
 def observed_training_seconds(path: Path) -> tuple[float, int | None]:
@@ -648,6 +864,56 @@ def observed_training_seconds(path: Path) -> tuple[float, int | None]:
     if started is not None and latest is not None:
         total += max(0.0, (latest - started).total_seconds())
     return total, parameters
+
+
+def observed_ensemble_forward(paths: list[Path], rows: int) -> dict:
+    """Parse final tqdm rates from five retained single-seed inference logs."""
+    model_rates = []
+    for raw_path in paths:
+        path = raw_path if raw_path.is_absolute() else ROOT / raw_path
+        if not path.exists():
+            raise FileNotFoundError(path)
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        segments = text.split("--- Model ")[1:] or [text]
+        for segment in segments:
+            matches = []
+            for line in re.split(r"[\r\n]+", segment):
+                match = TQDM_FINAL.search(line)
+                if match and match.group(1) == match.group(2):
+                    matches.append(match)
+            if not matches:
+                continue
+            match = matches[-1]
+            batches = int(match.group(2))
+            rate = float(match.group(3))
+            model_rates.append(
+                {
+                    "log": str(path.relative_to(ROOT)),
+                    "batches": batches,
+                    "final_tqdm_batches_per_second": rate,
+                    "estimated_forward_seconds": batches / rate,
+                }
+            )
+    if len(model_rates) != 5:
+        raise ValueError(f"expected five model progress records, found {len(model_rates)}")
+    # ``sum`` changed its floating-point summation strategy in Python 3.12.
+    # Use a correctly rounded aggregate so the frozen audit artifact is byte-
+    # reproducible under both the training environment (3.10) and newer Python.
+    forward_seconds = math.fsum(
+        item["estimated_forward_seconds"] for item in model_rates
+    )
+    return {
+        "models": len(model_rates),
+        "rows": rows,
+        "model_rates": model_rates,
+        "estimated_total_model_forward_seconds": forward_seconds,
+        "ensemble_output_rows_per_second": rows / forward_seconds,
+        "aggregate_model_rows_per_second": rows * len(model_rates) / forward_seconds,
+        "measurement_scope": (
+            "tqdm-derived CUDA model-forward loop only; excludes checkpoint loading, "
+            "tokenizer construction, dataloader setup, voting, and output serialization"
+        ),
+    }
 
 
 def build_cost_efficiency(complementarity: dict) -> dict:
@@ -691,6 +957,30 @@ def build_cost_efficiency(complementarity: dict) -> dict:
                         "log": str(log.relative_to(ROOT)),
                     }
                 )
+
+    inference = []
+    inference_log_root = ROOT / v1["protocol"]["output_root"] / "logs"
+    for dataset, spec in v1["gold_repeat"].items():
+        dev_rows = len(read_jsonl(spec["dev"]))
+        logs = [
+            inference_log_root / f"{dataset}_gold_repeat_seed{seed}_infer.log"
+            for seed in v1["protocol"]["seeds"]
+        ]
+        config = load_yaml(spec["config"])
+        inference.append(
+            {
+                "dataset": dataset,
+                "system": "five_seed_gold_repeat_ensemble",
+                "encoder": config["model"]["encoder_name"],
+                "batch_size": 16,
+                "logs": [str(log.relative_to(ROOT)) for log in logs],
+                "log_sha256": {
+                    str(log.relative_to(ROOT)): sha256(log.relative_to(ROOT))
+                    for log in logs
+                },
+                **observed_ensemble_forward(logs, dev_rows),
+            }
+        )
 
     provider_totals = {}
     for provider in ("deepseek", "qwen"):
@@ -743,7 +1033,7 @@ def build_cost_efficiency(complementarity: dict) -> dict:
     }
     return {
         "schema_version": 1,
-        "as_of": "2026-08-13",
+        "as_of": "2026-08-14",
         "scope": (
             "Measured provider throughput for the 8x2 fidelity campaign, adopted "
             "silver row counts, logged post-lock control training wall time, and "
@@ -754,6 +1044,7 @@ def build_cost_efficiency(complementarity: dict) -> dict:
         "teacher_fidelity": provider_totals,
         "adopted_silver_inventory": adopted_silver,
         "postlock_training": controls,
+        "student_inference": inference,
         "deployment": {
             "teacher_calls_at_student_inference": 0,
             "student_seed_models_per_frozen_ensemble": 5,
@@ -765,6 +1056,7 @@ def build_cost_efficiency(complementarity: dict) -> dict:
             "Teacher-fidelity wall time uses concurrent dataset jobs and is reported as summed per-dataset wall time, not elapsed campaign makespan.",
             "Delta per 1,000 silver rows is descriptive only and is not comparable as a causal efficiency estimate across datasets with different baselines and domains.",
             "Post-lock v2 used local NVMe checkpoint staging before archival, so v1/v2 wall times should not be interpreted as a controlled storage-speed comparison.",
+            "Student inference rates are reconstructed from retained tqdm model-forward logs and exclude model loading and other end-to-end overhead.",
         ],
     }
 
@@ -903,9 +1195,28 @@ def markdown_outputs(
         "",
         summary["allowed_interpretation"],
         "",
+        "## Exploratory cross-domain Spearman correlations", "",
+        "Five adopted domains only; percentile CIs are descriptive and do not establish a moderator.", "",
+        "| Descriptor vs KD dev gain | Spearman ρ | 95% bootstrap CI | Valid resamples |",
+        "|---|---:|---:|---:|",
+    ])
+    correlation_labels = {
+        "teacher_fidelity_vs_kd_gain": "Teacher fidelity",
+        "span_coverage_gain_vs_kd_gain": "Span-coverage gain",
+        "category_alignment_gain_vs_kd_gain": "Category-alignment gain",
+    }
+    for name, label in correlation_labels.items():
+        correlation = summary["exploratory_spearman"][name]
+        comp.append(
+            f"| {label} | {correlation['rho']:+.4f} | "
+            f"[{correlation['ci95'][0]:+.4f}, {correlation['ci95'][1]:+.4f}] | "
+            f"{correlation['valid_resamples']} |"
+        )
+    comp.extend([
+        "",
         "## Dev error slices", "",
-        "| Dataset | All rows / Δ | Multi-quad rows / Δ | Rare-category rows / Δ | Implicit rows / Δ |",
-        "|---|---:|---:|---:|---:|",
+        "| Dataset | All | Single-quad | Multi-quad | Rare category | Implicit | Short / Medium / Long length Δ |",
+        "|---|---:|---:|---:|---:|---:|---:|",
     ])
     def slice_cell(value: dict) -> str:
         delta = "—" if value["delta"] is None else f"{value['delta']:+.4f}"
@@ -913,17 +1224,33 @@ def markdown_outputs(
 
     for dataset, item in complementarity["datasets"].items():
         slices = item["dev_slices"]
+        lengths = slices["length_tertiles"]
+        length_deltas = " / ".join(
+            f"{lengths[name]['delta']:+.4f}" for name in ("short", "medium", "long")
+        )
         comp.append(
             f"| {dataset} | {slice_cell(slices['all'])} | "
+            f"{slice_cell(slices['single_quadruplet'])} | "
             f"{slice_cell(slices['multi_quadruplet'])} | "
             f"{slice_cell(slices['rare_category'])} | "
-            f"{slice_cell(slices['implicit_aspect_or_opinion'])} |"
+            f"{slice_cell(slices['implicit_aspect_or_opinion'])} | {length_deltas} |"
         )
 
     stats = [
         "# Bootstrap multiplicity robustness", "",
         "Post-hoc inference only; official-test choices remain frozen.", "",
+        "## Fixed-task macro-average contrasts", "",
+        "Equal weight per adopted dataset; paired examples are resampled independently within each dataset.", "",
+        "| Family | Macro ΔcF1 | 95% CI | p | Decision |",
+        "|---|---:|---:|---:|---|",
     ]
+    for family, item in statistics_report["macro_average"].items():
+        stats.append(
+            f"| {family} | {item['macro_delta_a_minus_b']:+.4f} | "
+            f"[{item['ci95'][0]:+.4f}, {item['ci95'][1]:+.4f}] | "
+            f"{item['bootstrap_p_two_sided']:.4f} | {item['classification']} |"
+        )
+    stats.append("")
     for family, items in statistics_report["families"].items():
         stats.extend([
             f"## {family}", "",
@@ -970,6 +1297,16 @@ def markdown_outputs(
             f"| {item['dataset']} | {item['system']} | {item['encoder']} | "
             f"{item['parameters'] or '—'} | {item['observed_run_wall_hours']:.2f} | "
             f"{item['retained_best_checkpoint_bytes'] / (1024 ** 3):.2f} |"
+        )
+    resource.extend([
+        "", "| Dataset | Encoder | 5-model forward seconds | Ensemble output rows/s | Scope |",
+        "|---|---|---:|---:|---|",
+    ])
+    for item in cost["student_inference"]:
+        resource.append(
+            f"| {item['dataset']} | {item['encoder']} | "
+            f"{item['estimated_total_model_forward_seconds']:.2f} | "
+            f"{item['ensemble_output_rows_per_second']:.2f} | model-forward only |"
         )
     return {
         "postlock_complete_table.md": "\n".join(controls) + "\n",

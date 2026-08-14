@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "status": "frozen",
-  "locked_at": "2026-08-13T02:20:00+09:00",
+  "locked_at": "2026-08-14T23:26:45+09:00",
   "table_count": 6,
   "output": {
     "path": "docs/audits/tallip_kd/tallip_core_tables.md",
-    "sha256": "e1a4220e0a66c3e04aea2779153bf19fd6001c17c6666aae9e545e09039c2283"
+    "sha256": "3ceef837e4480f607ae05b10cd8983e3898f51445144431d570cf4dd15860fcc"
   },
   "generator": {
     "path": "scripts/kd/build_tallip_report.py",
-    "sha256": "e02f65a60c8a69f5693378185147282a36c2afadeaf6fe4d7594f7ca05314380"
+    "sha256": "a0605aab886b976442f4694bb7bb978a7de6e22b5bd330c35aaf9a786e1341f9"
   },
   "inputs": [
     {
@@ -42,7 +42,7 @@
     },
     {
       "path": "scripts/kd/tallip_postlock_analysis.py",
-      "sha256": "1366204d69c10dcc60fdad769f5f617af444eae032ecacf67a9bdf48a82c7eca"
+      "sha256": "62b1dc715144a5ccba29a5b3fe422c7907bb5a805d15ca2c2f11334a3e7845b3"
     },
     {
       "path": "docs/audits/tallip_kd/postlock_metrics.json",
@@ -70,15 +70,15 @@
     },
     {
       "path": "docs/audits/tallip_kd/complementarity_error_analysis.json",
-      "sha256": "dcf3679451ed142f4047b6329a881c6aab35352dbc4a60cfa0ff88e15f322b2a"
+      "sha256": "c88adfcce1f45375ee21ae7e1945e1dea3e0c49308edd04058634edbfe66b0a1"
     },
     {
       "path": "docs/audits/tallip_kd/statistical_robustness.json",
-      "sha256": "ae6f9f79016cae8479afc2f2666cd42d1738b9a481ea615955c30e0f03fca76e"
+      "sha256": "8a27f3aa415e5b4fd252b30ce50da3a6fcf5d17621f7bf87100ec004d20ccc25"
     },
     {
       "path": "docs/audits/tallip_kd/cost_efficiency.json",
-      "sha256": "a2ed92b1bd2134df360756601a207bdcab2f797857d476d08f41a30a087cff32"
+      "sha256": "043b8fb872050ec1d346d2209f9c8ccfd5637aeb96c6b0afffe68f3ebd4ff4aa"
     },
     {
       "path": "docs/audits/tallip_kd/ablation_evidence.json",
@@ -90,7 +90,7 @@
     },
     {
       "path": "scripts/kd/registry.yaml",
-      "sha256": "ab67b2ce591e76ade002574559e3bcc8009da07f0d372a6e8ebeb1dc0c2196a4"
+      "sha256": "a4e94bf91e411abed6b80b679b1def633b3812eaa98c26ed687692a143cc1b00"
     },
     {
       "path": "docs/audits/kd_freeze_report/artifact.json",
@@ -98,7 +98,7 @@
     },
     {
       "path": "docs/EXPERIMENTS.md",
-      "sha256": "2ef11b7edc34bb57d2544f053910eb4bc7068417e08e89c63c8ce52676c0b146"
+      "sha256": "be2bc965e1f28369aff60ab59a6288de54de1d190c0ce1303b6ce8e86059ad0a"
     }
   ],
   "verification_command": "python scripts/kd/build_tallip_report.py --verify",

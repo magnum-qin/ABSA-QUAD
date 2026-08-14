@@ -65,6 +65,30 @@ conda run -n absa --no-capture-output python scripts/kd/official_test.py audit
 conda run -n absa --no-capture-output python scripts/kd/official_test.py score
 ```
 
+## TALLIP post-lock non-LLM controls
+
+The dev-only repeated-gold and same-text student-self-training controls are
+registered in `postlock_v1.yaml` and `postlock_v2.yaml`. Both manifests forbid
+official-test evaluation and reuse frozen pre-test thresholds. The completed
+matrix contains five datasets × two controls × five seeds.
+
+```bash
+# completion status (no training or inference)
+python scripts/kd/postlock_experiments.py status
+python scripts/kd/postlock_experiments.py --manifest scripts/kd/postlock_v2.yaml status
+
+# deterministic analysis verification: per-domain and fixed-task macro bootstrap,
+# Holm/BH families, exploratory Spearman, error/length slices, and resource logs
+python scripts/kd/tallip_postlock_analysis.py --verify
+
+# verify all six frozen paper tables and their SHA256 input lock
+python scripts/kd/build_tallip_report.py --verify
+```
+
+Training entry points remain available through `postlock_experiments.py`, but
+completed seeds are skipped by their completion markers. Do not rerun or tune
+these controls against official test labels.
+
 All new model directories contain `inductive` in their prefix. Evaluation uses
 only `checkpoint_best.pt` and the frozen vote/top-k settings in the manifest.
 Raw API responses and removed rows live below `data/audits/tallip_kd/` (ignored

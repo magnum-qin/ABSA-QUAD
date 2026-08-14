@@ -2,6 +2,17 @@
 
 Post-hoc inference only; official-test choices remain frozen.
 
+## Fixed-task macro-average contrasts
+
+Equal weight per adopted dataset; paired examples are resampled independently within each dataset.
+
+| Family | Macro ΔcF1 | 95% CI | p | Decision |
+|---|---:|---:|---:|---|
+| adopted_kd_vs_baseline_dev | +0.0600 | [+0.0291, +0.0911] | 0.0003 | supported |
+| exposure_control_dev | +0.0588 | [+0.0318, +0.0853] | 0.0001 | supported |
+| same_text_self_training_dev | +0.0621 | [+0.0351, +0.0888] | 0.0001 | supported |
+| self_training_vs_exposure_dev | -0.0033 | [-0.0226, +0.0170] | 0.7450 | inconclusive |
+
 ## teacher_fidelity_8x2
 
 | Dataset | ΔcF1 | Raw p | Holm p | BH p | Raw CI decision | Holm < .05 |
@@ -44,6 +55,16 @@ Post-hoc inference only; official-test choices remain frozen.
 | tat_restaurant | +0.0569 | 0.1620 | 0.4860 | 0.2294 | inconclusive | no |
 | ukr_restaurant | +0.0438 | 0.1835 | 0.4860 | 0.2294 | inconclusive | no |
 | zho_restaurant | -0.0016 | 0.9082 | 0.9082 | 0.9082 | inconclusive | no |
+
+## self_training_vs_exposure_dev
+
+| Dataset | ΔcF1 | Raw p | Holm p | BH p | Raw CI decision | Holm < .05 |
+|---|---:|---:|---:|---:|---|---|
+| eng_laptop | +0.0015 | 0.8826 | 0.8826 | 0.8826 | inconclusive | no |
+| rus_restaurant | -0.0258 | 0.3132 | 0.8618 | 0.3915 | inconclusive | no |
+| tat_restaurant | -0.0498 | 0.1109 | 0.4436 | 0.2772 | inconclusive | no |
+| ukr_restaurant | +0.0298 | 0.2873 | 0.8618 | 0.3915 | inconclusive | no |
+| zho_restaurant | +0.0276 | 0.0052 | 0.0260 | 0.0260 | supported | yes |
 
 ## frozen_official_test_posthoc
 

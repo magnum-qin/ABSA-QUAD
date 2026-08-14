@@ -283,6 +283,19 @@ class TallipKDTests(unittest.TestCase):
         )
         self.assertEqual(module.holm_adjust([0.01, 0.02, 0.5]), [0.03, 0.04, 0.5])
         self.assertEqual(module.bh_adjust([0.01, 0.02, 0.5]), [0.03, 0.03, 0.5])
+        self.assertAlmostEqual(module.spearman([1, 2, 3], [3, 2, 1]), -1.0)
+        first_correlation = module.spearman_bootstrap(
+            ["a", "b", "c", "d", "e"],
+            [1, 2, 3, 4, 5],
+            [2, 1, 4, 3, 5],
+        )
+        second_correlation = module.spearman_bootstrap(
+            ["a", "b", "c", "d", "e"],
+            [1, 2, 3, 4, 5],
+            [2, 1, 4, 3, 5],
+        )
+        self.assertEqual(first_correlation, second_correlation)
+        self.assertEqual(first_correlation["valid_resamples"], 10000)
         analysis = module.build_complementarity()
         self.assertEqual(set(analysis["datasets"]), set(module.ADOPTED))
         cross_domain = analysis["cross_domain_summary"]
@@ -300,6 +313,14 @@ class TallipKDTests(unittest.TestCase):
             set(cross_domain["silver_improves_both_dev_aspect_and_opinion_type_coverage"]),
             {"eng_laptop", "ukr_restaurant"},
         )
+        self.assertEqual(
+            set(cross_domain["exploratory_spearman"]),
+            {
+                "teacher_fidelity_vs_kd_gain",
+                "span_coverage_gain_vs_kd_gain",
+                "category_alignment_gain_vs_kd_gain",
+            },
+        )
         for dataset, item in analysis["datasets"].items():
             grain = item["grain"]
             self.assertEqual(
@@ -313,6 +334,17 @@ class TallipKDTests(unittest.TestCase):
             self.assertEqual(validity["invalid_explicit_opinion_substrings"], 0, dataset)
             self.assertEqual(validity["categories_absent_from_gold_train_inventory"], 0, dataset)
             self.assertEqual(validity["invalid_va_format_or_range"], 0, dataset)
+            slices = item["dev_slices"]
+            self.assertEqual(
+                sum(group["rows"] for group in slices["length_tertiles"].values()),
+                item["grain"]["dev_rows"],
+                dataset,
+            )
+            self.assertEqual(
+                slices["single_quadruplet"]["rows"] + slices["multi_quadruplet"]["rows"],
+                item["grain"]["dev_rows"],
+                dataset,
+            )
 
     def test_postlock_precomputed_vote_merge_matches_inference_semantics(self):
         module = load_module("postlock_vote_merge", "scripts/kd/postlock_experiments.py")
@@ -486,6 +518,7 @@ class TallipKDTests(unittest.TestCase):
                 "adopted_kd_vs_baseline_dev": 5,
                 "exposure_control_dev": 5,
                 "same_text_self_training_dev": 5,
+                "self_training_vs_exposure_dev": 5,
                 "frozen_official_test_posthoc": 5,
             },
         )
@@ -493,6 +526,26 @@ class TallipKDTests(unittest.TestCase):
             for item in items:
                 self.assertIn("holm_adjusted_p", item)
                 self.assertIn("bh_adjusted_p", item)
+        self.assertEqual(
+            set(statistics_report["macro_average"]),
+            {
+                "adopted_kd_vs_baseline_dev",
+                "exposure_control_dev",
+                "same_text_self_training_dev",
+                "self_training_vs_exposure_dev",
+            },
+        )
+        for item in statistics_report["macro_average"].values():
+            self.assertEqual(
+                item["datasets"],
+                [
+                    "eng_laptop", "rus_restaurant", "tat_restaurant",
+                    "ukr_restaurant", "zho_restaurant",
+                ],
+            )
+            self.assertEqual(item["n_datasets"], 5)
+            self.assertEqual(item["iterations"], 10000)
+            self.assertEqual(item["seed"], 20260713)
         official = json.loads(
             (ROOT / "docs/audits/tallip_kd/official_test/official_test_metrics.json").read_text()
         )
@@ -512,7 +565,11 @@ class TallipKDTests(unittest.TestCase):
             (ROOT / "docs/audits/tallip_kd/cost_efficiency.json").read_text()
         )
         self.assertEqual(len(cost["postlock_training"]), 10)
+        self.assertEqual(len(cost["student_inference"]), 5)
         self.assertEqual(cost["deployment"]["teacher_calls_at_student_inference"], 0)
+        for item in cost["student_inference"]:
+            self.assertEqual(item["models"], 5)
+            self.assertGreater(item["ensemble_output_rows_per_second"], 0)
         for provider in ("deepseek", "qwen"):
             self.assertEqual(cost["teacher_fidelity"][provider]["annotated_rows"], 1344)
             self.assertIsNone(cost["teacher_fidelity"][provider]["token_usage"])

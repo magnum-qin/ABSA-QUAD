@@ -1,6 +1,6 @@
 # TALLIP 与 ICONIP V20 的贡献边界
 
-更新日期：2026-08-13。
+更新日期：2026-08-14。
 
 本文档用于约束 TALLIP 稿件的 novelty、相关工作和 prior-publication
 声明。ICONIP V20 的依据是仓库中的冻结稿
@@ -29,7 +29,7 @@ test 复核。**
 | LLM 的角色 | 增强或候选融合属于配置研究，LLM candidate fusion 是已报告负结果之一 | DeepSeek/Qwen 是离线 silver teacher，并直接接受 label-hidden gold-dev fidelity 评测 |
 | 学生系统 | 论文的主要技术贡献 | 从 V20 继承并作为受控实验载体，不作为 TALLIP 新贡献 |
 | 数据范围 | 同一项 SemEval 任务的 8 个数据集 | 仍为同一 8 个数据集；数据集数量本身不是新增贡献 |
-| 主要证据 | dev 上的系统/配置比较与 five-seed ensemble | clean-inductive five-seed、8×2 teacher fidelity、五域曝光匹配/同文本自训练、直接互补性/error analysis、paired bootstrap 与多重校正、冻结 official test |
+| 主要证据 | dev 上的系统/配置比较与 five-seed ensemble | clean-inductive five-seed、8×2 teacher fidelity、五域曝光匹配/同文本自训练、直接互补性/error analysis、固定任务 macro bootstrap、paired bootstrap 与多重校正、冻结 official test |
 | 数据完整性 | 按当时比赛开发流程报告 | 统一文本泄漏审计，清理 3 个 KD 输入并补训 clean baseline/KD |
 | 主要结论 | 无普适学生配置；语言专用 encoder 与多种子推理最稳健 | KD 收益有条件；teacher/pool 效果依域而变；不存在普适 silver cap |
 | 交付物 | V20 系统与配置研究 | 原始 teacher 响应、删除明细、SHA256、协议锁和六张冻结证据表 |

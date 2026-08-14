@@ -40,6 +40,20 @@ postlock_controls:
   checkpoint_policy: checkpoint_best.pt
   official_test_evaluation: forbidden
   status: complete
+  aggregate_analysis:
+    fixed_task_macro_bootstrap:
+      method: equal_dataset_weight_paired_examples_within_dataset
+      iterations: 10000
+      seed: 20260713
+      adopted_kd_vs_baseline_dev: {delta: 0.0600, ci95: [0.0291, 0.0911], decision: supported}
+      llm_kd_vs_gold_repeat_dev: {delta: 0.0588, ci95: [0.0318, 0.0853], decision: supported}
+      llm_kd_vs_same_text_self_training_dev: {delta: 0.0621, ci95: [0.0351, 0.0888], decision: supported}
+      self_training_vs_gold_repeat_dev: {delta: -0.0033, ci95: [-0.0226, 0.0170], decision: inconclusive}
+    exploratory_spearman_n5:
+      teacher_fidelity_vs_kd_gain: {rho: -0.7000, ci95: [-1.0000, 0.8750]}
+      span_coverage_gain_vs_kd_gain: {rho: 0.7000, ci95: [-0.8750, 1.0000]}
+      category_alignment_gain_vs_kd_gain: {rho: 0.1000, ci95: [-1.0000, 1.0000]}
+    inference_scope: "five-model CUDA forward loop from retained dev logs; excludes loading/voting/I/O"
   arms:
     eng_laptop_gold_repeat:
       dataset: eng_laptop
