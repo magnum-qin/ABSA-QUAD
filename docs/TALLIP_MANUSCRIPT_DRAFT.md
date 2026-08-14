@@ -2,7 +2,7 @@
 
 ## An Inductive-Safe Study of Offline Structured Distillation for Multilingual Dimensional Aspect Sentiment Quad Prediction
 
-**Draft status:** Sections 3--5, working manuscript, 2026-08-15.
+**Draft status:** Sections 3--8, working manuscript, 2026-08-15.
 
 > Editorial note: this Markdown file is the editable source draft and is not the
 > ICONIP manuscript. Bracketed `[CITE: ...]` markers are unresolved bibliography
@@ -552,6 +552,265 @@ post-lock control was evaluated on official test. None of the eight main
 systems exceeds the corresponding official leaderboard best, so we make no
 test SOTA claim.
 
+## 6 Discussion
+
+### 6.1 Reliable Average Benefits Can Coexist with Domain-Level Uncertainty
+
+The central empirical pattern is not that KD either works or fails everywhere.
+Across the fixed five-domain set, KD has a positive macro effect relative to the
+matched baseline, repeated-gold exposure, and same-text student self-training.
+At the same time, the dataset-level intervals differ markedly. English and
+Russian provide the strongest development evidence that the LLM labels add
+information beyond both non-LLM controls. Ukrainian provides weaker evidence:
+its exposure-adjusted comparison is positive before, but not after, family-wise
+correction, and its same-text teacher-source comparison remains inconclusive.
+Tatar and Chinese restaurant do not establish a reliable LLM-label advantage
+on development data.
+
+These statements answer different questions. The macro bootstrap asks whether
+the mean paired effect over the prespecified adopted-domain set is positive when
+each dataset receives equal weight. A dataset-level interval asks whether one
+domain independently supports the contrast. A supported macro effect therefore
+does not imply five supported domain effects, just as an inconclusive
+small-domain interval does not prove that its true effect is zero. This
+distinction is especially important for Russian, Tatar, and Ukrainian, whose
+development sets contain only 48 examples and consequently yield wide
+intervals.
+
+The one-shot official-test results are consistent with conditional rather than
+universal generalization. Four of five raw KD contrasts are positive with
+intervals above zero, while three remain significant after Holm correction.
+Chinese restaurant is an important counterexample: its development ensemble has
+a small positive contrast, whereas its test contrast is slightly negative and
+inconclusive. We therefore interpret the aggregate result as evidence that
+offline LLM supervision can be useful over the studied set, not as a guarantee
+for every language, domain, or split.
+
+Nor does the pattern support a simple low-resource rule. English laptop has the
+largest development gain despite having more raw gold training examples than
+the three 1,240-row Slavic/Turkic restaurant sets, while the larger Chinese
+restaurant set shows the weakest adopted-KD contrast. Gold size alone is not a
+sufficient predictor of benefit.
+
+### 6.2 Direct Fidelity Is a Screening Signal, Not a Sufficient Selection Rule
+
+Directly evaluating a teacher on label-hidden gold data removes a major
+ambiguity in downstream-only studies. It reveals whether the teacher can
+produce valid task structures and provides paired teacher comparisons before
+student optimization is considered. The 8-by-2 experiment indicates that
+DeepSeek is more consistent overall, but five of the eight pairwise differences
+remain uncertain. The matched Tatar experiment further shows that small
+downstream fluctuations cannot be used to infer a reliable reversal in teacher
+quality.
+
+Fidelity alone is nevertheless insufficient for selecting a complete KD
+pipeline. Chinese restaurant illustrates the limitation most clearly: it has
+the highest direct DeepSeek fidelity among the adopted domains, but the smallest
+development gain and no supported official-test benefit. Direct fidelity is
+measured on the gold development distribution, whereas downstream training
+also depends on which texts enter the silver pool, which categories and spans
+they cover, how their label distribution interacts with the base data, and how
+the student responds to the resulting mixture. A teacher can therefore label
+gold-like examples accurately without supplying useful new supervision, or it
+can add useful coverage even when its aggregate fidelity is not the highest.
+
+The pool and quantity experiments reinforce this view. Under a common Russian
+teacher and cap, generated, translated, and real pools have a clear domain-local
+ordering. The observational Chinese comparison points in the opposite
+direction, and the Russian same-pool cap intervention shows that reducing the
+gen8k batch does not recover the separate gen4k result. These findings favor a
+multi-factor account involving label validity, pool composition, coverage, and
+teacher--student fit. “Information complementarity” is a useful description of
+that account, but our measured proxies are not monotonic and were not
+independently manipulated. It should not be treated as a proven universal
+moderator.
+
+### 6.3 An Audit-First Workflow Is More Defensible Than a Larger KD Grid
+
+The experiments suggest a practical workflow for multilingual and low-resource
+structured prediction. First, a small label-hidden gold probe should be used to
+measure candidate teachers directly, including invalid, empty, `NULL`, rare
+category, span, and continuous-label behavior. Second, every gold, augmented,
+pool, silver, and combined training file should be audited against development
+and test using a documented normalization key. Cleaning should be decided by
+the inductive protocol, not by whether deletion improves the score.
+
+Third, teacher, pool, and quantity decisions should be made within the target
+domain under frozen development rules. A ranking learned on Russian restaurant
+data should not be transferred to Chinese restaurant without a matched test.
+Fourth, multiple training seeds and paired example-level inference should be
+reported because seed variation and evaluation-example variation answer
+different uncertainty questions. Fifth, an exposure-matched control should be
+the minimum comparison when silver data increases the number of training rows.
+Where feasible, the stronger comparison is same-text self-training, which holds
+the unlabeled text fixed and changes the supervision source. Finally, test data
+should be used once, after checkpoint, threshold, and prediction hashes are
+locked.
+
+This workflow also provides a principled stopping rule. Once direct fidelity,
+clean-inductive reruns, matched non-LLM controls, and frozen evaluation agree on
+the boundary of the claim, adding more teacher, pool, augmentation, or cap arms
+can increase multiplicity without resolving the main uncertainty. The failed
+Russian quantity gate is an example: stopping after the preregistered criterion
+failed is more informative than completing a post-hoc curve and selecting its
+best point.
+
+### 6.4 Offline Distillation Moves LLM Cost Out of Deployment but Does Not Make Training Free
+
+The deployed system contains five student checkpoints and makes no LLM calls.
+This separates annotation-time access to a large teacher from inference-time
+operation and can be attractive when an API-based or 35B-parameter teacher is
+too costly or unavailable in production. In retained development logs for the
+gold-repeat controls using the same student configurations, the five-model
+ensembles process between 10.77 and 26.46 output rows per second in the CUDA
+model-forward loop, depending on the dataset and inherited encoder. These rates
+exclude checkpoint loading, tokenization setup, voting, and output serialization
+and should not be interpreted as end-to-end KD latency benchmarks.
+
+The evidence closure itself is computationally substantial. The 50 retained
+best checkpoints from the repeated-gold and self-training controls occupy
+301.54 GiB, and their recorded training logs sum to 134.98 run-wall hours on one
+RTX 4090, including checkpoint I/O. These measurements document the cost of the
+study rather than a controlled comparison between encoders, configurations, or
+storage devices. Historical token-usage and provider-billing fields were not
+retained, so we cannot reconstruct a defensible monetary cost for all silver
+generation. Future experiments should store tokens, wall time, retries, model
+revision, and billing metadata at collection time.
+
+### 6.5 Relation to Our Prior ICONIP Study
+
+Our ICONIP V20 work introduced LEADER-DimASQP, language- and dataset-specific
+encoder/recipe selection, and five-seed inference [CITE: ICONIP-V20]. The
+present study reuses those components to hold student capacity and decoding
+policy as stable as possible. It does not claim Rethink, Hungarian matching,
+language-specific encoders, or ensembling as new contributions.
+
+The new research question is when LLM-labeled silver data improves that fixed
+student and how such a claim can be audited. The evidence added here---direct
+two-teacher fidelity across eight datasets, matched teacher/pool/quantity
+comparisons, clean-inductive reruns, exposure and same-text controls,
+multiplicity-aware paired inference, and a dev-locked official-test
+evaluation---was not part of V20. This distinction is methodological as well as
+editorial: architecture improvements and silver-supervision effects are not
+pooled into one attribution claim.
+
+## 7 Limitations and Ethical Considerations
+
+### 7.1 Scope and Statistical Power
+
+The study covers one structured sentiment task, six languages, eight datasets,
+and three review domains. Direct fidelity uses all eight datasets, but the
+downstream macro and control analyses are restricted to five previously adopted
+KD systems. Those systems were selected through earlier development work, so
+the macro estimand describes this fixed adopted set rather than a random sample
+of languages or all eight task datasets. In particular, the three non-adopted
+datasets do not have comparable downstream KD controls and cannot be counted as
+negative or positive KD evidence.
+
+Several low-resource development sets contain only 48 examples. Paired
+resampling preserves the available example-level uncertainty but cannot create
+information that is absent from a small evaluation set. The exploratory
+moderator analysis has only five domain-level observations; its wide intervals
+preclude a reliable correlation claim. Larger multilingual benchmarks and
+prospectively selected domains are needed to test whether the present macro
+effect generalizes.
+
+The official-test analysis is intentionally one-shot. Its family-wise
+correction is a post-hoc robustness check, not a new selection criterion, and
+the test results were not replicated across alternative task collections.
+Although the lock prevents test-guided model selection in this study, a future
+paper that chooses hypotheses based on these released labels would require a
+new held-out evaluation source.
+
+### 7.2 Limits of Causal Attribution
+
+The repeated-gold control matches total row exposure, and the self-training
+control additionally matches silver text and row count. These comparisons
+remove important alternative explanations, but they do not randomize every
+property of the training process. Student pseudo-labels are produced by the
+repeated-gold ensemble, and differences in label density, empty predictions,
+confidence, and error structure remain part of the teacher-source treatment.
+The controls therefore support statements about the complete supervision
+source, not a claim that one isolated linguistic feature causes the gain.
+
+Only the Russian pool comparison and Tatar teacher comparison closely match the
+principal observable factors. The Chinese pool result and Ukrainian
+translation/native result retain construction or quantity differences and are
+descriptive. The Russian same-pool quantity intervention uses two seeds because
+the preregistered continuation gate failed; it rejects the proposed “fewer is
+better” explanation for that pool but does not estimate a full dose--response.
+We also lack a separate two-annotator human audit of newly generated Russian
+silver. Direct fidelity against the official gold development labels remains
+the main teacher-quality check.
+
+### 7.3 Model and Cost Reproducibility
+
+We preserve prompts, raw responses, parsed outputs, requested and returned model
+identities, timestamps, and hashes. Even so, an API model name may refer to a
+service that changes after collection, and a local quantized checkpoint may not
+behave identically under another runtime or hardware stack. The teacher results
+should therefore be read as evaluations of the recorded model endpoints and
+settings, not immutable properties of the model families.
+
+The resource audit is incomplete because historical token and monetary billing
+were not stored. Logged wall time includes I/O and varies with encoder, sequence
+composition, and checkpoint location. The reported throughput covers only the
+model-forward loop. We consequently avoid monetary, energy, and end-to-end
+latency comparisons that the retained evidence cannot support.
+
+### 7.4 Bias, Data Governance, and Human Oversight
+
+LLM-generated labels can reproduce language, regional, cultural, and domain
+biases from the teacher [CITE: multilingual LLM annotation bias]. This concern
+is particularly important for Tatar and Ukrainian, where both teacher
+competence and evaluation sample size are less certain than aggregate cF1 may
+suggest. Automatic schema validation catches malformed spans and categories but
+cannot guarantee that implicit opinions, intensity, or culturally specific
+expressions are interpreted appropriately. Silver labels should therefore
+augment, not silently replace, expert or native speaker review in consequential
+applications.
+
+Review text can also contain personal or sensitive content even when it comes
+from a public corpus. Practitioners should verify dataset licenses, provider
+terms, retention policies, and whether external API processing is appropriate
+for their data. Private reviews should not be sent to a third-party teacher
+without a suitable legal and governance basis.
+
+Finally, five-seed training and inference increase energy, storage, and
+maintenance costs relative to a single student. Publishing stopped and negative
+experiments reduces incentives to repeat uninformative sweeps, while offline
+distillation eliminates teacher calls during deployment. These benefits do not
+remove the need to evaluate whether the ensemble's incremental accuracy
+justifies its operational footprint in a particular application.
+
+## 8 Conclusion
+
+We studied offline structured LLM-to-student distillation for multilingual
+DimASQP while fixing the inherited student architecture and inference recipes.
+Across five adopted domains, KD has a reliable positive macro effect relative
+to the matched baseline, exposure-matched repeated gold, and labels produced by
+a student on the same silver texts. Clean-inductive retraining, paired
+bootstrap inference, and a frozen official-test evaluation show that this
+average benefit is not solely an artifact of duplicated training exposure or
+known text overlap.
+
+The benefit is nevertheless domain-dependent. English and Russian provide the
+clearest development evidence that LLM labels add value beyond both non-LLM
+controls. Other domains remain uncertain under matched comparisons, and Chinese
+restaurant does not show a supported official-test gain. DeepSeek is more
+consistent in direct fidelity, but the data do not establish a universal
+teacher ranking. Pool-source results reverse across settings, and a same-pool
+Russian intervention provides no support for a universal silver-size optimum.
+
+The resulting lesson is methodological: silver supervision should be selected
+and audited within domain. Direct teacher evaluation, split-contamination
+checks, multiple seeds, matched exposure and self-training controls,
+multiplicity-aware uncertainty, and a one-shot test lock together provide a
+more credible basis for deciding when LLM labels help. Future work should
+improve prospective measures of supervision complementarity and evaluate them
+on new tasks and held-out domains rather than extending post-hoc teacher or
+quantity grids.
+
 <!--
 Internal drafting provenance (remove only when the corresponding citations and
 artifact references have been transferred to the submission source):
@@ -566,6 +825,9 @@ artifact references have been transferred to the submission source):
 - Exposure/self-training construction: scripts/kd/postlock_experiments.py and
   scripts/kd/postlock_v1.yaml / postlock_v2.yaml
 - Statistical families: docs/audits/tallip_kd/statistical_robustness.json
+- Resource and throughput scope: docs/audits/tallip_kd/cost_efficiency.json
 - Official-test lock: scripts/kd/official_test.yaml and
   docs/audits/tallip_kd/official_test/protocol_lock.json
+- Final claim boundaries and prior-publication distinction: docs/CONCLUSIONS.md
+  and docs/TALLIP_VS_ICONIP_V20.md
 -->
