@@ -354,26 +354,29 @@ silver size”。
 
 | 论文位置 | 内容 | 冻结来源 |
 |---|---|---|
-| Table 1 | 8 个数据集、语言/domain、gold split、adopted KD 与清洗状态 | cleaning manifest + registry；生成新表时只读审计产物 |
-| Table 2 | 8×2 direct teacher fidelity | 核心表 1 |
-| Table 3 | clean-inductive 五种子、ensemble 与 KD−baseline | 核心表 2–3 |
-| Table 4 | repeated-gold、same-text self-training 与 macro/multiplicity 摘要 | 核心表 5、5d |
-| Table 5 | teacher/pool/quantity/complementarity 消融及证据等级 | 核心表 4、5c |
-| Table 6 | 一次性 official-test 主系统和五个预注册对照 | 核心表 6 |
+| Table 1 | 五个 adopted KD 的 teacher、pool、base/silver 行数和冻结阈值 | registry、核心表 2/5c |
+| Table 2 | 8 个数据集、语言/domain、gold split 和实验角色 | `tallip.yaml` 与 split 文件 |
+| Table 3 | 8×2 direct teacher fidelity | 核心表 1 |
+| Table 4 | clean-inductive 五种子、ensemble 与 KD−baseline | 核心表 2–3 |
+| Table 5 | 三类 macro 对照及 raw/Holm 域级摘要 | 核心表 5d |
+| Table 6 | teacher/pool/quantity 消融及允许解释 | 核心表 4 |
+| Table 7 | complementarity 与 error transitions | 核心表 5c |
+| Table 8 | 一次性 official-test 主系统和五个预注册对照 | 核心表 6 |
 
 resource audit、完整 seed 分数、辅助 fidelity 指标、error slices 和所有 raw/Holm/BH
 p 值放附录。若篇幅紧张，Table 5 可压缩为三列，完整 evidence-grade 表放附录。
 
 ### 建议图形
 
-1. **Figure 1 — Audit-aware offline distillation protocol.** 展示 gold/unlabeled
-   输入、两种 teacher、schema validation、overlap filter、三个训练分支
-   （LLM/repeat/self）、dev lock 和 one-shot test。该图负责解释实验因果结构，
-   不重复 V20 网络图。
-2. **Figure 2 — Paired effect forest plot.** 按数据集分面展示 KD−baseline、
+1. **Figure 1 — Paired effect forest plot（已生成）.** 按数据集分面展示 KD−baseline、
    KD−repeated-gold、KD−same-text self-training 的 ΔcF1 与 95% CI，并单独显示
-   五域 macro。它应成为“平均有效、单域异质”的主视觉证据。
-3. **Appendix Figure A1 — Fidelity versus downstream gain.** 展示 n=5 的探索性
+   五域 macro。它是“平均有效、单域异质”的主视觉证据；由
+   `scripts/kd/plot_tallip_figures.py` 从冻结统计自动生成。
+2. **Figure 2 — Audit-aware offline distillation protocol（可选）.** 展示
+   gold/unlabeled 输入、两种 teacher、schema validation、overlap filter、三个
+   训练分支（LLM/repeat/self）、dev lock 和 one-shot test。该图只在版面允许时
+   保留，不重复 V20 网络图。
+3. **Appendix Figure A1 — Fidelity versus downstream gain（可选）.** 展示 n=5 的探索性
    关系并在图内标出 CI/`descriptive only`；不要画回归趋势线暗示可靠 moderator。
 
 ## 7. 附录结构

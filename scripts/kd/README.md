@@ -83,6 +83,9 @@ python scripts/kd/tallip_postlock_analysis.py --verify
 
 # verify all six frozen paper tables and their SHA256 input lock
 python scripts/kd/build_tallip_report.py --verify
+
+# render the manuscript forest plot directly from the frozen statistics
+conda run -n absa --no-capture-output python scripts/kd/plot_tallip_figures.py
 ```
 
 Training entry points remain available through `postlock_experiments.py`, but

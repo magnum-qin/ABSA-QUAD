@@ -2,7 +2,7 @@
 
 ## An Inductive-Safe Study of Offline Structured Distillation for Multilingual Dimensional Aspect Sentiment Quad Prediction
 
-**Draft status:** Sections 3--4, working manuscript, 2026-08-14.
+**Draft status:** Sections 3--5, working manuscript, 2026-08-15.
 
 > Editorial note: this Markdown file is the editable source draft and is not the
 > ICONIP manuscript. Bracketed `[CITE: ...]` markers are unresolved bibliography
@@ -350,6 +350,207 @@ Post-lock control training was run on a single 24-GB NVIDIA RTX 4090. LLMs are
 offline annotators only, so student inference makes zero LLM calls. Historical
 provider token counts and monetary billing were not retained; we report them as
 unavailable rather than reconstructing a potentially misleading cost estimate.
+
+## 5 Results
+
+### 5.1 Direct Fidelity Favors DeepSeek Overall, but Most Pairwise Differences Remain Uncertain
+
+Table 3 reports teacher fidelity when the complete development labels are
+hidden. DeepSeek obtains the higher cF1 point estimate on all eight datasets,
+but the size and certainty of the difference vary substantially. The paired
+95% interval excludes zero for English restaurant, Chinese laptop, and Chinese
+restaurant only; these same three comparisons remain significant after Holm
+and Benjamini--Hochberg correction within the eight-dataset family. The other
+five comparisons are inconclusive rather than evidence of equivalence.
+
+**Table 3. Direct teacher fidelity on label-hidden gold development data.**
+
+| Dataset | DeepSeek cF1 | Qwen cF1 | DeepSeek−Qwen | 95% CI | Decision |
+|---|---:|---:|---:|---:|---|
+| eng_laptop | 0.3575 | 0.3170 | +0.0404 | [−0.0066, +0.0879] | inconclusive |
+| eng_restaurant | 0.5529 | 0.3638 | +0.1892 | [+0.1418, +0.2384] | supported |
+| jpn_hotel | 0.2146 | 0.2004 | +0.0142 | [−0.0344, +0.0610] | inconclusive |
+| rus_restaurant | 0.3904 | 0.3649 | +0.0255 | [−0.0494, +0.1039] | inconclusive |
+| tat_restaurant | 0.4359 | 0.3954 | +0.0405 | [−0.0675, +0.1516] | inconclusive |
+| ukr_restaurant | 0.3786 | 0.3598 | +0.0188 | [−0.0579, +0.0879] | inconclusive |
+| zho_laptop | 0.2821 | 0.2374 | +0.0447 | [+0.0137, +0.0755] | supported |
+| zho_restaurant | 0.4653 | 0.4060 | +0.0593 | [+0.0240, +0.0941] | supported |
+
+Direct fidelity and downstream student performance need not induce the same
+ranking. On the Tatar matched-text control, the DeepSeek-labeled arm reaches
+0.5365 ensemble cF1 and the Qwen-labeled arm reaches 0.5327. Their difference
+is only +0.0038 with a 95% CI of [−0.0823,+0.0852]. On the frozen official test,
+the matched DeepSeek−Qwen difference is likewise positive but inconclusive at
++0.0109 [−0.0069,+0.0293]. Thus, the earlier observation that one Qwen student
+scored higher under a different run does not establish a reliable Tatar
+teacher-ranking reversal.
+
+### 5.2 Clean-Inductive KD Has a Positive Macro Effect and Heterogeneous Domain Effects
+
+All five adopted systems remain operational after the inductive audit. Table 4
+shows the five individual seed scores, their mean and sample standard deviation,
+the frozen ensemble, and the paired ensemble contrast with its matched baseline.
+English and Russian show supported development improvements. Tatar, Ukrainian,
+and Chinese restaurant have positive point estimates but intervals that cross
+zero. After Holm correction within the five-domain baseline family, only the
+English comparison remains significant; English and Russian remain significant
+under Benjamini--Hochberg correction.
+
+**Table 4. Clean-inductive KD results and paired development contrasts.**
+
+| Dataset | Five seed cF1 scores | Mean±SD | Ensemble | KD−baseline | 95% CI | Decision |
+|---|---|---:|---:|---:|---:|---|
+| eng_laptop | .3826/.3610/.3900/.3799/.3789 | 0.3785±0.0107 | 0.4102 | +0.1058 | [+0.0601,+0.1537] | supported |
+| rus_restaurant | .5714/.5471/.5487/.5578/.5513 | 0.5553±0.0099 | 0.6162 | +0.0895 | [+0.0191,+0.1631] | supported |
+| tat_restaurant | .4798/.4538/.4681/.4733/.4437 | 0.4637±0.0147 | 0.5327 | +0.0506 | [−0.0302,+0.1353] | inconclusive |
+| ukr_restaurant | .4448/.4835/.4601/.5016/.5353 | 0.4851±0.0355 | 0.5377 | +0.0472 | [−0.0466,+0.1449] | inconclusive |
+| zho_restaurant | .5391/.5417/.5427/.5405/.5361 | 0.5400±0.0026 | 0.5738 | +0.0069 | [−0.0204,+0.0349] | inconclusive |
+
+The fixed-task macro analysis gives each adopted dataset equal weight. It
+estimates KD−baseline at +0.0600 cF1 with a 95% CI of
+[+0.0291,+0.0911]. This supports a positive average effect over the fixed
+five-domain set, but it does not convert the three inconclusive dataset-level
+results into supported individual effects or justify extrapolation to unseen
+languages.
+
+Cleaning does not produce a reliable change relative to the earlier
+transductive checkpoints: clean−transductive is −0.0038
+[−0.0444,+0.0351] for English, −0.0183 [−0.0738,+0.0292] for Ukrainian,
+and +0.0159 [−0.0075,+0.0398] for Chinese restaurant. This sensitivity result
+does not make the original overlap acceptable. It instead shows that the main
+directional findings can be stated using inputs that satisfy the inductive
+protocol.
+
+### 5.3 Matched Controls Reject a Pure Exposure Explanation on Average
+
+Figure 1 places the three principal development contrasts on one common cF1
+scale. The macro effect remains supported when the baseline is replaced by
+either repeated gold or same-text student self-training. However, the
+dataset-level intervals reveal that the evidence is concentrated rather than
+uniform.
+
+![Paired development-set effects of LLM-labeled silver data](figures/tallip_kd_effect_forest.png)
+
+**Figure 1.** Development-set cF1 differences with 95% paired-bootstrap
+intervals. Each panel uses the same five adopted datasets. The diamond is the
+equal-dataset-weight macro estimate; filled circles indicate an unadjusted
+interval that excludes zero, open circles are inconclusive, and a star marks a
+dataset comparison that remains significant after Holm correction within its
+five-comparison family.
+
+Table 5 summarizes the aggregate estimates and the number of dataset-level
+comparisons supported before and after multiplicity correction. KD exceeds the
+exposure-matched repeated-gold control by +0.0588
+[+0.0318,+0.0853] on average and the same-text self-training control by +0.0621
+[+0.0351,+0.0888]. By contrast, self-training−repeated-gold is −0.0033
+[−0.0226,+0.0170], so the two non-LLM controls have no reliable macro ordering.
+
+**Table 5. Fixed-task macro effects and dataset-level multiplicity summary.**
+
+| Contrast | Macro ΔcF1 | 95% CI | Raw supported domains | Holm-supported domains |
+|---|---:|---:|---|---|
+| KD−baseline | +0.0600 | [+0.0291,+0.0911] | eng, rus | eng |
+| KD−repeated gold | +0.0588 | [+0.0318,+0.0853] | eng, rus, ukr | eng, rus |
+| KD−same-text self-training | +0.0621 | [+0.0351,+0.0888] | eng, rus | eng, rus |
+| Self-training−repeated gold | −0.0033 | [−0.0226,+0.0170] | zho | zho |
+
+The domain-level controls narrow the mechanism claim. For English and Russian,
+LLM KD reliably exceeds both repeated-gold exposure and student labels on the
+same texts, and these differences survive Holm correction. Ukrainian KD exceeds
+repeated gold in the unadjusted comparison (+0.0736
+[+0.0036,+0.1507]) but not after family-wise correction, and its advantage over
+same-text self-training is inconclusive. Neither Tatar nor Chinese restaurant
+establishes a reliable LLM-label advantage. Chinese self-training itself
+exceeds repeated gold by +0.0276 [+0.0079,+0.0463], which shows why an exposure
+control alone is insufficient for attributing a gain to an LLM teacher.
+
+### 5.4 Teacher, Pool, and Quantity Do Not Admit a Universal Ranking
+
+Table 6 summarizes the most controlled ablations and the boundary of each
+inference. The direct teacher matrix supports greater overall consistency for
+DeepSeek, but the matched Tatar downstream arm does not support a universal
+teacher ordering. The Russian pool experiment provides a clear within-domain
+ordering under a common teacher and cap, while the Chinese observation points
+in a different direction under a weaker control. Together, these results reject
+a universal pool-source ranking rather than establishing that either generated
+or real text is generally superior.
+
+**Table 6. Controlled ablations and allowed interpretation.**
+
+| Axis | Controlled comparison | Result | Allowed interpretation |
+|---|---|---|---|
+| Teacher fidelity | 8 datasets × identical label-hidden dev inputs | DeepSeek higher in 8/8; supported in 3/8 | DeepSeek is more consistent overall; no universal pairwise dominance claim |
+| Teacher downstream | Tatar, same gold and 3,915 silver texts, five seeds | DeepSeek−Qwen +0.0038 [−0.0823,+0.0852] | no reliable downstream ranking difference |
+| Pool source | Russian, same DeepSeek teacher and cap=3,000 | generated .6162 > translated .5761 > real .5586 | strong within-Russian ordering only |
+| Pool source | Chinese restaurant, real vs generated | real−generated +0.023 cF1 | observational; other factors are not fully matched |
+| Silver quantity | Russian, same gen8k pool, seeds 42/123 | cap3000−full7988 = −0.0114 mean | lower quantity does not explain the independent gen4k advantage |
+| Translation/native | Ukrainian pools differ in construction and quantity | mixed | descriptive evidence only |
+
+The Russian same-pool quantity result failed the preregistered +1.5 percentage
+point continuation gate. We therefore did not train the other three seeds or a
+cap5000 arm. The independent gen4k batch can outperform the gen8k batch, but its
+advantage is more consistent with batch composition, coverage, or labeling
+quality than with a general preference for fewer silver rows. The evidence does
+not identify a dose--response curve or an optimal cap.
+
+### 5.5 Complementarity Measurements Are Informative but Not a Causal Moderator
+
+The direct measurements in Table 7 provide counterexamples to a single-metric
+explanation. English laptop has the largest observed span-coverage expansion
+and the largest development gain. Chinese restaurant has the highest direct
+DeepSeek fidelity in Table 3, yet it has the smallest development gain and loses
+aspect and opinion span coverage relative to its base data. Russian and Tatar
+show positive downstream point estimates without a consistent increase in both
+span inventories.
+
+**Table 7. Descriptive complementarity and row-level error transitions.**
+
+| Dataset | Silver rows | Aspect/opinion span coverage Δ | Category JSD Δ | Repaired/harmed dev rows | KD−baseline cF1 |
+|---|---:|---:|---:|---:|---:|
+| eng_laptop | 7,547 | +21/+38 | −0.0141 | 71/44 | +0.1058 |
+| rus_restaurant | 3,000 | −4/+0 | +0.0503 | 20/19 | +0.0895 |
+| tat_restaurant | 3,915 | −9/+4 | +0.0571 | 16/20 | +0.0506 |
+| ukr_restaurant | 5,534 | +4/+9 | +0.0241 | 22/18 | +0.0472 |
+| zho_restaurant | 3,882 | −30/−56 | −0.0009 | 130/112 | +0.0069 |
+
+Across only five domains, teacher fidelity versus KD gain has Spearman
+\(\rho=-0.70\) with a bootstrap interval of [−1.00,+0.875], span-coverage gain
+versus KD gain has \(\rho=+0.70\) [−0.875,+1.00], and category-alignment gain
+has \(\rho=+0.10\) [−1.00,+1.00]. The intervals are too wide to establish a
+moderator. Slices by sentence length, single versus multiple quads, rare
+category, and implicit aspect or opinion are also heterogeneous. These
+measurements support a multi-factor interpretation involving validity,
+coverage, distribution, and teacher--student fit; they do not prove
+“information complementarity” as a universal causal law.
+
+### 5.6 Frozen Official-Test Evaluation Supports Conditional Generalization
+
+Table 8 reports the one-shot post-competition evaluation. Among the five
+preregistered KD contrasts, English, Russian, Tatar, and Ukrainian have raw
+paired intervals above zero. Chinese restaurant has a negative point estimate
+and an interval crossing zero. After Holm correction within this five-contrast
+family, English, Tatar, and Ukrainian remain significant; Russian does not.
+
+**Table 8. Frozen main systems on official test and preregistered KD contrasts.**
+
+| Dataset | Frozen main system | Test cF1 | KD−baseline | 95% CI | Holm < .05 |
+|---|---|---:|---:|---:|---|
+| eng_laptop | clean DeepSeek KD | 0.3532 | +0.0822 | [+0.0629,+0.1021] | yes |
+| eng_restaurant | inherited V16 baseline | 0.5904 | — | — | — |
+| jpn_hotel | inherited V16 no-augmentation | 0.4217 | — | — | — |
+| rus_restaurant | DeepSeek gen4k KD | 0.5189 | +0.0211 | [+0.0005,+0.0431] | no |
+| tat_restaurant | Qwen KD | 0.4311 | +0.0274 | [+0.0071,+0.0482] | yes |
+| ukr_restaurant | clean DeepSeek KD | 0.4608 | +0.0393 | [+0.0150,+0.0639] | yes |
+| zho_laptop | inherited V16 baseline | 0.4309 | — | — | — |
+| zho_restaurant | clean DeepSeek real-pool KD | 0.4660 | −0.0137 | [−0.0289,+0.0014] | no |
+
+The test results strengthen the conclusion that KD can help under selected
+domain conditions, but they do not support a five-domain success claim. They
+also do not constitute a test-set model-selection loop: all choices and
+prediction hashes were frozen before the labels were retrieved, and no
+post-lock control was evaluated on official test. None of the eight main
+systems exceeds the corresponding official leaderboard best, so we make no
+test SOTA claim.
 
 <!--
 Internal drafting provenance (remove only when the corresponding citations and
