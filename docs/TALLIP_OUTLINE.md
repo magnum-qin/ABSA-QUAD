@@ -192,7 +192,8 @@ silver size”。
 
 #### 4.2 Contamination Audit and Inductive Cleaning
 
-- 说明 NFKC、首尾/连续空白规范化，以及 exact/normalized/source-ID 三类重合。
+- 说明 Unicode NFKC、casefold 与空白折叠规范化，以及
+  exact/normalized/source-ID 三类重合。
 - 报告受影响训练集清洗：eng 23,590→22,595；ukr 9,105→8,500；
   zho-real 10,911→9,932。
 - rus-gen4k 与 tat-qwen 为零文本重合，重新审计但不重训。
