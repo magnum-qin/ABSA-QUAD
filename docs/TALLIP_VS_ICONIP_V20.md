@@ -1,6 +1,11 @@
 # TALLIP 与 ICONIP V20 的贡献边界
 
-更新日期：2026-08-14。
+更新日期：2026-08-15。
+
+投稿用英文差异声明见
+[`TALLIP_PRIOR_PUBLICATION_STATEMENT.md`](TALLIP_PRIOR_PUBLICATION_STATEMENT.md)，
+cover letter 草稿见 [`TALLIP_COVER_LETTER.md`](TALLIP_COVER_LETTER.md)。本文件
+继续作为中文的内部 claim boundary；投稿时以英文声明和最终 ICONIP 书目信息为准。
 
 本文档用于约束 TALLIP 稿件的 novelty、相关工作和 prior-publication
 声明。ICONIP V20 的依据是仓库中的冻结稿

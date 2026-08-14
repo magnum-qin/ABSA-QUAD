@@ -60,8 +60,14 @@ Before submission, the authors must still:
    DOI/venue metadata when available;
 3. generate and paste the exact CCS XML from the ACM CCS tool;
 4. add funding and acknowledgments supplied by the authors;
-5. include a cover-letter statement that identifies the ICONIP V20 paper and
-   explains the new KD research, inductive audit, controls, statistics, and
-   official-test evidence;
+5. resolve the author-only confirmations in
+   [`../../docs/TALLIP_COVER_LETTER.md`](../../docs/TALLIP_COVER_LETTER.md),
+   including corresponding author, co-author approval, exclusive submission,
+   and competing interests;
 6. rerun all repository evidence checks and inspect every table and figure in
    both generated PDFs.
+
+The submission-facing prior-publication comparison is in
+[`../../docs/TALLIP_PRIOR_PUBLICATION_STATEMENT.md`](../../docs/TALLIP_PRIOR_PUBLICATION_STATEMENT.md),
+and the full operational checklist is in
+[`../../docs/TALLIP_SUBMISSION_CHECKLIST.md`](../../docs/TALLIP_SUBMISSION_CHECKLIST.md).
