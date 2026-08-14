@@ -1,0 +1,104 @@
+% Shared manuscript content. Select the review or journal layout through one of
+% the two wrapper files in this directory.
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{calc}
+\usepackage{longtable}
+\usepackage{graphicx}
+
+\graphicspath{{../../docs/figures/}}
+\setlength{\emergencystretch}{2em}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\acmJournal{TALLIP}
+\acmYear{2026}
+\setcopyright{none}
+\settopmatter{printacmref=false, printfolios=true}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+\citestyle{acmauthoryear}
+
+\title{When Does LLM-Labeled Silver Data Help?}
+\subtitle{An Inductive-Safe Study of Offline Structured Distillation for
+Multilingual Dimensional Aspect Sentiment Quad Prediction}
+
+\author{Hongzhen Qin}
+\affiliation{%
+  \institution{School of Computer Science and Technology, Hangzhou Dianzi University}
+  \city{Hangzhou}
+  \postcode{310018}
+  \country{China}}
+\affiliation{%
+  \institution{University of Yamanashi}
+  \city{Kofu}
+  \country{Japan}}
+\email{241050420@hdu.edu.cn}
+\email{g24tka12@yamanashi.ac.jp}
+
+\author{Yoshimi Suzuki}
+\affiliation{%
+  \institution{University of Yamanashi}
+  \city{Kofu}
+  \country{Japan}}
+\email{ysuzuki@yamanashi.ac.jp}
+
+\author{Fumiyo Fukumoto}
+\affiliation{%
+  \institution{University of Yamanashi}
+  \city{Kofu}
+  \country{Japan}}
+\email{fukumoto@yamanashi.ac.jp}
+
+\author{Renjie Zhou}
+\affiliation{%
+  \institution{School of Computer Science and Technology, Hangzhou Dianzi University}
+  \city{Hangzhou}
+  \postcode{310018}
+  \country{China}}
+\email{rjzhou@hdu.edu.cn}
+
+\renewcommand{\shortauthors}{Qin et al.}
+
+\begin{document}
+
+\begin{abstract}
+Large language models (LLMs) can provide labels for a student, removing teacher
+cost from deployment. Gains may reflect teacher quality, pool composition,
+exposure, split overlap, or development-set selection. This study evaluates
+offline structured label distillation for Dimensional Aspect Sentiment Quad
+Prediction with a fixed student. Two teachers are evaluated on label-hidden
+development sets from eight language--domain datasets; training inputs are
+audited for development/test overlap; and five seeds are trained on five
+clean-inductive domains. Exposure-matched repeated-gold and same-text
+self-training controls test alternatives to LLM supervision, while paired
+bootstrap inference, multiplicity correction, and a test lock limit
+selection-driven claims. Across the five domains, distillation improves macro
+cF1 over the frozen baseline by 0.0600 (95\% CI [0.0291, 0.0911]), over
+repeated-gold exposure by 0.0588 [0.0318, 0.0853], and over same-text
+self-training by 0.0621 [0.0351, 0.0888]. A reliable per-domain advantage over
+self-training is established only for English laptop and Russian restaurant.
+DeepSeek leads direct fidelity on all eight datasets, but only three differences
+survive Holm correction. One-shot official-test evaluation supports four of
+five KD contrasts before correction and three afterward. No universal teacher,
+pool, or silver-quantity ranking is supported. Offline LLM supervision is
+therefore a conditional tool requiring inductive data hygiene and matched
+controls.
+\end{abstract}
+
+\ccsdesc[500]{Information systems~Sentiment analysis}
+\ccsdesc[500]{Computing methodologies~Information extraction}
+\ccsdesc[300]{Computing methodologies~Transfer learning}
+\ccsdesc[300]{Computing methodologies~Natural language processing}
+
+\keywords{dimensional aspect-based sentiment analysis, knowledge distillation,
+LLM annotation, multilingual NLP, low-resource languages, data contamination,
+statistical evaluation}
+
+\maketitle
+
+\input{tallip_body}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{tallip_refs}
+
+\end{document}

@@ -6,38 +6,35 @@
 
 > Editorial note: this Markdown file is the editable source draft and is not the
 > ICONIP manuscript. Bracketed `CITE: key` markers resolve to
-> `docs/TALLIP_REFERENCES.md`; they must be converted to the target bibliography
-> syntax only after the TALLIP template is fixed. Numerical results must be
-> imported from `docs/audits/tallip_kd/tallip_core_tables.md` after its
-> verification command passes.
+> `docs/TALLIP_REFERENCES.md`. The current ACM/TALLIP submission snapshot is in
+> `paper/tallip/`; regenerate or synchronize it after material Markdown edits.
+> Numerical results must be imported from
+> `docs/audits/tallip_kd/tallip_core_tables.md` only after its verification
+> command passes.
 
 ## Abstract
 
-Large language models (LLMs) can label unlabeled text for a smaller
-task-specific student, moving teacher cost out of deployment. Yet multilingual
-structured-prediction gains may reflect teacher quality, pool composition,
-additional training exposure, split overlap, or development-set selection. We
-study these factors in offline structured label distillation for Dimensional
-Aspect Sentiment Quad Prediction (DimASQP), which jointly predicts aspect and
-opinion spans, categories, and continuous valence and arousal, while fixing a
-previously introduced student. We evaluate two LLM teachers on label-hidden
-development sets from eight language--domain datasets, audit training inputs
-for development/test overlap, and train five seeds on five clean-inductive
-adopted domains. Exposure-matched repeated-gold and same-text self-training
-controls test alternatives to LLM supervision; paired bootstrap inference,
-multiplicity correction, and a pre-evaluation test lock limit selection-driven
-claims. Across the five domains, LLM distillation improves macro cF1 over the
-frozen baseline by 0.0600 (95% CI [0.0291, 0.0911]), over repeated-gold exposure
-by 0.0588 [0.0318, 0.0853], and over same-text self-training by 0.0621 [0.0351,
-0.0888]. These average effects are heterogeneous: a reliable per-domain
-advantage over self-training is established only for English laptop and Russian
-restaurant. DeepSeek has the higher direct-fidelity point estimate on all eight
-datasets, but only three differences survive Holm correction. A one-shot
-evaluation on released official test labels supports four of five adopted KD
-contrasts before correction and three afterward. Ablations provide no universal
-ranking of teacher, pool source, or silver-data quantity. Offline LLM
-supervision is therefore a conditional tool, not a domain-independent recipe,
-and requires inductive data hygiene and matched controls.
+Large language models (LLMs) can provide labels for a student, removing teacher
+cost from deployment. Gains may reflect
+teacher quality, pool composition, exposure, split overlap, or development-set
+selection. This study evaluates offline structured label distillation for
+Dimensional Aspect Sentiment Quad Prediction with a fixed student. Two
+teachers are evaluated on label-hidden development sets from eight
+language--domain datasets; training inputs are audited for development/test
+overlap; and five seeds are trained on five clean-inductive domains.
+Exposure-matched repeated-gold and same-text self-training controls test
+alternatives to LLM supervision, while paired bootstrap inference,
+multiplicity correction, and a test lock limit selection-driven claims. Across
+the five domains, distillation improves macro cF1 over the frozen baseline by
+0.0600 (95% CI [0.0291, 0.0911]), over repeated-gold exposure by 0.0588
+[0.0318, 0.0853], and over same-text self-training by 0.0621 [0.0351, 0.0888].
+A reliable per-domain advantage over self-training is established only for
+English laptop and Russian restaurant. DeepSeek leads direct fidelity on all
+eight datasets, but only three differences survive Holm
+correction. One-shot official-test evaluation supports four of five KD
+contrasts before correction and three afterward. No universal teacher, pool,
+or silver-quantity ranking is supported. Offline LLM supervision is therefore
+a conditional tool requiring inductive data hygiene and matched controls.
 
 ## 1 Introduction
 
@@ -270,30 +267,30 @@ source for teacher, pool, augmentation, or threshold selection.
 
 ### 3.1 Dimensional Aspect Sentiment Quad Prediction
 
-Given an input sentence (x=(x_1,\ldots,x_n)), the Dimensional Aspect
+Given an input sentence $x=(x_1,\ldots,x_n)$, the Dimensional Aspect
 Sentiment Quad Prediction (DimASQP) task requires a system to predict an
 unordered set
 
-\[
+$$
 Y=\{(a_i,c_i,o_i,V_i,A_i)\}_{i=1}^{m},
-\]
+$$
 
-where (a_i) is an aspect span or `NULL`, (o_i) is an opinion span or
-`NULL`, and (c_i) is an entity--attribute category defined by the dataset.
-The two continuous labels (V_i,A_i\in[1,9]) represent valence and arousal,
+where $a_i$ is an aspect span or `NULL`, $o_i$ is an opinion span or
+`NULL`, and $c_i$ is an entity--attribute category defined by the dataset.
+The two continuous labels $V_i,A_i\in[1,9]$ represent valence and arousal,
 respectively. A sentence can contain no opinion, one opinion, or multiple
-opinions; the cardinality (m) is therefore unknown at prediction time.
+opinions; the cardinality $m$ is therefore unknown at prediction time.
 [CITE: lee2026dimabsa; yu2026semeval]
 
 We use the official Task-3 continuous F1 (cF1) as the primary metric. A
 predicted quad is eligible for matching when its categorical triple
-((a,c,o)) matches a gold triple. For each matched pair, the continuous true
+$(a,c,o)$ matches a gold triple. For each matched pair, the continuous true
 positive credit is
 
-\[
+$$
 \operatorname{cTP}
 =1-\frac{\sqrt{(V_p-V_g)^2+(A_p-A_g)^2}}{\sqrt{2(9-1)^2}}.
-\]
+$$
 
 Continuous precision and recall replace the ordinary true-positive count with
 the sum of this credit, and cF1 is their harmonic mean. The metric consequently
@@ -333,23 +330,23 @@ using the experiments reported in this paper.
 
 ### 3.3 Offline Structured Label Distillation
 
-Let (G_d) denote the labeled training data for dataset (d), and let (U_d)
-be an unlabeled text pool from the same task domain. An LLM teacher (t)
-maps each (u\in U_d) to a set of structured DimASQP labels. The prompt
+Let $G_d$ denote the labeled training data for dataset $d$, and let $U_d$
+be an unlabeled text pool from the same task domain. An LLM teacher $t$
+maps each $u\in U_d$ to a set of structured DimASQP labels. The prompt
 requires non-`NULL` aspects and opinions to be verbatim substrings of the
-input, restricts categories to the inventory derived from (G_d), constrains
-valence and arousal to ([1,9]), and permits an empty set when the sentence
+input, restricts categories to the inventory derived from $G_d$, constrains
+valence and arousal to $[1,9]$, and permits an empty set when the sentence
 contains no in-domain opinion. Responses are parsed into the task JSON schema,
-and accepted examples form the silver set (S_{d,t}). The student is then
+and accepted examples form the silver set $S_{d,t}$. The student is then
 trained on
 
-\[
+$$
 T_{d,t}=G_d\cup S_{d,t}.
-\]
+$$
 
 This is response-based structured distillation: the teacher supplies hard
 structured labels rather than logits, hidden states, or token-level
-probabilities. The LLM is used only while constructing (S_{d,t}). Validation,
+probabilities. The LLM is used only while constructing $S_{d,t}$. Validation,
 official-test evaluation, and deployment use the student checkpoints alone and
 make no teacher calls.
 
@@ -491,8 +488,8 @@ inherit the dataset-specific model configuration, optimizer, training data
 order, augmentation recipe, maximum of 30 epochs, validation-based checkpoint
 selection, and early-stopping patience of eight from the corresponding fixed
 student. The adopted configurations use AdamW, an encoder learning rate of
-(1.5\times10^{-5}), a warmup ratio of 0.1, weight decay 0.01, gradient-norm
-clipping at 1.0, FGM with \(\epsilon=0.1\), and EMA with decay 0.999. Batch size
+$1.5\times10^{-5}$, a warmup ratio of 0.1, weight decay 0.01, gradient-norm
+clipping at 1.0, FGM with $\epsilon=0.1$, and EMA with decay 0.999. Batch size
 is eight for the base-size English and Ukrainian encoders and four for the large
 Russian, Tatar, and Chinese encoders. We retain and evaluate
 `checkpoint_best.pt`; no last-epoch checkpoint is substituted.
@@ -557,8 +554,8 @@ having fewer rows; it cannot identify a universal optimal silver dose.
 
 For a comparison between systems (A) and (B), we resample evaluation
 examples with replacement, recompute both cF1 scores from the corresponding
-row-level sufficient statistics, and record \(\Delta=\operatorname{cF1}_A-
-\operatorname{cF1}_B\). Every paired bootstrap uses 10,000 resamples and random
+row-level sufficient statistics, and record $\Delta=\operatorname{cF1}_A-
+\operatorname{cF1}_B$. Every paired bootstrap uses 10,000 resamples and random
 seed 20260713. We report the observed delta, percentile 95% confidence interval,
 and two-sided bootstrap p-value. An interval whose lower bound is above zero is
 classified as supported improvement; an interval that crosses zero is
@@ -770,9 +767,9 @@ span inventories.
 | zho_restaurant | 3,882 | −30/−56 | −0.0009 | 130/112 | +0.0069 |
 
 Across only five domains, teacher fidelity versus KD gain has Spearman
-\(\rho=-0.70\) with a bootstrap interval of [−1.00,+0.875], span-coverage gain
-versus KD gain has \(\rho=+0.70\) [−0.875,+1.00], and category-alignment gain
-has \(\rho=+0.10\) [−1.00,+1.00]. The intervals are too wide to establish a
+$\rho=-0.70$ with a bootstrap interval of [−1.00,+0.875], span-coverage gain
+versus KD gain has $\rho=+0.70$ [−0.875,+1.00], and category-alignment gain
+has $\rho=+0.10$ [−1.00,+1.00]. The intervals are too wide to establish a
 moderator. Slices by sentence length, single versus multiple quads, rare
 category, and implicit aspect or opinion are also heterogeneous. These
 measurements support a multi-factor interpretation involving validity,
