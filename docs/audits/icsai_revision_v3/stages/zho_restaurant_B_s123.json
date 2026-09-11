@@ -1,0 +1,69 @@
+{
+  "run_id": "zho_restaurant_B_s123",
+  "dataset": "zho_restaurant",
+  "arm": "B",
+  "seed": 123,
+  "checkpoint": "checkpoints/icsai_phase1/zho_restaurant_B_s123/checkpoint_best.pt",
+  "checkpoint_sha256": "41632f9ca198892a264fd22aa6e53e6c096ad56158e62c187fed1ba5a6b2fdc5",
+  "dev": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+  "dev_sha256": "f1f44388802ea74490374138f9f976dbcb8346a3184c0da7e4c4c3bcec6d2ea9",
+  "final_prediction": "predictions/icsai_phase1/zho_restaurant_B_s123/dev.jsonl",
+  "final_prediction_sha256": "dba024b321076fbfd08948ca742b9a63edd14192928e8990c1121bd70b7a65ed",
+  "rows": 300,
+  "stages": {
+    "draft": {
+      "counts": {
+        "tokens": 10491,
+        "correct": 6306,
+        "positive_gold": 3645,
+        "positive_pred": 3765,
+        "positive_correct": 881,
+        "gold_spans": 1358,
+        "pred_spans": 1182,
+        "matched_spans": 109
+      },
+      "bio_accuracy": 0.6010866456963111,
+      "bio_non_o_micro_f1": 0.2377867746288799,
+      "span_precision": 0.0922165820642978,
+      "span_recall": 0.08026509572901326,
+      "span_f1": 0.08582677165354331
+    },
+    "refine1": {
+      "counts": {
+        "tokens": 10491,
+        "correct": 9037,
+        "positive_gold": 3645,
+        "positive_pred": 3832,
+        "positive_correct": 2922,
+        "gold_spans": 1358,
+        "pred_spans": 1498,
+        "matched_spans": 1019
+      },
+      "bio_accuracy": 0.8614050138213707,
+      "bio_non_o_micro_f1": 0.7815968971512639,
+      "span_precision": 0.6802403204272364,
+      "span_recall": 0.7503681885125184,
+      "span_f1": 0.7135854341736695
+    },
+    "final": {
+      "counts": {
+        "tokens": 10491,
+        "correct": 9069,
+        "positive_gold": 3645,
+        "positive_pred": 3710,
+        "positive_correct": 2882,
+        "gold_spans": 1358,
+        "pred_spans": 1449,
+        "matched_spans": 1011
+      },
+      "bio_accuracy": 0.8644552473548756,
+      "bio_non_o_micro_f1": 0.7836845683208702,
+      "span_precision": 0.6977225672877847,
+      "span_recall": 0.7444771723122239,
+      "span_f1": 0.7203420021375133
+    }
+  },
+  "final_prediction_replay": true,
+  "trace_sha256": "4ec0db58693c24bc8b736b5beb4d5e1f454a8abbb90ed28adeddf3f86cb2d11c",
+  "protocol_sha256": "942533c3bb80a4855104af433916de2ff56d5179b53957d9ecec130e9e33f48d"
+}

@@ -1,0 +1,13 @@
+{
+  "record_checks": {
+    "protected_originals": 132,
+    "stage_runs": 27,
+    "stage_summary_rows": 21,
+    "all_stage_traces_recomputed": true,
+    "six_holm_values_recomputed": true,
+    "seed_differences_recomputed": 18,
+    "original_citations_plus_three": 14,
+    "implicit_partition_records": 16
+  },
+  "local_assets": "not_requested"
+}

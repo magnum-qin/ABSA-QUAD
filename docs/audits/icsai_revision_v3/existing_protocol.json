@@ -1,0 +1,10 @@
+{
+  "scope": "Post-review descriptive partition of existing fixed Japanese hotel test predictions; no training, inference, selection or significance test.",
+  "partitions": "Sentence: any gold NULL aspect/opinion versus none, retain all quads and predictions in selected rows. Quad: partition gold and predictions separately by their own NULL status, retains all rows.",
+  "script_sha256": "15f79afb02efa6d21cfad6058b3f1c6872be5a9358fcd205473bf7bdb4af2084",
+  "gold_sha256": "c0dd73766e11eae318b9f662a14d8c51a72c9e10681deb70c691eeb4ba7a7dd1",
+  "source_sha256": {
+    "docs/audits/icsai_core_test/test_statistics.json": "e35c65d4bf318b5e59d81362c4834a0be137283d53b17f3f190901c53f8efc35",
+    "docs/audits/icsai_extension_test/test_statistics.json": "acb3f0284a08d298bd6b3360204a36511eab869d94067ed28b4f2cb1f863f898"
+  }
+}

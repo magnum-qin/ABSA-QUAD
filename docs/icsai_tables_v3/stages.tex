@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\caption{Post-review development typed token-span F1, averaged over three fixed seeds. A has only a draft output. These are diagnostics of the existing BIO projection, not official quad scores.}\label{tab:stages}
+\begin{tabular}{llrrr}
+\toprule
+Language & Arm & Draft & Refine 1 & Final \\
+\midrule
+English & A & 0.855 & -- & -- \\
+English & B & 0.102 & 0.830 & 0.856 \\
+English & C & 0.046 & 0.831 & 0.852 \\
+Chinese & A & 0.736 & -- & -- \\
+Chinese & B & 0.082 & 0.723 & 0.729 \\
+Chinese & C & 0.011 & 0.737 & 0.737 \\
+Tatar & A & 0.708 & -- & -- \\
+Tatar & B & 0.050 & 0.683 & 0.707 \\
+Tatar & C & 0.006 & 0.696 & 0.706 \\
+\bottomrule
+\end{tabular}
+\end{table}

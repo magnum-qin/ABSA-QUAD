@@ -1,0 +1,69 @@
+{
+  "run_id": "eng_restaurant_C_s123",
+  "dataset": "eng_restaurant",
+  "arm": "C",
+  "seed": 123,
+  "checkpoint": "checkpoints/icsai_phase1/eng_restaurant_C_s123/checkpoint_best.pt",
+  "checkpoint_sha256": "c161e530f9c2d1c5258e9f21b753849976101378015ed8377c981ab1d3acade9",
+  "dev": "data/subtask_3/eng/eng_restaurant_dev_task3.jsonl",
+  "dev_sha256": "656022e2d83ec0d758765881cdfa38b409077c6137f4df743165c72eb08e4a9c",
+  "final_prediction": "predictions/icsai_phase1/eng_restaurant_C_s123/dev.jsonl",
+  "final_prediction_sha256": "f806ed4cb100573de209c2cbcd5f005d54306c36f882c13a3bad94e4b1bb363c",
+  "rows": 200,
+  "stages": {
+    "draft": {
+      "counts": {
+        "tokens": 3654,
+        "correct": 699,
+        "positive_gold": 1260,
+        "positive_pred": 2946,
+        "positive_correct": 306,
+        "gold_spans": 698,
+        "pred_spans": 1594,
+        "matched_spans": 105
+      },
+      "bio_accuracy": 0.19129720853858784,
+      "bio_non_o_micro_f1": 0.14550641940085593,
+      "span_precision": 0.06587202007528231,
+      "span_recall": 0.1504297994269341,
+      "span_f1": 0.09162303664921466
+    },
+    "refine1": {
+      "counts": {
+        "tokens": 3654,
+        "correct": 3340,
+        "positive_gold": 1260,
+        "positive_pred": 1243,
+        "positive_correct": 1068,
+        "gold_spans": 698,
+        "pred_spans": 731,
+        "matched_spans": 592
+      },
+      "bio_accuracy": 0.9140667761357416,
+      "bio_non_o_micro_f1": 0.8533759488613664,
+      "span_precision": 0.8098495212038304,
+      "span_recall": 0.8481375358166189,
+      "span_f1": 0.8285514345696291
+    },
+    "final": {
+      "counts": {
+        "tokens": 3654,
+        "correct": 3359,
+        "positive_gold": 1260,
+        "positive_pred": 1209,
+        "positive_correct": 1062,
+        "gold_spans": 698,
+        "pred_spans": 706,
+        "matched_spans": 591
+      },
+      "bio_accuracy": 0.9192665571975916,
+      "bio_non_o_micro_f1": 0.8602673147023087,
+      "span_precision": 0.8371104815864022,
+      "span_recall": 0.8467048710601719,
+      "span_f1": 0.8418803418803419
+    }
+  },
+  "final_prediction_replay": true,
+  "trace_sha256": "811de93a884840672a81f694221297aa5db301932038513455cccd7501a029fc",
+  "protocol_sha256": "942533c3bb80a4855104af433916de2ff56d5179b53957d9ecec130e9e33f48d"
+}

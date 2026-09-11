@@ -1,0 +1,12 @@
+{
+  "schema": "pdf_read_preflight/1",
+  "verdict": "PASS",
+  "file": "docs/paper_icsai_v3_supplement.pdf",
+  "sha256": "376997867bee98e1d2bb14dd1b4ac359ee8fb93251408621d187ba82aa254063",
+  "declared_page_count": 4,
+  "enumerated_page_count": 4,
+  "reader_page_count": 4,
+  "warnings": [],
+  "generated_at": "2026-09-11T17:35:25.495727+00:00",
+  "tool": "pdf_read_preflight/1.0.0"
+}

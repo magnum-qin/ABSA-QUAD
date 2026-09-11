@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\caption{Japanese hotel test cF1 by sentence and quad partition. N counts sentences in the first partition and gold quads in the second. Single-model entries are three-seed means and sample SDs; ensemble is fixed vote-2.}\label{tab:implicit}
+\begin{tabular}{llrcc}
+\toprule
+Unit & Stratum & N & Single & Ensemble \\
+\midrule
+Sentence & Explicit & 648 & $0.2402\pm0.0015$ & 0.2545 \\
+Sentence & Implicit & 152 & $0.2225\pm0.0080$ & 0.2411 \\
+Quad & Explicit & 1268 & $0.2416\pm0.0024$ & 0.2579 \\
+Quad & Implicit & 175 & $0.1914\pm0.0118$ & 0.1985 \\
+\bottomrule
+\end{tabular}
+\end{table}

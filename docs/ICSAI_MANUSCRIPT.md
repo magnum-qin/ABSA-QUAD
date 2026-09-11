@@ -1,5 +1,7 @@
 # ICSAI 稿件初稿（2026-09-10）
 
+2026-09-12 更新：当前修订版为 [v3 正文](paper_icsai_v3.pdf)与[补充材料](paper_icsai_v3_supplement.pdf)。八项修改见 [对应表](ICSAI_REVISION_V3.md)，[复现说明](ICSAI_REPRODUCIBILITY_V3.md)及 [源码包](paper_icsai_v3_source.zip)另附。旧稿及以下历史记录保持保留。
+
 主文件：[paper_icsai_draft.tex](paper_icsai_draft.tex)；预览：[paper_icsai_draft.pdf](paper_icsai_draft.pdf)。原 ICONIP tex 保留。当前第二稿6页，是供老师审阅的版本，不是最终投稿版本。
 
 ## 已完成

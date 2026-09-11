@@ -1,0 +1,1111 @@
+{
+  "protocol": {
+    "scope": "Post-review descriptive partition of existing fixed Japanese hotel test predictions; no training, inference, selection or significance test.",
+    "partitions": "Sentence: any gold NULL aspect/opinion versus none, retain all quads and predictions in selected rows. Quad: partition gold and predictions separately by their own NULL status, retains all rows.",
+    "script_sha256": "15f79afb02efa6d21cfad6058b3f1c6872be5a9358fcd205473bf7bdb4af2084",
+    "gold_sha256": "c0dd73766e11eae318b9f662a14d8c51a72c9e10681deb70c691eeb4ba7a7dd1",
+    "source_sha256": {
+      "docs/audits/icsai_core_test/test_statistics.json": "e35c65d4bf318b5e59d81362c4834a0be137283d53b17f3f190901c53f8efc35",
+      "docs/audits/icsai_extension_test/test_statistics.json": "acb3f0284a08d298bd6b3360204a36511eab869d94067ed28b4f2cb1f863f898"
+    }
+  },
+  "sentence_counts": {
+    "implicit": 152,
+    "explicit": 648
+  },
+  "gold_quad_counts": {
+    "implicit": 175,
+    "explicit": 1268,
+    "both_null": 0
+  },
+  "results": [
+    {
+      "run_id": "jpn_hotel_A_s42",
+      "seed": 42,
+      "kind": "single",
+      "unit": "sentence",
+      "stratum": "explicit",
+      "rows": 648,
+      "gold_quads": 1108,
+      "pred_quads": 1221,
+      "metrics": {
+        "cPrecision": 0.2291547166133816,
+        "cRecall": 0.25252518861456585,
+        "cF1": 0.24027300041643535,
+        "exact_precision": 0.23914823914823916,
+        "exact_recall": 0.26353790613718414,
+        "exact_f1": 0.25075139544869046,
+        "tp_categorical": 292,
+        "fp_categorical": 929,
+        "fn_categorical": 816,
+        "va_mae": 0.30869863013698634,
+        "va_rmse": 0.41236620910418803,
+        "va_coordinate_n": 584,
+        "aspect_span": {
+          "precision": 0.673963133640553,
+          "recall": 0.6303879310344828,
+          "f1": 0.6514476614699332,
+          "tp": 585,
+          "fp": 283,
+          "fn": 343
+        },
+        "opinion_span": {
+          "precision": 0.5095669687814703,
+          "recall": 0.5054945054945055,
+          "f1": 0.5075225677031093,
+          "tp": 506,
+          "fp": 487,
+          "fn": 495
+        },
+        "category_span": {
+          "precision": 0.6406417112299465,
+          "recall": 0.6385927505330491,
+          "f1": 0.6396155899626268,
+          "tp": 599,
+          "fp": 336,
+          "fn": 339
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 45,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 648,
+          "prediction_rows": 648,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 33,
+          "error_rate": 0.0,
+          "empty_rate": 0.05092592592592592
+        }
+      },
+      "prediction_sha256": "8f43de369a283948197dbd15212694160d52c97d2a8fce45d1853a9bfe99c59a"
+    },
+    {
+      "run_id": "jpn_hotel_A_s42",
+      "seed": 42,
+      "kind": "single",
+      "unit": "sentence",
+      "stratum": "implicit",
+      "rows": 152,
+      "gold_quads": 335,
+      "pred_quads": 353,
+      "metrics": {
+        "cPrecision": 0.208505642282789,
+        "cRecall": 0.21970893052484933,
+        "cF1": 0.2139607317611178,
+        "exact_precision": 0.21813031161473087,
+        "exact_recall": 0.2298507462686567,
+        "exact_f1": 0.22383720930232556,
+        "tp_categorical": 77,
+        "fp_categorical": 276,
+        "fn_categorical": 258,
+        "va_mae": 0.32967532467532473,
+        "va_rmse": 0.42892420545589877,
+        "va_coordinate_n": 154,
+        "aspect_span": {
+          "precision": 0.5084745762711864,
+          "recall": 0.6206896551724138,
+          "f1": 0.5590062111801243,
+          "tp": 90,
+          "fp": 87,
+          "fn": 55
+        },
+        "opinion_span": {
+          "precision": 0.4879725085910653,
+          "recall": 0.4536741214057508,
+          "f1": 0.4701986754966888,
+          "tp": 142,
+          "fp": 149,
+          "fn": 171
+        },
+        "category_span": {
+          "precision": 0.7072243346007605,
+          "recall": 0.6526315789473685,
+          "f1": 0.6788321167883212,
+          "tp": 186,
+          "fp": 77,
+          "fn": 99
+        },
+        "null_slice": {
+          "precision": 0.297029702970297,
+          "recall": 0.17142857142857143,
+          "f1": 0.21739130434782608,
+          "tp": 30,
+          "fp": 71,
+          "fn": 145
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 152,
+          "prediction_rows": 152,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 6,
+          "error_rate": 0.0,
+          "empty_rate": 0.039473684210526314
+        }
+      },
+      "prediction_sha256": "8f43de369a283948197dbd15212694160d52c97d2a8fce45d1853a9bfe99c59a"
+    },
+    {
+      "run_id": "jpn_hotel_A_s42",
+      "seed": 42,
+      "kind": "single",
+      "unit": "quad",
+      "stratum": "explicit",
+      "rows": 800,
+      "gold_quads": 1268,
+      "pred_quads": 1428,
+      "metrics": {
+        "cPrecision": 0.22746063866360838,
+        "cRecall": 0.2561622965391426,
+        "cF1": 0.24095978635877802,
+        "exact_precision": 0.23739495798319327,
+        "exact_recall": 0.26735015772870663,
+        "exact_f1": 0.2514836795252226,
+        "tp_categorical": 339,
+        "fp_categorical": 1089,
+        "fn_categorical": 929,
+        "va_mae": 0.31025073746312687,
+        "va_rmse": 0.41256607587349187,
+        "va_coordinate_n": 678,
+        "aspect_span": {
+          "precision": 0.645933014354067,
+          "recall": 0.6290773532152842,
+          "f1": 0.6373937677053824,
+          "tp": 675,
+          "fp": 370,
+          "fn": 398
+        },
+        "opinion_span": {
+          "precision": 0.47359597652975693,
+          "recall": 0.4930191972076789,
+          "f1": 0.48311244121419417,
+          "tp": 565,
+          "fp": 628,
+          "fn": 581
+        },
+        "category_span": {
+          "precision": 0.6306306306306306,
+          "recall": 0.6475485661424607,
+          "f1": 0.6389776357827476,
+          "tp": 700,
+          "fp": 410,
+          "fn": 381
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 800,
+          "prediction_rows": 800,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 73,
+          "error_rate": 0.0,
+          "empty_rate": 0.09125
+        }
+      },
+      "prediction_sha256": "8f43de369a283948197dbd15212694160d52c97d2a8fce45d1853a9bfe99c59a"
+    },
+    {
+      "run_id": "jpn_hotel_A_s42",
+      "seed": 42,
+      "kind": "single",
+      "unit": "quad",
+      "stratum": "implicit",
+      "rows": 800,
+      "gold_quads": 175,
+      "pred_quads": 146,
+      "metrics": {
+        "cPrecision": 0.19579868972007355,
+        "cRecall": 0.16335204970931852,
+        "cF1": 0.1781097115210638,
+        "exact_precision": 0.2054794520547945,
+        "exact_recall": 0.17142857142857143,
+        "exact_f1": 0.18691588785046728,
+        "tp_categorical": 30,
+        "fp_categorical": 116,
+        "fn_categorical": 145,
+        "va_mae": 0.3449999999999999,
+        "va_rmse": 0.4515934750045296,
+        "va_coordinate_n": 60,
+        "aspect_span": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "opinion_span": {
+          "precision": 0.3287671232876712,
+          "recall": 0.2774566473988439,
+          "f1": 0.3009404388714733,
+          "tp": 48,
+          "fp": 98,
+          "fn": 125
+        },
+        "category_span": {
+          "precision": 0.4765625,
+          "recall": 0.3696969696969697,
+          "f1": 0.416382252559727,
+          "tp": 61,
+          "fp": 67,
+          "fn": 104
+        },
+        "null_slice": {
+          "precision": 0.2054794520547945,
+          "recall": 0.17142857142857143,
+          "f1": 0.18691588785046728,
+          "tp": 30,
+          "fp": 116,
+          "fn": 145
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 800,
+          "prediction_rows": 800,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 689,
+          "error_rate": 0.0,
+          "empty_rate": 0.86125
+        }
+      },
+      "prediction_sha256": "8f43de369a283948197dbd15212694160d52c97d2a8fce45d1853a9bfe99c59a"
+    },
+    {
+      "run_id": "jpn_hotel_A_s123",
+      "seed": 123,
+      "kind": "single",
+      "unit": "sentence",
+      "stratum": "explicit",
+      "rows": 648,
+      "gold_quads": 1108,
+      "pred_quads": 1216,
+      "metrics": {
+        "cPrecision": 0.2309511262333262,
+        "cRecall": 0.253462607851737,
+        "cF1": 0.2416837947501933,
+        "exact_precision": 0.24095394736842105,
+        "exact_recall": 0.2644404332129964,
+        "exact_f1": 0.2521514629948365,
+        "tp_categorical": 293,
+        "fp_categorical": 923,
+        "fn_categorical": 815,
+        "va_mae": 0.310443686006826,
+        "va_rmse": 0.39737706579923326,
+        "va_coordinate_n": 586,
+        "aspect_span": {
+          "precision": 0.6689419795221843,
+          "recall": 0.6336206896551724,
+          "f1": 0.6508024349750967,
+          "tp": 588,
+          "fp": 291,
+          "fn": 340
+        },
+        "opinion_span": {
+          "precision": 0.5194274028629857,
+          "recall": 0.5074925074925075,
+          "f1": 0.513390601313795,
+          "tp": 508,
+          "fp": 470,
+          "fn": 493
+        },
+        "category_span": {
+          "precision": 0.6439075630252101,
+          "recall": 0.6535181236673774,
+          "f1": 0.6486772486772487,
+          "tp": 613,
+          "fp": 339,
+          "fn": 325
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 48,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 648,
+          "prediction_rows": 648,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 23,
+          "error_rate": 0.0,
+          "empty_rate": 0.035493827160493825
+        }
+      },
+      "prediction_sha256": "5af22f491b5a7caeaa24344e5fafae76b9cef8bd8a7aa17f08cefaa748777dce"
+    },
+    {
+      "run_id": "jpn_hotel_A_s123",
+      "seed": 123,
+      "kind": "single",
+      "unit": "sentence",
+      "stratum": "implicit",
+      "rows": 152,
+      "gold_quads": 335,
+      "pred_quads": 356,
+      "metrics": {
+        "cPrecision": 0.22308724072767067,
+        "cRecall": 0.23707181402701719,
+        "cF1": 0.2298670266253278,
+        "exact_precision": 0.23314606741573032,
+        "exact_recall": 0.24776119402985075,
+        "exact_f1": 0.2402315484804631,
+        "tp_categorical": 83,
+        "fp_categorical": 273,
+        "fn_categorical": 252,
+        "va_mae": 0.3227710843373494,
+        "va_rmse": 0.41257930964480993,
+        "va_coordinate_n": 166,
+        "aspect_span": {
+          "precision": 0.4864864864864865,
+          "recall": 0.6206896551724138,
+          "f1": 0.5454545454545455,
+          "tp": 90,
+          "fp": 95,
+          "fn": 55
+        },
+        "opinion_span": {
+          "precision": 0.48771929824561405,
+          "recall": 0.4440894568690096,
+          "f1": 0.46488294314381273,
+          "tp": 139,
+          "fp": 146,
+          "fn": 174
+        },
+        "category_span": {
+          "precision": 0.6973180076628352,
+          "recall": 0.6385964912280702,
+          "f1": 0.6666666666666667,
+          "tp": 182,
+          "fp": 79,
+          "fn": 103
+        },
+        "null_slice": {
+          "precision": 0.32673267326732675,
+          "recall": 0.18857142857142858,
+          "f1": 0.2391304347826087,
+          "tp": 33,
+          "fp": 68,
+          "fn": 142
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 152,
+          "prediction_rows": 152,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 8,
+          "error_rate": 0.0,
+          "empty_rate": 0.05263157894736842
+        }
+      },
+      "prediction_sha256": "5af22f491b5a7caeaa24344e5fafae76b9cef8bd8a7aa17f08cefaa748777dce"
+    },
+    {
+      "run_id": "jpn_hotel_A_s123",
+      "seed": 123,
+      "kind": "single",
+      "unit": "quad",
+      "stratum": "explicit",
+      "rows": 800,
+      "gold_quads": 1268,
+      "pred_quads": 1423,
+      "metrics": {
+        "cPrecision": 0.2309167234996689,
+        "cRecall": 0.2591439255047546,
+        "cF1": 0.24421738947605268,
+        "exact_precision": 0.2410400562192551,
+        "exact_recall": 0.2705047318611987,
+        "exact_f1": 0.25492382014121145,
+        "tp_categorical": 343,
+        "fp_categorical": 1080,
+        "fn_categorical": 925,
+        "va_mae": 0.31470845481049564,
+        "va_rmse": 0.4027147309435682,
+        "va_coordinate_n": 686,
+        "aspect_span": {
+          "precision": 0.6372180451127819,
+          "recall": 0.6318732525629077,
+          "f1": 0.6345343940102948,
+          "tp": 678,
+          "fp": 386,
+          "fn": 395
+        },
+        "opinion_span": {
+          "precision": 0.4858369098712446,
+          "recall": 0.493891797556719,
+          "f1": 0.48983124188662913,
+          "tp": 566,
+          "fp": 599,
+          "fn": 580
+        },
+        "category_span": {
+          "precision": 0.640107430617726,
+          "recall": 0.6614246068455134,
+          "f1": 0.6505914467697906,
+          "tp": 715,
+          "fp": 402,
+          "fn": 366
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 800,
+          "prediction_rows": 800,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 66,
+          "error_rate": 0.0,
+          "empty_rate": 0.0825
+        }
+      },
+      "prediction_sha256": "5af22f491b5a7caeaa24344e5fafae76b9cef8bd8a7aa17f08cefaa748777dce"
+    },
+    {
+      "run_id": "jpn_hotel_A_s123",
+      "seed": 123,
+      "kind": "single",
+      "unit": "quad",
+      "stratum": "implicit",
+      "rows": 800,
+      "gold_quads": 175,
+      "pred_quads": 149,
+      "metrics": {
+        "cPrecision": 0.21249080307883392,
+        "cRecall": 0.18092074090712146,
+        "cF1": 0.1954390719675695,
+        "exact_precision": 0.2214765100671141,
+        "exact_recall": 0.18857142857142858,
+        "exact_f1": 0.2037037037037037,
+        "tp_categorical": 33,
+        "fp_categorical": 116,
+        "fn_categorical": 142,
+        "va_mae": 0.2971212121212121,
+        "va_rmse": 0.38011760540574013,
+        "va_coordinate_n": 66,
+        "aspect_span": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "opinion_span": {
+          "precision": 0.3221476510067114,
+          "recall": 0.2774566473988439,
+          "f1": 0.29813664596273287,
+          "tp": 48,
+          "fp": 101,
+          "fn": 125
+        },
+        "category_span": {
+          "precision": 0.44776119402985076,
+          "recall": 0.36363636363636365,
+          "f1": 0.4013377926421404,
+          "tp": 60,
+          "fp": 74,
+          "fn": 105
+        },
+        "null_slice": {
+          "precision": 0.2214765100671141,
+          "recall": 0.18857142857142858,
+          "f1": 0.2037037037037037,
+          "tp": 33,
+          "fp": 116,
+          "fn": 142
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 800,
+          "prediction_rows": 800,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 688,
+          "error_rate": 0.0,
+          "empty_rate": 0.86
+        }
+      },
+      "prediction_sha256": "5af22f491b5a7caeaa24344e5fafae76b9cef8bd8a7aa17f08cefaa748777dce"
+    },
+    {
+      "run_id": "jpn_hotel_A_s456",
+      "seed": 456,
+      "kind": "single",
+      "unit": "sentence",
+      "stratum": "explicit",
+      "rows": 648,
+      "gold_quads": 1108,
+      "pred_quads": 1196,
+      "metrics": {
+        "cPrecision": 0.2299928663848603,
+        "cRecall": 0.24825944783058929,
+        "cF1": 0.2387773161426154,
+        "exact_precision": 0.2399665551839465,
+        "exact_recall": 0.25902527075812276,
+        "exact_f1": 0.24913194444444445,
+        "tp_categorical": 287,
+        "fp_categorical": 909,
+        "fn_categorical": 821,
+        "va_mae": 0.3103484320557492,
+        "va_rmse": 0.3909801852095329,
+        "va_coordinate_n": 574,
+        "aspect_span": {
+          "precision": 0.691764705882353,
+          "recall": 0.6336206896551724,
+          "f1": 0.6614173228346457,
+          "tp": 588,
+          "fp": 262,
+          "fn": 340
+        },
+        "opinion_span": {
+          "precision": 0.5223123732251521,
+          "recall": 0.5144855144855145,
+          "f1": 0.5183694011071968,
+          "tp": 515,
+          "fp": 471,
+          "fn": 486
+        },
+        "category_span": {
+          "precision": 0.6449893390191898,
+          "recall": 0.6449893390191898,
+          "f1": 0.6449893390191898,
+          "tp": 605,
+          "fp": 333,
+          "fn": 333
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 57,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 648,
+          "prediction_rows": 648,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 28,
+          "error_rate": 0.0,
+          "empty_rate": 0.043209876543209874
+        }
+      },
+      "prediction_sha256": "8179a0eb97fa8b283ba31dbcfe89e28090ee3056560390f56d449e9b20b2e8bd"
+    },
+    {
+      "run_id": "jpn_hotel_A_s456",
+      "seed": 456,
+      "kind": "single",
+      "unit": "sentence",
+      "stratum": "implicit",
+      "rows": 152,
+      "gold_quads": 335,
+      "pred_quads": 383,
+      "metrics": {
+        "cPrecision": 0.2097837502134626,
+        "cRecall": 0.2398423174082274,
+        "cF1": 0.2238082906177052,
+        "exact_precision": 0.2193211488250653,
+        "exact_recall": 0.2507462686567164,
+        "exact_f1": 0.23398328690807796,
+        "tp_categorical": 84,
+        "fp_categorical": 299,
+        "fn_categorical": 251,
+        "va_mae": 0.32297619047619036,
+        "va_rmse": 0.4097022728530468,
+        "va_coordinate_n": 168,
+        "aspect_span": {
+          "precision": 0.5108695652173914,
+          "recall": 0.6482758620689655,
+          "f1": 0.5714285714285715,
+          "tp": 94,
+          "fp": 90,
+          "fn": 51
+        },
+        "opinion_span": {
+          "precision": 0.5033112582781457,
+          "recall": 0.48562300319488816,
+          "f1": 0.49430894308943085,
+          "tp": 152,
+          "fp": 150,
+          "fn": 161
+        },
+        "category_span": {
+          "precision": 0.6861313868613139,
+          "recall": 0.6596491228070176,
+          "f1": 0.6726296958855099,
+          "tp": 188,
+          "fp": 86,
+          "fn": 97
+        },
+        "null_slice": {
+          "precision": 0.32432432432432434,
+          "recall": 0.2057142857142857,
+          "f1": 0.2517482517482517,
+          "tp": 36,
+          "fp": 75,
+          "fn": 139
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 152,
+          "prediction_rows": 152,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 4,
+          "error_rate": 0.0,
+          "empty_rate": 0.02631578947368421
+        }
+      },
+      "prediction_sha256": "8179a0eb97fa8b283ba31dbcfe89e28090ee3056560390f56d449e9b20b2e8bd"
+    },
+    {
+      "run_id": "jpn_hotel_A_s456",
+      "seed": 456,
+      "kind": "single",
+      "unit": "quad",
+      "stratum": "explicit",
+      "rows": 800,
+      "gold_quads": 1268,
+      "pred_quads": 1411,
+      "metrics": {
+        "cPrecision": 0.2275043631640724,
+        "cRecall": 0.2531614009656989,
+        "cF1": 0.23964811976446895,
+        "exact_precision": 0.23742026931254429,
+        "exact_recall": 0.26419558359621453,
+        "exact_f1": 0.2500933184023889,
+        "tp_categorical": 335,
+        "fp_categorical": 1076,
+        "fn_categorical": 933,
+        "va_mae": 0.312179104477612,
+        "va_rmse": 0.39340154564948376,
+        "va_coordinate_n": 670,
+        "aspect_span": {
+          "precision": 0.6595744680851063,
+          "recall": 0.6356011183597391,
+          "f1": 0.6473659231134313,
+          "tp": 682,
+          "fp": 352,
+          "fn": 391
+        },
+        "opinion_span": {
+          "precision": 0.4846678023850085,
+          "recall": 0.4965095986038394,
+          "f1": 0.49051724137931035,
+          "tp": 569,
+          "fp": 605,
+          "fn": 577
+        },
+        "category_span": {
+          "precision": 0.6323396567299007,
+          "recall": 0.6475485661424607,
+          "f1": 0.6398537477148081,
+          "tp": 700,
+          "fp": 407,
+          "fn": 381
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 800,
+          "prediction_rows": 800,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 79,
+          "error_rate": 0.0,
+          "empty_rate": 0.09875
+        }
+      },
+      "prediction_sha256": "8179a0eb97fa8b283ba31dbcfe89e28090ee3056560390f56d449e9b20b2e8bd"
+    },
+    {
+      "run_id": "jpn_hotel_A_s456",
+      "seed": 456,
+      "kind": "single",
+      "unit": "quad",
+      "stratum": "implicit",
+      "rows": 800,
+      "gold_quads": 175,
+      "pred_quads": 168,
+      "metrics": {
+        "cPrecision": 0.204821357759185,
+        "cRecall": 0.1966285034488176,
+        "cF1": 0.20064133004981385,
+        "exact_precision": 0.21428571428571427,
+        "exact_recall": 0.2057142857142857,
+        "exact_f1": 0.20991253644314867,
+        "tp_categorical": 36,
+        "fp_categorical": 132,
+        "fn_categorical": 139,
+        "va_mae": 0.32277777777777766,
+        "va_rmse": 0.4125159929559634,
+        "va_coordinate_n": 72,
+        "aspect_span": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "opinion_span": {
+          "precision": 0.3333333333333333,
+          "recall": 0.3236994219653179,
+          "f1": 0.3284457478005865,
+          "tp": 56,
+          "fp": 112,
+          "fn": 117
+        },
+        "category_span": {
+          "precision": 0.4689655172413793,
+          "recall": 0.4121212121212121,
+          "f1": 0.4387096774193548,
+          "tp": 68,
+          "fp": 77,
+          "fn": 97
+        },
+        "null_slice": {
+          "precision": 0.21428571428571427,
+          "recall": 0.2057142857142857,
+          "f1": 0.20991253644314867,
+          "tp": 36,
+          "fp": 132,
+          "fn": 139
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 800,
+          "prediction_rows": 800,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 672,
+          "error_rate": 0.0,
+          "empty_rate": 0.84
+        }
+      },
+      "prediction_sha256": "8179a0eb97fa8b283ba31dbcfe89e28090ee3056560390f56d449e9b20b2e8bd"
+    },
+    {
+      "run_id": "jpn_hotel_A_ensemble",
+      "seed": null,
+      "kind": "ensemble",
+      "unit": "sentence",
+      "stratum": "explicit",
+      "rows": 648,
+      "gold_quads": 1108,
+      "pred_quads": 1064,
+      "metrics": {
+        "cPrecision": 0.25973832709524003,
+        "cRecall": 0.24942380869073594,
+        "cF1": 0.254476593028854,
+        "exact_precision": 0.2706766917293233,
+        "exact_recall": 0.259927797833935,
+        "exact_f1": 0.26519337016574585,
+        "tp_categorical": 288,
+        "fp_categorical": 776,
+        "fn_categorical": 820,
+        "va_mae": 0.30065972222222226,
+        "va_rmse": 0.3840722045831138,
+        "va_coordinate_n": 576,
+        "aspect_span": {
+          "precision": 0.712484237074401,
+          "recall": 0.6088362068965517,
+          "f1": 0.6565950029052876,
+          "tp": 565,
+          "fp": 228,
+          "fn": 363
+        },
+        "opinion_span": {
+          "precision": 0.5362637362637362,
+          "recall": 0.4875124875124875,
+          "f1": 0.510727367870225,
+          "tp": 488,
+          "fp": 422,
+          "fn": 513
+        },
+        "category_span": {
+          "precision": 0.6908665105386417,
+          "recall": 0.6289978678038379,
+          "f1": 0.6584821428571429,
+          "tp": 590,
+          "fp": 264,
+          "fn": 348
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 40,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 648,
+          "prediction_rows": 648,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 52,
+          "error_rate": 0.0,
+          "empty_rate": 0.08024691358024691
+        }
+      },
+      "prediction_sha256": "4bd665ddb92547e9a6b81429ff112ff1384e5b9fec14789f766b9bb13cdffc01"
+    },
+    {
+      "run_id": "jpn_hotel_A_ensemble",
+      "seed": null,
+      "kind": "ensemble",
+      "unit": "sentence",
+      "stratum": "implicit",
+      "rows": 152,
+      "gold_quads": 335,
+      "pred_quads": 317,
+      "metrics": {
+        "cPrecision": 0.24789523933677182,
+        "cRecall": 0.23457549513360199,
+        "cF1": 0.2410515057354499,
+        "exact_precision": 0.2586750788643533,
+        "exact_recall": 0.24477611940298508,
+        "exact_f1": 0.25153374233128833,
+        "tp_categorical": 82,
+        "fp_categorical": 235,
+        "fn_categorical": 253,
+        "va_mae": 0.30993902439024384,
+        "va_rmse": 0.3982055787238914,
+        "va_coordinate_n": 164,
+        "aspect_span": {
+          "precision": 0.5272727272727272,
+          "recall": 0.6,
+          "f1": 0.5612903225806452,
+          "tp": 87,
+          "fp": 78,
+          "fn": 58
+        },
+        "opinion_span": {
+          "precision": 0.5055762081784386,
+          "recall": 0.43450479233226835,
+          "f1": 0.4673539518900343,
+          "tp": 136,
+          "fp": 133,
+          "fn": 177
+        },
+        "category_span": {
+          "precision": 0.7385892116182573,
+          "recall": 0.624561403508772,
+          "f1": 0.6768060836501901,
+          "tp": 178,
+          "fp": 63,
+          "fn": 107
+        },
+        "null_slice": {
+          "precision": 0.3404255319148936,
+          "recall": 0.18285714285714286,
+          "f1": 0.2379182156133829,
+          "tp": 32,
+          "fp": 62,
+          "fn": 143
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 152,
+          "prediction_rows": 152,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 11,
+          "error_rate": 0.0,
+          "empty_rate": 0.07236842105263158
+        }
+      },
+      "prediction_sha256": "4bd665ddb92547e9a6b81429ff112ff1384e5b9fec14789f766b9bb13cdffc01"
+    },
+    {
+      "run_id": "jpn_hotel_A_ensemble",
+      "seed": null,
+      "kind": "ensemble",
+      "unit": "quad",
+      "stratum": "explicit",
+      "rows": 800,
+      "gold_quads": 1268,
+      "pred_quads": 1247,
+      "metrics": {
+        "cPrecision": 0.2600444200978552,
+        "cRecall": 0.2557376907429223,
+        "cF1": 0.25787307503938406,
+        "exact_precision": 0.27105052125100243,
+        "exact_recall": 0.2665615141955836,
+        "exact_f1": 0.2687872763419483,
+        "tp_categorical": 338,
+        "fp_categorical": 909,
+        "fn_categorical": 930,
+        "va_mae": 0.30272189349112416,
+        "va_rmse": 0.3869257531640125,
+        "va_coordinate_n": 676,
+        "aspect_span": {
+          "precision": 0.6805845511482255,
+          "recall": 0.6076421248835042,
+          "f1": 0.6420482520925652,
+          "tp": 652,
+          "fp": 306,
+          "fn": 421
+        },
+        "opinion_span": {
+          "precision": 0.501841620626151,
+          "recall": 0.4755671902268761,
+          "f1": 0.48835125448028677,
+          "tp": 545,
+          "fp": 541,
+          "fn": 601
+        },
+        "category_span": {
+          "precision": 0.6791707798617966,
+          "recall": 0.6364477335800185,
+          "f1": 0.6571155682903534,
+          "tp": 688,
+          "fp": 325,
+          "fn": 393
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 800,
+          "prediction_rows": 800,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 99,
+          "error_rate": 0.0,
+          "empty_rate": 0.12375
+        }
+      },
+      "prediction_sha256": "4bd665ddb92547e9a6b81429ff112ff1384e5b9fec14789f766b9bb13cdffc01"
+    },
+    {
+      "run_id": "jpn_hotel_A_ensemble",
+      "seed": null,
+      "kind": "ensemble",
+      "unit": "quad",
+      "stratum": "implicit",
+      "rows": 800,
+      "gold_quads": 175,
+      "pred_quads": 134,
+      "metrics": {
+        "cPrecision": 0.22887297788855585,
+        "cRecall": 0.17525130878323703,
+        "cF1": 0.19850471868651443,
+        "exact_precision": 0.23880597014925373,
+        "exact_recall": 0.18285714285714286,
+        "exact_f1": 0.20711974110032363,
+        "tp_categorical": 32,
+        "fp_categorical": 102,
+        "fn_categorical": 143,
+        "va_mae": 0.3026562499999999,
+        "va_rmse": 0.3906464994083526,
+        "va_coordinate_n": 64,
+        "aspect_span": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "opinion_span": {
+          "precision": 0.35074626865671643,
+          "recall": 0.27167630057803466,
+          "f1": 0.3061889250814332,
+          "tp": 47,
+          "fp": 87,
+          "fn": 126
+        },
+        "category_span": {
+          "precision": 0.525,
+          "recall": 0.38181818181818183,
+          "f1": 0.4421052631578947,
+          "tp": 63,
+          "fp": 57,
+          "fn": 102
+        },
+        "null_slice": {
+          "precision": 0.23880597014925373,
+          "recall": 0.18285714285714286,
+          "f1": 0.20711974110032363,
+          "tp": 32,
+          "fp": 102,
+          "fn": 143
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 800,
+          "prediction_rows": 800,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 691,
+          "error_rate": 0.0,
+          "empty_rate": 0.86375
+        }
+      },
+      "prediction_sha256": "4bd665ddb92547e9a6b81429ff112ff1384e5b9fec14789f766b9bb13cdffc01"
+    }
+  ]
+}

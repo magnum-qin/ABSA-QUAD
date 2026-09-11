@@ -1,0 +1,69 @@
+{
+  "run_id": "tat_restaurant_B_s42",
+  "dataset": "tat_restaurant",
+  "arm": "B",
+  "seed": 42,
+  "checkpoint": "checkpoints/icsai_phase1/tat_restaurant_B_s42/checkpoint_best.pt",
+  "checkpoint_sha256": "e344d8a743ca7cac7e4a1e52b9c621662750d60e94352dc64b92600fb756bebc",
+  "dev": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+  "dev_sha256": "9c9b9eb1a2ab7ac5d40dada5e80e3509e7a702e153b549b7d86c74e22bd10a4c",
+  "final_prediction": "predictions/icsai_phase1/tat_restaurant_B_s42/dev.jsonl",
+  "final_prediction_sha256": "93865ae250ac842f1ca98c57539c6d5d1868a78e774022fb553e02d34aef3770",
+  "rows": 48,
+  "stages": {
+    "draft": {
+      "counts": {
+        "tokens": 2007,
+        "correct": 241,
+        "positive_gold": 741,
+        "positive_pred": 1682,
+        "positive_correct": 93,
+        "gold_spans": 175,
+        "pred_spans": 1267,
+        "matched_spans": 0
+      },
+      "bio_accuracy": 0.12007972097658197,
+      "bio_non_o_micro_f1": 0.07676434172513413,
+      "span_precision": 0.0,
+      "span_recall": 0.0,
+      "span_f1": 0.0
+    },
+    "refine1": {
+      "counts": {
+        "tokens": 2007,
+        "correct": 1608,
+        "positive_gold": 741,
+        "positive_pred": 716,
+        "positive_correct": 517,
+        "gold_spans": 175,
+        "pred_spans": 212,
+        "matched_spans": 126
+      },
+      "bio_accuracy": 0.8011958146487295,
+      "bio_non_o_micro_f1": 0.7096774193548387,
+      "span_precision": 0.5943396226415094,
+      "span_recall": 0.72,
+      "span_f1": 0.6511627906976745
+    },
+    "final": {
+      "counts": {
+        "tokens": 2007,
+        "correct": 1625,
+        "positive_gold": 741,
+        "positive_pred": 639,
+        "positive_correct": 492,
+        "gold_spans": 175,
+        "pred_spans": 179,
+        "matched_spans": 124
+      },
+      "bio_accuracy": 0.809666168410563,
+      "bio_non_o_micro_f1": 0.7130434782608696,
+      "span_precision": 0.6927374301675978,
+      "span_recall": 0.7085714285714285,
+      "span_f1": 0.7005649717514124
+    }
+  },
+  "final_prediction_replay": true,
+  "trace_sha256": "dd8bfc3b8679fa27b7130ff47f7095d166a2501c658ac4d0f52646f47ef13b47",
+  "protocol_sha256": "942533c3bb80a4855104af433916de2ff56d5179b53957d9ecec130e9e33f48d"
+}

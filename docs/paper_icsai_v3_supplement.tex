@@ -1,0 +1,78 @@
+\documentclass[10pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=22mm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,xurl,longtable,placeins}
+\setlength{\emergencystretch}{1em}
+\usepackage[hidelinks]{hyperref}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\title{Supplement to Revisiting BIO Feedback for Multilingual Dimensional Aspect Sentiment Quadruple Extraction}
+\author{Hongzhen Qin, Yoshimi Suzuki, Fumiyo Fukumoto, and Renjie Zhou}
+\date{September 12, 2026}
+\begin{document}
+\maketitle
+\section{Scope and Artifact Map}
+This supplement accompanies the v3 revision. All original 42 training runs, selected checkpoints, 56 test predictions, and six corrected test contrasts remain unchanged. Intermediate BIO diagnostics and Japanese hotel partitions were added after review, following earlier exposure to test outcomes. They are descriptive follow-up analyses, not additional preregistered tests or independent confirmation. No new training was performed.
+
+The companion source archive preserves repository-relative paths. Start with \path{docs/ICSAI_REPRODUCIBILITY_V3.md}. Full SHA-256 identities are in \path{docs/audits/icsai_revision_v3/artifact_manifest.json}. The original experiment code is anchored to repository commit \texttt{2d245c7}; the complete commit identifier and per-file hashes are recorded in that manifest. Archive contents are independently listed and hashed in \path{ARCHIVE_MANIFEST.json} at the archive root.
+
+\begin{longtable}{p{0.23\linewidth}p{0.69\linewidth}}
+\toprule
+Evidence & Repository-relative entry point \\
+\midrule
+Earlier system source & \path{docs/paper_iconip_current.tex}; earlier system manuscript, rather than a newly asserted proceedings publication. Its metadata and source hash are retained. \\
+Experiment matrix & \path{docs/audits/icsai_phase1/experiment_matrix.json} \\
+Input identities & \path{docs/audits/icsai_phase1/gold_input_manifest.json} \\
+Implementation lock & \path{docs/audits/icsai_phase2/implementation.lock.json} and \path{preflight.json} in that directory \\
+Core test locks & \path{docs/audits/icsai_core_test/protocol_lock.json} and \path{predictions.lock.json} \\
+Extension test locks & \path{docs/audits/icsai_extension_test/protocol_lock.json} and \path{predictions.lock.json} \\
+Original score records & \path{docs/audits/icsai_core_test/test_statistics.json}; \path{docs/audits/icsai_extension_test/test_statistics.json}; \path{eight_domain_summary.json} in the latter directory \\
+Training records & \path{docs/audits/icsai_archive/runs/}: configuration, initialization, epoch, and status records for 42 runs \\
+New stage records & \path{docs/audits/icsai_revision_v3/stage_protocol.json}, \path{stage_summary.json}, and \path{stages/} in that directory \\
+NULL partitions & \path{docs/audits/icsai_revision_v3/implicit_results.json} \\
+Paired seed differences & \path{docs/audits/icsai_revision_v3/seed_contrasts.json} \\
+Literature checks & \path{docs/audits/icsai_revision_v3/literature_verification.json} \\
+\bottomrule
+\end{longtable}
+
+The earlier manuscript describes heterogeneous encoders, augmentation, and five-seed development ensembles, including broader category/affect feedback. The current fixed experiment checks the active implementation, whose pair-fusion output is discarded. It adds the A/B/C intervention, shared initialization/data-order controls, gold-only training, corrected fixed-seed test comparisons, uniform eight-dataset evaluation, and inference-cost measurements. Earlier development rankings are not pooled with these results. The source archive includes the earlier manuscript for provenance; its historical claims are not endorsed as new controlled findings.
+
+The original official scorer is identified by SHA-256
+\path{75eee32e50c5ebbd0000ed810b818954abedb9899f56987227c813667e3f9dbe}
+at the official dataset repository revision
+\path{bdc93be1224106ae7d3eb95739c02a76ed4ae8a1}.
+The upstream path is \path{evaluation_script/metrics_subtask_1_2_3.py} in
+\url{https://github.com/DimABSA/DimABSA2026}. The encoder snapshot is
+\path{microsoft/mdeberta-v3-base} revision
+\path{a0484667b22365f84929a935b5e50a51f71f159d}.
+
+\section{Supervision and Gradient Interpretation}
+A's BIO head is directly supervised. In B/C, final BIO, pair, entity, attribute, and V/A outputs contribute to the main loss. The initial BIO head has no separate direct cross-entropy objective; its loss only supplies the detached scalar margin reference. B can train that head indirectly through $P^{(0)}E$. Multiplication by zero in C removes the task gradient through both the initial probabilities and their embedding on that path. The shared refinement head receives final-step supervision in both conditions. The computed pair-feedback output is unused.
+
+For the BIO terms in B/C, away from the hinge boundary, the derivative with respect to the final BIO loss is $2+0.5\,\mathbf{1}\{L_{\rm BIO}^{\rm final}-\mathrm{stopgrad}(L_{\rm BIO}^{\rm draft})+0.1>0\}$. The draft reference affects this gate numerically without receiving a gradient through the reference. Thus the penalty is not a guarantee of improvement or a direct teaching signal to the draft head. Zero data gradients also do not imply byte-frozen parameters under optimizer weight decay or EMA. This distinction is why B--C is described as a joint intervention on content and learning path.
+
+\section{Intermediate BIO and Span Diagnostics}
+The diagnostic protocol was written before the new forward passes and retained separately from the original experiment. All 27 core best checkpoints were loaded with their saved EMA parameters. Complete original development splits were used (English 200, Chinese 300, Tatar 48 sentences); all three seeds and all A/B/C conditions were included. Forward hooks observe the initial span head and each call to the shared refinement head without changing model code. The final quad predictions exactly match the archived development predictions for every run.
+
+For each stage, argmax labels are scored on all attended positions, including CLS/SEP; padding is excluded. Non-O BIO F1 counts exact matching positive tags, so a wrong positive type contributes both a false positive and a false negative. Typed token-span F1 requires the exact start, end, and aspect/opinion type. Its decoder follows the deployed greedy treatment of orphan I tags and type switches and is checked against that decoder on every batch. Gold spans are obtained from the training pipeline's five-way BIO labels; these labels may lose overlaps or truncated/unmapped annotations. These are stage diagnostics, not official quad extraction scores or annotation-complete character-span evaluation. Each seed is aggregated across its whole split before taking the seed mean and sample SD.
+
+\input{icsai_tables_v3/stages_full.tex}
+The initial B outputs have substantially lower decoded span F1 than directly supervised A outputs, while both B and C produce stronger refined outputs. This supports caution about interpreting the initial channel as an accurate boundary estimate. It does not show that its soft probabilities contain no useful information, establish a causal explanation of test differences, or compare against a directly supervised draft-feedback variant. All per-run metrics and attended gold/predicted tag sequences are retained under \path{stages/}; no sentence text is needed to rebuild the stage tables.
+\FloatBarrier
+\section{Japanese Hotel Implicit-Element Partitions}
+The dataset's label constructor maps a NULL aspect or opinion to the existing CLS position, with direct BIO supervision where the relevant stage is supervised. A zero-offset predicted span is rendered as NULL. The five-way single layer cannot put both aspect and opinion tags on that anchor simultaneously; aspect labels take precedence. This is a representational collision, not a complete lack of NULL support. No Japanese test gold quad has both elements NULL. This observation does not rule out a sentence containing separate quads that require both anchor types.
+
+Two partitions answer different questions. The sentence partition separates the 152 sentences containing at least one NULL gold element from the 648 remaining sentences. It retains all gold and predicted quads in each selected sentence, including explicit quads inside an implicit-containing sentence. The quad partition independently assigns each gold and predicted quad to implicit (either aspect or opinion is NULL) or explicit status, across all 800 sentences. Thus false-positive implicit predictions on explicit sentences remain in the implicit quad denominator. The 1,443 gold quads divide into 175 implicit and 1,268 explicit quads; the sentence partition divides them into 335 and 1,108 gold quads. The two definitions should not be conflated.
+
+\input{icsai_tables_v3/implicit.tex}
+Per-seed cF1, categorical F1, V/A errors, and counts are retained in \path{implicit_results.json}. Every original prediction file is hash-checked before partitioning. Both partitions conserve the overall gold and predicted quad counts. Their scores use the same continuous-credit rule as the original test scores, with no new significance claim. Performance differences are descriptive and may reflect other sentence or annotation properties.
+
+\section{Original Paired Seed Differences}
+\input{icsai_tables_v3/seed_contrasts.tex}
+These entries are derived from the existing core test record, not new model runs. The three seeds are 42, 123, and 456 in the stated order. Mean differences use unrounded scores; small apparent discrepancies from subtracting four-decimal means arise from rounding. Holm correction still covers the original six contrasts, and the sentence bootstrap remains conditional on these trained seeds. No equivalence or full-training-process uncertainty claim is made.
+
+\section{Literature Verification and Reproduction Limits}
+IMN was checked through arXiv MCP at \url{https://arxiv.org/abs/1906.06906v1}, including Sections 3.3--3.4 (message passing and learning); formal metadata were verified at \url{https://aclanthology.org/P19-1048/}. IMKTN was checked at \url{https://arxiv.org/abs/2004.01935v3}, including Section 3's routing and document-knowledge transfer; formal metadata were verified at \url{https://aclanthology.org/2021.findings-emnlp.152/}. The latter is a 2021 conference publication despite the initial 2020 arXiv identifier. These sources establish related mechanisms, not dimensional cF1 baselines. The earlier LEADER source is explicitly treated as a local manuscript with version provenance, without inventing a DOI or final proceedings status.
+
+The source archive includes manuscripts, tables, scripts, configurations, stage-tag traces, aggregate results, and provenance records. Raw datasets, original quad-prediction files, and full model weights are not bundled. Table rebuilding from included records requires only Python's standard library. Full prediction/scoring replay requires the exact external assets named by the manifests and the original compatible Python environment. The reproduction guide distinguishes these modes and gives commands; absence of external assets is not described as a successful full replay. No online publication or submission is implied by this local package.
+\end{document}

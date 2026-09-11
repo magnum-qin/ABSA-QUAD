@@ -1,0 +1,69 @@
+{
+  "run_id": "tat_restaurant_B_s456",
+  "dataset": "tat_restaurant",
+  "arm": "B",
+  "seed": 456,
+  "checkpoint": "checkpoints/icsai_phase1/tat_restaurant_B_s456/checkpoint_best.pt",
+  "checkpoint_sha256": "97ed564ca05b7b109a6a4996458bdedcea453b4781f3d406354b65d9ea0075e6",
+  "dev": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+  "dev_sha256": "9c9b9eb1a2ab7ac5d40dada5e80e3509e7a702e153b549b7d86c74e22bd10a4c",
+  "final_prediction": "predictions/icsai_phase1/tat_restaurant_B_s456/dev.jsonl",
+  "final_prediction_sha256": "ec6f85a50553295bad7dd6e23fd887525a440b0bc7d51f4af84388aef090ed96",
+  "rows": 48,
+  "stages": {
+    "draft": {
+      "counts": {
+        "tokens": 2007,
+        "correct": 1251,
+        "positive_gold": 741,
+        "positive_pred": 669,
+        "positive_correct": 212,
+        "gold_spans": 175,
+        "pred_spans": 252,
+        "matched_spans": 29
+      },
+      "bio_accuracy": 0.6233183856502242,
+      "bio_non_o_micro_f1": 0.300709219858156,
+      "span_precision": 0.11507936507936507,
+      "span_recall": 0.1657142857142857,
+      "span_f1": 0.1358313817330211
+    },
+    "refine1": {
+      "counts": {
+        "tokens": 2007,
+        "correct": 1607,
+        "positive_gold": 741,
+        "positive_pred": 762,
+        "positive_correct": 536,
+        "gold_spans": 175,
+        "pred_spans": 215,
+        "matched_spans": 134
+      },
+      "bio_accuracy": 0.8006975585450922,
+      "bio_non_o_micro_f1": 0.7132401862940785,
+      "span_precision": 0.6232558139534884,
+      "span_recall": 0.7657142857142857,
+      "span_f1": 0.6871794871794872
+    },
+    "final": {
+      "counts": {
+        "tokens": 2007,
+        "correct": 1625,
+        "positive_gold": 741,
+        "positive_pred": 716,
+        "positive_correct": 526,
+        "gold_spans": 175,
+        "pred_spans": 196,
+        "matched_spans": 131
+      },
+      "bio_accuracy": 0.809666168410563,
+      "bio_non_o_micro_f1": 0.7220315717227179,
+      "span_precision": 0.6683673469387755,
+      "span_recall": 0.7485714285714286,
+      "span_f1": 0.706199460916442
+    }
+  },
+  "final_prediction_replay": true,
+  "trace_sha256": "b7ec95a65e4a549b1b978ceffd8280fcf992552f7578c23068429dca1b1eaa59",
+  "protocol_sha256": "942533c3bb80a4855104af433916de2ff56d5179b53957d9ecec130e9e33f48d"
+}

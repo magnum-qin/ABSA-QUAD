@@ -1,5 +1,9 @@
 # ICSAI 实验与稿件记录索引
 
+## 2026-09-12 修订版
+
+八项审阅修改的对应位置见 [ICSAI_REVISION_V3.md](ICSAI_REVISION_V3.md)。当前文稿为 [v3 正文](paper_icsai_v3.pdf)、[补充材料](paper_icsai_v3_supplement.pdf)，[复现入口](ICSAI_REPRODUCIBILITY_V3.md)区分随包表格重建与需本地资产的推理复现。新增 27 个固定检查点的阶段诊断和日语酒店 NULL 分层，均未追加训练。以下第二稿记录作为历史快照保留。
+
 ## 已完成
 
 - 42次训练：三域A/B/C各3seed共27次，另五域A各3seed共15次。

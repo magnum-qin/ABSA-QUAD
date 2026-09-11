@@ -1,0 +1,35 @@
+{
+  "run_id": "eng_restaurant_A_s123",
+  "dataset": "eng_restaurant",
+  "arm": "A",
+  "seed": 123,
+  "checkpoint": "checkpoints/icsai_phase1/eng_restaurant_A_s123/checkpoint_best.pt",
+  "checkpoint_sha256": "3591e19511c6895b474e90bfad64a6842f2148922a178945328e120d5fee3857",
+  "dev": "data/subtask_3/eng/eng_restaurant_dev_task3.jsonl",
+  "dev_sha256": "656022e2d83ec0d758765881cdfa38b409077c6137f4df743165c72eb08e4a9c",
+  "final_prediction": "predictions/icsai_phase1/eng_restaurant_A_s123/dev.jsonl",
+  "final_prediction_sha256": "14900f426ad516b05492bbe445302ce811a39c26688de56cd0ab8df410978844",
+  "rows": 200,
+  "stages": {
+    "draft": {
+      "counts": {
+        "tokens": 3654,
+        "correct": 3342,
+        "positive_gold": 1260,
+        "positive_pred": 1211,
+        "positive_correct": 1055,
+        "gold_spans": 698,
+        "pred_spans": 698,
+        "matched_spans": 593
+      },
+      "bio_accuracy": 0.9146141215106732,
+      "bio_non_o_micro_f1": 0.8539053014973695,
+      "span_precision": 0.8495702005730659,
+      "span_recall": 0.8495702005730659,
+      "span_f1": 0.8495702005730659
+    }
+  },
+  "final_prediction_replay": true,
+  "trace_sha256": "2fc692c89ad31e7b61987d09da3a1f4b69155fb5b5e35acb0e90d7eb166665f0",
+  "protocol_sha256": "942533c3bb80a4855104af433916de2ff56d5179b53957d9ecec130e9e33f48d"
+}

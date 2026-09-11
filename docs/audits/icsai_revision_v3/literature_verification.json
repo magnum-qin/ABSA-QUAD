@@ -1,0 +1,49 @@
+{
+  "checked_on": "2026-09-12",
+  "sources": [
+    {
+      "arxiv_id": "1906.06906v1",
+      "title": "An Interactive Multi-Task Learning Network for End-to-End Aspect-Based Sentiment Analysis",
+      "authors": [
+        "Ruidan He",
+        "Wee Sun Lee",
+        "Hwee Tou Ng",
+        "Daniel Dahlmeier"
+      ],
+      "arxiv_initial_published": "2019-06-17T09:00:01Z",
+      "publication_year": 2019,
+      "doi": "10.18653/v1/P19-1048",
+      "pages": "504–515",
+      "metadata_tool": "arxiv.get_abstract",
+      "method_read": "arxiv.read_paper_section in preceding revision work; IMN Sections 3.3–3.4; IMKTN Section 3",
+      "verification_scope": "Metadata and cited mechanism only, not exhaustive literature or experimental replication; not a human-read attestation",
+      "method_summary": "Repeated message passing combines task predictions and document-task signals with shared token states; aspect-level cross-entropy uses final-iteration predictions.",
+      "official_url": "https://aclanthology.org/P19-1048/"
+    },
+    {
+      "arxiv_id": "2004.01935v3",
+      "title": "An Iterative Multi-Knowledge Transfer Network for Aspect-Based Sentiment Analysis",
+      "authors": [
+        "Yunlong Liang",
+        "Fandong Meng",
+        "Jinchao Zhang",
+        "Yufeng Chen",
+        "Jinan Xu",
+        "Jie Zhou"
+      ],
+      "arxiv_initial_published": "2020-04-04T13:49:54Z",
+      "publication_year": 2021,
+      "doi": "10.18653/v1/2021.findings-emnlp.152",
+      "pages": "1768–1780",
+      "metadata_tool": "arxiv.get_abstract",
+      "method_read": "arxiv.read_paper_section in preceding revision work; IMN Sections 3.3–3.4; IMKTN Section 3",
+      "verification_scope": "Metadata and cited mechanism only, not exhaustive literature or experimental replication; not a human-read attestation",
+      "method_summary": "Routing transfers representations between aspect, opinion and sentiment tasks; document-domain and sentiment knowledge are transferred selectively.",
+      "official_url": "https://aclanthology.org/2021.findings-emnlp.152/"
+    }
+  ],
+  "local_prior_source": {
+    "path": "docs/paper_iconip_current.tex",
+    "status": "Earlier system manuscript, local archived source; no final proceedings status or DOI asserted"
+  }
+}

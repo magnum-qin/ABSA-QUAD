@@ -1,0 +1,32 @@
+\begin{table}[htbp]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\caption{Development stage diagnostics: mean and sample SD over three seeds. All attended positions, including CLS/SEP, are scored; padding is excluded. Span F1 uses exact token boundaries and aspect/opinion type.}\label{tab:stagesfull}
+\begin{tabular}{lllccc}
+\toprule
+Language & Arm & Stage & BIO accuracy & Non-O BIO F1 & Span F1 \\
+\midrule
+English & A & draft & $0.919\pm0.005$ & $0.864\pm0.010$ & $0.855\pm0.009$ \\
+English & B & draft & $0.485\pm0.099$ & $0.212\pm0.016$ & $0.102\pm0.024$ \\
+English & B & refine1 & $0.913\pm0.005$ & $0.858\pm0.006$ & $0.830\pm0.007$ \\
+English & B & final & $0.920\pm0.001$ & $0.867\pm0.002$ & $0.856\pm0.001$ \\
+English & C & draft & $0.270\pm0.126$ & $0.127\pm0.016$ & $0.046\pm0.040$ \\
+English & C & refine1 & $0.914\pm0.001$ & $0.856\pm0.003$ & $0.831\pm0.004$ \\
+English & C & final & $0.921\pm0.001$ & $0.865\pm0.005$ & $0.852\pm0.010$ \\
+Chinese & A & draft & $0.868\pm0.002$ & $0.790\pm0.004$ & $0.736\pm0.005$ \\
+Chinese & B & draft & $0.622\pm0.019$ & $0.215\pm0.038$ & $0.082\pm0.030$ \\
+Chinese & B & refine1 & $0.865\pm0.003$ & $0.787\pm0.005$ & $0.723\pm0.009$ \\
+Chinese & B & final & $0.868\pm0.003$ & $0.790\pm0.005$ & $0.729\pm0.007$ \\
+Chinese & C & draft & $0.294\pm0.252$ & $0.131\pm0.009$ & $0.011\pm0.002$ \\
+Chinese & C & refine1 & $0.865\pm0.000$ & $0.791\pm0.001$ & $0.737\pm0.004$ \\
+Chinese & C & final & $0.869\pm0.002$ & $0.793\pm0.003$ & $0.737\pm0.005$ \\
+Tatar & A & draft & $0.800\pm0.002$ & $0.710\pm0.002$ & $0.708\pm0.010$ \\
+Tatar & B & draft & $0.400\pm0.256$ & $0.206\pm0.116$ & $0.050\pm0.074$ \\
+Tatar & B & refine1 & $0.803\pm0.004$ & $0.717\pm0.009$ & $0.683\pm0.030$ \\
+Tatar & B & final & $0.809\pm0.001$ & $0.720\pm0.006$ & $0.707\pm0.007$ \\
+Tatar & C & draft & $0.283\pm0.188$ & $0.161\pm0.066$ & $0.006\pm0.007$ \\
+Tatar & C & refine1 & $0.802\pm0.006$ & $0.715\pm0.009$ & $0.696\pm0.010$ \\
+Tatar & C & final & $0.808\pm0.008$ & $0.718\pm0.007$ & $0.706\pm0.009$ \\
+\bottomrule
+\end{tabular}
+\end{table}

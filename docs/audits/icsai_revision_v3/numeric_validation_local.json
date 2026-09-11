@@ -1,0 +1,227 @@
+{
+  "record_checks": {
+    "protected_originals": 132,
+    "stage_runs": 27,
+    "stage_summary_rows": 21,
+    "all_stage_traces_recomputed": true,
+    "six_holm_values_recomputed": true,
+    "seed_differences_recomputed": 18,
+    "original_citations_plus_three": 14,
+    "implicit_partition_records": 16
+  },
+  "local_assets": {
+    "test_prediction_files": 56,
+    "max_cf1_absolute_error": 7.771561172376096e-16,
+    "original_dev_prediction_hashes": 27,
+    "official_slice_checks": [
+      {
+        "run_id": "jpn_hotel_A_s42",
+        "unit": "sentence",
+        "stratum": "explicit",
+        "result": {
+          "TP": 279.7979089849389,
+          "FP": 929,
+          "FN": 816,
+          "cPrecision": 0.22915471661338155,
+          "cRecall": 0.2525251886145658,
+          "cF1": 0.2402730004164353
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s42",
+        "unit": "sentence",
+        "stratum": "implicit",
+        "result": {
+          "TP": 73.60249172582449,
+          "FP": 276,
+          "FN": 258,
+          "cPrecision": 0.20850564228278892,
+          "cRecall": 0.21970893052484924,
+          "cF1": 0.21396073176111768
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s42",
+        "unit": "quad",
+        "stratum": "explicit",
+        "result": {
+          "TP": 324.8137920116326,
+          "FP": 1089,
+          "FN": 929,
+          "cPrecision": 0.22746063866360824,
+          "cRecall": 0.2561622965391424,
+          "cF1": 0.24095978635877785
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s42",
+        "unit": "quad",
+        "stratum": "implicit",
+        "result": {
+          "TP": 28.58660869913074,
+          "FP": 116,
+          "FN": 145,
+          "cPrecision": 0.19579868972007355,
+          "cRecall": 0.16335204970931852,
+          "cF1": 0.1781097115210638
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s123",
+        "unit": "sentence",
+        "stratum": "explicit",
+        "result": {
+          "TP": 280.8365694997245,
+          "FP": 923,
+          "FN": 815,
+          "cPrecision": 0.23095112623332606,
+          "cRecall": 0.2534626078517369,
+          "cF1": 0.24168379475019322
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s123",
+        "unit": "sentence",
+        "stratum": "implicit",
+        "result": {
+          "TP": 79.41905769905077,
+          "FP": 273,
+          "FN": 252,
+          "cPrecision": 0.2230872407276707,
+          "cRecall": 0.2370718140270172,
+          "cF1": 0.22986702662532785
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s123",
+        "unit": "quad",
+        "stratum": "explicit",
+        "result": {
+          "TP": 328.5944975400287,
+          "FP": 1080,
+          "FN": 925,
+          "cPrecision": 0.23091672349966882,
+          "cRecall": 0.2591439255047545,
+          "cF1": 0.24421738947605254
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s123",
+        "unit": "quad",
+        "stratum": "implicit",
+        "result": {
+          "TP": 31.661129658746262,
+          "FP": 116,
+          "FN": 142,
+          "cPrecision": 0.21249080307883397,
+          "cRecall": 0.18092074090712149,
+          "cF1": 0.19543907196756952
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s456",
+        "unit": "sentence",
+        "stratum": "explicit",
+        "result": {
+          "TP": 275.0714681962928,
+          "FP": 909,
+          "FN": 821,
+          "cPrecision": 0.22999286638486022,
+          "cRecall": 0.24825944783058917,
+          "cF1": 0.23877731614261527
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s456",
+        "unit": "sentence",
+        "stratum": "implicit",
+        "result": {
+          "TP": 80.34717633175615,
+          "FP": 299,
+          "FN": 251,
+          "cPrecision": 0.20978375021346252,
+          "cRecall": 0.2398423174082273,
+          "cF1": 0.22380829061770516
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s456",
+        "unit": "quad",
+        "stratum": "explicit",
+        "result": {
+          "TP": 321.00865642450583,
+          "FP": 1076,
+          "FN": 933,
+          "cPrecision": 0.22750436316407216,
+          "cRecall": 0.2531614009656986,
+          "cF1": 0.2396481197644687
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_s456",
+        "unit": "quad",
+        "stratum": "implicit",
+        "result": {
+          "TP": 34.409988103543064,
+          "FP": 132,
+          "FN": 139,
+          "cPrecision": 0.20482135775918492,
+          "cRecall": 0.19662850344881752,
+          "cF1": 0.20064133004981383
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_ensemble",
+        "unit": "sentence",
+        "stratum": "explicit",
+        "result": {
+          "TP": 276.3615800293355,
+          "FP": 776,
+          "FN": 820,
+          "cPrecision": 0.25973832709524014,
+          "cRecall": 0.24942380869073605,
+          "cF1": 0.2544765930288541
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_ensemble",
+        "unit": "sentence",
+        "stratum": "implicit",
+        "result": {
+          "TP": 78.58279086975665,
+          "FP": 235,
+          "FN": 253,
+          "cPrecision": 0.24789523933677177,
+          "cRecall": 0.23457549513360193,
+          "cF1": 0.24105150573544984
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_ensemble",
+        "unit": "quad",
+        "stratum": "explicit",
+        "result": {
+          "TP": 324.2753918620255,
+          "FP": 909,
+          "FN": 930,
+          "cPrecision": 0.2600444200978553,
+          "cRecall": 0.25573769074292235,
+          "cF1": 0.2578730750393841
+        }
+      },
+      {
+        "run_id": "jpn_hotel_A_ensemble",
+        "unit": "quad",
+        "stratum": "implicit",
+        "result": {
+          "TP": 30.66897903706649,
+          "FP": 102,
+          "FN": 143,
+          "cPrecision": 0.22887297788855587,
+          "cRecall": 0.17525130878323708,
+          "cF1": 0.1985047186865145
+        }
+      }
+    ]
+  }
+}
