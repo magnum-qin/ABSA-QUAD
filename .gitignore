@@ -47,3 +47,4 @@ Thumbs.db
 predictions/
 /artifacts/tallip_submission/
 .claude/settings.local.json
+.codex-tmp
