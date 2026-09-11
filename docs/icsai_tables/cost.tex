@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering\small\setlength{\tabcolsep}{3pt}
+\caption{Repeated cost on 64 fixed English development sentences. Wall time includes decoding and, for ensembles, voting; memory is peak allocated GPU memory. Single-model SD combines three seeds and five repeats per seed.}\label{tab:cost}
+\begin{tabular}{llrrr}
+\toprule
+Arm & Mode & Seconds $\pm$ SD & Rows/s & GiB \\
+\midrule
+A & Single & $0.232\pm0.002$ & 276.3 & 1.32 \\
+A & Ensemble & $0.699\pm0.002$ & 91.5 & 3.43 \\
+B & Single & $0.358\pm0.013$ & 179.0 & 1.38 \\
+B & Ensemble & $1.073\pm0.006$ & 59.7 & 3.60 \\
+C & Single & $0.371\pm0.017$ & 172.4 & 1.38 \\
+C & Ensemble & $1.111\pm0.004$ & 57.6 & 3.60 \\
+\bottomrule
+\end{tabular}
+\end{table}

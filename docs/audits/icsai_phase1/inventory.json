@@ -1,0 +1,3424 @@
+{
+  "as_of": "2026-09-07T02:39:58.530100+00:00",
+  "git_head": "f2eebbfa6b30deb154de2666d27c43c26a7f8a85",
+  "scope": "Inventory of local ICONIP best-dev recipe references. Prediction scores below are dev-only diagnostics, not new system selection. Filename, same score or row count alone does not prove provenance. No test labels read. Checkpoint sizes are not content hashes.",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    1024
+  ],
+  "source_files": [
+    {
+      "path": "docs/paper_iconip_current.tex",
+      "exists": true,
+      "bytes": 42320,
+      "sha256": "00e0286add19ac58bd91bb4a0809a45971b4fff8e20cc1b05d10c54a18b6e87d"
+    },
+    {
+      "path": "scripts/audit_best_reproduction.py",
+      "exists": true,
+      "bytes": 6763,
+      "sha256": "de94e71f0471d5ef7590876d379c423746dfa7a26145db9041b65b4100d609e5"
+    },
+    {
+      "path": "scripts/run_final_best_submission_4090.sh",
+      "exists": true,
+      "bytes": 13073,
+      "sha256": "fd89af0af5de64158dc50d02aacd340f5ef8a8b7ac50e3b9c1e94f8631c68895"
+    },
+    {
+      "path": "src/models/dimabsa_model.py",
+      "exists": true,
+      "bytes": 39525,
+      "sha256": "d75097a0c2f00af6a11f689a1d806b006ed603d90ec513fe246eb60115d87a9b"
+    },
+    {
+      "path": "src/models/feature_rethink.py",
+      "exists": true,
+      "bytes": 9155,
+      "sha256": "2a5e4f954ec598c300da906b9a1057b1874f99ca2d18cba8fcb094f0ae603c30"
+    },
+    {
+      "path": "scripts/inference.py",
+      "exists": true,
+      "bytes": 17947,
+      "sha256": "82cf80c44e93e55e98810c4aed06bad9d7b3a346d5c75580b7282e4dde45a476"
+    },
+    {
+      "path": "scripts/train.py",
+      "exists": true,
+      "bytes": 29002,
+      "sha256": "da5ed0539e8261a44824b966d8dc52963903899012dd4ca8c7e299f4e512580a"
+    },
+    {
+      "path": "docs/audits/tallip_kd/official_test/protocol_lock.json",
+      "exists": true,
+      "bytes": 6011,
+      "sha256": "e9bd7fa33bc1e644654bfb16cf9d565b9e01cf5b3e5c0db3b890e2a4fe337dd1"
+    }
+  ],
+  "datasets": [
+    {
+      "name": "eng_restaurant",
+      "version": "V16",
+      "checkpoint_prefix": "v16_native_eng_restaurant_seed",
+      "config": "/tmp/pipeline_eng_restaurant_v16.yaml",
+      "train_file": "data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl",
+      "expected_train_lines": 2284,
+      "dev_file": "data/subtask_3/eng/eng_restaurant_dev_task3.jsonl",
+      "test_file": "data/subtask_3/eng/eng_restaurant_test_task3.jsonl",
+      "vote": 4,
+      "topk": 0.0,
+      "dual_layer": false,
+      "expected_dev_cf1": 0.6949,
+      "encoder_reference": "microsoft/deberta-v3-large",
+      "historical_config": {
+        "path": "/tmp/pipeline_eng_restaurant_v16.yaml",
+        "exists": false
+      },
+      "retained_config_candidate": {
+        "path": "configs/pipeline_eng_restaurant_v16.yaml",
+        "exists": true,
+        "bytes": 1331,
+        "sha256": "85286facd0ebc71b901bc656461b2aa0596f1e04a92cd9230349eb38848cc018",
+        "model": {
+          "encoder_name": "microsoft/deberta-v3-large",
+          "hidden_size": 768,
+          "num_entity_labels": 7,
+          "num_attribute_labels": 6,
+          "dropout": 0.1,
+          "use_crf": false,
+          "va_hidden_size": 256,
+          "va_min": 1.0,
+          "va_max": 9.0,
+          "rethink": {
+            "enabled": true,
+            "num_iterations": 2,
+            "label_embedding_dim": 64
+          }
+        },
+        "train_file": "data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl"
+      },
+      "train": {
+        "path": "data/subtask_3/eng/eng_restaurant_train_alltasks.jsonl",
+        "exists": true,
+        "bytes": 648560,
+        "sha256": "bebab04e593f3f6afe76f144b897c85bcc2eb9749bfbfa1e0080e7d4e2d3985c",
+        "rows": 2284
+      },
+      "dev": {
+        "path": "data/subtask_3/eng/eng_restaurant_dev_task3.jsonl",
+        "exists": true,
+        "bytes": 63330,
+        "sha256": "656022e2d83ec0d758765881cdfa38b409077c6137f4df743165c72eb08e4a9c",
+        "rows": 200
+      },
+      "test_input": {
+        "path": "data/subtask_3/eng/eng_restaurant_test_task3.jsonl",
+        "exists": true,
+        "bytes": 127042,
+        "sha256": "f5675ec4a26feec85e09471bc9310a1d985dc22ca2dfe1cb8209f7423ca48b95",
+        "rows": 1000
+      },
+      "historical_checkpoints": [
+        {
+          "path": "checkpoints/v16_native_eng_restaurant_seed42/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_eng_restaurant_seed123/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_eng_restaurant_seed456/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_eng_restaurant_seed789/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_eng_restaurant_seed1024/checkpoint_best.pt",
+          "exists": false
+        }
+      ],
+      "other_checkpoint_candidates": [],
+      "dev_prediction_candidates": [
+        {
+          "path": "predictions/cw_eval/cw_eng_restaurant.jsonl",
+          "exists": true,
+          "bytes": 41932,
+          "sha256": "e9d2010462893d534b57fd37f7f0906178a57cb65b6fd5aa473e999aae672a69",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6977940225564299,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 53914,
+          "sha256": "7b7d84ca6812bed802ed1091216a9e31c99fa98d7636959241ce2e5da5347508",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6651403741815887,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 55438,
+          "sha256": "4c344f3fbcced77c67a7f1e39e0c2f0a604314f3f70cc304ef78c38925c20b07",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6552990059322465,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 55037,
+          "sha256": "e1d81e1c3e144050a1ea2b33204104ba6cc9a6b5e9a7b3503f2afadd1cf12e02",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6561908115019326,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 55028,
+          "sha256": "1645aca0c65e16d55e59f051f241c21d39e9c04c63f4f340392aa8b8921884b3",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6561908115019326,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 47843,
+          "sha256": "2e484403268dbddcb0f0f1677872ec7138d4e37dca36cf793e95a2f9460dcc98",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6820179224391392,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 48784,
+          "sha256": "308cf68ac59bc3b72b9550a37ba266411efe8c9f78a1f41a3ba30c2dd3edec2e",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6776462541770075,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 48784,
+          "sha256": "5daf2966235c8af4a77497d9f55a8de53281671cd3bb1ea1be9fc943f2ccd818",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6776462541770075,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 48689,
+          "sha256": "4173118497f26fa86aacd3971257e9deeb9ef89606475055928c10ed6b3874c6",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6784696396620342,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 43735,
+          "sha256": "1286996aba373f55f1f6ce2b389f7c1aa41e7e8132c85f18dd241e4b0582fe00",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6998933860453557,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 44613,
+          "sha256": "bbcc3112e013b31f08e67ed78801bb5be1feb0a4db2882d2d38679ea8ca0cc9d",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6918280333252428,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 44521,
+          "sha256": "401e729f1e6601e5c28ec0d1b234b2daa6ad978817b10ad9d15b04838a11ed46",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6927149923423264,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_restaurant_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 44521,
+          "sha256": "401e729f1e6601e5c28ec0d1b234b2daa6ad978817b10ad9d15b04838a11ed46",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.6927149923423264,
+          "matches_paper_rounded_score": false
+        }
+      ],
+      "test_prediction_candidates": [
+        {
+          "path": "submission/final/eng_restaurant_test.jsonl",
+          "exists": true,
+          "bytes": 218391,
+          "sha256": "0a1e8dd65c82838972763f646495355e67504cf10a26d1f826c5bcb63feaafbb",
+          "rows": 1000,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": [
+            "eng_restaurant_v16"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "eng_laptop",
+      "version": "V5/V6",
+      "checkpoint_prefix": "v5_eng_laptop_seed",
+      "config": "/tmp/pipeline_eng_laptop_v5.yaml",
+      "train_file": "data/subtask_3/eng/eng_laptop_train_alltasks_augmented.jsonl",
+      "expected_train_lines": 15049,
+      "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+      "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+      "vote": 3,
+      "topk": 0.0,
+      "dual_layer": true,
+      "expected_dev_cf1": 0.3304,
+      "encoder_reference": "microsoft/deberta-v3-base",
+      "historical_config": {
+        "path": "/tmp/pipeline_eng_laptop_v5.yaml",
+        "exists": false
+      },
+      "retained_config_candidate": {
+        "path": "configs/pipeline_eng_laptop_v5repro.yaml",
+        "exists": true,
+        "bytes": 1734,
+        "sha256": "eda1dc5c601a8332808cb559aa04f31ba9da519bfec7c5b036285e2d7a571437",
+        "model": {
+          "encoder_name": "microsoft/deberta-v3-base",
+          "hidden_size": 768,
+          "dropout": 0.1,
+          "va_hidden_size": 256,
+          "va_min": 1.0,
+          "va_max": 9.0,
+          "use_crf": false,
+          "num_entity_labels": 24,
+          "num_attribute_labels": 10,
+          "rethink": {
+            "enabled": true,
+            "num_iterations": 2,
+            "label_embedding_dim": 64
+          }
+        },
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro.jsonl"
+      },
+      "train": {
+        "path": "data/subtask_3/eng/eng_laptop_train_alltasks_augmented.jsonl",
+        "exists": true,
+        "bytes": 3403720,
+        "sha256": "e89b956a239bf1da1a5e67b7bd1576bf841ff2fe520d8dde09259ef54866596a",
+        "rows": 12632
+      },
+      "dev": {
+        "path": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "exists": true,
+        "bytes": 56045,
+        "sha256": "c3a622060eba7b770a70bdf789c1ec5fddf5ec780877b88c5e8bfca5a3f87ab9",
+        "rows": 200
+      },
+      "test_input": {
+        "path": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "exists": true,
+        "bytes": 126998,
+        "sha256": "76dad16c5aba037dbeb8f839f73eb0c7f84a15ea621dbe959ee58a1189f34688",
+        "rows": 1000
+      },
+      "historical_checkpoints": [
+        {
+          "path": "checkpoints/v5_eng_laptop_seed42/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v5_eng_laptop_seed123/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v5_eng_laptop_seed456/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v5_eng_laptop_seed789/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v5_eng_laptop_seed1024/checkpoint_best.pt",
+          "exists": false
+        }
+      ],
+      "other_checkpoint_candidates": [
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed1024/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed123/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed2025/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed256/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed31337/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed42/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed456/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed64/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed7/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5_6pivot_eng_laptop_seed789/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed1024/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201542929
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed123/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201544426
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed42/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201544362
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed456/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201544362
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_inductive_seed789/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201544362
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_seed1024/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_seed123/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_seed42/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_seed456/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        },
+        {
+          "path": "checkpoints/v5repro_eng_laptop_seed789/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 3201512190
+        }
+      ],
+      "dev_prediction_candidates": [
+        {
+          "path": "predictions/cw_eval/cw_eng_laptop.jsonl",
+          "exists": true,
+          "bytes": 36099,
+          "sha256": "7525bbb920efc6ba2b478171fe8f9ccc5f0d94a14436dd9f2ca457610311d3c4",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.29753859454345366,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/ensemble_eng_laptop_dev_5seed.jsonl",
+          "exists": true,
+          "bytes": 37863,
+          "sha256": "7f7ff70f33e5b4c8fb958bd421b2bf3fbcbf2fc501f9ba6867cc7d5c194c0536",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3018422638929233,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 48700,
+          "sha256": "0deabf476b5af24335816c483e3caf20d6aba7496c0a5a5b188bf036ee3c75a3",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2915178545158114,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 51020,
+          "sha256": "afc6f36de8b9fc26c37f50026cf7d032526f50b8ba54dc20079c66029f9bfef9",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2856840574584246,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 50720,
+          "sha256": "07af08d174e5bae1bee149b55cc5b0df83f852f6c484f4d05e8e3ed9e6dfe8dc",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2864675785340626,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 50197,
+          "sha256": "4055176fcb523b9488669b4a67b60e2a7996c23ddde31de88105683954ac550e",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.28844868212005187,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 39974,
+          "sha256": "a662a17a986df4f4169c5098dac9750e58d8f928c7b914476928bcd678a1ed1d",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3034618659902127,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 42264,
+          "sha256": "69b54f6bcfa36947b95a2bb63815725fcb6866db3cebf5de8f780e55b8b11e3d",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2961614575477872,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 41689,
+          "sha256": "dba2a7a5f8db3fd1619b87ce9d30e2a6aebb1b2dd4bec1c7b546275619d55279",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2984639795703669,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 41092,
+          "sha256": "c891d04dea661ca49c8ab8fda9f0c086fe4d75b7c2e55ccbd65e30c20603d318",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.30128411166079555,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 33195,
+          "sha256": "8790842d171f9a8dfb5ba0109eb30b92edde1d8bdffcf025c38934e9c3fea902",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.29935209240706895,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 34427,
+          "sha256": "25a1778b210f3700fd6b811f6c1c7def42f72287df1ed81c6b74cb11a6c83144",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2993583032112343,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 33942,
+          "sha256": "aa55357bb115aa22e994774703821dd3acc3d43cf123d744550f80233142172d",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.30200749173522756,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_eng_laptop_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 33946,
+          "sha256": "06fc3e89086806a33596c20916417aec4e1b446d934beb5fe58f93bbe19ab404",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.30200749173522756,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v18_sweep/v18_eng_laptop_v3_t0.0.jsonl",
+          "exists": true,
+          "bytes": 36379,
+          "sha256": "d4930b8ac4a578f90aa48c69a559e9dfbc0b9e56a725af624059d5ca1341995d",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2643776715193258,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v18_sweep/v18_eng_laptop_v3_t0.10.jsonl",
+          "exists": true,
+          "bytes": 37344,
+          "sha256": "d7be4e218d11b3cc3462f35f072f21c46ec579667750e03e730d2b85f9dbaddb",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.26628373554586354,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v18_sweep/v18_eng_laptop_v3_t0.15.jsonl",
+          "exists": true,
+          "bytes": 37342,
+          "sha256": "92561f0b45de6fc8d91f0a943c5b3d3840d710685d6ba4cb40bffece63103136",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2631391836544772,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v18_sweep/v18_eng_laptop_v4_t0.0.jsonl",
+          "exists": true,
+          "bytes": 31169,
+          "sha256": "583fe16295d6a5e79e78a0d7b4b97bc65f1db5d07c6addcc37838985cab6940a",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.27619291131278256,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v18_sweep/v18_eng_laptop_v4_t0.10.jsonl",
+          "exists": true,
+          "bytes": 32408,
+          "sha256": "4acca917b4cb2a4171d13c10a9e9717617f75abd38a7737fc4df04363973d24c",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.270173154587191,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v18_sweep/v18_eng_laptop_v4_t0.15.jsonl",
+          "exists": true,
+          "bytes": 32408,
+          "sha256": "2f41c80678ce3059ceb2b3f1689df64f7568e86186ef47ee86b6be1ad88d2bc6",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.27016117673249007,
+          "matches_paper_rounded_score": false
+        }
+      ],
+      "test_prediction_candidates": [
+        {
+          "path": "submission/final/eng_laptop_test.jsonl",
+          "exists": true,
+          "bytes": 202562,
+          "sha256": "5e421fcde0432e8b39d68525a38fad1e890e0ee55b7a11b8d811550cc843febc",
+          "rows": 1000,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": []
+        },
+        {
+          "path": "submission/final/eng_laptop_test_v20_backup.jsonl",
+          "exists": true,
+          "bytes": 252033,
+          "sha256": "8fe30b43f73cf64d2117084eec62f0deea63fc11afde70ee72f640ce0b01175a",
+          "rows": 1000,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": []
+        }
+      ]
+    },
+    {
+      "name": "jpn_hotel",
+      "version": "V16 no_aug",
+      "checkpoint_prefix": "v16_ablation_jpn_no_aug_seed",
+      "config": "/tmp/pipeline_jpn_v16_no_aug.yaml",
+      "train_file": "data/subtask_3/jpn/jpn_hotel_train_alltasks.jsonl",
+      "expected_train_lines": 1600,
+      "dev_file": "data/subtask_3/jpn/jpn_hotel_dev_task3.jsonl",
+      "test_file": "data/subtask_3/jpn/jpn_hotel_test_task3.jsonl",
+      "vote": 4,
+      "topk": 0.0,
+      "dual_layer": false,
+      "expected_dev_cf1": 0.45,
+      "encoder_reference": "ku-nlp/deberta-v2-large-japanese",
+      "historical_config": {
+        "path": "/tmp/pipeline_jpn_v16_no_aug.yaml",
+        "exists": false
+      },
+      "retained_config_candidate": {
+        "path": "configs/pipeline_jpn_v16.yaml",
+        "exists": true,
+        "bytes": 1527,
+        "sha256": "eeb7315e5ae3f23bd0297e0c3a69703b65ab9ada8c602ba698c84e94d1af7db3",
+        "model": {
+          "encoder_name": "ku-nlp/deberta-v2-large-japanese",
+          "hidden_size": 768,
+          "num_entity_labels": 8,
+          "num_attribute_labels": 9,
+          "dropout": 0.1,
+          "use_crf": false,
+          "va_hidden_size": 256,
+          "va_min": 1.0,
+          "va_max": 9.0,
+          "rethink": {
+            "enabled": true,
+            "num_iterations": 2,
+            "label_embedding_dim": 64
+          }
+        },
+        "train_file": "data/subtask_3/jpn/jpn_hotel_train_v13.jsonl"
+      },
+      "train": {
+        "path": "data/subtask_3/jpn/jpn_hotel_train_alltasks.jsonl",
+        "exists": true,
+        "bytes": 545728,
+        "sha256": "ec3dbffd24e1175fad20a3e5519427d4019ae346af7359f162176a1ce3bf39e5",
+        "rows": 1600
+      },
+      "dev": {
+        "path": "data/subtask_3/jpn/jpn_hotel_dev_task3.jsonl",
+        "exists": true,
+        "bytes": 68695,
+        "sha256": "70c6c21de271ef90daec4a66a6cd14a66d2ea8eb85f01f8bd5d070e41db5e8e8",
+        "rows": 200
+      },
+      "test_input": {
+        "path": "data/subtask_3/jpn/jpn_hotel_test_task3.jsonl",
+        "exists": true,
+        "bytes": 113590,
+        "sha256": "ff991f6b36c29d5731146725bb1c0f36eba19111a47ba5d5d47847c677538cb6",
+        "rows": 800
+      },
+      "historical_checkpoints": [
+        {
+          "path": "checkpoints/v16_ablation_jpn_no_aug_seed42/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_ablation_jpn_no_aug_seed123/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_ablation_jpn_no_aug_seed456/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_ablation_jpn_no_aug_seed789/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_ablation_jpn_no_aug_seed1024/checkpoint_best.pt",
+          "exists": false
+        }
+      ],
+      "other_checkpoint_candidates": [],
+      "dev_prediction_candidates": [
+        {
+          "path": "predictions/cw_eval/cw_jpn_hotel.jsonl",
+          "exists": true,
+          "bytes": 39914,
+          "sha256": "8df3deab7e03b0b8eca8251a1ec02866f18cf6ca0b8d4de9d962a7a50ca070b8",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4335495768567246,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/ensemble_jpn_5seed.jsonl",
+          "exists": true,
+          "bytes": 40929,
+          "sha256": "5cc19e01e9f4a098c36a56e4022d5bcb405d442b9c1e57adeb918da13351b07d",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.43148938203794507,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/ensemble_jpn_5seed_corrected.jsonl",
+          "exists": true,
+          "bytes": 40734,
+          "sha256": "a44310845cccc988ce1efeb38be9a61543b8eab8ed53b592b1b8764daaaa2ae1",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.29186338246310056,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/ensemble_jpn_5seed_corrected_v2.jsonl",
+          "exists": true,
+          "bytes": 40901,
+          "sha256": "d068bb6b553279304cc281e3b96fcd14ed3c336cd9b5c53c76d5ec93be01eb38",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4318355893637345,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/llm_quads_jpn_dev.jsonl",
+          "exists": true,
+          "bytes": 52886,
+          "sha256": "56b1bc49f8b3839b78a6fc505f2d866bd63a563349d8d68138ce03580631c81d",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2352740880031038,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/llm_quads_jpn_dev_v4pro_backup.jsonl",
+          "exists": true,
+          "bytes": 25129,
+          "sha256": "6ac1d17262891149c9a1625adf72d3d3c2ad4a1ecdc57f1daf224f6ae73d6217",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.119388338020857,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_jpn_hotel_vote1.jsonl",
+          "exists": true,
+          "bytes": 71091,
+          "sha256": "54ee013d22d11cd098a56c11e853f676a70790e39b5188b1618300f972edae27",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2525472226672918,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_jpn_hotel_vote2.jsonl",
+          "exists": true,
+          "bytes": 50709,
+          "sha256": "434305e36401c09a0b0f35e5d0b6067529356ee50e9eacdf1d28dad92d16d405",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2873677066726306,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_jpn_hotel_vote3.jsonl",
+          "exists": true,
+          "bytes": 42554,
+          "sha256": "16e55d2f7cf4a671cac6fb49c17bab8e50896011f8b5be9844d67f6b5079dfbf",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2920046331420913,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_jpn_hotel_vote4.jsonl",
+          "exists": true,
+          "bytes": 36095,
+          "sha256": "8e4d15e660823184e6882851ebee9ba5b0210d2e87cb93a317ebd69d797e975a",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2941380347647308,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_jpn_hotel_vote5.jsonl",
+          "exists": true,
+          "bytes": 30038,
+          "sha256": "d84f7f9442aff8d41a2227f1b2cfc25ea75fc5cbb73bc78d033d6822f088d21b",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2810863233505264,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v10_paraphrase_jpn_mecab.jsonl",
+          "exists": true,
+          "bytes": 48587,
+          "sha256": "709680a064a8e9e68d77fa69992cc95dca82ee268bc75c7ecfb7f4612bbe909f",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3337644739699647,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v11_comet_jpn_mecab.jsonl",
+          "exists": true,
+          "bytes": 52331,
+          "sha256": "31d7116d00c547fcd20238196d7b04acccc02a49e7be4e8cb58b1099367fc07a",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.34351084187121056,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v12_comet095_jpn_mecab.jsonl",
+          "exists": true,
+          "bytes": 50857,
+          "sha256": "1275d0bd62395b70de695200edea406a94b1a1e0869bcf0dc6cf18514377e501",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.35227971639650857,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_comet096_jpn_mecab.jsonl",
+          "exists": true,
+          "bytes": 51594,
+          "sha256": "98846963a95573c99c1c2a8d978ef8c04f2f6cdbf4ebb88f48736baf3e1f2bf1",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3593299769472479,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v14_comet0965_jpn_mecab.jsonl",
+          "exists": true,
+          "bytes": 54038,
+          "sha256": "f9f178af0484b1d1527d13d5ebd9d7cf5ced0c3a3fd2496159ed153b5d485a05",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.34451451146521156,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_topk0.15_vote3.jsonl",
+          "exists": true,
+          "bytes": 49549,
+          "sha256": "f09d4448fe376e1f5fdc6c442b2ab6cf23ca75b63b269d74114de79a73cd2487",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4035746656735071,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_topk0.15_vote3_mecab.jsonl",
+          "exists": true,
+          "bytes": 49000,
+          "sha256": "32f570d6e7a413145b800abf78df208f6a95614e81cd51380eb24c2ed4c0012d",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.39622431162034266,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_topk0.20_vote3.jsonl",
+          "exists": true,
+          "bytes": 49138,
+          "sha256": "7114474b5732edd0f1e5d430f264ff60145597b2c399682c446c9c6ccbd55832",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4082547931271523,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_topk0.20_vote3_mecab.jsonl",
+          "exists": true,
+          "bytes": 48586,
+          "sha256": "d90c90e46b603ff2cd16f17aaaf579553df609e3adc3b08927a39e62284aecac",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.395849955228863,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_topk0.25_vote3.jsonl",
+          "exists": true,
+          "bytes": 48633,
+          "sha256": "41d4bd081765c8aeed8d5aa3a6879cc9c38ac6eae4d3fe3cec104ae2ab6a7483",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4084942159704792,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_topk0.25_vote3_mecab.jsonl",
+          "exists": true,
+          "bytes": 48087,
+          "sha256": "105ff9f09e4c0ffb912c6e081f1298d6d08bd2f8142d55eabc26f72c9ee837ab",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.393400105007459,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_topk0.30_vote3.jsonl",
+          "exists": true,
+          "bytes": 47942,
+          "sha256": "7436a4671452dff2b88435d16771537ce75b2bbd235b3f32d7fdfe22b816a671",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.41215911982517717,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_topk0.30_vote3_mecab.jsonl",
+          "exists": true,
+          "bytes": 47411,
+          "sha256": "bf2fce70ebcbf2109904ade433a00ea64960e10ac0ba0a634bb66b9956e3676f",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.39431769791479593,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_vote2.jsonl",
+          "exists": true,
+          "bytes": 56250,
+          "sha256": "047283adb28201e380e6c6f4256a97c6f5b08a54f37a164fbbd44a7a7e50c17c",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.38602593599332585,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_vote2_mecab.jsonl",
+          "exists": true,
+          "bytes": 55593,
+          "sha256": "164e7fe7e00548608617da675bb538d0af5aa129f8810df993b0a831c1b9b065",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3765110116947296,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_vote3.jsonl",
+          "exists": true,
+          "bytes": 45423,
+          "sha256": "953abc7d773ea42ed645de2c0a59175f1aef738f2c1740bfc1679b993c8414a6",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4080015340088405,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_vote3_mecab.jsonl",
+          "exists": true,
+          "bytes": 44919,
+          "sha256": "745355d8dface61f1eaea8a1647b2cf727703b38d5a93c0eb6282287fc4fd1cc",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3923651480773006,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_vote4.jsonl",
+          "exists": true,
+          "bytes": 38459,
+          "sha256": "c312c8899cd23312f77381a90d77bc686969acd9ac759336c3c09432d2328834",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3952950632892574,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_vote4_mecab.jsonl",
+          "exists": true,
+          "bytes": 38069,
+          "sha256": "8f5d76c8ad0f8bc57cfdace68d9210e69ff07047c43a6d66fa4de6d1e1121c08",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3898120672710646,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_vote5.jsonl",
+          "exists": true,
+          "bytes": 32189,
+          "sha256": "5303b61b375847a44eccefe35b4a7230259765a7fefcab81f38a9bb5bc650eb5",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3882974745101225,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_xlmr_jpn_vote5_mecab.jsonl",
+          "exists": true,
+          "bytes": 31874,
+          "sha256": "dbd7ed36b8fbb9fa0f6a9a9db03d21aef33151d78e940d53d384c78016439f21",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.39202402078780946,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 54958,
+          "sha256": "8adfd2029f4c98fda35b7b707375131dba198288af077528c01144e5df3db323",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.41554568467653413,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 65522,
+          "sha256": "83aa99c696c5f7950c731e521a027db01e10692931561808384eea5904523e94",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.39896494450868564,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 64189,
+          "sha256": "fba559a76b9c31968ac6b312c6814e2017a5c79a392cd08ef58f3efe9108a7fa",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.40017833538976605,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 63066,
+          "sha256": "33d4122d5fe8c608a8766a8acfa23121f75663b26b1ebe463f92cb8348d1754d",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.40132879403457633,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 43481,
+          "sha256": "3f04cb547565eec6d399055f13989f4d4fe998c6d735559b4747a52e43cce17a",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.43588802454160835,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 50319,
+          "sha256": "56f6bbf7d0a9fd8adc6c90182f64bcd338f72906ec46b9450dcac3cd48e14eb7",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.42173248935209307,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 48851,
+          "sha256": "747095edc7898b1078a9bbefdd607de907da4b4fdc61cf2436d2b967108c0f32",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4276831687859371,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 48397,
+          "sha256": "016b39c246a5e81777ce7f7706068fc6c9a01d4b2f7bc0ac2a56fd457080adca",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.43056641758112063,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 34945,
+          "sha256": "96662ea74d13573d741a71b66d94b18a73b59130b8619721e459335514126735",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4465901701167272,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 38528,
+          "sha256": "4c57ae76a39e8251cabaea035127380e6f3feab7aa5190c2013c799582172e65",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4448803283052957,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 38441,
+          "sha256": "a62fb2e3356dc1b703c0106c5e43eb35f8883cea51c9259fea83ee289111f551",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44258900691959513,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_jpn_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 38250,
+          "sha256": "09b76cd50bee2f74ea23b6f3b21a8383910289570c4e13ec16f06d6550d3473c",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44395273303853705,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v5_jpn_hotel.jsonl",
+          "exists": true,
+          "bytes": 50084,
+          "sha256": "70538dcd603eb8e0f76c969c87c4264071a19bdf531c9a875adc17da9e3707d6",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2818702066556831,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v5_jpn_hotel_mecab.jsonl",
+          "exists": true,
+          "bytes": 48521,
+          "sha256": "5e0cb53c7de486a7a10bc4f04a6b391fdf1bf8917eafdf717a7e6413c1898ac7",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3296417239751218,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v7_jpn_hotel.jsonl",
+          "exists": true,
+          "bytes": 50084,
+          "sha256": "70538dcd603eb8e0f76c969c87c4264071a19bdf531c9a875adc17da9e3707d6",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2818702066556831,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v7_jpn_hotel_mecab.jsonl",
+          "exists": true,
+          "bytes": 48521,
+          "sha256": "5e0cb53c7de486a7a10bc4f04a6b391fdf1bf8917eafdf717a7e6413c1898ac7",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3296417239751218,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v8_pseudo_jpn_mecab.jsonl",
+          "exists": true,
+          "bytes": 48569,
+          "sha256": "1c9493aac13ef82cabc78f01f79bdc7116caef823995033f1ce7084c55cccd34",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.32059457639955424,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v9_paraphrase_jpn_mecab.jsonl",
+          "exists": true,
+          "bytes": 47219,
+          "sha256": "9c4a036b614a6c5f74ee0d635aa7ebfe476e111be80cdf4436a992b8331ba0e3",
+          "rows": 200,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.32908061108354486,
+          "matches_paper_rounded_score": false
+        }
+      ],
+      "test_prediction_candidates": [
+        {
+          "path": "submission/final/jpn_hotel_test.jsonl",
+          "exists": true,
+          "bytes": 186050,
+          "sha256": "e6b167602d60b235b4a0969295956fd9325abdb384e29f037fc639cf7af397c6",
+          "rows": 800,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": [
+            "jpn_hotel_v16_no_aug"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "rus_restaurant",
+      "version": "V15",
+      "checkpoint_prefix": "v15_xlmr_rus_seed",
+      "config": "/tmp/pipeline_rus_v15.yaml",
+      "train_file": "data/subtask_3/rus/rus_restaurant_train_v13.jsonl",
+      "expected_train_lines": 1766,
+      "dev_file": "data/subtask_3/rus/rus_restaurant_dev_task3.jsonl",
+      "test_file": "data/subtask_3/rus/rus_restaurant_test_task3.jsonl",
+      "vote": 4,
+      "topk": 0.1,
+      "dual_layer": false,
+      "expected_dev_cf1": 0.5267,
+      "encoder_reference": "xlm-roberta-large",
+      "historical_config": {
+        "path": "/tmp/pipeline_rus_v15.yaml",
+        "exists": false
+      },
+      "retained_config_candidate": {
+        "path": "configs/pipeline_rus_v15.yaml",
+        "exists": true,
+        "bytes": 1351,
+        "sha256": "998a4a79866bc92bb008a85c490aeef0b2b6998fd086b6c862d357f13d106915",
+        "model": {
+          "encoder_name": "xlm-roberta-large",
+          "hidden_size": 768,
+          "num_entity_labels": 7,
+          "num_attribute_labels": 6,
+          "dropout": 0.1,
+          "use_crf": false,
+          "va_hidden_size": 256,
+          "va_min": 1.0,
+          "va_max": 9.0,
+          "rethink": {
+            "enabled": true,
+            "num_iterations": 2,
+            "label_embedding_dim": 64
+          }
+        },
+        "train_file": "data/subtask_3/rus/rus_restaurant_train_v13.jsonl"
+      },
+      "train": {
+        "path": "data/subtask_3/rus/rus_restaurant_train_v13.jsonl",
+        "exists": true,
+        "bytes": 773540,
+        "sha256": "2ed744b17b7accebd5d583edb3a0761758f1a6a9bfb27478bb1b431ae832bdc5",
+        "rows": 1766
+      },
+      "dev": {
+        "path": "data/subtask_3/rus/rus_restaurant_dev_task3.jsonl",
+        "exists": true,
+        "bytes": 23944,
+        "sha256": "04d1a5711e462d401283f946dfe3653773ce80d19b5cc59efa654b4e7c835624",
+        "rows": 48
+      },
+      "test_input": {
+        "path": "data/subtask_3/rus/rus_restaurant_test_task3.jsonl",
+        "exists": true,
+        "bytes": 134986,
+        "sha256": "ab7832c6d7ae372bb4b0e8f25412dfa7500e3679373420bb4fdeb60038cdf91e",
+        "rows": 630
+      },
+      "historical_checkpoints": [
+        {
+          "path": "checkpoints/v15_xlmr_rus_seed42/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v15_xlmr_rus_seed123/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v15_xlmr_rus_seed456/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v15_xlmr_rus_seed789/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v15_xlmr_rus_seed1024/checkpoint_best.pt",
+          "exists": false
+        }
+      ],
+      "other_checkpoint_candidates": [],
+      "dev_prediction_candidates": [
+        {
+          "path": "predictions/cw_eval/cw_rus_restaurant.jsonl",
+          "exists": true,
+          "bytes": 11882,
+          "sha256": "7c75f486439c6523871f88d2858b97dfa158be119290ff1f89b6578a7ce920e6",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5294105163695516,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_rus_restaurant_vote1.jsonl",
+          "exists": true,
+          "bytes": 23164,
+          "sha256": "95998a597548561ddfb7d4bc9f2794cf6b0b4b71344d784b5d35b416eebdb184",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3824562332517891,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_rus_restaurant_vote2.jsonl",
+          "exists": true,
+          "bytes": 17687,
+          "sha256": "ebd19d6db2685fd6db154d2c5afc892f6c29fe033cc17bc258972d4f83cebf19",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4256328195971317,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_rus_restaurant_vote3.jsonl",
+          "exists": true,
+          "bytes": 14398,
+          "sha256": "143efe6a0def935cb82d35b7bc296aebfb1747c74eb71ea1e4a37f0371866cf8",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4542377277515832,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_rus_restaurant_vote4.jsonl",
+          "exists": true,
+          "bytes": 12165,
+          "sha256": "c26dcc078ecce7dd442bab5060fcde664857a6f10f6de79475aa980db082b90d",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.469567113043539,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_rus_restaurant_vote5.jsonl",
+          "exists": true,
+          "bytes": 10250,
+          "sha256": "476e51b6830b4a21e96247cf6f093ae369adc166171239c49852086986c9500e",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4826410767248232,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_rus_vote2.jsonl",
+          "exists": true,
+          "bytes": 17321,
+          "sha256": "fff19ff173cd642a517ec2246ace806913862ccf62503c47e5e485c5c1b725a0",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.45505232193723755,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_rus_vote3.jsonl",
+          "exists": true,
+          "bytes": 14660,
+          "sha256": "6c29d063f856aae9dc8a25ed6c50445d0bdfaead4ef40b62c554bea790ae1a6f",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.467338658603045,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_rus_vote4.jsonl",
+          "exists": true,
+          "bytes": 12769,
+          "sha256": "ead0206b0c29ca65b5f82e74963d43ead701b3a9f04ca3a45426bc3a9670fd1b",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.46940623065417353,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_rus_vote5.jsonl",
+          "exists": true,
+          "bytes": 11201,
+          "sha256": "40fd9f131d9f83831f59bc579a89c9866c75eeea14dc10106bd96e4aba8e69b9",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.47235030385973187,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13b_rus_vote2.jsonl",
+          "exists": true,
+          "bytes": 17026,
+          "sha256": "06e8135be9bf9913072e834ba7f8c9f9f2691231578d9432a6e94c7ab8ebaf94",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44290096865310086,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13b_rus_vote3.jsonl",
+          "exists": true,
+          "bytes": 13599,
+          "sha256": "e3e9d040689e772ccb7e7e84d9fec5ef79a18ad571a5815c9a6ff02216dc0d6c",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4598857912599363,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13b_rus_vote4.jsonl",
+          "exists": true,
+          "bytes": 11520,
+          "sha256": "88a742c1b94561f5d92e7cdfed337a325da30d752c0483ac5c081a7e67d081f2",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4451065430661911,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13b_rus_vote5.jsonl",
+          "exists": true,
+          "bytes": 9360,
+          "sha256": "455a426d9af6223d73114fb4be31f719b1442c966de06aeadee564264df412de",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4040384551456465,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 18813,
+          "sha256": "b97d0b1d2cbccebe7bfb63ef949515764ab82684ec3c0b999bea6bea02065bfb",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4715932867421443,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 19573,
+          "sha256": "68374587b82214324a6c5bb1507ec07a8e3a06098af8afa81a9bde0c34f92c6a",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.46026166735706453,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 19446,
+          "sha256": "7e8284f4ec918c0abd58c26dd0c98e44d0f71bbd7445b0af5da37da3b7b25467",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4621027140264928,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 19198,
+          "sha256": "e6bd14e7c4f70e283d95595e8af28d08d4b686ab82a101e3684a27cb2da7e402",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.46582934881702903,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 15040,
+          "sha256": "8403eeb448cd1714c68db57bac39e17999d990ce5c0a0266f60e772f2eb6dd32",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5142252719268332,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 15281,
+          "sha256": "09a58ddaca451345075d9b86cc426d98e5ffa079c39cdba862996cac385fe60e",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.509395978921945,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 15281,
+          "sha256": "09a58ddaca451345075d9b86cc426d98e5ffa079c39cdba862996cac385fe60e",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.509395978921945,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 15281,
+          "sha256": "09a58ddaca451345075d9b86cc426d98e5ffa079c39cdba862996cac385fe60e",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.509395978921945,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 12671,
+          "sha256": "8f3091fc4613032d3985612cc2acfe2b5566440ccbd1a62ebe7f3bf3fe2b6bc2",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5195406678076312,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 12780,
+          "sha256": "2d74563103f441177d4371252a170009a6f65ba3cd502c478b8b0bfd9b1abe0e",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5267369887665554,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 12780,
+          "sha256": "2d74563103f441177d4371252a170009a6f65ba3cd502c478b8b0bfd9b1abe0e",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5267369887665554,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/v15_sweep/v15_rus_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 12780,
+          "sha256": "2d74563103f441177d4371252a170009a6f65ba3cd502c478b8b0bfd9b1abe0e",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5267369887665554,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 20161,
+          "sha256": "14ec46d69dfd0abf04d7996750f42dd1df805fa18e2a91aa452e4d74951f4758",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4644358271681865,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 22227,
+          "sha256": "1c5226e61ba27d724f2a48b1196d1c9f0c1c2ad796f4921278ca210a50bd985e",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.43381368471753684,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 21435,
+          "sha256": "0b561bc00adde8888230181754188e4818229a308484b849820881926e639ca9",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44356230684602077,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 20980,
+          "sha256": "becd14e8c4950d697e4a7ddc99480fae00838608dd0ebf6d33fc839159ff60f5",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.45030850162694896,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 16318,
+          "sha256": "b2b242e3db6210b549e8b704090e1c6e24f84667d16de7cf7b7c8a28a9b0d894",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.515243980711223,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 17534,
+          "sha256": "7752d272fbcee6c92225164a8ed34c53bca8aa6bfdbd4d3522207f2b13069a00",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.49102310982308855,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 17558,
+          "sha256": "321aed2a4a691a1ba8040042d0f13a1915ff0a2cd87ba664232387de7a5ca0db",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.49102310982308855,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 17346,
+          "sha256": "99405edd992a2254540146810c65615a08fcabca3656968230b65f45aded3b38",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.495256067666391,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 14630,
+          "sha256": "24a5efff5c6facb41b6e92fd1f2fdd8dbe80eb1c6bd57670ab995e26cfb903c2",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5056923028652548,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 14959,
+          "sha256": "87bbf3baa6bf39b9c4916b031944faba535e251234267e0b62ae3ccd581b5e41",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4985362797115013,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 14849,
+          "sha256": "17bf390c88d5057f1abe810b902c419e8e4328c7215972ad2af3496b84a53a45",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.500899010894968,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_rus_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 14747,
+          "sha256": "c53d54cf896e8acc086fef529d84fedce613de35ab441fd2d4cd341001c843bd",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5032842442801823,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v5_rus_restaurant.jsonl",
+          "exists": true,
+          "bytes": 14398,
+          "sha256": "143efe6a0def935cb82d35b7bc296aebfb1747c74eb71ea1e4a37f0371866cf8",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4542377277515832,
+          "matches_paper_rounded_score": false
+        }
+      ],
+      "test_prediction_candidates": [
+        {
+          "path": "submission/final/rus_restaurant_test.jsonl",
+          "exists": true,
+          "bytes": 180517,
+          "sha256": "59bc8c646e066da723c93bfc7ae9b5f682b64c80d32ec1803473027f86ed3549",
+          "rows": 630,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": [
+            "rus_restaurant_gen4k_kd"
+          ]
+        },
+        {
+          "path": "submission/final/rus_restaurant_test_real_backup.jsonl",
+          "exists": true,
+          "bytes": 192357,
+          "sha256": "c46524a902af3a1ff2015d477d1a2dc547495c2fc3a5c88dc509214643ca9768",
+          "rows": 630,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": []
+        },
+        {
+          "path": "submission/final/rus_restaurant_test_v15_backup.jsonl",
+          "exists": true,
+          "bytes": 130549,
+          "sha256": "2f23c4e7a6be114c9fa5fc77e5491636e5a482de62118b3c61835a16a66fb0ca",
+          "rows": 630,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": [
+            "rus_restaurant_v15_baseline"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tat_restaurant",
+      "version": "V15",
+      "checkpoint_prefix": "v15_xlmr_tat_seed",
+      "config": "/tmp/pipeline_tat_v15.yaml",
+      "train_file": "data/subtask_3/tat/tat_restaurant_train_v13.jsonl",
+      "expected_train_lines": 1599,
+      "dev_file": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+      "test_file": "data/subtask_3/tat/tat_restaurant_test_task3.jsonl",
+      "vote": 3,
+      "topk": 0.2,
+      "dual_layer": false,
+      "expected_dev_cf1": 0.4821,
+      "encoder_reference": "xlm-roberta-large",
+      "historical_config": {
+        "path": "/tmp/pipeline_tat_v15.yaml",
+        "exists": false
+      },
+      "retained_config_candidate": {
+        "path": "configs/pipeline_tat_v15.yaml",
+        "exists": false
+      },
+      "train": {
+        "path": "data/subtask_3/tat/tat_restaurant_train_v13.jsonl",
+        "exists": true,
+        "bytes": 698955,
+        "sha256": "20ef6129c57b6c04096eb51eda1c25d81c0ec672e244a7949b3e37f8505ddf31",
+        "rows": 1599
+      },
+      "dev": {
+        "path": "data/subtask_3/tat/tat_restaurant_dev_task3.jsonl",
+        "exists": true,
+        "bytes": 24274,
+        "sha256": "9c9b9eb1a2ab7ac5d40dada5e80e3509e7a702e153b549b7d86c74e22bd10a4c",
+        "rows": 48
+      },
+      "test_input": {
+        "path": "data/subtask_3/tat/tat_restaurant_test_task3.jsonl",
+        "exists": true,
+        "bytes": 135758,
+        "sha256": "815bfc353d4824178b450d935d3b9bd769387c770e336f3a4a595427c25990ee",
+        "rows": 630
+      },
+      "historical_checkpoints": [
+        {
+          "path": "checkpoints/v15_xlmr_tat_seed42/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v15_xlmr_tat_seed123/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v15_xlmr_tat_seed456/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v15_xlmr_tat_seed789/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v15_xlmr_tat_seed1024/checkpoint_best.pt",
+          "exists": false
+        }
+      ],
+      "other_checkpoint_candidates": [],
+      "dev_prediction_candidates": [
+        {
+          "path": "predictions/cw_eval/cw_tat_restaurant.jsonl",
+          "exists": true,
+          "bytes": 10854,
+          "sha256": "c63206d921c7630e3d7fb3c038136536b8ad1f01616e1e469b1405efab467821",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.48846781517619514,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_tat_restaurant_vote1.jsonl",
+          "exists": true,
+          "bytes": 21171,
+          "sha256": "d199e22a04e9151cd7b5b1dbde5a65417be3b16f10e182e7ff7be4b2a845c04f",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.37720751877772873,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_tat_restaurant_vote2.jsonl",
+          "exists": true,
+          "bytes": 14544,
+          "sha256": "6242c75475376ad0470f3f8af4a482d1abb44f33e99b7df497e1145911499541",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.45115095367959607,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_tat_restaurant_vote3.jsonl",
+          "exists": true,
+          "bytes": 13354,
+          "sha256": "af50953e7859d8db6aae533c42b6e5e09f68d722d496b82434272408ddd7ac2f",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44707405521025373,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_tat_restaurant_vote4.jsonl",
+          "exists": true,
+          "bytes": 11930,
+          "sha256": "e592f8e7cec7371333c1645970d50e952547a8d117be9c449483ac053a4402ae",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.46304608205105224,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_tat_restaurant_vote5.jsonl",
+          "exists": true,
+          "bytes": 8855,
+          "sha256": "841ee78f8bd28fe6a0bab3bd1baecf78274f308078d35483194a8ccaccfefae6",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.45950674555269266,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_tat_vote2.jsonl",
+          "exists": true,
+          "bytes": 18123,
+          "sha256": "c1c6f925b1b6a04cd352fcd53a8ee9b459ef414f990f613218db68ab27c6de0a",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4254943749910626,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_tat_vote3.jsonl",
+          "exists": true,
+          "bytes": 14516,
+          "sha256": "642482974cef9741405787b7eb34ba05a447a3fa23c756c3d252f6afc109aaea",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.41334767795463156,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_tat_vote4.jsonl",
+          "exists": true,
+          "bytes": 10452,
+          "sha256": "b15654dd3916eecfc9c78aa12781e5c42f77f3ead0c5fd7e3511407c6aa1cd89",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.40059750276141626,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_tat_vote5.jsonl",
+          "exists": true,
+          "bytes": 8907,
+          "sha256": "5180a65b2e94bd6d714341473a8a5aabba9f0b636005b49b9a113c8a59f074ae",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4325469968466825,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 17112,
+          "sha256": "2134536337482a0dbe8bb3a4299a2ec48a355d53cee7342caf3473da3e39fca1",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.45016279317620983,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 18192,
+          "sha256": "bc752e8ee5dba0a5d6cccf94da8e85575bcd7e89f33300ccab284db9d18dd531",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.43344635259362113,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 18192,
+          "sha256": "28bab989c0e344488b10cc01b6117cffd95c6d2caeccaadbcf04bec49e6de8bf",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.43344635259362113,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 17980,
+          "sha256": "2c511afe32372f9c9b286e376755b101d5cb34bd86eb99752dad54454d3ed9f6",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4370425113259722,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 12703,
+          "sha256": "ae46454f50e954bf79be4ec09d8710815d532e352077b94b8e110a45838799f5",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4770579367171247,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 13154,
+          "sha256": "fa7b2bf36de23897427bfb84497be69135decff0522084f303e1a985e8b53014",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4772705112755146,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 13080,
+          "sha256": "07240a1407f42f89f856b4b2322874bdf69901e372f1588c29c183ed0c41432c",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.47966885555328104,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 12931,
+          "sha256": "96e17521715eb146ea6aa932d64005211bdec8886b47156b8c06ab9c0d467a8b",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.48207215982666624,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 9329,
+          "sha256": "f3df33266f638483a991e126bdb37c4f3d1dd600fd473665e3fee259a3f7a435",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.45056035736252764,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 9616,
+          "sha256": "cd5c2c514876c4f91f4cc3c4412db854728a179c2ffb9c8ac3506556dfc4d9ef",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.45658349839010315,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 9722,
+          "sha256": "5e726eb7ea649157cb06ac2f89afe41ef55291e46804e64ce57f2e299a3a95be",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4539134194521493,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_tat_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 9568,
+          "sha256": "043309cc3de50104ff762023a9f179fe2209296dd17ab4f9d2f701b5f494577d",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4565610595111443,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep_tat/v15_tat_vote3_topk0.05.jsonl",
+          "exists": true,
+          "bytes": 13398,
+          "sha256": "c56235e90a9454595f4a49ab5bd99e122f657a1c709bd6de45ff6b98f8553017",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4817598667937952,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep_tat/v15_tat_vote3_topk0.25.jsonl",
+          "exists": true,
+          "bytes": 12931,
+          "sha256": "96e17521715eb146ea6aa932d64005211bdec8886b47156b8c06ab9c0d467a8b",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.48207215982666624,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/v15_sweep_tat/v15_tat_vote3_topk0.30.jsonl",
+          "exists": true,
+          "bytes": 12820,
+          "sha256": "4562401255971d1fd46b2af47cc8b3ce3c343982457cd32b1cbb4f21e435ee6f",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.47466292976968716,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep_tat/v15_tat_vote3_topk0.35.jsonl",
+          "exists": true,
+          "bytes": 12820,
+          "sha256": "e86bed88fea483b747d395f235a654733d5aa28b5c6f66fdef7b25af69860464",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4746363228251595,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep_tat/v15_tat_vote3_topk0.40.jsonl",
+          "exists": true,
+          "bytes": 12703,
+          "sha256": "ae46454f50e954bf79be4ec09d8710815d532e352077b94b8e110a45838799f5",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4770579367171247,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep_tat/v15_tat_vote3_topk0.50.jsonl",
+          "exists": true,
+          "bytes": 12703,
+          "sha256": "ae46454f50e954bf79be4ec09d8710815d532e352077b94b8e110a45838799f5",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4770579367171247,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v5_tat_restaurant.jsonl",
+          "exists": true,
+          "bytes": 13354,
+          "sha256": "af50953e7859d8db6aae533c42b6e5e09f68d722d496b82434272408ddd7ac2f",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44707405521025373,
+          "matches_paper_rounded_score": false
+        }
+      ],
+      "test_prediction_candidates": [
+        {
+          "path": "submission/final/tat_restaurant_test.jsonl",
+          "exists": true,
+          "bytes": 155695,
+          "sha256": "b2d3b814b5c33bce27c1473f7c43d4129d27c28d375c1e4ebcc805e98c66fbf9",
+          "rows": 630,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": [
+            "tat_restaurant_qwen_kd"
+          ]
+        },
+        {
+          "path": "submission/final/tat_restaurant_test_deepseek_backup.jsonl",
+          "exists": true,
+          "bytes": 191502,
+          "sha256": "7bd3e3d4cae094415b7368da880e239450334190a081d29b4bfd87130475ed5f",
+          "rows": 630,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": []
+        },
+        {
+          "path": "submission/final/tat_restaurant_test_v15_backup.jsonl",
+          "exists": true,
+          "bytes": 158277,
+          "sha256": "86406bdf26998babc4b3a0b89c9d0b5aca910b54bb9c83f10115c0e445a5fa05",
+          "rows": 630,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": [
+            "tat_restaurant_v15_baseline"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ukr_restaurant",
+      "version": "V13b",
+      "checkpoint_prefix": "v13b_ukr_seed",
+      "config": "/tmp/pipeline_ukr_v13b.yaml",
+      "train_file": "data/subtask_3/ukr/ukr_restaurant_train_v13b.jsonl",
+      "expected_train_lines": 2967,
+      "dev_file": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+      "test_file": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+      "vote": 3,
+      "topk": 0.0,
+      "dual_layer": false,
+      "expected_dev_cf1": 0.5068,
+      "encoder_reference": "microsoft/mdeberta-v3-base",
+      "historical_config": {
+        "path": "/tmp/pipeline_ukr_v13b.yaml",
+        "exists": false
+      },
+      "retained_config_candidate": {
+        "path": "configs/pipeline_ukr_v13b.yaml",
+        "exists": true,
+        "bytes": 1380,
+        "sha256": "7d3ddd09c1511ba9d52315abed2eca1d6df5aff9d5798158a440ff7d1a0a119f",
+        "model": {
+          "encoder_name": "microsoft/mdeberta-v3-base",
+          "hidden_size": 768,
+          "num_entity_labels": 7,
+          "num_attribute_labels": 6,
+          "dropout": 0.1,
+          "use_crf": false,
+          "va_hidden_size": 256,
+          "va_min": 1.0,
+          "va_max": 9.0,
+          "rethink": {
+            "enabled": true,
+            "num_iterations": 2,
+            "label_embedding_dim": 64
+          }
+        },
+        "train_file": "data/subtask_3/ukr/ukr_restaurant_train_v13b.jsonl"
+      },
+      "train": {
+        "path": "data/subtask_3/ukr/ukr_restaurant_train_v13b.jsonl",
+        "exists": true,
+        "bytes": 1300718,
+        "sha256": "d820847a19e263d2f212836deea7d14d6d4527ac7885ff3804c64a5a84301312",
+        "rows": 2967
+      },
+      "dev": {
+        "path": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "exists": true,
+        "bytes": 22770,
+        "sha256": "2daa110ba03d4dfaa4aa91da01e61d22da495d4ad65a00a0178dd3f28b5608a0",
+        "rows": 48
+      },
+      "test_input": {
+        "path": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+        "exists": true,
+        "bytes": 133131,
+        "sha256": "b52c53a7ca8d5a4bbf3855a67ff38fb0642fa920553bd65601d5abd171c539c0",
+        "rows": 630
+      },
+      "historical_checkpoints": [
+        {
+          "path": "checkpoints/v13b_ukr_seed42/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v13b_ukr_seed123/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v13b_ukr_seed456/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v13b_ukr_seed789/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v13b_ukr_seed1024/checkpoint_best.pt",
+          "exists": false
+        }
+      ],
+      "other_checkpoint_candidates": [
+        {
+          "path": "checkpoints/v13b_ukr_inductive_seed1024/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 4711344482
+        },
+        {
+          "path": "checkpoints/v13b_ukr_inductive_seed123/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 4711344546
+        },
+        {
+          "path": "checkpoints/v13b_ukr_inductive_seed42/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 4711344546
+        },
+        {
+          "path": "checkpoints/v13b_ukr_inductive_seed456/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 4711344482
+        },
+        {
+          "path": "checkpoints/v13b_ukr_inductive_seed789/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 4711344546
+        }
+      ],
+      "dev_prediction_candidates": [
+        {
+          "path": "predictions/cw_eval/cw_ukr_restaurant.jsonl",
+          "exists": true,
+          "bytes": 12182,
+          "sha256": "0f7804e95055971f7ed2835e0cde15ed07343bb693b240950b429da067f71467",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5062027391387885,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_ukr_restaurant_vote1.jsonl",
+          "exists": true,
+          "bytes": 20665,
+          "sha256": "4ece7ff3734e864698df2d87543f560ede34bcb430ef6b6b2013b6c29a1132c1",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4057317237756471,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_ukr_restaurant_vote2.jsonl",
+          "exists": true,
+          "bytes": 16260,
+          "sha256": "5cfc4fd57f16e881123515d107753124e446509211841ed9ef86110c6aa5ce93",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4553723235379376,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_ukr_restaurant_vote3.jsonl",
+          "exists": true,
+          "bytes": 13683,
+          "sha256": "98bbcc5ca009da7799a8c446ffe2665fbaa9b09fcdee210f6caf11e3e830bc0c",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.457498887983091,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_ukr_restaurant_vote4.jsonl",
+          "exists": true,
+          "bytes": 11776,
+          "sha256": "6b4292b406fe3f64fe7dc46be74738dfb5a2436bf4b70fa614bd818f2fb0b04a",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.46733123390558695,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_ukr_restaurant_vote5.jsonl",
+          "exists": true,
+          "bytes": 9716,
+          "sha256": "ebfc1abb9afd56b946eb4af698066b2d9cd70d531f75a3be047385fa1f5ac334",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4705780184157883,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_ukr_vote2.jsonl",
+          "exists": true,
+          "bytes": 17483,
+          "sha256": "42018e1c73eebb2e66159571fadf306171eb5b19f2c6c13b1e5290c28f481706",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.42452645159699154,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_ukr_vote3.jsonl",
+          "exists": true,
+          "bytes": 15149,
+          "sha256": "992cb72e4e0fead5e1abf756def9cd35a82bd6e66e16445c6de83e349c781001",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4394283330406186,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_ukr_vote4.jsonl",
+          "exists": true,
+          "bytes": 12921,
+          "sha256": "0c3f7122f30add576273f0f7786ddce12aa9640a27f309e30e26eb0cc006685a",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44215876634162793,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_ukr_vote5.jsonl",
+          "exists": true,
+          "bytes": 10176,
+          "sha256": "801c0dd8d375f7d109ba618b5bdb8aef82567749a979c344b9a7c66701f8719e",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4390224861356643,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13b_ukr_vote2.jsonl",
+          "exists": true,
+          "bytes": 16686,
+          "sha256": "856a7b6d2ceca7aa3714110ccc5be8219dc887c4973f13892d88fbca5d627911",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4531700289083519,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13b_ukr_vote3.jsonl",
+          "exists": true,
+          "bytes": 13108,
+          "sha256": "446d03cf6d6bda289269a7c35d6e965719ebfe73c3aac40e8950979af818102d",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4952122035210953,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13b_ukr_vote4.jsonl",
+          "exists": true,
+          "bytes": 11702,
+          "sha256": "f18315d82a00e46f07722d76d7d3a3310ba57ebc770b0fd9209ebb83933d9ae9",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5068480899045564,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/v13b_ukr_vote5.jsonl",
+          "exists": true,
+          "bytes": 9848,
+          "sha256": "903a2b81a6b71ac296f69ad4653bf82282b9646b44b8206edbda23a9214dfa1d",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.48831875975875905,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 18436,
+          "sha256": "f51e8c7177f5fdb0870a012c763bd8cb1d902437bf37a864c140933aa2154439",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.45517755124502635,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 19405,
+          "sha256": "dedc80fef716e912f5bfaeb1ebd3966361f3105e3b55908cd0fb34a00f176113",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4405354843522456,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 19074,
+          "sha256": "0cfed9037ba80ece28477091f01a078420086f05b34ba716e0d53c84e819e394",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44590786830776086,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 18959,
+          "sha256": "30972516b17fb233834b382400df66e210d295b42e2d569da4adf06d16c3c712",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4477279004233027,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 14529,
+          "sha256": "9e0f17f18b1b6c04331946f09ec02aee46e65cb8231d694666b0c7a65073e96c",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4673757676204376,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 14648,
+          "sha256": "4a046c3258657a4bd2fa979209dc5b1846d4ce22a45ca7968130df99acea302b",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4651182077450182,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 14529,
+          "sha256": "383c71e6c08b696f63d3c516eb4b8921007df1417aaec494217ad1dd7f78f6a1",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.46735435297456157,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 14529,
+          "sha256": "6fc7c665da2ee01fff724cdf5939f4dedf6d1579d4d87265f02455a98922213d",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.46735435297456157,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 11215,
+          "sha256": "59092b4cdd42c275505fc209d80ede2c4dde45745dbe9099e531211a3f877abd",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4956824759145957,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 12000,
+          "sha256": "3525ce7450d12ef4acad4f66055e0c1f099988e3b1f3a7cbd3b7b2cf4accce35",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4869691737382898,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 12000,
+          "sha256": "51a328f8b596b68fee3bbbb163ed050025e6b80209ec01e6db0de2e13f88db83",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4869691737382898,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_ukr_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 11873,
+          "sha256": "a8df989919a4dc582c86d88a785bde3be023856e8e6380b98581e0ce0783e428",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.48957328696683683,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v5_ukr_restaurant.jsonl",
+          "exists": true,
+          "bytes": 13683,
+          "sha256": "98bbcc5ca009da7799a8c446ffe2665fbaa9b09fcdee210f6caf11e3e830bc0c",
+          "rows": 48,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.457498887983091,
+          "matches_paper_rounded_score": false
+        }
+      ],
+      "test_prediction_candidates": [
+        {
+          "path": "submission/final/ukr_restaurant_test.jsonl",
+          "exists": true,
+          "bytes": 175420,
+          "sha256": "5fef6f0336d677b8484c0aeea4478c3cd9f13cc2444d6c138c3a12c239a2b8be",
+          "rows": 630,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": []
+        },
+        {
+          "path": "submission/final/ukr_restaurant_test_v13b_backup.jsonl",
+          "exists": true,
+          "bytes": 152556,
+          "sha256": "c8f6b3ab391a7a135d633dabed0699393349751b6b1bef6eaceee77005020894",
+          "rows": 630,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": []
+        }
+      ]
+    },
+    {
+      "name": "zho_restaurant",
+      "version": "V16",
+      "checkpoint_prefix": "v16_native_zho_restaurant_seed",
+      "config": "/tmp/pipeline_zho_restaurant_v16.yaml",
+      "train_file": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+      "expected_train_lines": 6050,
+      "dev_file": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+      "test_file": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+      "vote": 4,
+      "topk": 0.0,
+      "dual_layer": false,
+      "expected_dev_cf1": 0.5669,
+      "encoder_reference": "hfl/chinese-roberta-wwm-ext-large",
+      "historical_config": {
+        "path": "/tmp/pipeline_zho_restaurant_v16.yaml",
+        "exists": false
+      },
+      "retained_config_candidate": {
+        "path": "configs/pipeline_zho_restaurant_v16.yaml",
+        "exists": false
+      },
+      "train": {
+        "path": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+        "exists": true,
+        "bytes": 1383417,
+        "sha256": "6c3290734269f2bd4852daf57339fec7436af46cb93e3821c67f5926fd133849",
+        "rows": 6050
+      },
+      "dev": {
+        "path": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "exists": true,
+        "bytes": 122828,
+        "sha256": "f1f44388802ea74490374138f9f976dbcb8346a3184c0da7e4c4c3bcec6d2ea9",
+        "rows": 300
+      },
+      "test_input": {
+        "path": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+        "exists": true,
+        "bytes": 158223,
+        "sha256": "e81cd42039d28e9e486a15bf3cfbcd40f42169e80807f8a955e27b908391b141",
+        "rows": 1000
+      },
+      "historical_checkpoints": [
+        {
+          "path": "checkpoints/v16_native_zho_restaurant_seed42/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_zho_restaurant_seed123/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_zho_restaurant_seed456/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_zho_restaurant_seed789/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_zho_restaurant_seed1024/checkpoint_best.pt",
+          "exists": false
+        }
+      ],
+      "other_checkpoint_candidates": [
+        {
+          "path": "checkpoints/final_zho_restaurant_v16_seed1024/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655062751
+        },
+        {
+          "path": "checkpoints/final_zho_restaurant_v16_seed123/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655062751
+        },
+        {
+          "path": "checkpoints/final_zho_restaurant_v16_seed42/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655062751
+        },
+        {
+          "path": "checkpoints/final_zho_restaurant_v16_seed456/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655062751
+        },
+        {
+          "path": "checkpoints/final_zho_restaurant_v16_seed789/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655062751
+        }
+      ],
+      "dev_prediction_candidates": [
+        {
+          "path": "predictions/cw_eval/cw_zho_restaurant.jsonl",
+          "exists": true,
+          "bytes": 68861,
+          "sha256": "63309e474e5b25507a547840917a18070a57b8d01e8d920c0e15cdf488944ff8",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5671988161599211,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/final_dev_verify/zho_restaurant_dev_verify.jsonl",
+          "exists": true,
+          "bytes": 78989,
+          "sha256": "a64df61f808e928e4d02b1bc8841bba2b00bf8f0a9fc4541bb0c1670619bb170",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5669438101693832,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 118348,
+          "sha256": "f8b348a320e333087b70d14b49a4d638a3d62533d536d993f858961652a90e59",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5102711235517512,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 123513,
+          "sha256": "f99c670175092d8a5a035517bcbc91d363d2ebb5d5f4efc3de4e37fa20b3a703",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5020900766375131,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 122915,
+          "sha256": "5ccd339008c85423c976c0f38207bdcfb5b565001d7559a7851225c6f44d53aa",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5027008818674492,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 121795,
+          "sha256": "ea0534a4f320faffcaa9555913c0a320baf276a31d7e149a3c8ca7cb6b667735",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5036117102819854,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 94901,
+          "sha256": "52c7ad1c58ab445cef1ccc704b4a1a3c96e16b114daad0d03088a81fcaa538d5",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5453112525558464,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 98132,
+          "sha256": "41bfabaeb5d9f9199848221bd5ba275f74cb14549316084c2239aab4b00a53ad",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5401046167078126,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 97727,
+          "sha256": "f44205d8ddce295d4891765509ad0f8a807220309545d61425ab9b19c880e191",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5391171386116785,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 96968,
+          "sha256": "aa48866a9d8a57f840f2e5e13cd0eb41f9b550e139da823de3591af30c561f84",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5405734239553008,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 78989,
+          "sha256": "a64df61f808e928e4d02b1bc8841bba2b00bf8f0a9fc4541bb0c1670619bb170",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5669438101693832,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 81339,
+          "sha256": "a0a28bc069ee16429773949d34d1868f581a035ce40c9bab7ee6eaed250071ea",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5654050057966148,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 80761,
+          "sha256": "c15fd6689aaff647e0b97d2a1021e3d28d74d2ce25a66abcd13da333fa414403",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5626049397318581,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_missing_sweep/v16_zho_restaurant_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 80364,
+          "sha256": "c5ada322a32617e0ffd77f388635730a199beca971af354cd63a30f948fa34b4",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.5654211572358764,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v5_zho_restaurant.jsonl",
+          "exists": true,
+          "bytes": 82016,
+          "sha256": "9d1ee90f7af71e8b55b3e353f730a909bbf34426877cfd49a5deb104b3c9ae6b",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4726845753420211,
+          "matches_paper_rounded_score": false
+        }
+      ],
+      "test_prediction_candidates": [
+        {
+          "path": "submission/final/zho_restaurant_test.jsonl",
+          "exists": true,
+          "bytes": 379077,
+          "sha256": "851e1ed35c79e484b5a813bebbe75be32fa34107f3754b0936d9cbed9a18fa8d",
+          "rows": 1000,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": []
+        },
+        {
+          "path": "submission/final/zho_restaurant_test_deepseek_gen_backup.jsonl",
+          "exists": true,
+          "bytes": 346955,
+          "sha256": "1ddd056c2dfc7f160af6549af930da44e6b86baedb0eab9a95311c05eca9e663",
+          "rows": 1000,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": []
+        },
+        {
+          "path": "submission/final/zho_restaurant_test_qwen_backup.jsonl",
+          "exists": true,
+          "bytes": 349363,
+          "sha256": "5eba4f8b3368052648ed45ac5f47b52e53c7e9af578e9ed9d2369a5e90865c96",
+          "rows": 1000,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": []
+        },
+        {
+          "path": "submission/final/zho_restaurant_test_v16_backup.jsonl",
+          "exists": true,
+          "bytes": 296464,
+          "sha256": "f53026cb10dad88d611939037cd1d5fe59a77f77fd8d818ec2a9daccb2a05c6e",
+          "rows": 1000,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": [
+            "zho_restaurant_v16_baseline"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "zho_laptop",
+      "version": "V16",
+      "checkpoint_prefix": "v16_native_zho_laptop_seed",
+      "config": "/tmp/pipeline_zho_laptop_v16.yaml",
+      "train_file": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl",
+      "expected_train_lines": 5534,
+      "dev_file": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+      "test_file": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+      "vote": 4,
+      "topk": 0.1,
+      "dual_layer": false,
+      "expected_dev_cf1": 0.4487,
+      "encoder_reference": "hfl/chinese-roberta-wwm-ext-large",
+      "historical_config": {
+        "path": "/tmp/pipeline_zho_laptop_v16.yaml",
+        "exists": false
+      },
+      "retained_config_candidate": {
+        "path": "configs/pipeline_zho_laptop_v16.yaml",
+        "exists": true,
+        "bytes": 1533,
+        "sha256": "f38e8bf2480eccf98688bcad337551059cab9be76aeeabcdbe14bf03125fc21f",
+        "model": {
+          "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+          "hidden_size": 768,
+          "num_entity_labels": 23,
+          "num_attribute_labels": 9,
+          "dropout": 0.1,
+          "use_crf": false,
+          "va_hidden_size": 256,
+          "va_min": 1.0,
+          "va_max": 9.0,
+          "rethink": {
+            "enabled": true,
+            "num_iterations": 2,
+            "label_embedding_dim": 64
+          }
+        },
+        "train_file": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl"
+      },
+      "train": {
+        "path": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl",
+        "exists": true,
+        "bytes": 2086827,
+        "sha256": "610d8d18ba3af2b2f9fe182fb5bf411efc83574f1491f3beb870b0bb02c32d59",
+        "rows": 5534
+      },
+      "dev": {
+        "path": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+        "exists": true,
+        "bytes": 111131,
+        "sha256": "2251f376139777906ecc509b5709988abdf56bee0f15af52781cfdbb65ca6cdd",
+        "rows": 300
+      },
+      "test_input": {
+        "path": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+        "exists": true,
+        "bytes": 144673,
+        "sha256": "413f447616b870b6af21d57d813daccf99d21604125dc327ee0c8cd36e1b4d37",
+        "rows": 1000
+      },
+      "historical_checkpoints": [
+        {
+          "path": "checkpoints/v16_native_zho_laptop_seed42/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_zho_laptop_seed123/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_zho_laptop_seed456/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_zho_laptop_seed789/checkpoint_best.pt",
+          "exists": false
+        },
+        {
+          "path": "checkpoints/v16_native_zho_laptop_seed1024/checkpoint_best.pt",
+          "exists": false
+        }
+      ],
+      "other_checkpoint_candidates": [
+        {
+          "path": "checkpoints/final_zho_laptop_v16_seed1024/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655540255
+        },
+        {
+          "path": "checkpoints/final_zho_laptop_v16_seed123/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655540255
+        },
+        {
+          "path": "checkpoints/final_zho_laptop_v16_seed42/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655540255
+        },
+        {
+          "path": "checkpoints/final_zho_laptop_v16_seed456/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655540255
+        },
+        {
+          "path": "checkpoints/final_zho_laptop_v16_seed789/checkpoint_best.pt",
+          "exists": true,
+          "bytes": 5655540255
+        }
+      ],
+      "dev_prediction_candidates": [
+        {
+          "path": "predictions/cw_eval/cw_zho_laptop.jsonl",
+          "exists": true,
+          "bytes": 44796,
+          "sha256": "a7332f8061e83e20eb6400890698d0ce9ce5fd52b179ce06d0106cf529f63330",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4357422036898012,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/final_dev_verify/zho_laptop_dev_verify.jsonl",
+          "exists": true,
+          "bytes": 52534,
+          "sha256": "4bc14e60040cd978db36a8a157e143506b186e25267fe0ee17c11a9431a355e8",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44868214556651653,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/tune_zho_laptop_vote1.jsonl",
+          "exists": true,
+          "bytes": 123185,
+          "sha256": "4570c5df7f250ffbf10123df289182154c778e6d2d598845b5ebc7c5bfcb877f",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.2739855848801259,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_zho_laptop_vote2.jsonl",
+          "exists": true,
+          "bytes": 75081,
+          "sha256": "346101cf757afcf6d67c77663933f308b67e1cc7740d5cbeb5b442f04543097b",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3245542122883922,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_zho_laptop_vote3.jsonl",
+          "exists": true,
+          "bytes": 58761,
+          "sha256": "ddee84cb59e532d972b5ece7815a3b90b1cf4e50b47bc520a21078e5827c82f9",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.34489625457241135,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_zho_laptop_vote4.jsonl",
+          "exists": true,
+          "bytes": 49562,
+          "sha256": "b0ce2ebc0caa166bcc1dda3d848b9d28732590e1d4ca5de97d8bfc022ffef3a9",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.33468282544089806,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/tune_zho_laptop_vote5.jsonl",
+          "exists": true,
+          "bytes": 40760,
+          "sha256": "9af7454e19912521d132b61f8afc99557be02164b94fbdb341a09c1c30fc30b5",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3241518754725462,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_zho_laptop_vote2.jsonl",
+          "exists": true,
+          "bytes": 82837,
+          "sha256": "c028f10af93417935daac03e9b65d20bcc549f14fd393ea888b264c884aaa0f4",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3367574145377112,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_zho_laptop_vote3.jsonl",
+          "exists": true,
+          "bytes": 61226,
+          "sha256": "496a5785f3b2e6d83ebc8d565dc4a988d7c30b49b09975b23d19f900b228decf",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.36833739969751256,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_zho_laptop_vote4.jsonl",
+          "exists": true,
+          "bytes": 50593,
+          "sha256": "f725945d48d667d09cdbb8abc704665bb2c551f2024119f3a78f56f4c5b4595c",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.36171175373669107,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13_zho_laptop_vote5.jsonl",
+          "exists": true,
+          "bytes": 40328,
+          "sha256": "38f68b2abaa5bbf0f26b25ef75574a779a58c366d08cc08c11d529d1ed119bc2",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3590330273848686,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13c_zho_laptop_vote2.jsonl",
+          "exists": true,
+          "bytes": 79486,
+          "sha256": "96b2834da8653bd596db1686dcc1dc9ec3f84ef37e7309c325c68b600b662e55",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.34832844033976573,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13c_zho_laptop_vote3.jsonl",
+          "exists": true,
+          "bytes": 61568,
+          "sha256": "1c5d4a53544126053f6fa15356d8e6f5ba381d2b26d482ca180e6d532c725317",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.37470610826620343,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13c_zho_laptop_vote4.jsonl",
+          "exists": true,
+          "bytes": 51713,
+          "sha256": "f63fd8fb2fce8e79babd461c6bc76c30ba2785260cf67362b1af00dd94893462",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.37913964229391134,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v13c_zho_laptop_vote5.jsonl",
+          "exists": true,
+          "bytes": 41614,
+          "sha256": "b8ea76f3be087650c70dddcb275adf29ddb44475fc5dd8c78e7bde7155eccb14",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3534622839051288,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 83688,
+          "sha256": "3b0b7c847326dece799cdc12d342f09e55d0b29cc69f38d6a1a8f1c60fdaa5d4",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.37260421317318965,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 97319,
+          "sha256": "f173279a932ce4f3e45b1958840bc9e22276f79a975c26334d78895a5ae2d794",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3555942654008404,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 95765,
+          "sha256": "b792eace6be3cc00144645adf569570a564b3927d86b7f4681e3fdfdd52ac463",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3610771138075283,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 92748,
+          "sha256": "80ab77c166eb2dce29d849f3f8dedacaf96c977aea041f0e32e35a5291b3a07a",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.36382633426529165,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 64010,
+          "sha256": "892e5f92767702eae61f1aeee7d9cc6d7276a7afb58c6650449edb3f6185f149",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3824880504353073,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 69722,
+          "sha256": "d4a57fbb61894fd5a85105642f3324c65f4ac9cf17c435cdc6d66aab6b0e0a1a",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.38682144647393774,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 68566,
+          "sha256": "271f6b0da7166bfde0e41d544df595fd97b407e1985cecd9d1b0ff86f4aa5241",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.39040446035950344,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 68110,
+          "sha256": "daf6e52c14ed6e14c2aa8d4150842afc509bafdf99b604ea41fa441a6ec96256",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.38827096670048744,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 51354,
+          "sha256": "ecb080821552d33ad09342d55335bf68caf7f59aaad6780b49e77ce566f84b41",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3796939546026945,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 55155,
+          "sha256": "a0092a19ed9719ff34797993002a19a55e1b87dc0be937078f266ef14f3afe55",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3876292944136359,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 54763,
+          "sha256": "862f12ed1e0f414ffe326bc01e43547366a3398ed3ea28b24aad58fff69197e5",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.38682393610460775,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v15_sweep/v15_zho_laptop_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 54866,
+          "sha256": "4e34f5c37aa64aa021ea2745c1aa2ee7723573b5bac087fd85d37ce5970ed143",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.3863632772491954,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote2_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 80186,
+          "sha256": "51d0f2aefa5573ea9aeeee78725295da439b8ae293214a8e71a700e445aad659",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.41484009055899257,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote2_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 86469,
+          "sha256": "0005b64939ba503846bd347a851f4f16fb3afd642461f2638fc6cfd5b49a311d",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4012745197717534,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote2_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 85405,
+          "sha256": "622ea081feeb923a5a2902f9560656ef9a14f94d046a45bb29cb2a3a8b1d5314",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.402972945863397,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote2_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 84343,
+          "sha256": "11fc61d4642dc61a2f7c007ee5365162f0899cbff268c0e8692bdf804b7d216d",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.406246765983964,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote3_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 62161,
+          "sha256": "265012f1d5bd8f19903d8a8cb1a554483e72adc913bd6246b924173d9f000ccd",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.43772619457596323,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote3_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 64973,
+          "sha256": "3ec4b6a62b12f74a1629bc7c07af15b0f3e440a912aaf9a61bebf0f39d521c0d",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.43056030526338246,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote3_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 64085,
+          "sha256": "c3686bbfc86679cdfcbee85eaa1419e3b199ceb9e4718c9c4c9c34da9cce67d5",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4301610533982788,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote3_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 63874,
+          "sha256": "716f3f18249bd691d00fa68b63a029ff71af73943642e69b9598f481ec9faaa5",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4326818809803819,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote4_topk0.0.jsonl",
+          "exists": true,
+          "bytes": 50383,
+          "sha256": "dc233478dd7666582c72ea29ced22e3d572b499763d60818ad6d50b482259bc0",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.4446866489285757,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote4_topk0.10.jsonl",
+          "exists": true,
+          "bytes": 52534,
+          "sha256": "4bc14e60040cd978db36a8a157e143506b186e25267fe0ee17c11a9431a355e8",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44868214556651653,
+          "matches_paper_rounded_score": true
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote4_topk0.15.jsonl",
+          "exists": true,
+          "bytes": 51907,
+          "sha256": "b2d12f106eca480f69ddd84fee6fc3a932dd9397c4bc152659eaa270ac6d192f",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44747563586434946,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v16_sweep/v16_zho_laptop_vote4_topk0.20.jsonl",
+          "exists": true,
+          "bytes": 51540,
+          "sha256": "8a123062118fd56432e259171c531768d5635b30b09506d420fc8ad0f6939cbe",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.44147610784727837,
+          "matches_paper_rounded_score": false
+        },
+        {
+          "path": "predictions/v5_zho_laptop.jsonl",
+          "exists": true,
+          "bytes": 58761,
+          "sha256": "ddee84cb59e532d972b5ece7815a3b90b1cf4e50b47bc520a21078e5827c82f9",
+          "rows": 300,
+          "text_matches_where_present": true,
+          "local_dev_cf1": 0.34489625457241135,
+          "matches_paper_rounded_score": false
+        }
+      ],
+      "test_prediction_candidates": [
+        {
+          "path": "submission/final/zho_laptop_test.jsonl",
+          "exists": true,
+          "bytes": 180981,
+          "sha256": "5768b3c9a461d73181b029daac42dd5d7ff51bd7c45321b0e70341f3e4285133",
+          "rows": 1000,
+          "ids_match_test": true,
+          "existing_20260718_lock_systems": [
+            "zho_laptop_v16"
+          ]
+        }
+      ]
+    }
+  ]
+}

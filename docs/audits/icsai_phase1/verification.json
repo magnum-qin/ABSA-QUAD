@@ -1,0 +1,12 @@
+{
+  "status": "pass",
+  "scope": "Phase-1 inventory/design integrity only. Does not establish historical run lineage, complete training, independent blind test, publication clearance, or statistical performance.",
+  "checks": [
+    "40 frozen file hashes match",
+    "Eight historical systems: 40 checkpoint existence entries and candidate prediction hashes rechecked",
+    "Eight frozen gold inputs reconstructed logically; no exact normalized train/dev or train/unlabelled-test overlap; label maps cover train",
+    "42 unique planned runs: 27 complete-design core cells + 15 extension cells; no completed-run claim",
+    "Dynamic path evidence passes and matches current source hashes; no inference about accuracy",
+    "Official saved pages and IEEE template support conference date/page facts; timezone remains explicitly unspecified"
+  ]
+}

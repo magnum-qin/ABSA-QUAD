@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>ICSAI 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <script>
+      function geturl() {
+          var myurl = '/login.html?myurl=' + document.URL;
+          //var myurl = '/login.aspx';
+          //alert(myurl);
+          document.getElementById("myclick").href = myurl;
+      }
+      window.onload = function () {
+          geturl();
+      }
+    </script>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-inverse"  role="navigation">
+      <div class="container">
+      <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse"
+                  data-target="#example-navbar-collapse">
+              <span class="sr-only">切换导航</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <div class="navbar-brand" style="padding:0px 0px 0px 10px; float:left;"><a href="https://www.ecnu.edu.cn/" target="_blank"><img width="120%"  height="110%" src="/images/2026/ecnu.gif" /></a></div>
+      </div>
+      <div class="collapse navbar-collapse" id="example-navbar-collapse" style="margin: 6px 10px 0px 0px;">
+          <ul class="nav navbar-nav" style="margin-left:20px;">
+              <li><a href="/">Home</a></li>
+              <li><a href="/topics.html">Topics</a></li>
+              <li><a href="/keynotes.html">Keynotes</a></li>
+              <!-- <li><a href="/registration.html">Registration</a></li> -->
+              <li><a href="/submission.html">Submission</a></li>
+              <li><a href="/organizing.html">Committees</a></li>
+              <li><a href="/venue.html">Venue</a></li>
+              <li><a href="/download.html">Download</a></li>
+          <!-- <li><a href="/final.html">Final_Submission</a></li> -->
+          </ul>
+          <!--ul class="nav navbar-nav">
+            <li>
+              <a data-toggle="modal" data-target="#myModal" id="myclick"><span style="color:#107fc1;">Login</span></a>
+            </li>
+          </ul-->
+      </div>
+      </div>
+    </nav>
+
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+      <div class="modal-dialog" style="width:450px;">
+          <div class="modal-content">
+              
+          </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+    <script>
+      $(function () {
+          
+          $("#myModal").on("hidden.bs.modal",
+      function () {
+          $(this).removeData("bs.modal");
+          /*modal页面加载$()错误,由于移除缓存时加载到<span style="color: rgb(51, 51, 255);"><div class="modal-content"></div></span>未移除的数据，手动移除加载的内容*/
+          //$(this).find(".modal-content").children().remove();
+
+      })
+      });   
+    </script>
+    <form id="form1" runat="server">
+    <div>
+      <uc:myhead ID="myhead" runat ="server" />
+      <!-- submission 开始-->
+      <div class="container" style="margin-top:150px;">
+	    <div class="row clearfix">
+		  <div class="col-md-12 column">
+            <h2 class="text-center"><b>Submission</b></h2>
+            <div style="color:#999; text-align:center; margin:10px 0px 10px 0px;">——————————————————————</div>
+          </div>
+	    </div>
+        <div class="row clearfix" style="margin-top:20px;">
+		  <div class="col-md-4 column" style="text-align:center;">
+            <img src="/images/submission.jpg" align="absmiddle" />
+		  </div>
+		  <div class="col-md-8 column" style="line-height:2.0">
+            　　All submissions will be peer-reviewed by 3 experts in the field based on originality, significance, quality and clarity. Authors should use the Latex style files or MS-Word templates obtained from the conference site to format their papers. Authors should submit pdf files of their manuscripts via the online submission system. Submissions imply that the papers have not been submitted elsewhere and will not be submitted elsewhere for publications before the review decisions of this conference.<br /><br />
+			　<img src="/images/link.jpg" align="absmiddle"/>　<a href="/submission/openconf.php" target="_blank"> Online Submission </a><!--span>(to be opened later)</span-->
+		  </div>
+	    </div>
+
+        <div class="row clearfix" style="margin-top:60px;">
+		  <div class="col-md-4 column" style="text-align:center;">
+            <img src="/images/format.jpg" align="absmiddle" />
+		  </div>
+		  <div class="col-md-8 column" style="line-height:2.0">
+            　　All papers must be written in English. Download the instructions and sample file.<br />　　There are no page limits for initial submissions. For accepted papers, one registration covers 6 pages and any additional pages will incur extra page charges.<br />　
+			　<img src="/images/pdf.jpg" align="absmiddle"/>　<a href="/download/pdf.pdf">PDF template</a><br /><br />　　<img src="/images/latex.jpg" align="absmiddle"/>　<a href="/download/latex.zip">Latex template</a><br /><br />　　<img src="/images/word.jpg" align="absmiddle"/>　<a href="/download/Word.doc">Word template (US-letter paper size)</a><br /><br />　　<img src="/images/word.jpg" align="absmiddle"/>　<a href="/download/MSW_A4_format.doc">Word template (A4 paper size)</a>
+		  </div>
+	    </div>
+      </div>
+    <!-- submission 结束--> 
+     <div style="margin-top:40px;"><uc:mybottom ID="mybottom" runat ="server" /></div>
+    </div>
+    </form>
+    <div style="background-color:#222; width:100%; color:#FFF; padding-bottom:20px;">
+      <!--信息产业部备案管理系统网址(https://beian.miit.gov.cn)-->
+      <!--a rel="nofollow" href="https://beian.miit.gov.cn/" target="_blank"></a-->
+      <div class="container">
+          <div class="col-md-9 column" style="padding-top:5px;">
+        <!--Organizer:-->
+        
+        <!-- 外层容器：flex 布局，子元素等宽分配 -->
+        <div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: space-around; align-items: center; width: 100%; height: 150px;">
+            
+            <!-- 第一列：1倍宽 -->
+            <div class="col-md-3 column" style="padding-top:5px; margin-right: 5px; flex: 1;">
+                <div style="width: 150px; margin: 0 auto;">
+                    <img style="object-fit: contain; width:100%; height:100%" src="/images/Taicang.jpg" />
+                </div>
+            </div>
+            <!-- 第三列：1倍宽 -->
+            <div class="col-md-3 column" style="padding-top:5px; flex: 1;">
+                <div style="width: 150px; margin: 0 auto;">
+                    <img style="object-fit: contain; width:100%; height:100%" src="/images/scit.png" />
+                </div>
+            </div>
+            <!-- 第二列：2倍宽（flex: 2） -->
+            <div class="col-md-3 column" style="padding-top:5px; margin-right: 5px; flex: 2;">
+                <div style="width: 300px; margin: 0 auto;">
+                    <img style="object-fit: contain; width:100%; height:100%" src="/images/jishu.jpg" />
+                </div>
+            </div>
+            
+        </div>
+    </div>
+          <div class="col-md-3 column" style="padding:20px 0px 0px 60px; text-align:right; display: inline;">
+              <span style="font-size:18px;">Contact</span><br />
+              —————————————<br />
+              <img src="/images/mail.png" align="absmiddle" />hsi@ce.ecnu.edu.cn<br />
+			  <div style="width:200px; margin:0 auto;">
+					<br /><br /><br /><br />
+					<!-- WeChat Group<br /> -->
+                    <!-- <img style=" object-fit:fill; width:50%; height:50%" src="/images/WeChat.png" />  -->
+                </div>
+              <!-- <img src="/images/phone.png" align="absmiddle" />+86 15801886522<br /> -->
+              <!--ICSAI 2026 is technically co-sponsored by the IEEE Systems, Man, and Cybernetics Society(SMCS). --><br />
+          </div>
+          <!--/div-->
+          <br><br>
+          <div class="text-center"padding-top:20px;> 
+			<a href="https://beian.miit.gov.cn/" target="_blank">沪ICP备2026114600号-1 </a>
+            </div>
+      </div>
+  </div>   
+</body>
+</html>

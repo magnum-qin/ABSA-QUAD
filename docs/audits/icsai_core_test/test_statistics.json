@@ -1,0 +1,2924 @@
+{
+  "as_of": "2026-09-09T13:43:03.434932+00:00",
+  "assessment": "Share with caveats: post-test-exposure supplementary evaluation; fixed trained seeds; three domains only.",
+  "protocol_sha256": "ed06f1892070b02945910343d93332bed8b7224ca6ac76781569acb744f8376e",
+  "prediction_lock_sha256": "93e456288b16d773571b5e1ec3da85a8e8fc93e89c69a951f0898ac9df6f6810",
+  "evaluator_sha256": "75eee32e50c5ebbd0000ed810b818954abedb9899f56987227c813667e3f9dbe",
+  "official_crosschecks": 36,
+  "sources": [
+    {
+      "dataset": "eng_restaurant",
+      "gold": "data/official_test_gold/DimABSA2026/bdc93be1224106ae7d3eb95739c02a76ed4ae8a1/eng/eng_restaurant_test_task3.jsonl",
+      "sha256": "a24cd3d6b8b2dd3bcebf5016f2e8bb90736fe2e89671aced73229062ca516f79",
+      "rows": 1000,
+      "implicit_rows": 0,
+      "explicit_only_rows": 1000,
+      "implicit_quads": 0,
+      "explicit_quads": 2129
+    },
+    {
+      "dataset": "zho_restaurant",
+      "gold": "data/official_test_gold/DimABSA2026/bdc93be1224106ae7d3eb95739c02a76ed4ae8a1/zho/zho_restaurant_test_task3.jsonl",
+      "sha256": "addbc0ab9bbb74a4aaf32ffdaa9a2fb5fc7f948612c942423fe8dfca472e678e",
+      "rows": 1000,
+      "implicit_rows": 0,
+      "explicit_only_rows": 1000,
+      "implicit_quads": 0,
+      "explicit_quads": 2861
+    },
+    {
+      "dataset": "tat_restaurant",
+      "gold": "data/official_test_gold/DimABSA2026/bdc93be1224106ae7d3eb95739c02a76ed4ae8a1/tat/tat_restaurant_test_task3.jsonl",
+      "sha256": "21dab883eefc05dd96122fe51564e53fd6c8455b56b399aaf0915b775edabe2e",
+      "rows": 630,
+      "implicit_rows": 0,
+      "explicit_only_rows": 630,
+      "implicit_quads": 0,
+      "explicit_quads": 1310
+    }
+  ],
+  "summary": [
+    {
+      "dataset": "eng_restaurant",
+      "arm": "A",
+      "mean": 0.5320931051024446,
+      "sample_sd": 0.0027647973780046144
+    },
+    {
+      "dataset": "eng_restaurant",
+      "arm": "B",
+      "mean": 0.5379615945965085,
+      "sample_sd": 0.003329304044412151
+    },
+    {
+      "dataset": "eng_restaurant",
+      "arm": "C",
+      "mean": 0.5323927794247559,
+      "sample_sd": 0.01558138697789738
+    },
+    {
+      "dataset": "zho_restaurant",
+      "arm": "A",
+      "mean": 0.3833128663388414,
+      "sample_sd": 0.0050399357967400565
+    },
+    {
+      "dataset": "zho_restaurant",
+      "arm": "B",
+      "mean": 0.37370294664074066,
+      "sample_sd": 0.0036967811195018747
+    },
+    {
+      "dataset": "zho_restaurant",
+      "arm": "C",
+      "mean": 0.3714839680163288,
+      "sample_sd": 0.009196266326090424
+    },
+    {
+      "dataset": "tat_restaurant",
+      "arm": "A",
+      "mean": 0.3331799984281462,
+      "sample_sd": 0.017053063907514605
+    },
+    {
+      "dataset": "tat_restaurant",
+      "arm": "B",
+      "mean": 0.31694893504796445,
+      "sample_sd": 0.02282724187391655
+    },
+    {
+      "dataset": "tat_restaurant",
+      "arm": "C",
+      "mean": 0.32850928512812555,
+      "sample_sd": 0.006734446263543124
+    }
+  ],
+  "contrasts": [
+    {
+      "dataset": "eng_restaurant",
+      "contrast": "B-A",
+      "delta": 0.005868489494064155,
+      "ci95": [
+        -0.0011700238736470107,
+        0.012859206392491888
+      ],
+      "p": 0.10068993100689931,
+      "paired_seed_deltas": [
+        0.007101064182242878,
+        0.0037910779002925388,
+        0.006713326399656605
+      ],
+      "holm_p": 0.20137986201379862
+    },
+    {
+      "dataset": "eng_restaurant",
+      "contrast": "B-C",
+      "delta": 0.005568815171752561,
+      "ci95": [
+        -7.966737538873374e-05,
+        0.011328763129776886
+      ],
+      "p": 0.0552944705529447,
+      "paired_seed_deltas": [
+        -0.004563074100829678,
+        0.020582785622897393,
+        0.0006867339931895255
+      ],
+      "holm_p": 0.1658834116588341
+    },
+    {
+      "dataset": "zho_restaurant",
+      "contrast": "B-A",
+      "delta": -0.0096099196981006,
+      "ci95": [
+        -0.017095853227065742,
+        -0.0020503195935624493
+      ],
+      "p": 0.014598540145985401,
+      "paired_seed_deltas": [
+        -0.008715286199517114,
+        -0.005698519735210517,
+        -0.014415953159574169
+      ],
+      "holm_p": 0.072992700729927
+    },
+    {
+      "dataset": "zho_restaurant",
+      "contrast": "B-C",
+      "delta": 0.002218978624411949,
+      "ci95": [
+        -0.0035273265163502845,
+        0.00796805376749771
+      ],
+      "p": 0.44175582441755823,
+      "paired_seed_deltas": [
+        0.00753072016498868,
+        -0.003508931548474592,
+        0.0026351472567217593
+      ],
+      "holm_p": 0.44175582441755823
+    },
+    {
+      "dataset": "tat_restaurant",
+      "contrast": "B-A",
+      "delta": -0.016231063380181765,
+      "ci95": [
+        -0.027218601269848115,
+        -0.004562573523901376
+      ],
+      "p": 0.0036996300369963003,
+      "paired_seed_deltas": [
+        -0.035204956464636006,
+        -0.00896000183419976,
+        -0.004528231841709529
+      ],
+      "holm_p": 0.0221977802219778
+    },
+    {
+      "dataset": "tat_restaurant",
+      "contrast": "B-C",
+      "delta": -0.011560350080161097,
+      "ci95": [
+        -0.021117893899284083,
+        -0.0018823662663305211
+      ],
+      "p": 0.020397960203979604,
+      "paired_seed_deltas": [
+        -0.030773184287447408,
+        -0.015286200836348018,
+        0.011378334883312191
+      ],
+      "holm_p": 0.08159184081591841
+    }
+  ],
+  "single_models": [
+    {
+      "run_id": "eng_restaurant_A_s42",
+      "dataset": "eng_restaurant",
+      "arm": "A",
+      "seed": 42,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/eng_restaurant_A_s42.jsonl",
+      "sha256": "6be81edae7403bfb72b3a2472ca2fc1d026d41e0bd034e7747d43ac3cf34ad59",
+      "rows": 1000,
+      "inference_seconds": 4.397307674022159,
+      "load_seconds": 3.9569904090021737,
+      "peak_allocated_bytes": 1421306880,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.5271364441023665,
+        "cRecall": 0.5424875289000869,
+        "cF1": 0.5347018282538357,
+        "exact_precision": 0.5732542218165222,
+        "exact_recall": 0.5899483325504932,
+        "exact_f1": 0.5814814814814815,
+        "tp_categorical": 1256,
+        "fp_categorical": 935,
+        "fn_categorical": 873,
+        "va_mae": 0.6138136942675162,
+        "va_rmse": 0.7860819555010354,
+        "va_coordinate_n": 2512,
+        "aspect_span": {
+          "precision": 0.8507256392536282,
+          "recall": 0.7561425061425061,
+          "f1": 0.800650406504065,
+          "tp": 1231,
+          "fp": 216,
+          "fn": 397
+        },
+        "opinion_span": {
+          "precision": 0.8392109982068141,
+          "recall": 0.72,
+          "f1": 0.7750483025117306,
+          "tp": 1404,
+          "fp": 269,
+          "fn": 546
+        },
+        "category_span": {
+          "precision": 0.8645066273932254,
+          "recall": 0.8079834824501032,
+          "f1": 0.8352899324083957,
+          "tp": 1174,
+          "fp": 184,
+          "fn": 279
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 163,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 26,
+          "error_rate": 0.0,
+          "empty_rate": 0.026
+        },
+        "matched_v_mae": 0.5621337579617838,
+        "matched_a_mae": 0.6654936305732477,
+        "matched_quad_count": 1256,
+        "matched_gold_coverage": 0.5899483325504932
+      }
+    },
+    {
+      "run_id": "eng_restaurant_A_s123",
+      "dataset": "eng_restaurant",
+      "arm": "A",
+      "seed": 123,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/eng_restaurant_A_s123.jsonl",
+      "sha256": "796b877186bc31b89c3578959e92604ed202ace16fb1e2bf770971604778cc49",
+      "rows": 1000,
+      "inference_seconds": 4.18387976201484,
+      "load_seconds": 3.4497881830029655,
+      "peak_allocated_bytes": 1421700096,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.5332605947541046,
+        "cRecall": 0.5315072719907045,
+        "cF1": 0.5323824897992049,
+        "exact_precision": 0.5782280867106503,
+        "exact_recall": 0.5763269140441521,
+        "exact_f1": 0.5772759350741001,
+        "tp_categorical": 1227,
+        "fp_categorical": 895,
+        "fn_categorical": 902,
+        "va_mae": 0.5925305623471883,
+        "va_rmse": 0.7566282765124861,
+        "va_coordinate_n": 2454,
+        "aspect_span": {
+          "precision": 0.8518518518518519,
+          "recall": 0.7487714987714987,
+          "f1": 0.7969924812030075,
+          "tp": 1219,
+          "fp": 212,
+          "fn": 409
+        },
+        "opinion_span": {
+          "precision": 0.8405438813349815,
+          "recall": 0.6974358974358974,
+          "f1": 0.7623318385650224,
+          "tp": 1360,
+          "fp": 258,
+          "fn": 590
+        },
+        "category_span": {
+          "precision": 0.862759643916914,
+          "recall": 0.8004129387474191,
+          "f1": 0.8304177079614423,
+          "tp": 1163,
+          "fp": 185,
+          "fn": 290
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 138,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 33,
+          "error_rate": 0.0,
+          "empty_rate": 0.033
+        },
+        "matched_v_mae": 0.5403015484922569,
+        "matched_a_mae": 0.6447595762021182,
+        "matched_quad_count": 1227,
+        "matched_gold_coverage": 0.5763269140441521
+      }
+    },
+    {
+      "run_id": "eng_restaurant_A_s456",
+      "dataset": "eng_restaurant",
+      "arm": "A",
+      "seed": 456,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/eng_restaurant_A_s456.jsonl",
+      "sha256": "9942549fc992baafaec5712385d71fc4fdf4d34abfdf81132bdd37988e9e4e8a",
+      "rows": 1000,
+      "inference_seconds": 4.167910769028822,
+      "load_seconds": 3.395820734993322,
+      "peak_allocated_bytes": 1421700096,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.5289466654864587,
+        "cRecall": 0.5294435623070191,
+        "cF1": 0.5291949972542928,
+        "exact_precision": 0.5757860159549507,
+        "exact_recall": 0.5763269140441521,
+        "exact_f1": 0.576056338028169,
+        "tp_categorical": 1227,
+        "fp_categorical": 904,
+        "fn_categorical": 902,
+        "va_mae": 0.6186022819885905,
+        "va_rmse": 0.792691838262668,
+        "va_coordinate_n": 2454,
+        "aspect_span": {
+          "precision": 0.8436414176511466,
+          "recall": 0.7457002457002457,
+          "f1": 0.7916530811868276,
+          "tp": 1214,
+          "fp": 225,
+          "fn": 414
+        },
+        "opinion_span": {
+          "precision": 0.8345679012345679,
+          "recall": 0.6933333333333334,
+          "f1": 0.757422969187675,
+          "tp": 1352,
+          "fp": 268,
+          "fn": 598
+        },
+        "category_span": {
+          "precision": 0.8737864077669902,
+          "recall": 0.805230557467309,
+          "f1": 0.8381088825214899,
+          "tp": 1170,
+          "fp": 169,
+          "fn": 283
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 128,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 32,
+          "error_rate": 0.0,
+          "empty_rate": 0.032
+        },
+        "matched_v_mae": 0.5643194784026074,
+        "matched_a_mae": 0.6728850855745706,
+        "matched_quad_count": 1227,
+        "matched_gold_coverage": 0.5763269140441521
+      }
+    },
+    {
+      "run_id": "eng_restaurant_B_s42",
+      "dataset": "eng_restaurant",
+      "arm": "B",
+      "seed": 42,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/eng_restaurant_B_s42.jsonl",
+      "sha256": "2516ade17c4406bb9fd37d0f42125c969f8e4a5f700b8051974407a46ad4aa84",
+      "rows": 1000,
+      "inference_seconds": 6.4505873800080735,
+      "load_seconds": 3.6801941890153103,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.545543912407661,
+        "cRecall": 0.5381128304631696,
+        "cF1": 0.5418028924360785,
+        "exact_precision": 0.5938095238095238,
+        "exact_recall": 0.5857209957726632,
+        "exact_f1": 0.5897375266020336,
+        "tp_categorical": 1247,
+        "fp_categorical": 853,
+        "fn_categorical": 882,
+        "va_mae": 0.6187770649558937,
+        "va_rmse": 0.7926746365253129,
+        "va_coordinate_n": 2494,
+        "aspect_span": {
+          "precision": 0.8509911141490089,
+          "recall": 0.7647420147420148,
+          "f1": 0.8055645422193465,
+          "tp": 1245,
+          "fp": 218,
+          "fn": 383
+        },
+        "opinion_span": {
+          "precision": 0.8455927051671732,
+          "recall": 0.7133333333333334,
+          "f1": 0.7738525730180806,
+          "tp": 1391,
+          "fp": 254,
+          "fn": 559
+        },
+        "category_span": {
+          "precision": 0.8701393983859135,
+          "recall": 0.8162422573984859,
+          "f1": 0.8423295454545455,
+          "tp": 1186,
+          "fp": 177,
+          "fn": 267
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 135,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 23,
+          "error_rate": 0.0,
+          "empty_rate": 0.023
+        },
+        "matched_v_mae": 0.5594947874899758,
+        "matched_a_mae": 0.678059342421811,
+        "matched_quad_count": 1247,
+        "matched_gold_coverage": 0.5857209957726632
+      }
+    },
+    {
+      "run_id": "eng_restaurant_B_s123",
+      "dataset": "eng_restaurant",
+      "arm": "B",
+      "seed": 123,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/eng_restaurant_B_s123.jsonl",
+      "sha256": "a567b01160c847a6159553126f6ccb7c7e1658447fcdbb267ae738ae82285234",
+      "rows": 1000,
+      "inference_seconds": 6.849996333010495,
+      "load_seconds": 3.6135352849960327,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.5295420118919452,
+        "cRecall": 0.5429733264256066,
+        "cF1": 0.5361735676994973,
+        "exact_precision": 0.5739807604214384,
+        "exact_recall": 0.5885392202912165,
+        "exact_f1": 0.5811688311688312,
+        "tp_categorical": 1253,
+        "fp_categorical": 930,
+        "fn_categorical": 876,
+        "va_mae": 0.5906544293695135,
+        "va_rmse": 0.760003727886014,
+        "va_coordinate_n": 2506,
+        "aspect_span": {
+          "precision": 0.8439189189189189,
+          "recall": 0.7671990171990172,
+          "f1": 0.8037323037323036,
+          "tp": 1249,
+          "fp": 231,
+          "fn": 379
+        },
+        "opinion_span": {
+          "precision": 0.843409915356711,
+          "recall": 0.7153846153846154,
+          "f1": 0.7741398446170921,
+          "tp": 1395,
+          "fp": 259,
+          "fn": 555
+        },
+        "category_span": {
+          "precision": 0.8665689149560117,
+          "recall": 0.8134893324156917,
+          "f1": 0.8391906283280085,
+          "tp": 1182,
+          "fp": 182,
+          "fn": 271
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 122,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 16,
+          "error_rate": 0.0,
+          "empty_rate": 0.016
+        },
+        "matched_v_mae": 0.5418116520351149,
+        "matched_a_mae": 0.6394972067039103,
+        "matched_quad_count": 1253,
+        "matched_gold_coverage": 0.5885392202912165
+      }
+    },
+    {
+      "run_id": "eng_restaurant_B_s456",
+      "dataset": "eng_restaurant",
+      "arm": "B",
+      "seed": 456,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/eng_restaurant_B_s456.jsonl",
+      "sha256": "be221ad5e919dc9024d0300abde1d4c9f1fd9f6e9abd49ad3b14ed967945a58e",
+      "rows": 1000,
+      "inference_seconds": 6.175426111993147,
+      "load_seconds": 3.5744883150036912,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.530603522107651,
+        "cRecall": 0.5413202677396984,
+        "cF1": 0.5359083236539494,
+        "exact_precision": 0.5768876611418048,
+        "exact_recall": 0.5885392202912165,
+        "exact_f1": 0.5826551964659381,
+        "tp_categorical": 1253,
+        "fp_categorical": 919,
+        "fn_categorical": 876,
+        "va_mae": 0.611013567438149,
+        "va_rmse": 0.7806801217617666,
+        "va_coordinate_n": 2506,
+        "aspect_span": {
+          "precision": 0.8484848484848485,
+          "recall": 0.773955773955774,
+          "f1": 0.8095085126887248,
+          "tp": 1260,
+          "fp": 225,
+          "fn": 368
+        },
+        "opinion_span": {
+          "precision": 0.8393939393939394,
+          "recall": 0.7102564102564103,
+          "f1": 0.7694444444444444,
+          "tp": 1385,
+          "fp": 265,
+          "fn": 565
+        },
+        "category_span": {
+          "precision": 0.8679383712399119,
+          "recall": 0.8141775636613903,
+          "f1": 0.8401988636363636,
+          "tp": 1183,
+          "fp": 180,
+          "fn": 270
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 126,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 18,
+          "error_rate": 0.0,
+          "empty_rate": 0.018
+        },
+        "matched_v_mae": 0.5591779728651226,
+        "matched_a_mae": 0.662849162011172,
+        "matched_quad_count": 1253,
+        "matched_gold_coverage": 0.5885392202912165
+      }
+    },
+    {
+      "run_id": "eng_restaurant_C_s42",
+      "dataset": "eng_restaurant",
+      "arm": "C",
+      "seed": 42,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/eng_restaurant_C_s42.jsonl",
+      "sha256": "3371624d33eca05f22138965521c8b07734e08273cea770c8a3a26563668cd28",
+      "rows": 1000,
+      "inference_seconds": 7.692149887996493,
+      "load_seconds": 3.765182043018285,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.547914476597948,
+        "cRecall": 0.5448261845739107,
+        "cF1": 0.5463659665369082,
+        "exact_precision": 0.5947094945677845,
+        "exact_recall": 0.5913574448097698,
+        "exact_f1": 0.593028732925106,
+        "tp_categorical": 1259,
+        "fp_categorical": 858,
+        "fn_categorical": 870,
+        "va_mae": 0.5975853852263703,
+        "va_rmse": 0.7688328631151753,
+        "va_coordinate_n": 2518,
+        "aspect_span": {
+          "precision": 0.8432580424366872,
+          "recall": 0.7567567567567568,
+          "f1": 0.7976691485917772,
+          "tp": 1232,
+          "fp": 229,
+          "fn": 396
+        },
+        "opinion_span": {
+          "precision": 0.840867992766727,
+          "recall": 0.7153846153846154,
+          "f1": 0.773067331670823,
+          "tp": 1395,
+          "fp": 264,
+          "fn": 555
+        },
+        "category_span": {
+          "precision": 0.8705882352941177,
+          "recall": 0.8148657949070888,
+          "f1": 0.8418059011731248,
+          "tp": 1184,
+          "fp": 176,
+          "fn": 269
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 107,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 27,
+          "error_rate": 0.0,
+          "empty_rate": 0.027
+        },
+        "matched_v_mae": 0.5432644956314528,
+        "matched_a_mae": 0.6519062748212857,
+        "matched_quad_count": 1259,
+        "matched_gold_coverage": 0.5913574448097698
+      }
+    },
+    {
+      "run_id": "eng_restaurant_C_s123",
+      "dataset": "eng_restaurant",
+      "arm": "C",
+      "seed": 123,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/eng_restaurant_C_s123.jsonl",
+      "sha256": "9b32909d1657483a916bc7b7ac3e3898c2e76d31eeee36faf196eded3c5675f8",
+      "rows": 1000,
+      "inference_seconds": 6.6522062130097765,
+      "load_seconds": 3.533093177014962,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.4937568646068901,
+        "cRecall": 0.5394450291571754,
+        "cF1": 0.5155907820765999,
+        "exact_precision": 0.5356835769561479,
+        "exact_recall": 0.5852512916862377,
+        "exact_f1": 0.559371492704826,
+        "tp_categorical": 1246,
+        "fp_categorical": 1080,
+        "fn_categorical": 883,
+        "va_mae": 0.5972873194221511,
+        "va_rmse": 0.7657587850321618,
+        "va_coordinate_n": 2492,
+        "aspect_span": {
+          "precision": 0.8456375838926175,
+          "recall": 0.773955773955774,
+          "f1": 0.8082103912764592,
+          "tp": 1260,
+          "fp": 230,
+          "fn": 368
+        },
+        "opinion_span": {
+          "precision": 0.8317365269461078,
+          "recall": 0.7123076923076923,
+          "f1": 0.7674033149171271,
+          "tp": 1389,
+          "fp": 281,
+          "fn": 561
+        },
+        "category_span": {
+          "precision": 0.8723880597014926,
+          "recall": 0.8045423262216105,
+          "f1": 0.8370927318295739,
+          "tp": 1169,
+          "fp": 171,
+          "fn": 284
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 87,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 15,
+          "error_rate": 0.0,
+          "empty_rate": 0.015
+        },
+        "matched_v_mae": 0.540794542536116,
+        "matched_a_mae": 0.6537800963081858,
+        "matched_quad_count": 1246,
+        "matched_gold_coverage": 0.5852512916862377
+      }
+    },
+    {
+      "run_id": "eng_restaurant_C_s456",
+      "dataset": "eng_restaurant",
+      "arm": "C",
+      "seed": 456,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/eng_restaurant_C_s456.jsonl",
+      "sha256": "8a1877f5af4ecc63c98d71cca5450c6b4c60a62c981f3c93e30cfee64080ae16",
+      "rows": 1000,
+      "inference_seconds": 6.177096061990596,
+      "load_seconds": 3.647688080003718,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.5400849135266396,
+        "cRecall": 0.5304450700724299,
+        "cF1": 0.5352215896607599,
+        "exact_precision": 0.5872788139646102,
+        "exact_recall": 0.5767966181305777,
+        "exact_f1": 0.5819905213270142,
+        "tp_categorical": 1228,
+        "fp_categorical": 863,
+        "fn_categorical": 901,
+        "va_mae": 0.6117345276872969,
+        "va_rmse": 0.781721509180417,
+        "va_coordinate_n": 2456,
+        "aspect_span": {
+          "precision": 0.8515731874145007,
+          "recall": 0.7647420147420148,
+          "f1": 0.8058252427184467,
+          "tp": 1245,
+          "fp": 217,
+          "fn": 383
+        },
+        "opinion_span": {
+          "precision": 0.8445945945945946,
+          "recall": 0.7051282051282052,
+          "f1": 0.7685858021240917,
+          "tp": 1375,
+          "fp": 253,
+          "fn": 575
+        },
+        "category_span": {
+          "precision": 0.8700147710487445,
+          "recall": 0.8107364074328974,
+          "f1": 0.8393302458140364,
+          "tp": 1178,
+          "fp": 176,
+          "fn": 275
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 123,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 26,
+          "error_rate": 0.0,
+          "empty_rate": 0.026
+        },
+        "matched_v_mae": 0.5658224755700322,
+        "matched_a_mae": 0.6576465798045594,
+        "matched_quad_count": 1228,
+        "matched_gold_coverage": 0.5767966181305777
+      }
+    },
+    {
+      "run_id": "zho_restaurant_A_s42",
+      "dataset": "zho_restaurant",
+      "arm": "A",
+      "seed": 42,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/zho_restaurant_A_s42.jsonl",
+      "sha256": "8f14a6c5a87d9ba9513bb24db0da00ddea4d08d311b93ed3364df5265bfce2d8",
+      "rows": 1000,
+      "inference_seconds": 5.07576985299238,
+      "load_seconds": 3.530661433003843,
+      "peak_allocated_bytes": 1421700096,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.3565342759731452,
+        "cRecall": 0.40339093020799405,
+        "cF1": 0.37851802273698626,
+        "exact_precision": 0.3799814643188137,
+        "exact_recall": 0.42991960852848654,
+        "exact_f1": 0.4034109544112824,
+        "tp_categorical": 1230,
+        "fp_categorical": 2007,
+        "fn_categorical": 1631,
+        "va_mae": 0.4570040650406504,
+        "va_rmse": 0.6139067551876597,
+        "va_coordinate_n": 2460,
+        "aspect_span": {
+          "precision": 0.7068114511352419,
+          "recall": 0.6907863000482393,
+          "f1": 0.6987070017077337,
+          "tp": 1432,
+          "fp": 594,
+          "fn": 641
+        },
+        "opinion_span": {
+          "precision": 0.6646082593593208,
+          "recall": 0.6277798031352534,
+          "f1": 0.6456692913385826,
+          "tp": 1722,
+          "fp": 869,
+          "fn": 1021
+        },
+        "category_span": {
+          "precision": 0.8468335787923417,
+          "recall": 0.8173418621179815,
+          "f1": 0.8318264014466547,
+          "tp": 1150,
+          "fp": 208,
+          "fn": 257
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 39,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 20,
+          "error_rate": 0.0,
+          "empty_rate": 0.02
+        },
+        "matched_v_mae": 0.4044796747967476,
+        "matched_a_mae": 0.5095284552845523,
+        "matched_quad_count": 1230,
+        "matched_gold_coverage": 0.42991960852848654
+      }
+    },
+    {
+      "run_id": "zho_restaurant_A_s123",
+      "dataset": "zho_restaurant",
+      "arm": "A",
+      "seed": 123,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/zho_restaurant_A_s123.jsonl",
+      "sha256": "0a73f34cf0ef3fece8e92d436174e1a6c0aa3a2d330d8541942b5780cc11265c",
+      "rows": 1000,
+      "inference_seconds": 5.045229987008497,
+      "load_seconds": 3.38805595098529,
+      "peak_allocated_bytes": 1421700096,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.36685070792269947,
+        "cRecall": 0.40031734013794745,
+        "cF1": 0.3828540565384148,
+        "exact_precision": 0.3901345291479821,
+        "exact_recall": 0.4257252708843062,
+        "exact_f1": 0.4071536018719705,
+        "tp_categorical": 1218,
+        "fp_categorical": 1904,
+        "fn_categorical": 1643,
+        "va_mae": 0.44075123152709306,
+        "va_rmse": 0.595615720937514,
+        "va_coordinate_n": 2436,
+        "aspect_span": {
+          "precision": 0.7107396149949341,
+          "recall": 0.6767969126869272,
+          "f1": 0.6933531010625155,
+          "tp": 1403,
+          "fp": 571,
+          "fn": 670
+        },
+        "opinion_span": {
+          "precision": 0.6825147347740668,
+          "recall": 0.6332482683193583,
+          "f1": 0.6569591527987897,
+          "tp": 1737,
+          "fp": 808,
+          "fn": 1006
+        },
+        "category_span": {
+          "precision": 0.8539823008849557,
+          "recall": 0.8230277185501066,
+          "f1": 0.8382193268186754,
+          "tp": 1158,
+          "fp": 198,
+          "fn": 249
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 32,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 19,
+          "error_rate": 0.0,
+          "empty_rate": 0.019
+        },
+        "matched_v_mae": 0.39667487684729047,
+        "matched_a_mae": 0.4848275862068953,
+        "matched_quad_count": 1218,
+        "matched_gold_coverage": 0.4257252708843062
+      }
+    },
+    {
+      "run_id": "zho_restaurant_A_s456",
+      "dataset": "zho_restaurant",
+      "arm": "A",
+      "seed": 456,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/zho_restaurant_A_s456.jsonl",
+      "sha256": "8225ee7df120cd305b2c1f4db2b42680f5c98b6e88021cd6ec5b26b62adcf99a",
+      "rows": 1000,
+      "inference_seconds": 5.02290081398678,
+      "load_seconds": 3.3660764929954894,
+      "peak_allocated_bytes": 1421700096,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.3737036622235881,
+        "cRecall": 0.4046605891536791,
+        "cF1": 0.388566519741123,
+        "exact_precision": 0.3983214977404777,
+        "exact_recall": 0.43131772107654665,
+        "exact_f1": 0.4141634502433294,
+        "tp_categorical": 1234,
+        "fp_categorical": 1864,
+        "fn_categorical": 1627,
+        "va_mae": 0.45849270664505626,
+        "va_rmse": 0.6135938451509527,
+        "va_coordinate_n": 2468,
+        "aspect_span": {
+          "precision": 0.71875,
+          "recall": 0.6878919440424506,
+          "f1": 0.7029824993837812,
+          "tp": 1426,
+          "fp": 558,
+          "fn": 647
+        },
+        "opinion_span": {
+          "precision": 0.6793863099921322,
+          "recall": 0.6296026248632883,
+          "f1": 0.6535477767265847,
+          "tp": 1727,
+          "fp": 815,
+          "fn": 1016
+        },
+        "category_span": {
+          "precision": 0.8571428571428571,
+          "recall": 0.8187633262260128,
+          "f1": 0.8375136314067612,
+          "tp": 1152,
+          "fp": 192,
+          "fn": 255
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 26,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 21,
+          "error_rate": 0.0,
+          "empty_rate": 0.021
+        },
+        "matched_v_mae": 0.414975688816856,
+        "matched_a_mae": 0.5020097244732569,
+        "matched_quad_count": 1234,
+        "matched_gold_coverage": 0.43131772107654665
+      }
+    },
+    {
+      "run_id": "zho_restaurant_B_s42",
+      "dataset": "zho_restaurant",
+      "arm": "B",
+      "seed": 42,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/zho_restaurant_B_s42.jsonl",
+      "sha256": "1b64c70b2922d3acda52ace9f5292357ee2512e58b094e0ed12b2a7c67a9ee1b",
+      "rows": 1000,
+      "inference_seconds": 8.101215222995961,
+      "load_seconds": 3.7290410220157355,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.34491431884854384,
+        "cRecall": 0.3985622992356819,
+        "cF1": 0.36980273653746903,
+        "exact_precision": 0.36721113127646704,
+        "exact_recall": 0.42432715833624607,
+        "exact_f1": 0.39370844819198964,
+        "tp_categorical": 1214,
+        "fp_categorical": 2092,
+        "fn_categorical": 1647,
+        "va_mae": 0.449332784184514,
+        "va_rmse": 0.60440059759428,
+        "va_coordinate_n": 2428,
+        "aspect_span": {
+          "precision": 0.6971484759095379,
+          "recall": 0.684032802701399,
+          "f1": 0.690528366204042,
+          "tp": 1418,
+          "fp": 616,
+          "fn": 655
+        },
+        "opinion_span": {
+          "precision": 0.6664098613251156,
+          "recall": 0.6306963179001094,
+          "f1": 0.6480614347256041,
+          "tp": 1730,
+          "fp": 866,
+          "fn": 1013
+        },
+        "category_span": {
+          "precision": 0.8541973490427098,
+          "recall": 0.8244491826581379,
+          "f1": 0.8390596745027123,
+          "tp": 1160,
+          "fp": 198,
+          "fn": 247
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 29,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 6,
+          "error_rate": 0.0,
+          "empty_rate": 0.006
+        },
+        "matched_v_mae": 0.4064744645799015,
+        "matched_a_mae": 0.49219110378912545,
+        "matched_quad_count": 1214,
+        "matched_gold_coverage": 0.42432715833624607
+      }
+    },
+    {
+      "run_id": "zho_restaurant_B_s123",
+      "dataset": "zho_restaurant",
+      "arm": "B",
+      "seed": 123,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/zho_restaurant_B_s123.jsonl",
+      "sha256": "714c63d8c1b1b5fc536959fdac771bb59f12ec855e2dd95dd5563bab1e97ab42",
+      "rows": 1000,
+      "inference_seconds": 8.038757941016229,
+      "load_seconds": 3.58703260999755,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.35321646092433134,
+        "cRecall": 0.40457544300909953,
+        "cF1": 0.3771555368032042,
+        "exact_precision": 0.37595361611229783,
+        "exact_recall": 0.4306186648025166,
+        "exact_f1": 0.4014336917562724,
+        "tp_categorical": 1232,
+        "fp_categorical": 2045,
+        "fn_categorical": 1629,
+        "va_mae": 0.44631899350649334,
+        "va_rmse": 0.606285027104339,
+        "va_coordinate_n": 2464,
+        "aspect_span": {
+          "precision": 0.69873046875,
+          "recall": 0.6903039073806078,
+          "f1": 0.6944916282455715,
+          "tp": 1431,
+          "fp": 617,
+          "fn": 642
+        },
+        "opinion_span": {
+          "precision": 0.6733824099186362,
+          "recall": 0.6336128326649654,
+          "f1": 0.6528925619834711,
+          "tp": 1738,
+          "fp": 843,
+          "fn": 1005
+        },
+        "category_span": {
+          "precision": 0.850735294117647,
+          "recall": 0.822316986496091,
+          "f1": 0.8362847849656668,
+          "tp": 1157,
+          "fp": 203,
+          "fn": 250
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 27,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 10,
+          "error_rate": 0.0,
+          "empty_rate": 0.01
+        },
+        "matched_v_mae": 0.40213474025973944,
+        "matched_a_mae": 0.4905032467532467,
+        "matched_quad_count": 1232,
+        "matched_gold_coverage": 0.4306186648025166
+      }
+    },
+    {
+      "run_id": "zho_restaurant_B_s456",
+      "dataset": "zho_restaurant",
+      "arm": "B",
+      "seed": 456,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/zho_restaurant_B_s456.jsonl",
+      "sha256": "a13c958f2f2c245a1135261056d4a258eec0b2bf3f6dbb7519c411ae54e6680f",
+      "rows": 1000,
+      "inference_seconds": 7.9396139740129,
+      "load_seconds": 3.535002529999474,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.34785100738056274,
+        "cRecall": 0.40475218579863453,
+        "cF1": 0.3741505665815488,
+        "exact_precision": 0.37038149594472813,
+        "exact_recall": 0.43096819293953165,
+        "exact_f1": 0.3983844911147012,
+        "tp_categorical": 1233,
+        "fp_categorical": 2096,
+        "fn_categorical": 1628,
+        "va_mae": 0.4489699918896996,
+        "va_rmse": 0.6040736944993134,
+        "va_coordinate_n": 2466,
+        "aspect_span": {
+          "precision": 0.7049659201557936,
+          "recall": 0.6985045827303425,
+          "f1": 0.7017203779985461,
+          "tp": 1448,
+          "fp": 606,
+          "fn": 625
+        },
+        "opinion_span": {
+          "precision": 0.6692160611854685,
+          "recall": 0.6379876048122494,
+          "f1": 0.6532288167226578,
+          "tp": 1750,
+          "fp": 865,
+          "fn": 993
+        },
+        "category_span": {
+          "precision": 0.8578754578754578,
+          "recall": 0.8322672352523098,
+          "f1": 0.8448773448773449,
+          "tp": 1171,
+          "fp": 194,
+          "fn": 236
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 46,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 6,
+          "error_rate": 0.0,
+          "empty_rate": 0.006
+        },
+        "matched_v_mae": 0.4011922141119212,
+        "matched_a_mae": 0.49674776966747713,
+        "matched_quad_count": 1233,
+        "matched_gold_coverage": 0.43096819293953165
+      }
+    },
+    {
+      "run_id": "zho_restaurant_C_s42",
+      "dataset": "zho_restaurant",
+      "arm": "C",
+      "seed": 42,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/zho_restaurant_C_s42.jsonl",
+      "sha256": "226f7bfc1c134037b4ac0f0a52ef0014e47167385d879381793994291588106d",
+      "rows": 1000,
+      "inference_seconds": 10.819239730015397,
+      "load_seconds": 3.6529167300031986,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.33903671489581766,
+        "cRecall": 0.3889264237287919,
+        "cF1": 0.3622720163724804,
+        "exact_precision": 0.3604509445460085,
+        "exact_recall": 0.4134917860887801,
+        "exact_f1": 0.38515383363177597,
+        "tp_categorical": 1183,
+        "fp_categorical": 2099,
+        "fn_categorical": 1678,
+        "va_mae": 0.43808114961961137,
+        "va_rmse": 0.5943698226293196,
+        "va_coordinate_n": 2366,
+        "aspect_span": {
+          "precision": 0.7029309488325882,
+          "recall": 0.6825856246985046,
+          "f1": 0.6926089084679393,
+          "tp": 1415,
+          "fp": 598,
+          "fn": 658
+        },
+        "opinion_span": {
+          "precision": 0.6637998436278343,
+          "recall": 0.6190302588406854,
+          "f1": 0.6406338426711942,
+          "tp": 1698,
+          "fp": 860,
+          "fn": 1045
+        },
+        "category_span": {
+          "precision": 0.8510324483775811,
+          "recall": 0.820184790334044,
+          "f1": 0.835323923271806,
+          "tp": 1154,
+          "fp": 202,
+          "fn": 253
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 26,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 7,
+          "error_rate": 0.0,
+          "empty_rate": 0.007
+        },
+        "matched_v_mae": 0.39268808114961956,
+        "matched_a_mae": 0.48347421808960245,
+        "matched_quad_count": 1183,
+        "matched_gold_coverage": 0.4134917860887801
+      }
+    },
+    {
+      "run_id": "zho_restaurant_C_s123",
+      "dataset": "zho_restaurant",
+      "arm": "C",
+      "seed": 123,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/zho_restaurant_C_s123.jsonl",
+      "sha256": "49d626dbde504a14b9e0ff8e685bdde793a4ca244ca0646516049b790936b74c",
+      "rows": 1000,
+      "inference_seconds": 10.933263479004381,
+      "load_seconds": 3.7912168629991356,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.35594674815913524,
+        "cRecall": 0.4090712715649202,
+        "cF1": 0.38066446835167883,
+        "exact_precision": 0.37864963503649635,
+        "exact_recall": 0.435162530583712,
+        "exact_f1": 0.40494389331598635,
+        "tp_categorical": 1245,
+        "fp_categorical": 2043,
+        "fn_categorical": 1616,
+        "va_mae": 0.441722891566265,
+        "va_rmse": 0.6002754722377732,
+        "va_coordinate_n": 2490,
+        "aspect_span": {
+          "precision": 0.7183308494783904,
+          "recall": 0.6975397973950795,
+          "f1": 0.7077826725403817,
+          "tp": 1446,
+          "fp": 567,
+          "fn": 627
+        },
+        "opinion_span": {
+          "precision": 0.6706379707916987,
+          "recall": 0.6361647830842143,
+          "f1": 0.6529466791393826,
+          "tp": 1745,
+          "fp": 857,
+          "fn": 998
+        },
+        "category_span": {
+          "precision": 0.8488628026412326,
+          "recall": 0.822316986496091,
+          "f1": 0.8353790613718413,
+          "tp": 1157,
+          "fp": 206,
+          "fn": 250
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 33,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 6,
+          "error_rate": 0.0,
+          "empty_rate": 0.006
+        },
+        "matched_v_mae": 0.40060240963855337,
+        "matched_a_mae": 0.48284337349397516,
+        "matched_quad_count": 1245,
+        "matched_gold_coverage": 0.435162530583712
+      }
+    },
+    {
+      "run_id": "zho_restaurant_C_s456",
+      "dataset": "zho_restaurant",
+      "arm": "C",
+      "seed": 456,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/zho_restaurant_C_s456.jsonl",
+      "sha256": "b5a5767e96447c1a7e81965894b08436a5d3ebbfb4e4601a7489336764034409",
+      "rows": 1000,
+      "inference_seconds": 8.064525900001172,
+      "load_seconds": 3.587615452008322,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.3478354185200424,
+        "cRecall": 0.3986551336341206,
+        "cF1": 0.37151541932482707,
+        "exact_precision": 0.370844769746874,
+        "exact_recall": 0.4250262146102761,
+        "exact_f1": 0.3960912052117264,
+        "tp_categorical": 1216,
+        "fp_categorical": 2063,
+        "fn_categorical": 1645,
+        "va_mae": 0.45988898026315744,
+        "va_rmse": 0.6147239097329535,
+        "va_coordinate_n": 2432,
+        "aspect_span": {
+          "precision": 0.7116895874263262,
+          "recall": 0.6989869753979739,
+          "f1": 0.7052810902896082,
+          "tp": 1449,
+          "fp": 587,
+          "fn": 624
+        },
+        "opinion_span": {
+          "precision": 0.6709055876685934,
+          "recall": 0.6347065257017863,
+          "f1": 0.6523042337954289,
+          "tp": 1741,
+          "fp": 854,
+          "fn": 1002
+        },
+        "category_span": {
+          "precision": 0.8549222797927462,
+          "recall": 0.8208955223880597,
+          "f1": 0.8375634517766497,
+          "tp": 1155,
+          "fp": 196,
+          "fn": 252
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 41,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 6,
+          "error_rate": 0.0,
+          "empty_rate": 0.006
+        },
+        "matched_v_mae": 0.41496710526315744,
+        "matched_a_mae": 0.5048108552631583,
+        "matched_quad_count": 1216,
+        "matched_gold_coverage": 0.4250262146102761
+      }
+    },
+    {
+      "run_id": "tat_restaurant_A_s42",
+      "dataset": "tat_restaurant",
+      "arm": "A",
+      "seed": 42,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/tat_restaurant_A_s42.jsonl",
+      "sha256": "b14e8a2196966457b1ae54fdd2c10c225691e97e302d137f211146e6ccd7c11d",
+      "rows": 630,
+      "inference_seconds": 2.9871670909924433,
+      "load_seconds": 3.5508921070140786,
+      "peak_allocated_bytes": 1421700096,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.33969377537060264,
+        "cRecall": 0.3350262273120753,
+        "cF1": 0.33734385686304275,
+        "exact_precision": 0.38544891640866874,
+        "exact_recall": 0.3801526717557252,
+        "exact_f1": 0.38278247501921603,
+        "tp_categorical": 498,
+        "fp_categorical": 794,
+        "fn_categorical": 812,
+        "va_mae": 0.9061746987951806,
+        "va_rmse": 1.0817733748517533,
+        "va_coordinate_n": 996,
+        "aspect_span": {
+          "precision": 0.7212543554006968,
+          "recall": 0.5965417867435159,
+          "f1": 0.6529968454258674,
+          "tp": 621,
+          "fp": 240,
+          "fn": 420
+        },
+        "opinion_span": {
+          "precision": 0.662839248434238,
+          "recall": 0.5354131534569984,
+          "f1": 0.5923507462686568,
+          "tp": 635,
+          "fp": 323,
+          "fn": 551
+        },
+        "category_span": {
+          "precision": 0.8205128205128205,
+          "recall": 0.6816568047337278,
+          "f1": 0.7446670976082742,
+          "tp": 576,
+          "fp": 126,
+          "fn": 269
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 75,
+          "error_rate": 0.0,
+          "empty_rate": 0.11904761904761904
+        },
+        "matched_v_mae": 0.7636947791164664,
+        "matched_a_mae": 1.048654618473896,
+        "matched_quad_count": 498,
+        "matched_gold_coverage": 0.3801526717557252
+      }
+    },
+    {
+      "run_id": "tat_restaurant_A_s123",
+      "dataset": "tat_restaurant",
+      "arm": "A",
+      "seed": 123,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/tat_restaurant_A_s123.jsonl",
+      "sha256": "71dc8f4d6d500d6baf7453fbc4b97a1cda774c5a5c1f8f6948f4e7f7266c31c5",
+      "rows": 630,
+      "inference_seconds": 2.9981604070053436,
+      "load_seconds": 3.4243213910085615,
+      "peak_allocated_bytes": 1421700096,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.2960906052809308,
+        "cRecall": 0.33519264704703844,
+        "cF1": 0.31443062487047646,
+        "exact_precision": 0.3351314902225219,
+        "exact_recall": 0.3793893129770992,
+        "exact_f1": 0.355889724310777,
+        "tp_categorical": 497,
+        "fp_categorical": 986,
+        "fn_categorical": 813,
+        "va_mae": 0.8926257545271629,
+        "va_rmse": 1.062905313862634,
+        "va_coordinate_n": 994,
+        "aspect_span": {
+          "precision": 0.6942889137737962,
+          "recall": 0.595581171950048,
+          "f1": 0.6411582213029989,
+          "tp": 620,
+          "fp": 273,
+          "fn": 421
+        },
+        "opinion_span": {
+          "precision": 0.625,
+          "recall": 0.5564924114671164,
+          "f1": 0.5887600356824264,
+          "tp": 660,
+          "fp": 396,
+          "fn": 526
+        },
+        "category_span": {
+          "precision": 0.8055172413793104,
+          "recall": 0.6911242603550296,
+          "f1": 0.7439490445859873,
+          "tp": 584,
+          "fp": 141,
+          "fn": 261
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 57,
+          "error_rate": 0.0,
+          "empty_rate": 0.09047619047619047
+        },
+        "matched_v_mae": 0.7596780684104625,
+        "matched_a_mae": 1.0255734406438644,
+        "matched_quad_count": 497,
+        "matched_gold_coverage": 0.3793893129770992
+      }
+    },
+    {
+      "run_id": "tat_restaurant_A_s456",
+      "dataset": "tat_restaurant",
+      "arm": "A",
+      "seed": 456,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/tat_restaurant_A_s456.jsonl",
+      "sha256": "3bdb9c1fafb93417ee887fe046b41bf24bd3b943fdf85f5d92dca2333401f773",
+      "rows": 630,
+      "inference_seconds": 2.988862629979849,
+      "load_seconds": 3.4504534450243227,
+      "peak_allocated_bytes": 1421700096,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.3485655875851625,
+        "cRecall": 0.3469691039779022,
+        "cF1": 0.34776551355091956,
+        "exact_precision": 0.39570552147239263,
+        "exact_recall": 0.3938931297709924,
+        "exact_f1": 0.3947972456006121,
+        "tp_categorical": 516,
+        "fp_categorical": 788,
+        "fn_categorical": 794,
+        "va_mae": 0.9120348837209301,
+        "va_rmse": 1.0790194371448705,
+        "va_coordinate_n": 1032,
+        "aspect_span": {
+          "precision": 0.7228915662650602,
+          "recall": 0.5763688760806917,
+          "f1": 0.6413682522715125,
+          "tp": 600,
+          "fp": 230,
+          "fn": 441
+        },
+        "opinion_span": {
+          "precision": 0.6547497446373851,
+          "recall": 0.5404721753794266,
+          "f1": 0.5921478060046189,
+          "tp": 641,
+          "fp": 338,
+          "fn": 545
+        },
+        "category_span": {
+          "precision": 0.8123209169054442,
+          "recall": 0.6710059171597633,
+          "f1": 0.7349319507453014,
+          "tp": 567,
+          "fp": 131,
+          "fn": 278
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 79,
+          "error_rate": 0.0,
+          "empty_rate": 0.1253968253968254
+        },
+        "matched_v_mae": 0.7606201550387595,
+        "matched_a_mae": 1.0634496124031008,
+        "matched_quad_count": 516,
+        "matched_gold_coverage": 0.3938931297709924
+      }
+    },
+    {
+      "run_id": "tat_restaurant_B_s42",
+      "dataset": "tat_restaurant",
+      "arm": "B",
+      "seed": 42,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/tat_restaurant_B_s42.jsonl",
+      "sha256": "73d721fbc80bfa24045b69f3704eea573319de1964f1a4025795c6d2c3f02f4f",
+      "rows": 630,
+      "inference_seconds": 5.641286105994368,
+      "load_seconds": 3.7389420479885302,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.29395824425043543,
+        "cRecall": 0.3107879147227886,
+        "cF1": 0.30213890039840674,
+        "exact_precision": 0.3328519855595668,
+        "exact_recall": 0.3519083969465649,
+        "exact_f1": 0.3421150278293135,
+        "tp_categorical": 461,
+        "fp_categorical": 924,
+        "fn_categorical": 849,
+        "va_mae": 0.8914208242950108,
+        "va_rmse": 1.0791130265537947,
+        "va_coordinate_n": 922,
+        "aspect_span": {
+          "precision": 0.7056019070321812,
+          "recall": 0.5686839577329491,
+          "f1": 0.6297872340425532,
+          "tp": 592,
+          "fp": 247,
+          "fn": 449
+        },
+        "opinion_span": {
+          "precision": 0.6620616365568545,
+          "recall": 0.5252951096121417,
+          "f1": 0.5858015984955336,
+          "tp": 623,
+          "fp": 318,
+          "fn": 563
+        },
+        "category_span": {
+          "precision": 0.7962154294032023,
+          "recall": 0.6473372781065089,
+          "f1": 0.7140992167101828,
+          "tp": 547,
+          "fp": 140,
+          "fn": 298
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 87,
+          "error_rate": 0.0,
+          "empty_rate": 0.1380952380952381
+        },
+        "matched_v_mae": 0.7735791757049896,
+        "matched_a_mae": 1.009262472885032,
+        "matched_quad_count": 461,
+        "matched_gold_coverage": 0.3519083969465649
+      }
+    },
+    {
+      "run_id": "tat_restaurant_B_s123",
+      "dataset": "tat_restaurant",
+      "arm": "B",
+      "seed": 123,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/tat_restaurant_B_s123.jsonl",
+      "sha256": "43862431782df61ed15df70b0d4e9ebad285a2a6e37734774337155566a2c8e9",
+      "rows": 630,
+      "inference_seconds": 6.195562954002526,
+      "load_seconds": 3.5762238430033904,
+      "peak_allocated_bytes": 1600324608,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.2791302945179875,
+        "cRecall": 0.3373001955892933,
+        "cF1": 0.30547062303627665,
+        "exact_precision": 0.31648768161718255,
+        "exact_recall": 0.38244274809160306,
+        "exact_f1": 0.34635326650535775,
+        "tp_categorical": 501,
+        "fp_categorical": 1082,
+        "fn_categorical": 809,
+        "va_mae": 0.9034530938123748,
+        "va_rmse": 1.083555082479182,
+        "va_coordinate_n": 1002,
+        "aspect_span": {
+          "precision": 0.6847237269772481,
+          "recall": 0.6071085494716618,
+          "f1": 0.6435845213849287,
+          "tp": 632,
+          "fp": 291,
+          "fn": 409
+        },
+        "opinion_span": {
+          "precision": 0.6424474187380497,
+          "recall": 0.5666104553119731,
+          "f1": 0.6021505376344087,
+          "tp": 672,
+          "fp": 374,
+          "fn": 514
+        },
+        "category_span": {
+          "precision": 0.7773279352226721,
+          "recall": 0.6816568047337278,
+          "f1": 0.7263556116015133,
+          "tp": 576,
+          "fp": 165,
+          "fn": 269
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 59,
+          "error_rate": 0.0,
+          "empty_rate": 0.09365079365079365
+        },
+        "matched_v_mae": 0.790419161676646,
+        "matched_a_mae": 1.0164870259481034,
+        "matched_quad_count": 501,
+        "matched_gold_coverage": 0.38244274809160306
+      }
+    },
+    {
+      "run_id": "tat_restaurant_B_s456",
+      "dataset": "tat_restaurant",
+      "arm": "B",
+      "seed": 456,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/tat_restaurant_B_s456.jsonl",
+      "sha256": "a84f658cd85024dd09b645620fefa671bb612eff458a2597662a13aced26df3d",
+      "rows": 630,
+      "inference_seconds": 4.773596982995514,
+      "load_seconds": 3.598813266988145,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.331975573464828,
+        "cRecall": 0.35528988854785404,
+        "cF1": 0.34323728170921003,
+        "exact_precision": 0.37660485021398005,
+        "exact_recall": 0.4030534351145038,
+        "exact_f1": 0.3893805309734513,
+        "tp_categorical": 528,
+        "fp_categorical": 874,
+        "fn_categorical": 782,
+        "va_mae": 0.9125852272727275,
+        "va_rmse": 1.0821785949480038,
+        "va_coordinate_n": 1056,
+        "aspect_span": {
+          "precision": 0.7265536723163842,
+          "recall": 0.6176753121998079,
+          "f1": 0.667705088265836,
+          "tp": 643,
+          "fp": 242,
+          "fn": 398
+        },
+        "opinion_span": {
+          "precision": 0.6447241045498547,
+          "recall": 0.5615514333895447,
+          "f1": 0.6002703920684993,
+          "tp": 666,
+          "fp": 367,
+          "fn": 520
+        },
+        "category_span": {
+          "precision": 0.8057065217391305,
+          "recall": 0.7017751479289941,
+          "f1": 0.750158127767236,
+          "tp": 593,
+          "fp": 143,
+          "fn": 252
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 46,
+          "error_rate": 0.0,
+          "empty_rate": 0.07301587301587302
+        },
+        "matched_v_mae": 0.7724053030303032,
+        "matched_a_mae": 1.0527651515151517,
+        "matched_quad_count": 528,
+        "matched_gold_coverage": 0.4030534351145038
+      }
+    },
+    {
+      "run_id": "tat_restaurant_C_s42",
+      "dataset": "tat_restaurant",
+      "arm": "C",
+      "seed": 42,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/tat_restaurant_C_s42.jsonl",
+      "sha256": "6e56b78e544af7e631430b87f9387c98f807d35840e64c54b039732b2823bb67",
+      "rows": 630,
+      "inference_seconds": 5.855208513996331,
+      "load_seconds": 3.5866284459771123,
+      "peak_allocated_bytes": 1496596480,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.3249280012595219,
+        "cRecall": 0.3412984196435894,
+        "cF1": 0.3329120846858542,
+        "exact_precision": 0.37136627906976744,
+        "exact_recall": 0.3900763358778626,
+        "exact_f1": 0.38049143708116157,
+        "tp_categorical": 511,
+        "fp_categorical": 865,
+        "fn_categorical": 799,
+        "va_mae": 0.9586986301369871,
+        "va_rmse": 1.1582178512689407,
+        "va_coordinate_n": 1022,
+        "aspect_span": {
+          "precision": 0.7211111111111111,
+          "recall": 0.6234390009606148,
+          "f1": 0.6687274600721277,
+          "tp": 649,
+          "fp": 251,
+          "fn": 392
+        },
+        "opinion_span": {
+          "precision": 0.6320388349514563,
+          "recall": 0.5489038785834739,
+          "f1": 0.5875451263537906,
+          "tp": 651,
+          "fp": 379,
+          "fn": 535
+        },
+        "category_span": {
+          "precision": 0.8097165991902834,
+          "recall": 0.7100591715976331,
+          "f1": 0.7566204287515763,
+          "tp": 600,
+          "fp": 141,
+          "fn": 245
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 45,
+          "error_rate": 0.0,
+          "empty_rate": 0.07142857142857142
+        },
+        "matched_v_mae": 0.8331311154598819,
+        "matched_a_mae": 1.0842661448140904,
+        "matched_quad_count": 511,
+        "matched_gold_coverage": 0.3900763358778626
+      }
+    },
+    {
+      "run_id": "tat_restaurant_C_s123",
+      "dataset": "tat_restaurant",
+      "arm": "C",
+      "seed": 123,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/tat_restaurant_C_s123.jsonl",
+      "sha256": "1b9446c4254a63e5737cb2d98981804eb36085b144a1af22a42e17b265def81c",
+      "rows": 630,
+      "inference_seconds": 5.662545583996689,
+      "load_seconds": 13.801415118010482,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.31229144131922576,
+        "cRecall": 0.3296939414843429,
+        "cF1": 0.3207568238726247,
+        "exact_precision": 0.35357917570498915,
+        "exact_recall": 0.3732824427480916,
+        "exact_f1": 0.36316375789082805,
+        "tp_categorical": 489,
+        "fp_categorical": 894,
+        "fn_categorical": 821,
+        "va_mae": 0.8926789366053164,
+        "va_rmse": 1.0738654068669127,
+        "va_coordinate_n": 978,
+        "aspect_span": {
+          "precision": 0.7,
+          "recall": 0.5917387127761767,
+          "f1": 0.6413326392503904,
+          "tp": 616,
+          "fp": 264,
+          "fn": 425
+        },
+        "opinion_span": {
+          "precision": 0.6423576423576424,
+          "recall": 0.5421585160202361,
+          "f1": 0.5880201188843165,
+          "tp": 643,
+          "fp": 358,
+          "fn": 543
+        },
+        "category_span": {
+          "precision": 0.7768595041322314,
+          "recall": 0.6674556213017752,
+          "f1": 0.7180140038192234,
+          "tp": 564,
+          "fp": 162,
+          "fn": 281
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 58,
+          "error_rate": 0.0,
+          "empty_rate": 0.09206349206349207
+        },
+        "matched_v_mae": 0.7679345603271974,
+        "matched_a_mae": 1.017423312883436,
+        "matched_quad_count": 489,
+        "matched_gold_coverage": 0.3732824427480916
+      }
+    },
+    {
+      "run_id": "tat_restaurant_C_s456",
+      "dataset": "tat_restaurant",
+      "arm": "C",
+      "seed": 456,
+      "kind": "single",
+      "path": "predictions/icsai_core_test/tat_restaurant_C_s456.jsonl",
+      "sha256": "249e4ffc7ceb6dbf564079e1e67009fa4ccc8e81c3f8a86296341cef4820dc5e",
+      "rows": 630,
+      "inference_seconds": 4.956520918989554,
+      "load_seconds": 3.529306198004633,
+      "peak_allocated_bytes": 1480286720,
+      "timing_scope": "one pass including first batch, transfers, decoding; excludes model/tokenizer loading; descriptive, not repeated benchmark",
+      "metrics": {
+        "cPrecision": 0.3283865811640424,
+        "cRecall": 0.3354055309904494,
+        "cF1": 0.33185894682589784,
+        "exact_precision": 0.37294469357249627,
+        "exact_recall": 0.38091603053435114,
+        "exact_f1": 0.37688821752265866,
+        "tp_categorical": 499,
+        "fp_categorical": 839,
+        "fn_categorical": 811,
+        "va_mae": 0.9154909819639279,
+        "va_rmse": 1.1050214227287078,
+        "va_coordinate_n": 998,
+        "aspect_span": {
+          "precision": 0.7286202964652223,
+          "recall": 0.6138328530259366,
+          "f1": 0.6663190823774765,
+          "tp": 639,
+          "fp": 238,
+          "fn": 402
+        },
+        "opinion_span": {
+          "precision": 0.6619289340101523,
+          "recall": 0.5497470489038786,
+          "f1": 0.6006448641179181,
+          "tp": 652,
+          "fp": 333,
+          "fn": 534
+        },
+        "category_span": {
+          "precision": 0.8124137931034483,
+          "recall": 0.6970414201183432,
+          "f1": 0.7503184713375797,
+          "tp": 589,
+          "fp": 136,
+          "fn": 256
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 47,
+          "error_rate": 0.0,
+          "empty_rate": 0.0746031746031746
+        },
+        "matched_v_mae": 0.7898396793587181,
+        "matched_a_mae": 1.0411422845691385,
+        "matched_quad_count": 499,
+        "matched_gold_coverage": 0.38091603053435114
+      }
+    }
+  ],
+  "ensembles": [
+    {
+      "run_id": "eng_restaurant_A_ensemble",
+      "dataset": "eng_restaurant",
+      "arm": "A",
+      "seed": null,
+      "kind": "ensemble",
+      "path": "predictions/icsai_core_test/eng_restaurant_A_ensemble.jsonl",
+      "sha256": "88710488ff57e51b46b20b250e64a27f525deaea8afff040323da214da8ff4c6",
+      "rows": 1000,
+      "members": [
+        "eng_restaurant_A_s42",
+        "eng_restaurant_A_s123",
+        "eng_restaurant_A_s456"
+      ],
+      "metrics": {
+        "cPrecision": 0.5748495632084697,
+        "cRecall": 0.5410984145935995,
+        "cF1": 0.557463597710996,
+        "exact_precision": 0.6237524950099801,
+        "exact_recall": 0.5871301080319399,
+        "exact_f1": 0.6048874909266877,
+        "tp_categorical": 1250,
+        "fp_categorical": 754,
+        "fn_categorical": 879,
+        "va_mae": 0.5970280000000002,
+        "va_rmse": 0.7649555019738072,
+        "va_coordinate_n": 2500,
+        "aspect_span": {
+          "precision": 0.8705966930265996,
+          "recall": 0.7438574938574939,
+          "f1": 0.8022524014574364,
+          "tp": 1211,
+          "fp": 180,
+          "fn": 417
+        },
+        "opinion_span": {
+          "precision": 0.8544776119402985,
+          "recall": 0.7046153846153846,
+          "f1": 0.7723440134907251,
+          "tp": 1374,
+          "fp": 234,
+          "fn": 576
+        },
+        "category_span": {
+          "precision": 0.8983050847457628,
+          "recall": 0.8024776324845148,
+          "f1": 0.8476917484551071,
+          "tp": 1166,
+          "fp": 132,
+          "fn": 287
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 105,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 39,
+          "error_rate": 0.0,
+          "empty_rate": 0.039
+        },
+        "matched_v_mae": 0.5449679999999996,
+        "matched_a_mae": 0.6490880000000001,
+        "matched_quad_count": 1250,
+        "matched_gold_coverage": 0.5871301080319399
+      }
+    },
+    {
+      "run_id": "eng_restaurant_B_ensemble",
+      "dataset": "eng_restaurant",
+      "arm": "B",
+      "seed": null,
+      "kind": "ensemble",
+      "path": "predictions/icsai_core_test/eng_restaurant_B_ensemble.jsonl",
+      "sha256": "97fe549cabb6269208593eb60179611a00d62ae689ba7751dcfe21318a26b7ec",
+      "rows": 1000,
+      "members": [
+        "eng_restaurant_B_s42",
+        "eng_restaurant_B_s123",
+        "eng_restaurant_B_s456"
+      ],
+      "metrics": {
+        "cPrecision": 0.5727089495110457,
+        "cRecall": 0.5444635574496742,
+        "cF1": 0.5582291903733958,
+        "exact_precision": 0.6215415019762845,
+        "exact_recall": 0.5908877407233443,
+        "exact_f1": 0.6058271129304117,
+        "tp_categorical": 1258,
+        "fp_categorical": 766,
+        "fn_categorical": 871,
+        "va_mae": 0.5998330683624801,
+        "va_rmse": 0.766727866730838,
+        "va_coordinate_n": 2516,
+        "aspect_span": {
+          "precision": 0.8700284090909091,
+          "recall": 0.7524570024570024,
+          "f1": 0.8069828722002634,
+          "tp": 1225,
+          "fp": 183,
+          "fn": 403
+        },
+        "opinion_span": {
+          "precision": 0.8634663341645885,
+          "recall": 0.7102564102564103,
+          "f1": 0.7794034890264491,
+          "tp": 1385,
+          "fp": 219,
+          "fn": 565
+        },
+        "category_span": {
+          "precision": 0.891354246365723,
+          "recall": 0.8017894012388163,
+          "f1": 0.8442028985507246,
+          "tp": 1165,
+          "fp": 142,
+          "fn": 288
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 98,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 34,
+          "error_rate": 0.0,
+          "empty_rate": 0.034
+        },
+        "matched_v_mae": 0.5462480127186015,
+        "matched_a_mae": 0.6534181240063585,
+        "matched_quad_count": 1258,
+        "matched_gold_coverage": 0.5908877407233443
+      }
+    },
+    {
+      "run_id": "eng_restaurant_C_ensemble",
+      "dataset": "eng_restaurant",
+      "arm": "C",
+      "seed": null,
+      "kind": "ensemble",
+      "path": "predictions/icsai_core_test/eng_restaurant_C_ensemble.jsonl",
+      "sha256": "96c9a41a7cef1e52be256206835c8e446168bc9eb7b688dbc4a67378ee2ed851",
+      "rows": 1000,
+      "members": [
+        "eng_restaurant_C_s42",
+        "eng_restaurant_C_s123",
+        "eng_restaurant_C_s456"
+      ],
+      "metrics": {
+        "cPrecision": 0.5781245535046446,
+        "cRecall": 0.5422802880924261,
+        "cF1": 0.5596290515505453,
+        "exact_precision": 0.6274411617426139,
+        "exact_recall": 0.5885392202912165,
+        "exact_f1": 0.6073679108095007,
+        "tp_categorical": 1253,
+        "fp_categorical": 744,
+        "fn_categorical": 876,
+        "va_mae": 0.5979608938547494,
+        "va_rmse": 0.7655454372148935,
+        "va_coordinate_n": 2506,
+        "aspect_span": {
+          "precision": 0.8715203426124197,
+          "recall": 0.75,
+          "f1": 0.8062066688676132,
+          "tp": 1221,
+          "fp": 180,
+          "fn": 407
+        },
+        "opinion_span": {
+          "precision": 0.8600874453466584,
+          "recall": 0.7061538461538461,
+          "f1": 0.7755561813573643,
+          "tp": 1377,
+          "fp": 224,
+          "fn": 573
+        },
+        "category_span": {
+          "precision": 0.8970588235294118,
+          "recall": 0.7976600137646249,
+          "f1": 0.8444444444444446,
+          "tp": 1159,
+          "fp": 133,
+          "fn": 294
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 78,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 34,
+          "error_rate": 0.0,
+          "empty_rate": 0.034
+        },
+        "matched_v_mae": 0.5449481245011971,
+        "matched_a_mae": 0.6509736632082992,
+        "matched_quad_count": 1253,
+        "matched_gold_coverage": 0.5885392202912165
+      }
+    },
+    {
+      "run_id": "zho_restaurant_A_ensemble",
+      "dataset": "zho_restaurant",
+      "arm": "A",
+      "seed": null,
+      "kind": "ensemble",
+      "path": "predictions/icsai_core_test/zho_restaurant_A_ensemble.jsonl",
+      "sha256": "b92fcfa3eb2038525ccb1e10f4054ebd790867a361323df9831ae9c513c1ccf6",
+      "rows": 1000,
+      "members": [
+        "zho_restaurant_A_s42",
+        "zho_restaurant_A_s123",
+        "zho_restaurant_A_s456"
+      ],
+      "metrics": {
+        "cPrecision": 0.4136415224518021,
+        "cRecall": 0.40467760270625447,
+        "cF1": 0.40911046690551023,
+        "exact_precision": 0.44015719899964273,
+        "exact_recall": 0.4306186648025166,
+        "exact_f1": 0.4353356890459364,
+        "tp_categorical": 1232,
+        "fp_categorical": 1567,
+        "fn_categorical": 1629,
+        "va_mae": 0.4463961038961042,
+        "va_rmse": 0.6023808957017919,
+        "va_coordinate_n": 2464,
+        "aspect_span": {
+          "precision": 0.7371760973030143,
+          "recall": 0.6724553786782441,
+          "f1": 0.7033299697275479,
+          "tp": 1394,
+          "fp": 497,
+          "fn": 679
+        },
+        "opinion_span": {
+          "precision": 0.703796412181894,
+          "recall": 0.6150200510390084,
+          "f1": 0.6564202334630349,
+          "tp": 1687,
+          "fp": 710,
+          "fn": 1056
+        },
+        "category_span": {
+          "precision": 0.8817120622568093,
+          "recall": 0.8052594171997157,
+          "f1": 0.8417533432392273,
+          "tp": 1133,
+          "fp": 152,
+          "fn": 274
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 24,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 32,
+          "error_rate": 0.0,
+          "empty_rate": 0.032
+        },
+        "matched_v_mae": 0.39745129870129803,
+        "matched_a_mae": 0.4953409090909083,
+        "matched_quad_count": 1232,
+        "matched_gold_coverage": 0.4306186648025166
+      }
+    },
+    {
+      "run_id": "zho_restaurant_B_ensemble",
+      "dataset": "zho_restaurant",
+      "arm": "B",
+      "seed": null,
+      "kind": "ensemble",
+      "path": "predictions/icsai_core_test/zho_restaurant_B_ensemble.jsonl",
+      "sha256": "7e42d352b31866037d75f1a590b567eb787801809dff07e87509360cf87a8521",
+      "rows": 1000,
+      "members": [
+        "zho_restaurant_B_s42",
+        "zho_restaurant_B_s123",
+        "zho_restaurant_B_s456"
+      ],
+      "metrics": {
+        "cPrecision": 0.40291949972379126,
+        "cRecall": 0.40770777759537774,
+        "cF1": 0.40529949676871985,
+        "exact_precision": 0.4286701208981002,
+        "exact_recall": 0.43376441803565186,
+        "exact_f1": 0.4312022237665045,
+        "tp_categorical": 1241,
+        "fp_categorical": 1654,
+        "fn_categorical": 1620,
+        "va_mae": 0.4438678485092669,
+        "va_rmse": 0.5995681362783464,
+        "va_coordinate_n": 2482,
+        "aspect_span": {
+          "precision": 0.73966065747614,
+          "recall": 0.6729377713458755,
+          "f1": 0.7047234150037888,
+          "tp": 1395,
+          "fp": 491,
+          "fn": 678
+        },
+        "opinion_span": {
+          "precision": 0.7045075125208681,
+          "recall": 0.6153846153846154,
+          "f1": 0.6569371473049233,
+          "tp": 1688,
+          "fp": 708,
+          "fn": 1055
+        },
+        "category_span": {
+          "precision": 0.8889757623143081,
+          "recall": 0.8081023454157783,
+          "f1": 0.8466120625465375,
+          "tp": 1137,
+          "fp": 142,
+          "fn": 270
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 23,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 22,
+          "error_rate": 0.0,
+          "empty_rate": 0.022
+        },
+        "matched_v_mae": 0.40008863819500345,
+        "matched_a_mae": 0.4876470588235284,
+        "matched_quad_count": 1241,
+        "matched_gold_coverage": 0.43376441803565186
+      }
+    },
+    {
+      "run_id": "zho_restaurant_C_ensemble",
+      "dataset": "zho_restaurant",
+      "arm": "C",
+      "seed": null,
+      "kind": "ensemble",
+      "path": "predictions/icsai_core_test/zho_restaurant_C_ensemble.jsonl",
+      "sha256": "4174f8a5e0c83313079872f2ffc9f5d9b9c84226adc2bebb6102cfd006ae2f89",
+      "rows": 1000,
+      "members": [
+        "zho_restaurant_C_s42",
+        "zho_restaurant_C_s123",
+        "zho_restaurant_C_s456"
+      ],
+      "metrics": {
+        "cPrecision": 0.39758180063699244,
+        "cRecall": 0.4035573397587648,
+        "cF1": 0.4005472850129492,
+        "exact_precision": 0.4228650137741047,
+        "exact_recall": 0.4292205522544565,
+        "exact_f1": 0.4260190806591501,
+        "tp_categorical": 1228,
+        "fp_categorical": 1676,
+        "fn_categorical": 1633,
+        "va_mae": 0.4415960912052118,
+        "va_rmse": 0.598304403802212,
+        "va_coordinate_n": 2456,
+        "aspect_span": {
+          "precision": 0.744692144373673,
+          "recall": 0.6767969126869272,
+          "f1": 0.7091230730351277,
+          "tp": 1403,
+          "fp": 481,
+          "fn": 670
+        },
+        "opinion_span": {
+          "precision": 0.6989648033126294,
+          "recall": 0.6153846153846154,
+          "f1": 0.6545172547499031,
+          "tp": 1688,
+          "fp": 727,
+          "fn": 1055
+        },
+        "category_span": {
+          "precision": 0.884375,
+          "recall": 0.8045486851457001,
+          "f1": 0.8425753628582062,
+          "tp": 1132,
+          "fp": 148,
+          "fn": 275
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 27,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 1000,
+          "prediction_rows": 1000,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 16,
+          "error_rate": 0.0,
+          "empty_rate": 0.016
+        },
+        "matched_v_mae": 0.3955944625407161,
+        "matched_a_mae": 0.48759771986970685,
+        "matched_quad_count": 1228,
+        "matched_gold_coverage": 0.4292205522544565
+      }
+    },
+    {
+      "run_id": "tat_restaurant_A_ensemble",
+      "dataset": "tat_restaurant",
+      "arm": "A",
+      "seed": null,
+      "kind": "ensemble",
+      "path": "predictions/icsai_core_test/tat_restaurant_A_ensemble.jsonl",
+      "sha256": "af201811bf950b418996fa3cf22e9154b6a30e10955e24b938c55033885007ca",
+      "rows": 630,
+      "members": [
+        "tat_restaurant_A_s42",
+        "tat_restaurant_A_s123",
+        "tat_restaurant_A_s456"
+      ],
+      "metrics": {
+        "cPrecision": 0.40350526609463755,
+        "cRecall": 0.33851319651756234,
+        "cF1": 0.36816296175841146,
+        "exact_precision": 0.456778889899909,
+        "exact_recall": 0.383206106870229,
+        "exact_f1": 0.41677044416770437,
+        "tp_categorical": 502,
+        "fp_categorical": 597,
+        "fn_categorical": 808,
+        "va_mae": 0.8922709163346615,
+        "va_rmse": 1.055241329245688,
+        "va_coordinate_n": 1004,
+        "aspect_span": {
+          "precision": 0.7460106382978723,
+          "recall": 0.5389048991354467,
+          "f1": 0.6257668711656441,
+          "tp": 561,
+          "fp": 191,
+          "fn": 480
+        },
+        "opinion_span": {
+          "precision": 0.7185273159144893,
+          "recall": 0.5101180438448567,
+          "f1": 0.5966469428007889,
+          "tp": 605,
+          "fp": 237,
+          "fn": 581
+        },
+        "category_span": {
+          "precision": 0.8776508972267537,
+          "recall": 0.6366863905325444,
+          "f1": 0.7379972565157751,
+          "tp": 538,
+          "fp": 75,
+          "fn": 307
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 114,
+          "error_rate": 0.0,
+          "empty_rate": 0.18095238095238095
+        },
+        "matched_v_mae": 0.7455179282868525,
+        "matched_a_mae": 1.0390239043824696,
+        "matched_quad_count": 502,
+        "matched_gold_coverage": 0.383206106870229
+      }
+    },
+    {
+      "run_id": "tat_restaurant_B_ensemble",
+      "dataset": "tat_restaurant",
+      "arm": "B",
+      "seed": null,
+      "kind": "ensemble",
+      "path": "predictions/icsai_core_test/tat_restaurant_B_ensemble.jsonl",
+      "sha256": "96d32fd3cc4d9967628757f6b9f02b3df25bf7173aebdef5f0a909dd8a0be354",
+      "rows": 630,
+      "members": [
+        "tat_restaurant_B_s42",
+        "tat_restaurant_B_s123",
+        "tat_restaurant_B_s456"
+      ],
+      "metrics": {
+        "cPrecision": 0.37011640342153257,
+        "cRecall": 0.33027944702272644,
+        "cF1": 0.34906500653470884,
+        "exact_precision": 0.41916167664670656,
+        "exact_recall": 0.37404580152671757,
+        "exact_f1": 0.3953206938281565,
+        "tp_categorical": 490,
+        "fp_categorical": 679,
+        "fn_categorical": 820,
+        "va_mae": 0.8982959183673469,
+        "va_rmse": 1.0653671878267885,
+        "va_coordinate_n": 980,
+        "aspect_span": {
+          "precision": 0.75,
+          "recall": 0.5446685878962536,
+          "f1": 0.6310517529215359,
+          "tp": 567,
+          "fp": 189,
+          "fn": 474
+        },
+        "opinion_span": {
+          "precision": 0.7228070175438597,
+          "recall": 0.521079258010118,
+          "f1": 0.6055854973052425,
+          "tp": 618,
+          "fp": 237,
+          "fn": 568
+        },
+        "category_span": {
+          "precision": 0.8525121555915721,
+          "recall": 0.6224852071005917,
+          "f1": 0.7195622435020519,
+          "tp": 526,
+          "fp": 91,
+          "fn": 319
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 108,
+          "error_rate": 0.0,
+          "empty_rate": 0.17142857142857143
+        },
+        "matched_v_mae": 0.7716326530612249,
+        "matched_a_mae": 1.0249591836734693,
+        "matched_quad_count": 490,
+        "matched_gold_coverage": 0.37404580152671757
+      }
+    },
+    {
+      "run_id": "tat_restaurant_C_ensemble",
+      "dataset": "tat_restaurant",
+      "arm": "C",
+      "seed": null,
+      "kind": "ensemble",
+      "path": "predictions/icsai_core_test/tat_restaurant_C_ensemble.jsonl",
+      "sha256": "ab987efa2c18e6320a7f7c010889ad5db5b8040a1135d132b06494ab9e637a3e",
+      "rows": 630,
+      "members": [
+        "tat_restaurant_C_s42",
+        "tat_restaurant_C_s123",
+        "tat_restaurant_C_s456"
+      ],
+      "metrics": {
+        "cPrecision": 0.3872142752620111,
+        "cRecall": 0.3402165120813548,
+        "cF1": 0.3621971806798657,
+        "exact_precision": 0.43961772371850566,
+        "exact_recall": 0.38625954198473283,
+        "exact_f1": 0.4112149532710281,
+        "tp_categorical": 506,
+        "fp_categorical": 645,
+        "fn_categorical": 804,
+        "va_mae": 0.9135869565217394,
+        "va_rmse": 1.0905034283635828,
+        "va_coordinate_n": 1012,
+        "aspect_span": {
+          "precision": 0.7623888182973316,
+          "recall": 0.5763688760806917,
+          "f1": 0.6564551422319475,
+          "tp": 600,
+          "fp": 187,
+          "fn": 441
+        },
+        "opinion_span": {
+          "precision": 0.7105263157894737,
+          "recall": 0.5236087689713322,
+          "f1": 0.6029126213592233,
+          "tp": 621,
+          "fp": 253,
+          "fn": 565
+        },
+        "category_span": {
+          "precision": 0.859375,
+          "recall": 0.650887573964497,
+          "f1": 0.7407407407407407,
+          "tp": 550,
+          "fp": 90,
+          "fn": 295
+        },
+        "null_slice": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "rare_category_slice": null,
+        "coverage": {
+          "gold_rows": 630,
+          "prediction_rows": 630,
+          "missing_ids": [],
+          "extra_ids": [],
+          "error_rows": 0,
+          "empty_rows": 93,
+          "error_rate": 0.0,
+          "empty_rate": 0.14761904761904762
+        },
+        "matched_v_mae": 0.7748221343873516,
+        "matched_a_mae": 1.0523517786561267,
+        "matched_quad_count": 506,
+        "matched_gold_coverage": 0.38625954198473283
+      }
+    }
+  ],
+  "statistics": {
+    "primary_metric": "official Task-3 cF1; local dev scorer used for checkpoint selection must be identified",
+    "official_evaluator_commit": "bdc93be1224106ae7d3eb95739c02a76ed4ae8a1",
+    "report": "Each seed, mean, sample SD, paired seed deltas; paired example bootstrap 10000 resamples seed 20260907. For seed-mean contrast resample same examples across all seeds and average per-seed cF1 differences; distinguish example CI from training-seed variability.",
+    "primary_contrasts": [
+      "B-A",
+      "B-C"
+    ],
+    "primary_datasets": [
+      "eng_restaurant",
+      "zho_restaurant",
+      "tat_restaurant"
+    ],
+    "multiplicity": "Holm correction across six confirmatory dataset-by-contrast tests; report unadjusted 95% CI and adjusted p, not conflated significance. Macro over fixed 3 datasets descriptive; no generalization to all languages.",
+    "coverage": "Report discrete extraction F1, matched V/A MAE and matched coverage; explicit/implicit sample counts; all planned outcomes including negative results."
+  },
+  "p_value_definition": "Two-sided centered paired bootstrap: (1 + count(abs(bootstrap_delta-observed_delta) >= abs(observed_delta)))/(10000+1); Holm over six test contrasts separately from dev."
+}

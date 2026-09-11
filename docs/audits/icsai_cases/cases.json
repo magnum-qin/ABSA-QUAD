@@ -1,0 +1,201 @@
+{
+  "protocol_sha256": "88ccf3a0bcbce86c9531582da42c868553df07e3259473cc63cc4b6cfa2ebbef",
+  "sources": {
+    "data/subtask_3/eng/eng_restaurant_dev_task3.jsonl": "656022e2d83ec0d758765881cdfa38b409077c6137f4df743165c72eb08e4a9c",
+    "predictions/icsai_phase1/eng_restaurant_A_s42/dev.jsonl": "f600e257dffa61dbaf4b432d89d07bdcc08dd70e9635afe018f2a98ffc30b670",
+    "predictions/icsai_phase1/eng_restaurant_B_s42/dev.jsonl": "97e9e5a6be58844c6870c3278a8a936044b3dfa5f5f163a2162bd9e0a1cd6a8b",
+    "predictions/icsai_phase1/eng_restaurant_C_s42/dev.jsonl": "e6ca16f11eea7e12fa97a037438ffe8c654e67103371e2ef9a08bf98920afff8"
+  },
+  "eligibility_counts": [
+    {
+      "category": "A exact categorical success with nonempty gold",
+      "eligible_rows": 109
+    },
+    {
+      "category": "A categorical failure and B success",
+      "eligible_rows": 9
+    },
+    {
+      "category": "A categorical success and B failure",
+      "eligible_rows": 11
+    },
+    {
+      "category": "A misses a gold NULL aspect/opinion triple",
+      "eligible_rows": 0
+    }
+  ],
+  "cases": [
+    {
+      "category": "A exact categorical success with nonempty gold",
+      "row_1based": 2,
+      "ID": "rest26_asqp_dev_2",
+      "text": "Customer service was fantastic and food was awesome",
+      "gold": [
+        {
+          "Aspect": "Customer service",
+          "Category": "SERVICE#GENERAL",
+          "Opinion": "fantastic",
+          "VA": "7.33#7.33"
+        },
+        {
+          "Aspect": "food",
+          "Category": "FOOD#QUALITY",
+          "Opinion": "awesome",
+          "VA": "7.67#7.67"
+        }
+      ],
+      "predictions": {
+        "A": [
+          {
+            "Aspect": "Customer service",
+            "Category": "SERVICE#GENERAL",
+            "Opinion": "fantastic",
+            "VA": "8.26#8.33"
+          },
+          {
+            "Aspect": "food",
+            "Category": "FOOD#QUALITY",
+            "Opinion": "awesome",
+            "VA": "8.31#8.35"
+          }
+        ],
+        "B": [
+          {
+            "Aspect": "Customer",
+            "Category": "SERVICE#GENERAL",
+            "Opinion": "fantastic",
+            "VA": "8.22#8.21"
+          },
+          {
+            "Aspect": "service",
+            "Category": "SERVICE#GENERAL",
+            "Opinion": "fantastic",
+            "VA": "8.19#8.15"
+          },
+          {
+            "Aspect": "food",
+            "Category": "FOOD#QUALITY",
+            "Opinion": "awesome",
+            "VA": "8.26#8.26"
+          }
+        ],
+        "C": [
+          {
+            "Aspect": "Customer service",
+            "Category": "SERVICE#GENERAL",
+            "Opinion": "fantastic",
+            "VA": "8.19#8.17"
+          },
+          {
+            "Aspect": "food",
+            "Category": "FOOD#QUALITY",
+            "Opinion": "awesome",
+            "VA": "8.17#8.20"
+          }
+        ]
+      }
+    },
+    {
+      "category": "A categorical failure and B success",
+      "row_1based": 29,
+      "ID": "rest26_asqp_dev_29",
+      "text": "Service is attentive and they got my picky order straight",
+      "gold": [
+        {
+          "Aspect": "Service",
+          "Category": "SERVICE#GENERAL",
+          "Opinion": "attentive",
+          "VA": "6.62#6.12"
+        }
+      ],
+      "predictions": {
+        "A": [
+          {
+            "Aspect": "NULL",
+            "Category": "SERVICE#GENERAL",
+            "Opinion": "attentive",
+            "VA": "7.03#6.99"
+          },
+          {
+            "Aspect": "Service",
+            "Category": "SERVICE#GENERAL",
+            "Opinion": "attentive",
+            "VA": "7.61#7.49"
+          }
+        ],
+        "B": [
+          {
+            "Aspect": "Service",
+            "Category": "SERVICE#GENERAL",
+            "Opinion": "attentive",
+            "VA": "7.48#7.49"
+          }
+        ],
+        "C": [
+          {
+            "Aspect": "Service",
+            "Category": "SERVICE#GENERAL",
+            "Opinion": "attentive",
+            "VA": "7.62#7.62"
+          }
+        ]
+      }
+    },
+    {
+      "category": "A categorical success and B failure",
+      "row_1based": 23,
+      "ID": "rest26_asqp_dev_23",
+      "text": "Mac 'n Cheese was good and a little spicy",
+      "gold": [
+        {
+          "Aspect": "Mac 'n Cheese",
+          "Category": "FOOD#QUALITY",
+          "Opinion": "good",
+          "VA": "6.00#5.50"
+        },
+        {
+          "Aspect": "Mac 'n Cheese",
+          "Category": "FOOD#QUALITY",
+          "Opinion": "a little spicy",
+          "VA": "6.00#5.50"
+        }
+      ],
+      "predictions": {
+        "A": [
+          {
+            "Aspect": "Mac 'n Cheese",
+            "Category": "FOOD#QUALITY",
+            "Opinion": "good",
+            "VA": "7.07#7.05"
+          },
+          {
+            "Aspect": "Mac 'n Cheese",
+            "Category": "FOOD#QUALITY",
+            "Opinion": "a little spicy",
+            "VA": "6.43#6.14"
+          }
+        ],
+        "B": [
+          {
+            "Aspect": "Mac 'n Cheese",
+            "Category": "FOOD#QUALITY",
+            "Opinion": "good",
+            "VA": "7.00#6.99"
+          }
+        ],
+        "C": [
+          {
+            "Aspect": "Mac 'n Cheese",
+            "Category": "FOOD#QUALITY",
+            "Opinion": "good",
+            "VA": "6.97#6.94"
+          }
+        ]
+      }
+    },
+    {
+      "category": "A misses a gold NULL aspect/opinion triple",
+      "status": "no eligible unused example"
+    }
+  ]
+}

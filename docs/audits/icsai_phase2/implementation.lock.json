@@ -1,0 +1,28 @@
+{
+  "scope": "Implementation readiness only; no formal result or blind-test claim",
+  "sha256": {
+    "docs/ICSAI_CONTROL_IMPLEMENTATION.md": "770d4f9a8a084d33af42703edb789f37c91b64026cb003cf7e5bdeccfb5e4446",
+    "docs/audits/icsai_phase1/experiment_matrix.json": "8fba66acbc7e17d0b43c7fd81c343440f111c720103df2d3af1b70df77d3922e",
+    "docs/audits/icsai_phase1/gold_input_manifest.json": "48a396da323eaaeb1d17ea99e71490fb37e65d21b41d706112d8c8ddc8898152",
+    "docs/audits/icsai_phase2/gpu_smoke.json": "de3d39ca4f2762f79a8d3385421fcdd17c23d5fd27857da5e3ed63c0cd6247c9",
+    "docs/audits/icsai_phase2/implementation_record.json": "fa632719d79d4bed88bb8632e6c6428364ded88f2e3788e36657bcd30fb08d20",
+    "docs/audits/icsai_phase2/preflight.json": "73c01e8e068995d40ca7ed3ff0000b26bbfcb737e385e62855c73c86aa2e37f4",
+    "docs/audits/icsai_phase2/tokenizer_check.json": "f8de4fffbb8f2204d9bc53a00e94320d4706ea71e07f2ae1a66f1c24a56eed35",
+    "docs/audits/icsai_phase2/unit_tests.log": "19f9ec96b67d678a009c18f7436adcbeaf50d1e3006f3a58644e9b5a41b16e4e",
+    "scripts/icsai/check_tokenizer.py": "1cc7f38ab49f486c19445276e1a4590788d42708a9c16afb11cc567b47d1b78e",
+    "scripts/icsai/control_runtime.py": "421615f75af22e81e4df61c805c89a75ad2d9edd0826e3fe080f66b78ea4f3d5",
+    "scripts/icsai/prepare_control.py": "864469eaba34085dc62f477253faefe9572255f5c6e7e37ddf0eae06845ca243",
+    "scripts/icsai/run_control.py": "6ee303a55e30a2499e6f20be493962228f0a85fa96ee9c0dd17eb0b523637ecc",
+    "scripts/icsai/smoke_control.py": "de707a8c172be6426bfe281ec924ef1c056da0e4e7cafb4736de9fd5bdf99023",
+    "scripts/icsai/verify_control.py": "4c25bdc8d13c0f7da15a0855f258f15a72abc12fb389c146d154676823e2e552",
+    "scripts/inference.py": "82cf80c44e93e55e98810c4aed06bad9d7b3a346d5c75580b7282e4dde45a476",
+    "scripts/train.py": "da5ed0539e8261a44824b966d8dc52963903899012dd4ca8c7e299f4e512580a",
+    "src/data/dataset.py": "dda97dd6d8d406123e4c31f925a7392a1a81694b0477d6b1eaf1f6f5eda707ba",
+    "src/evaluation/metrics.py": "795c637e441606bb764cadf7305e35a7cfa20240fe0a3d03ca300cf23030bb31",
+    "src/models/dimabsa_model.py": "d75097a0c2f00af6a11f689a1d806b006ed603d90ec513fe246eb60115d87a9b",
+    "src/models/feature_rethink.py": "2a5e4f954ec598c300da906b9a1057b1874f99ca2d18cba8fcb094f0ae603c30",
+    "src/models/icsai_control.py": "93518997591e070c54e21ba1eb439d42bc9c1be862fa486995d0ff016e1735ca",
+    "src/models/va_module.py": "d1e3edc68969ff768c50decb9c2121dd81bb9f4b85760dbefd3123f2d9555d22",
+    "tests/test_icsai_control.py": "e00076e6c662fe1e7d88f427b904589a5c156f382e24338d601f406631bc55f4"
+  }
+}

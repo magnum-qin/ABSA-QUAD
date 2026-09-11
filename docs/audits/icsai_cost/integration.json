@@ -1,0 +1,41 @@
+{
+  "measurements_verified": 60,
+  "loading_records": 9,
+  "B_over_A_mean_seconds": 1.5432506907142187,
+  "protocol": {
+    "created_at": "2026-09-10T10:04:05.914159+00:00",
+    "dataset": "eng_restaurant",
+    "selection": "first 64 dev rows in existing order, no label or outcome selection",
+    "rows": 64,
+    "batch_size": 8,
+    "max_length": 256,
+    "precision": "float32",
+    "seeds": [
+      42,
+      123,
+      456
+    ],
+    "arms": [
+      "A",
+      "B",
+      "C"
+    ],
+    "warmup_full_passes": 1,
+    "repeats": 5,
+    "ensemble": "three GPU-resident models, sequential inference, exact-string vote2 and VA mean",
+    "timing": "synchronized wall time; pretokenized CPU batches; includes H2D, model.predict and decoding, excludes tokenization, loading, scoring; ensemble includes CPU voting",
+    "memory": "torch peak allocated/reserved; single model on GPU alone; ensemble all three resident; allocator cleared before warmup",
+    "caveat": "One fixed English dev workload, no training or test scoring; does not establish all-language or production latency.",
+    "gpu": "NVIDIA GeForce RTX 4090, 595.84, 24564 MiB",
+    "torch": "2.10.0+cu128",
+    "cuda": "12.8",
+    "protocol_sha256": "ed06f1892070b02945910343d93332bed8b7224ca6ac76781569acb744f8376e",
+    "input_sha256": "be7ac7ca7ae7ad9b65fd54b1a444200c7444df81c17c42ae73f3ff63f18fac3a",
+    "script_sha256": "2d52265c4d22986f4c91f1872eff164cabf7c7c4f6783a57d8120d86237fdd30",
+    "environment": {
+      "OMP_NUM_THREADS": "4",
+      "MKL_NUM_THREADS": "4",
+      "TOKENIZERS_PARALLELISM": "false"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "frozen_at": "2026-09-09T13:20:42.269128+00:00",
+  "protocol_sha256": "ed06f1892070b02945910343d93332bed8b7224ca6ac76781569acb744f8376e",
+  "source_sha256": {
+    "scripts/icsai/core_test.py": "bd5cc748e3b9ab69fc8185df3c6ca07e54a21fe494247f7280104a83b65a262a",
+    "scripts/kd/tallip_common.py": "15ac280e00b5aa0be05ab27a36797f3ecb9910260ebcbc46a9d008fdfbe0dc3d",
+    "scripts/icsai/analyze_core.py": "406d61e535432c5cb2d7435406e16b07518c22a128f48d14713ac29b91497417"
+  }
+}

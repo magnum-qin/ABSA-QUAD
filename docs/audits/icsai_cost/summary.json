@@ -1,0 +1,73 @@
+{
+  "protocol_sha256": "5963847cf3698cf6d965f3e9495974ff87aa6dc6440591cecd303778c3d1d2ef",
+  "summary": [
+    {
+      "arm": "A",
+      "kind": "single",
+      "n": 15,
+      "mean_seconds": 0.2316563491282674,
+      "sample_sd_seconds": 0.0015885653181051435,
+      "median_seconds": 0.23181833600392565,
+      "rows_per_second": 276.2712968620748,
+      "peak_allocated_gib": 1.324061393737793,
+      "peak_reserved_gib": 1.400390625
+    },
+    {
+      "arm": "A",
+      "kind": "ensemble",
+      "n": 5,
+      "mean_seconds": 0.6993112189811654,
+      "sample_sd_seconds": 0.002014039059987892,
+      "median_seconds": 0.6992998279747553,
+      "rows_per_second": 91.51862327225686,
+      "peak_allocated_gib": 3.434494972229004,
+      "peak_reserved_gib": 3.5625
+    },
+    {
+      "arm": "B",
+      "kind": "single",
+      "n": 15,
+      "mean_seconds": 0.3575038208005329,
+      "sample_sd_seconds": 0.012706730972309746,
+      "median_seconds": 0.3531029360019602,
+      "rows_per_second": 179.0190657450579,
+      "peak_allocated_gib": 1.378624439239502,
+      "peak_reserved_gib": 1.455078125
+    },
+    {
+      "arm": "B",
+      "kind": "ensemble",
+      "n": 5,
+      "mean_seconds": 1.0729015926015564,
+      "sample_sd_seconds": 0.005611406763961708,
+      "median_seconds": 1.070882945030462,
+      "rows_per_second": 59.651323514968155,
+      "peak_allocated_gib": 3.599160671234131,
+      "peak_reserved_gib": 3.7421875
+    },
+    {
+      "arm": "C",
+      "kind": "single",
+      "n": 15,
+      "mean_seconds": 0.37114803834119814,
+      "sample_sd_seconds": 0.017300663028506056,
+      "median_seconds": 0.379802618001122,
+      "rows_per_second": 172.43793146810197,
+      "peak_allocated_gib": 1.378624439239502,
+      "peak_reserved_gib": 1.455078125
+    },
+    {
+      "arm": "C",
+      "kind": "ensemble",
+      "n": 5,
+      "mean_seconds": 1.1106531577883287,
+      "sample_sd_seconds": 0.0039652978614276935,
+      "median_seconds": 1.1115333969937637,
+      "rows_per_second": 57.62375008904201,
+      "peak_allocated_gib": 3.599160671234131,
+      "peak_reserved_gib": 3.7421875
+    }
+  ],
+  "scope": "One fixed English dev workload, no training or test scoring; does not establish all-language or production latency.",
+  "single_sd": "Across 3 seeds x 5 repeats, combines seed and timing variation; raw per-seed records retained."
+}

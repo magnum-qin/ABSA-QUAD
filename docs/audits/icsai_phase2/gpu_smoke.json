@@ -1,0 +1,141 @@
+{
+  "passed": true,
+  "scope": "Two isolated optimizer updates per arm on first eight clean English train rows. Second update manually enters FGM branch. Not a formal experiment, accuracy comparison or full-epoch cost estimate. No dev/test data scored; no checkpoint retained.",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "torch_version": "2.10.0+cu128",
+  "arms": [
+    {
+      "arm": "A",
+      "initialization": {
+        "full_sha256": "83e92a9d1e0b90ba1900a07811c72a0f702c9b2bbd402edef7cbc861fc05f623",
+        "shared_sha256": "83e92a9d1e0b90ba1900a07811c72a0f702c9b2bbd402edef7cbc861fc05f623",
+        "total_parameters": 282528790
+      },
+      "optimizer_updates_executed": 2,
+      "fgm_exercised_on_second_update": true,
+      "train_metrics": [
+        {
+          "loss": 12.13791275024414,
+          "bio_loss": 1.6923855543136597,
+          "pair_loss": 0.6120104789733887,
+          "entity_loss": 1.8851168155670166,
+          "attribute_loss": 1.620399832725525,
+          "va_loss": 4.63561487197876,
+          "consistency_loss": 0.0
+        },
+        {
+          "loss": 12.246491432189941,
+          "bio_loss": 1.6997021436691284,
+          "pair_loss": 0.6187775731086731,
+          "entity_loss": 1.9460763931274414,
+          "attribute_loss": 1.6194390058517456,
+          "va_loss": 4.66279411315918,
+          "consistency_loss": 0.0
+        }
+      ],
+      "gradient_evidence": [
+        {
+          "nonzero_gradient_parameters": 282528790,
+          "gradient_present_parameters": 282528790
+        },
+        {
+          "nonzero_gradient_parameters": 282528790,
+          "gradient_present_parameters": 282528790
+        }
+      ],
+      "prediction_id_and_unique_triple_check": true,
+      "wall_seconds": 6.645275127000787,
+      "peak_allocated_cuda_bytes": 10103916544
+    },
+    {
+      "arm": "B",
+      "initialization": {
+        "full_sha256": "5a6393fa7d591a353c399487f20d14816e6fc28ea90a2ff2c8db916b5bca90c3",
+        "shared_sha256": "83e92a9d1e0b90ba1900a07811c72a0f702c9b2bbd402edef7cbc861fc05f623",
+        "total_parameters": 297125356
+      },
+      "optimizer_updates_executed": 2,
+      "fgm_exercised_on_second_update": true,
+      "train_metrics": [
+        {
+          "loss": 13.195733070373535,
+          "bio_loss": 1.53802490234375,
+          "pair_loss": 0.6290127038955688,
+          "entity_loss": 1.9335052967071533,
+          "attribute_loss": 1.8071212768554688,
+          "va_loss": 5.750043869018555,
+          "consistency_loss": 0.0
+        },
+        {
+          "loss": 11.854414939880371,
+          "bio_loss": 1.5472123622894287,
+          "pair_loss": 0.6083323955535889,
+          "entity_loss": 1.958322286605835,
+          "attribute_loss": 1.7637860774993896,
+          "va_loss": 4.429549217224121,
+          "consistency_loss": 0.0
+        }
+      ],
+      "gradient_evidence": [
+        {
+          "nonzero_gradient_parameters": 291734363,
+          "gradient_present_parameters": 291734363,
+          "bio_embedding_gradient_l1": 0.02813117578625679
+        },
+        {
+          "nonzero_gradient_parameters": 291734363,
+          "gradient_present_parameters": 291734363,
+          "bio_embedding_gradient_l1": 0.03065386414527893
+        }
+      ],
+      "prediction_id_and_unique_triple_check": true,
+      "wall_seconds": 0.7977843640001083,
+      "peak_allocated_cuda_bytes": 10822234112
+    },
+    {
+      "arm": "C",
+      "initialization": {
+        "full_sha256": "5a6393fa7d591a353c399487f20d14816e6fc28ea90a2ff2c8db916b5bca90c3",
+        "shared_sha256": "83e92a9d1e0b90ba1900a07811c72a0f702c9b2bbd402edef7cbc861fc05f623",
+        "total_parameters": 297125356
+      },
+      "optimizer_updates_executed": 2,
+      "fgm_exercised_on_second_update": true,
+      "train_metrics": [
+        {
+          "loss": 14.358087539672852,
+          "bio_loss": 1.527125597000122,
+          "pair_loss": 0.6547269821166992,
+          "entity_loss": 1.8930647373199463,
+          "attribute_loss": 1.782278060913086,
+          "va_loss": 6.973766326904297,
+          "consistency_loss": 0.0
+        },
+        {
+          "loss": 10.664794921875,
+          "bio_loss": 1.5360218286514282,
+          "pair_loss": 0.6249767541885376,
+          "entity_loss": 2.0014262199401855,
+          "attribute_loss": 1.7382088899612427,
+          "va_loss": 3.228139638900757,
+          "consistency_loss": 0.0
+        }
+      ],
+      "gradient_evidence": [
+        {
+          "nonzero_gradient_parameters": 291436822,
+          "gradient_present_parameters": 291734363,
+          "bio_embedding_gradient_l1": 0.0
+        },
+        {
+          "nonzero_gradient_parameters": 291436822,
+          "gradient_present_parameters": 291734363,
+          "bio_embedding_gradient_l1": 0.0
+        }
+      ],
+      "prediction_id_and_unique_triple_check": true,
+      "wall_seconds": 0.5738088399994012,
+      "peak_allocated_cuda_bytes": 10815945216
+    }
+  ]
+}

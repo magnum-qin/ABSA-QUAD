@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "transformers_version": "4.57.6",
+  "tokenizer_class": "DebertaV2TokenizerFast",
+  "model_config": {
+    "model_type": "deberta-v2",
+    "attention_probs_dropout_prob": 0.1,
+    "hidden_act": "gelu",
+    "hidden_dropout_prob": 0.1,
+    "hidden_size": 768,
+    "initializer_range": 0.02,
+    "intermediate_size": 3072,
+    "max_position_embeddings": 512,
+    "relative_attention": true,
+    "position_buckets": 256,
+    "norm_rel_ebd": "layer_norm",
+    "share_att_key": true,
+    "pos_att_type": "p2c|c2p",
+    "layer_norm_eps": 1e-07,
+    "max_relative_positions": -1,
+    "position_biased_input": false,
+    "num_attention_heads": 12,
+    "num_hidden_layers": 12,
+    "type_vocab_size": 0,
+    "vocab_size": 251000
+  },
+  "backend_model_type": "Unigram",
+  "pre_tokenizer": {
+    "type": "Sequence",
+    "pretokenizers": [
+      {
+        "type": "Metaspace",
+        "replacement": "\u2581",
+        "prepend_scheme": "always",
+        "split": true
+      }
+    ]
+  },
+  "samples": 64,
+  "default_equals_explicit_no_mistral_fix_ids_and_offsets": true,
+  "source_file": "/home/g24tka12/miniforge3/envs/absa/lib/python3.10/site-packages/transformers/tokenization_utils_base.py",
+  "source_sha256": "a2d62f7e5d58f908b3a2d0b24ce6329e1e52c815082cedde29a5c007a23e7e83",
+  "interpretation": "Installed 4.57.6 local-tokenizer detection can enter the Mistral warning branch when config has no transformers_version; this snapshot is DebertaV2/Unigram, not Mistral. Default leaves tokenizer unchanged. No Mistral regex patch applied; no runtime or protocol change. Sample equivalence is not a universal tokenizer correctness proof."
+}

@@ -1,0 +1,26 @@
+{
+  "scope": "Current full model with synthetic encoder and fixed nonempty spans; inference feedback and final-output gradient only, not accuracy or historical checkpoint provenance.",
+  "refinement_calls": 2,
+  "pair_input_intervention_max_delta": 0.0,
+  "discarded_pair_output_intervention_max_delta": 0.0,
+  "bio_intervention_max_delta": 0.321777880191803,
+  "label_embedding_gradient_l1": {
+    "bio_embedding.weight": 75.63050079345703,
+    "entity_embedding.weight": null,
+    "attribute_embedding.weight": null,
+    "pair_embedding.weight": null,
+    "va_projector.weight": null,
+    "va_projector.bias": null,
+    "token_fusion.weight": 2872.063720703125,
+    "token_fusion.bias": 81.95869445800781,
+    "pair_fusion.weight": null,
+    "pair_fusion.bias": null
+  },
+  "passed": true,
+  "torch_version": "2.10.0+cu128",
+  "source_sha256": {
+    "src/models/dimabsa_model.py": "d75097a0c2f00af6a11f689a1d806b006ed603d90ec513fe246eb60115d87a9b",
+    "src/models/feature_rethink.py": "2a5e4f954ec598c300da906b9a1057b1874f99ca2d18cba8fcb094f0ae603c30",
+    "scripts/icsai/probe_rethink_path.py": "3684cbb335ac473d1ace0f12e31cffd07c162d83201668e099d1a889f24d6f1f"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "recorded_at": "2026-09-07T09:42:40.371355+00:00",
+  "scope": "Implement and validate the frozen C arm plus an isolated protocol-conforming training entry point.",
+  "design_changed": false,
+  "historical_sources_changed": false,
+  "formal_runs_started": 0,
+  "validation_updates_only": 6,
+  "implementation": "Separate ControlledLabelEmbedding and ControlledTrainer; original feature/model/train/inference files preserved.",
+  "runtime_clarifications": [
+    "Use an independent per-epoch generator for paired data order",
+    "Always preserve earliest tied best cF1, including zero",
+    "Force 30 epochs; no loss-based tie fallback or early stopping",
+    "C must be loaded with the experiment-specific factory using saved arm config"
+  ],
+  "evidence": [
+    "unit_tests.log",
+    "preflight.json",
+    "gpu_smoke.json",
+    "tokenizer_check.json"
+  ],
+  "failed_attempts": [
+    {
+      "log": "gpu_smoke_attempt1_stale_gate.log",
+      "reason": "Driver source changed after initial preflight; refused before optimizer updates. Preflight rerun before successful smoke."
+    }
+  ],
+  "test_exposure": "Prior test exposure remains disclosed; no new dev/test scoring during implementation checks."
+}

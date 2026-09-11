@@ -1,0 +1,68 @@
+{
+  "scope": "Dev-selected single-model results only; no test scoring or significance claims.",
+  "groups": [
+    {
+      "dataset": "eng_restaurant",
+      "arm": "A",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.6413211899001426,
+      "dev_cf1_sample_sd": 0.002604569580105752
+    },
+    {
+      "dataset": "eng_restaurant",
+      "arm": "B",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.6596349378358612,
+      "dev_cf1_sample_sd": 0.00443307872980017
+    },
+    {
+      "dataset": "eng_restaurant",
+      "arm": "C",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.6517743612149302,
+      "dev_cf1_sample_sd": 0.008478128419693937
+    },
+    {
+      "dataset": "tat_restaurant",
+      "arm": "A",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.3887068209561776,
+      "dev_cf1_sample_sd": 0.031335360148222496
+    },
+    {
+      "dataset": "tat_restaurant",
+      "arm": "B",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.3672884862485004,
+      "dev_cf1_sample_sd": 0.0217014423592063
+    },
+    {
+      "dataset": "tat_restaurant",
+      "arm": "C",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.36805118547661303,
+      "dev_cf1_sample_sd": 0.014868114574828456
+    },
+    {
+      "dataset": "zho_restaurant",
+      "arm": "A",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.45871929424904434,
+      "dev_cf1_sample_sd": 0.013081008933549703
+    },
+    {
+      "dataset": "zho_restaurant",
+      "arm": "B",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.44263075909998995,
+      "dev_cf1_sample_sd": 0.0019100144134800575
+    },
+    {
+      "dataset": "zho_restaurant",
+      "arm": "C",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.4418304304221338,
+      "dev_cf1_sample_sd": 0.01059494225713967
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "date": "2026-09-07",
+  "type": "author_confirmation_only",
+  "source": "User message: ICONIP 的稿件tex在docs里面有，ICONIP已撤回",
+  "manuscript": "docs/paper_iconip_current.tex",
+  "iconip_status": "withdrawn_author_confirmed",
+  "changes": [
+    "Resolve manuscript identity using author confirmation",
+    "Resolve ICONIP withdrawal status using author confirmation"
+  ],
+  "experiment_matrix_changed": false,
+  "data_or_model_changed": false,
+  "results_exposure": "Existing test exposure remains disclosed; no additional experiments or test scoring in this amendment.",
+  "previous_lock": "docs/audits/icsai_phase1/phase1.before_author_confirmation.lock.json",
+  "previous_lock_sha256": "748c0a9e014bae9394cff48fcb731db7dd393be652a07ec5b8a0f85171e60dea"
+}

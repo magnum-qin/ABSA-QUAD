@@ -1,0 +1,10 @@
+{
+  "source_sha256": {
+    "docs/audits/icsai_core_test/test_statistics.json": "e35c65d4bf318b5e59d81362c4834a0be137283d53b17f3f190901c53f8efc35",
+    "docs/audits/icsai_extension_test/test_statistics.json": "acb3f0284a08d298bd6b3360204a36511eab869d94067ed28b4f2cb1f863f898",
+    "docs/audits/icsai_extension_test/eight_domain_summary.json": "c133e9ae6336572ad16c7a282f0fb03c0d0c437df594ab4ecda045619df76e06",
+    "docs/audits/icsai_phase1/gold_input_manifest.json": "48a396da323eaaeb1d17ea99e71490fb37e65d21b41d706112d8c8ddc8898152"
+  },
+  "validated_prediction_files": 56,
+  "tables": 5
+}

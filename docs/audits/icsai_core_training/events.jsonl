@@ -1,0 +1,136 @@
+{"time": "2026-09-07T10:36:59.272674+00:00", "event": "phase_started", "run_id": "eng_restaurant_A_s42", "phase": "train", "pid": 773441, "log": "docs/audits/icsai_core_training/eng_restaurant_A_s42.train.log"}
+{"time": "2026-09-07T11:34:16.989928+00:00", "event": "phase_completed", "run_id": "eng_restaurant_A_s42", "phase": "train"}
+{"time": "2026-09-07T11:34:16.990482+00:00", "event": "phase_started", "run_id": "eng_restaurant_A_s42", "phase": "predict-dev", "pid": 850879, "log": "docs/audits/icsai_core_training/eng_restaurant_A_s42.predict-dev.log"}
+{"time": "2026-09-07T11:34:25.153924+00:00", "event": "phase_completed", "run_id": "eng_restaurant_A_s42", "phase": "predict-dev"}
+{"time": "2026-09-07T11:34:25.154546+00:00", "event": "run_completed", "run_id": "eng_restaurant_A_s42", "completed_runs": 1, "rough_remaining_training_hours": 34.97330774250576}
+{"time": "2026-09-07T11:34:25.155103+00:00", "event": "phase_started", "run_id": "zho_restaurant_A_s42", "phase": "train", "pid": 851075, "log": "docs/audits/icsai_core_training/zho_restaurant_A_s42.train.log"}
+{"time": "2026-09-07T13:18:40.308987+00:00", "event": "phase_completed", "run_id": "zho_restaurant_A_s42", "phase": "train"}
+{"time": "2026-09-07T13:18:40.309572+00:00", "event": "phase_started", "run_id": "zho_restaurant_A_s42", "phase": "predict-dev", "pid": 991964, "log": "docs/audits/icsai_core_training/zho_restaurant_A_s42.predict-dev.log"}
+{"time": "2026-09-07T13:18:49.182991+00:00", "event": "phase_completed", "run_id": "zho_restaurant_A_s42", "phase": "predict-dev"}
+{"time": "2026-09-07T13:18:49.183833+00:00", "event": "run_completed", "run_id": "zho_restaurant_A_s42", "completed_runs": 2, "rough_remaining_training_hours": 25.10643555613588}
+{"time": "2026-09-07T13:18:49.184374+00:00", "event": "phase_started", "run_id": "tat_restaurant_A_s42", "phase": "train", "pid": 992181, "log": "docs/audits/icsai_core_training/tat_restaurant_A_s42.train.log"}
+{"time": "2026-09-07T14:02:17.280898+00:00", "event": "phase_completed", "run_id": "tat_restaurant_A_s42", "phase": "train"}
+{"time": "2026-09-07T14:02:17.281736+00:00", "event": "phase_started", "run_id": "tat_restaurant_A_s42", "phase": "predict-dev", "pid": 1050802, "log": "docs/audits/icsai_core_training/tat_restaurant_A_s42.predict-dev.log"}
+{"time": "2026-09-07T14:02:24.881861+00:00", "event": "phase_completed", "run_id": "tat_restaurant_A_s42", "phase": "predict-dev"}
+{"time": "2026-09-07T14:02:24.882679+00:00", "event": "run_completed", "run_id": "tat_restaurant_A_s42", "completed_runs": 3, "rough_remaining_training_hours": 27.292156285320065}
+{"time": "2026-09-07T14:02:24.883231+00:00", "event": "phase_started", "run_id": "eng_restaurant_B_s42", "phase": "train", "pid": 1050993, "log": "docs/audits/icsai_core_training/eng_restaurant_B_s42.train.log"}
+{"time": "2026-09-07T15:05:49.523053+00:00", "event": "phase_completed", "run_id": "eng_restaurant_B_s42", "phase": "train"}
+{"time": "2026-09-07T15:05:49.523877+00:00", "event": "phase_started", "run_id": "eng_restaurant_B_s42", "phase": "predict-dev", "pid": 1136781, "log": "docs/audits/icsai_core_training/eng_restaurant_B_s42.predict-dev.log"}
+{"time": "2026-09-07T15:05:58.243523+00:00", "event": "phase_completed", "run_id": "eng_restaurant_B_s42", "phase": "predict-dev"}
+{"time": "2026-09-07T15:05:58.244346+00:00", "event": "run_completed", "run_id": "eng_restaurant_B_s42", "completed_runs": 4, "rough_remaining_training_hours": 27.98547089034829}
+{"time": "2026-09-07T15:05:58.244899+00:00", "event": "phase_started", "run_id": "zho_restaurant_B_s42", "phase": "train", "pid": 1136971, "log": "docs/audits/icsai_core_training/zho_restaurant_B_s42.train.log"}
+{"time": "2026-09-07T17:02:24.574488+00:00", "event": "phase_completed", "run_id": "zho_restaurant_B_s42", "phase": "train"}
+{"time": "2026-09-07T17:02:24.574982+00:00", "event": "phase_started", "run_id": "zho_restaurant_B_s42", "phase": "predict-dev", "pid": 1294806, "log": "docs/audits/icsai_core_training/zho_restaurant_B_s42.predict-dev.log"}
+{"time": "2026-09-07T17:02:34.516080+00:00", "event": "phase_completed", "run_id": "zho_restaurant_B_s42", "phase": "predict-dev"}
+{"time": "2026-09-07T17:02:34.516914+00:00", "event": "run_completed", "run_id": "zho_restaurant_B_s42", "completed_runs": 5, "rough_remaining_training_hours": 24.412804531175325}
+{"time": "2026-09-07T17:02:34.517454+00:00", "event": "phase_started", "run_id": "tat_restaurant_B_s42", "phase": "train", "pid": 1295037, "log": "docs/audits/icsai_core_training/tat_restaurant_B_s42.train.log"}
+{"time": "2026-09-07T17:50:08.737250+00:00", "event": "phase_completed", "run_id": "tat_restaurant_B_s42", "phase": "train"}
+{"time": "2026-09-07T17:50:08.737905+00:00", "event": "phase_started", "run_id": "tat_restaurant_B_s42", "phase": "predict-dev", "pid": 1359135, "log": "docs/audits/icsai_core_training/tat_restaurant_B_s42.predict-dev.log"}
+{"time": "2026-09-07T17:50:16.774367+00:00", "event": "phase_completed", "run_id": "tat_restaurant_B_s42", "phase": "predict-dev"}
+{"time": "2026-09-07T17:50:16.775256+00:00", "event": "run_completed", "run_id": "tat_restaurant_B_s42", "completed_runs": 6, "rough_remaining_training_hours": 25.18785177740713}
+{"time": "2026-09-07T17:50:16.775808+00:00", "event": "phase_started", "run_id": "eng_restaurant_C_s42", "phase": "train", "pid": 1359319, "log": "docs/audits/icsai_core_training/eng_restaurant_C_s42.train.log"}
+{"time": "2026-09-07T18:56:58.330092+00:00", "event": "phase_completed", "run_id": "eng_restaurant_C_s42", "phase": "train"}
+{"time": "2026-09-07T18:56:58.330872+00:00", "event": "phase_started", "run_id": "eng_restaurant_C_s42", "phase": "predict-dev", "pid": 1449416, "log": "docs/audits/icsai_core_training/eng_restaurant_C_s42.predict-dev.log"}
+{"time": "2026-09-07T18:57:07.201167+00:00", "event": "phase_completed", "run_id": "eng_restaurant_C_s42", "phase": "predict-dev"}
+{"time": "2026-09-07T18:57:07.201911+00:00", "event": "run_completed", "run_id": "eng_restaurant_C_s42", "completed_runs": 7, "rough_remaining_training_hours": 25.086007057389303}
+{"time": "2026-09-07T18:57:07.202425+00:00", "event": "phase_started", "run_id": "zho_restaurant_C_s42", "phase": "train", "pid": 1449624, "log": "docs/audits/icsai_core_training/zho_restaurant_C_s42.train.log"}
+{"time": "2026-09-07T20:56:59.204930+00:00", "event": "phase_completed", "run_id": "zho_restaurant_C_s42", "phase": "train"}
+{"time": "2026-09-07T20:56:59.205708+00:00", "event": "phase_started", "run_id": "zho_restaurant_C_s42", "phase": "predict-dev", "pid": 1611108, "log": "docs/audits/icsai_core_training/zho_restaurant_C_s42.predict-dev.log"}
+{"time": "2026-09-07T20:57:09.754957+00:00", "event": "phase_completed", "run_id": "zho_restaurant_C_s42", "phase": "predict-dev"}
+{"time": "2026-09-07T20:57:09.755852+00:00", "event": "run_completed", "run_id": "zho_restaurant_C_s42", "completed_runs": 8, "rough_remaining_training_hours": 21.99748174023682}
+{"time": "2026-09-07T20:57:09.756360+00:00", "event": "phase_started", "run_id": "tat_restaurant_C_s42", "phase": "train", "pid": 1611341, "log": "docs/audits/icsai_core_training/tat_restaurant_C_s42.train.log"}
+{"time": "2026-09-07T21:42:51.483882+00:00", "event": "phase_completed", "run_id": "tat_restaurant_C_s42", "phase": "train"}
+{"time": "2026-09-07T21:42:51.484426+00:00", "event": "phase_started", "run_id": "tat_restaurant_C_s42", "phase": "predict-dev", "pid": 1673148, "log": "docs/audits/icsai_core_training/tat_restaurant_C_s42.predict-dev.log"}
+{"time": "2026-09-07T21:42:59.543354+00:00", "event": "phase_completed", "run_id": "tat_restaurant_C_s42", "phase": "predict-dev"}
+{"time": "2026-09-07T21:42:59.544244+00:00", "event": "run_completed", "run_id": "tat_restaurant_C_s42", "completed_runs": 9, "rough_remaining_training_hours": 22.124097512633373}
+{"time": "2026-09-07T21:42:59.544785+00:00", "event": "phase_started", "run_id": "eng_restaurant_A_s123", "phase": "train", "pid": 1673341, "log": "docs/audits/icsai_core_training/eng_restaurant_A_s123.train.log"}
+{"time": "2026-09-07T22:36:38.289056+00:00", "event": "phase_completed", "run_id": "eng_restaurant_A_s123", "phase": "train"}
+{"time": "2026-09-07T22:36:38.289674+00:00", "event": "phase_started", "run_id": "eng_restaurant_A_s123", "phase": "predict-dev", "pid": 1745617, "log": "docs/audits/icsai_core_training/eng_restaurant_A_s123.predict-dev.log"}
+{"time": "2026-09-07T22:36:46.520913+00:00", "event": "phase_completed", "run_id": "eng_restaurant_A_s123", "phase": "predict-dev"}
+{"time": "2026-09-07T22:36:46.521775+00:00", "event": "run_completed", "run_id": "eng_restaurant_A_s123", "completed_runs": 10, "rough_remaining_training_hours": 21.26527189876328}
+{"time": "2026-09-07T22:36:46.522336+00:00", "event": "phase_started", "run_id": "zho_restaurant_A_s123", "phase": "train", "pid": 1745783, "log": "docs/audits/icsai_core_training/zho_restaurant_A_s123.train.log"}
+{"time": "2026-09-08T00:16:51.548951+00:00", "event": "phase_completed", "run_id": "zho_restaurant_A_s123", "phase": "train"}
+{"time": "2026-09-08T00:16:51.549635+00:00", "event": "phase_started", "run_id": "zho_restaurant_A_s123", "phase": "predict-dev", "pid": 1880804, "log": "docs/audits/icsai_core_training/zho_restaurant_A_s123.predict-dev.log"}
+{"time": "2026-09-08T00:17:00.477357+00:00", "event": "phase_completed", "run_id": "zho_restaurant_A_s123", "phase": "predict-dev"}
+{"time": "2026-09-08T00:17:00.478397+00:00", "event": "run_completed", "run_id": "zho_restaurant_A_s123", "completed_runs": 11, "rough_remaining_training_hours": 18.050302671768222}
+{"time": "2026-09-08T00:17:00.478941+00:00", "event": "phase_started", "run_id": "tat_restaurant_A_s123", "phase": "train", "pid": 1880995, "log": "docs/audits/icsai_core_training/tat_restaurant_A_s123.train.log"}
+{"time": "2026-09-08T00:58:20.042769+00:00", "event": "phase_completed", "run_id": "tat_restaurant_A_s123", "phase": "train"}
+{"time": "2026-09-08T00:58:20.043466+00:00", "event": "phase_started", "run_id": "tat_restaurant_A_s123", "phase": "predict-dev", "pid": 1936644, "log": "docs/audits/icsai_core_training/tat_restaurant_A_s123.predict-dev.log"}
+{"time": "2026-09-08T00:58:27.668788+00:00", "event": "phase_completed", "run_id": "tat_restaurant_A_s123", "phase": "predict-dev"}
+{"time": "2026-09-08T00:58:27.669768+00:00", "event": "run_completed", "run_id": "tat_restaurant_A_s123", "completed_runs": 12, "rough_remaining_training_hours": 17.884655206036502}
+{"time": "2026-09-08T00:58:27.670294+00:00", "event": "phase_started", "run_id": "eng_restaurant_B_s123", "phase": "train", "pid": 1936853, "log": "docs/audits/icsai_core_training/eng_restaurant_B_s123.train.log"}
+{"time": "2026-09-08T02:04:05.237275+00:00", "event": "phase_completed", "run_id": "eng_restaurant_B_s123", "phase": "train"}
+{"time": "2026-09-08T02:04:05.237894+00:00", "event": "phase_started", "run_id": "eng_restaurant_B_s123", "phase": "predict-dev", "pid": 2025231, "log": "docs/audits/icsai_core_training/eng_restaurant_B_s123.predict-dev.log"}
+{"time": "2026-09-08T02:04:14.251773+00:00", "event": "phase_completed", "run_id": "eng_restaurant_B_s123", "phase": "predict-dev"}
+{"time": "2026-09-08T02:04:14.252753+00:00", "event": "run_completed", "run_id": "eng_restaurant_B_s123", "completed_runs": 13, "rough_remaining_training_hours": 17.29814896646374}
+{"time": "2026-09-08T02:04:14.253310+00:00", "event": "phase_started", "run_id": "zho_restaurant_B_s123", "phase": "train", "pid": 2025433, "log": "docs/audits/icsai_core_training/zho_restaurant_B_s123.train.log"}
+{"time": "2026-09-08T04:01:46.285691+00:00", "event": "phase_completed", "run_id": "zho_restaurant_B_s123", "phase": "train"}
+{"time": "2026-09-08T04:01:46.286517+00:00", "event": "phase_started", "run_id": "zho_restaurant_B_s123", "phase": "predict-dev", "pid": 2205092, "log": "docs/audits/icsai_core_training/zho_restaurant_B_s123.predict-dev.log"}
+{"time": "2026-09-08T04:01:56.280107+00:00", "event": "phase_completed", "run_id": "zho_restaurant_B_s123", "phase": "predict-dev"}
+{"time": "2026-09-08T04:01:56.281028+00:00", "event": "run_completed", "run_id": "zho_restaurant_B_s123", "completed_runs": 14, "rough_remaining_training_hours": 14.715364851344722}
+{"time": "2026-09-08T04:01:56.281561+00:00", "event": "phase_started", "run_id": "tat_restaurant_B_s123", "phase": "train", "pid": 2205313, "log": "docs/audits/icsai_core_training/tat_restaurant_B_s123.train.log"}
+{"time": "2026-09-08T04:51:30.462403+00:00", "event": "phase_completed", "run_id": "tat_restaurant_B_s123", "phase": "train"}
+{"time": "2026-09-08T04:51:30.462975+00:00", "event": "phase_started", "run_id": "tat_restaurant_B_s123", "phase": "predict-dev", "pid": 2272168, "log": "docs/audits/icsai_core_training/tat_restaurant_B_s123.predict-dev.log"}
+{"time": "2026-09-08T04:51:38.608050+00:00", "event": "phase_completed", "run_id": "tat_restaurant_B_s123", "phase": "predict-dev"}
+{"time": "2026-09-08T04:51:38.608986+00:00", "event": "run_completed", "run_id": "tat_restaurant_B_s123", "completed_runs": 15, "rough_remaining_training_hours": 14.5449437721476}
+{"time": "2026-09-08T04:51:38.609487+00:00", "event": "phase_started", "run_id": "eng_restaurant_C_s123", "phase": "train", "pid": 2272365, "log": "docs/audits/icsai_core_training/eng_restaurant_C_s123.train.log"}
+{"time": "2026-09-08T05:54:49.349966+00:00", "event": "phase_completed", "run_id": "eng_restaurant_C_s123", "phase": "train"}
+{"time": "2026-09-08T05:54:49.350771+00:00", "event": "phase_started", "run_id": "eng_restaurant_C_s123", "phase": "predict-dev", "pid": 2358228, "log": "docs/audits/icsai_core_training/eng_restaurant_C_s123.predict-dev.log"}
+{"time": "2026-09-08T05:54:58.241900+00:00", "event": "phase_completed", "run_id": "eng_restaurant_C_s123", "phase": "predict-dev"}
+{"time": "2026-09-08T05:54:58.242847+00:00", "event": "run_completed", "run_id": "eng_restaurant_C_s123", "completed_runs": 16, "rough_remaining_training_hours": 13.808333345094113}
+{"time": "2026-09-08T05:54:58.243396+00:00", "event": "phase_started", "run_id": "zho_restaurant_C_s123", "phase": "train", "pid": 2358430, "log": "docs/audits/icsai_core_training/zho_restaurant_C_s123.train.log"}
+{"time": "2026-09-08T07:56:11.272205+00:00", "event": "phase_completed", "run_id": "zho_restaurant_C_s123", "phase": "train"}
+{"time": "2026-09-08T07:56:11.272739+00:00", "event": "phase_started", "run_id": "zho_restaurant_C_s123", "phase": "predict-dev", "pid": 2522632, "log": "docs/audits/icsai_core_training/zho_restaurant_C_s123.predict-dev.log"}
+{"time": "2026-09-08T07:56:22.121576+00:00", "event": "phase_completed", "run_id": "zho_restaurant_C_s123", "phase": "predict-dev"}
+{"time": "2026-09-08T07:56:22.122581+00:00", "event": "run_completed", "run_id": "zho_restaurant_C_s123", "completed_runs": 17, "rough_remaining_training_hours": 11.327951208400766}
+{"time": "2026-09-08T07:56:22.123123+00:00", "event": "phase_started", "run_id": "tat_restaurant_C_s123", "phase": "train", "pid": 2522908, "log": "docs/audits/icsai_core_training/tat_restaurant_C_s123.train.log"}
+{"time": "2026-09-08T08:45:39.682001+00:00", "event": "phase_completed", "run_id": "tat_restaurant_C_s123", "phase": "train"}
+{"time": "2026-09-08T08:45:39.682445+00:00", "event": "phase_started", "run_id": "tat_restaurant_C_s123", "phase": "predict-dev", "pid": 2590335, "log": "docs/audits/icsai_core_training/tat_restaurant_C_s123.predict-dev.log"}
+{"time": "2026-09-08T08:45:47.722990+00:00", "event": "phase_completed", "run_id": "tat_restaurant_C_s123", "phase": "predict-dev"}
+{"time": "2026-09-08T08:45:47.723960+00:00", "event": "run_completed", "run_id": "tat_restaurant_C_s123", "completed_runs": 18, "rough_remaining_training_hours": 11.035315782733349}
+{"time": "2026-09-08T08:45:47.724479+00:00", "event": "phase_started", "run_id": "eng_restaurant_A_s456", "phase": "train", "pid": 2590520, "log": "docs/audits/icsai_core_training/eng_restaurant_A_s456.train.log"}
+{"time": "2026-09-08T09:38:56.193315+00:00", "event": "phase_completed", "run_id": "eng_restaurant_A_s456", "phase": "train"}
+{"time": "2026-09-08T09:38:56.194041+00:00", "event": "phase_started", "run_id": "eng_restaurant_A_s456", "phase": "predict-dev", "pid": 2662727, "log": "docs/audits/icsai_core_training/eng_restaurant_A_s456.predict-dev.log"}
+{"time": "2026-09-08T09:39:04.432228+00:00", "event": "phase_completed", "run_id": "eng_restaurant_A_s456", "phase": "predict-dev"}
+{"time": "2026-09-08T09:39:04.433422+00:00", "event": "run_completed", "run_id": "eng_restaurant_A_s456", "completed_runs": 19, "rough_remaining_training_hours": 10.159714206120345}
+{"time": "2026-09-08T09:39:04.433988+00:00", "event": "phase_started", "run_id": "zho_restaurant_A_s456", "phase": "train", "pid": 2662956, "log": "docs/audits/icsai_core_training/zho_restaurant_A_s456.train.log"}
+{"time": "2026-09-08T11:20:22.797721+00:00", "event": "phase_completed", "run_id": "zho_restaurant_A_s456", "phase": "train"}
+{"time": "2026-09-08T11:20:22.798237+00:00", "event": "phase_started", "run_id": "zho_restaurant_A_s456", "phase": "predict-dev", "pid": 2799999, "log": "docs/audits/icsai_core_training/zho_restaurant_A_s456.predict-dev.log"}
+{"time": "2026-09-08T11:20:31.732743+00:00", "event": "phase_completed", "run_id": "zho_restaurant_A_s456", "phase": "predict-dev"}
+{"time": "2026-09-08T11:20:31.734059+00:00", "event": "run_completed", "run_id": "zho_restaurant_A_s456", "completed_runs": 20, "rough_remaining_training_hours": 7.636959935652424}
+{"time": "2026-09-08T11:20:31.734588+00:00", "event": "phase_started", "run_id": "tat_restaurant_A_s456", "phase": "train", "pid": 2800213, "log": "docs/audits/icsai_core_training/tat_restaurant_A_s456.train.log"}
+{"time": "2026-09-08T12:00:00.458060+00:00", "event": "phase_completed", "run_id": "tat_restaurant_A_s456", "phase": "train"}
+{"time": "2026-09-08T12:00:00.458789+00:00", "event": "phase_started", "run_id": "tat_restaurant_A_s456", "phase": "predict-dev", "pid": 2853477, "log": "docs/audits/icsai_core_training/tat_restaurant_A_s456.predict-dev.log"}
+{"time": "2026-09-08T12:00:08.121499+00:00", "event": "phase_completed", "run_id": "tat_restaurant_A_s456", "phase": "predict-dev"}
+{"time": "2026-09-08T12:00:08.122841+00:00", "event": "run_completed", "run_id": "tat_restaurant_A_s456", "completed_runs": 21, "rough_remaining_training_hours": 7.227843326450403}
+{"time": "2026-09-08T12:00:08.123310+00:00", "event": "phase_started", "run_id": "eng_restaurant_B_s456", "phase": "train", "pid": 2853721, "log": "docs/audits/icsai_core_training/eng_restaurant_B_s456.train.log"}
+{"time": "2026-09-08T13:00:47.144529+00:00", "event": "phase_completed", "run_id": "eng_restaurant_B_s456", "phase": "train"}
+{"time": "2026-09-08T13:00:47.145053+00:00", "event": "phase_started", "run_id": "eng_restaurant_B_s456", "phase": "predict-dev", "pid": 2936209, "log": "docs/audits/icsai_core_training/eng_restaurant_B_s456.predict-dev.log"}
+{"time": "2026-09-08T13:00:55.927881+00:00", "event": "phase_completed", "run_id": "eng_restaurant_B_s456", "phase": "predict-dev"}
+{"time": "2026-09-08T13:00:55.929180+00:00", "event": "run_completed", "run_id": "eng_restaurant_B_s456", "completed_runs": 22, "rough_remaining_training_hours": 6.400684955197918}
+{"time": "2026-09-08T13:00:55.929672+00:00", "event": "phase_started", "run_id": "zho_restaurant_B_s456", "phase": "train", "pid": 2936429, "log": "docs/audits/icsai_core_training/zho_restaurant_B_s456.train.log"}
+{"time": "2026-09-08T14:57:24.475985+00:00", "event": "phase_completed", "run_id": "zho_restaurant_B_s456", "phase": "train"}
+{"time": "2026-09-08T14:57:24.476506+00:00", "event": "phase_started", "run_id": "zho_restaurant_B_s456", "phase": "predict-dev", "pid": 3094242, "log": "docs/audits/icsai_core_training/zho_restaurant_B_s456.predict-dev.log"}
+{"time": "2026-09-08T14:57:34.436755+00:00", "event": "phase_completed", "run_id": "zho_restaurant_B_s456", "phase": "predict-dev"}
+{"time": "2026-09-08T14:57:34.438046+00:00", "event": "run_completed", "run_id": "zho_restaurant_B_s456", "completed_runs": 23, "rough_remaining_training_hours": 4.053110385224032}
+{"time": "2026-09-08T14:57:34.438564+00:00", "event": "phase_started", "run_id": "tat_restaurant_B_s456", "phase": "train", "pid": 3094470, "log": "docs/audits/icsai_core_training/tat_restaurant_B_s456.train.log"}
+{"time": "2026-09-08T15:41:19.535067+00:00", "event": "phase_completed", "run_id": "tat_restaurant_B_s456", "phase": "train"}
+{"time": "2026-09-08T15:41:19.535827+00:00", "event": "phase_started", "run_id": "tat_restaurant_B_s456", "phase": "predict-dev", "pid": 3153816, "log": "docs/audits/icsai_core_training/tat_restaurant_B_s456.predict-dev.log"}
+{"time": "2026-09-08T15:41:27.462735+00:00", "event": "phase_completed", "run_id": "tat_restaurant_B_s456", "phase": "predict-dev"}
+{"time": "2026-09-08T15:41:27.464229+00:00", "event": "run_completed", "run_id": "tat_restaurant_B_s456", "completed_runs": 24, "rough_remaining_training_hours": 3.6216687516360104}
+{"time": "2026-09-08T15:41:27.464820+00:00", "event": "phase_started", "run_id": "eng_restaurant_C_s456", "phase": "train", "pid": 3154015, "log": "docs/audits/icsai_core_training/eng_restaurant_C_s456.train.log"}
+{"time": "2026-09-08T16:39:06.842255+00:00", "event": "phase_completed", "run_id": "eng_restaurant_C_s456", "phase": "train"}
+{"time": "2026-09-08T16:39:06.842785+00:00", "event": "phase_started", "run_id": "eng_restaurant_C_s456", "phase": "predict-dev", "pid": 3231308, "log": "docs/audits/icsai_core_training/eng_restaurant_C_s456.predict-dev.log"}
+{"time": "2026-09-08T16:39:15.661154+00:00", "event": "phase_completed", "run_id": "eng_restaurant_C_s456", "phase": "predict-dev"}
+{"time": "2026-09-08T16:39:15.662579+00:00", "event": "run_completed", "run_id": "eng_restaurant_C_s456", "completed_runs": 25, "rough_remaining_training_hours": 2.7657992769062165}
+{"time": "2026-09-08T16:39:15.663100+00:00", "event": "phase_started", "run_id": "zho_restaurant_C_s456", "phase": "train", "pid": 3231503, "log": "docs/audits/icsai_core_training/zho_restaurant_C_s456.train.log"}
+{"time": "2026-09-08T18:32:24.084362+00:00", "event": "phase_completed", "run_id": "zho_restaurant_C_s456", "phase": "train"}
+{"time": "2026-09-08T18:32:24.085008+00:00", "event": "phase_started", "run_id": "zho_restaurant_C_s456", "phase": "predict-dev", "pid": 3384075, "log": "docs/audits/icsai_core_training/zho_restaurant_C_s456.predict-dev.log"}
+{"time": "2026-09-08T18:32:33.883783+00:00", "event": "phase_completed", "run_id": "zho_restaurant_C_s456", "phase": "predict-dev"}
+{"time": "2026-09-08T18:32:33.885333+00:00", "event": "run_completed", "run_id": "zho_restaurant_C_s456", "completed_runs": 26, "rough_remaining_training_hours": 0.46405710320680543}
+{"time": "2026-09-08T18:32:33.885947+00:00", "event": "phase_started", "run_id": "tat_restaurant_C_s456", "phase": "train", "pid": 3384347, "log": "docs/audits/icsai_core_training/tat_restaurant_C_s456.train.log"}
+{"time": "2026-09-08T19:16:23.165937+00:00", "event": "phase_completed", "run_id": "tat_restaurant_C_s456", "phase": "train"}
+{"time": "2026-09-08T19:16:23.166640+00:00", "event": "phase_started", "run_id": "tat_restaurant_C_s456", "phase": "predict-dev", "pid": 3443338, "log": "docs/audits/icsai_core_training/tat_restaurant_C_s456.predict-dev.log"}
+{"time": "2026-09-08T19:16:31.231495+00:00", "event": "phase_completed", "run_id": "tat_restaurant_C_s456", "phase": "predict-dev"}
+{"time": "2026-09-08T19:16:31.232938+00:00", "event": "run_completed", "run_id": "tat_restaurant_C_s456", "completed_runs": 27, "rough_remaining_training_hours": 0.0}
+{"time": "2026-09-08T19:16:31.233118+00:00", "event": "queue_completed", "completed_runs": 27}

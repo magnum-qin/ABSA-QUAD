@@ -1,0 +1,18 @@
+{
+  "completed_at": "2026-09-10T10:01:19.921660+00:00",
+  "plan_day": "2026-09-10",
+  "status": "complete",
+  "assessment": "Share with caveats: reviewed initial manuscript; cost experiments and final positioning remain.",
+  "pages": 5,
+  "checks": [
+    "56 prediction hashes and result locks",
+    "24 input ID sequences",
+    "unrounded macro +2.987545 percentage points",
+    "all six contrasts; only negative Tatar B-A adjusted p<0.05",
+    "model and loss source review",
+    "no overfull boxes or undefined references",
+    "original ICONIP source unchanged"
+  ],
+  "tex_sha256": "0328032714ff7d0777486bbabe562f44b2ef78c95ba70983f5a51d684b75247b",
+  "pdf_sha256": "4de3e6d9c68d3fd06d0d734f30e8dbdfc1b2c87ae1a0de5e3066e62aa2c68a61"
+}

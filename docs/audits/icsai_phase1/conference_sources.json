@@ -1,0 +1,20 @@
+[
+  {
+    "url": "https://www.icsai.com.cn/",
+    "snapshot": "docs/audits/icsai_phase1/conference_home.html",
+    "sha256": "88dcb680a0a3d3c7f996a7482287a1a77d721412ab1d7521b1c18aa0d4ca099e",
+    "retrieved_date": "2026-09-07"
+  },
+  {
+    "url": "https://www.icsai.com.cn/submission.html",
+    "snapshot": "docs/audits/icsai_phase1/conference_submission.html",
+    "sha256": "79ed3157ddb76f65929ebe8616102486265d13359d685e5457395a89917da41c",
+    "retrieved_date": "2026-09-07"
+  },
+  {
+    "url": "https://www.icsai.com.cn/download/latex.zip",
+    "snapshot": "docs/audits/icsai_phase1/conference_latex.zip",
+    "sha256": "40bbc4e4fecfa857dd13d612b23b6ef65fc814ca89e3ab0088b388a442a4b388",
+    "retrieved_date": "2026-09-07"
+  }
+]

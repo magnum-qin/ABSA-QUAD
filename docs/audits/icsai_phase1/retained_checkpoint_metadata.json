@@ -1,0 +1,3277 @@
+[
+  {
+    "path": "checkpoints/final_zho_laptop_v16_seed42/checkpoint_best.pt",
+    "seed": 42,
+    "exists": true,
+    "bytes": 5655540255,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 23,
+        "num_attribute_labels": 9,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_laptop_v16_seed42",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 42
+    },
+    "epoch": 16,
+    "metrics": {
+      "continuous_f1": 0.39697428684585967,
+      "continuous_recall": 0.40922213235653043,
+      "continuous_precision": 0.38543828192897145,
+      "tp_categorical": 235.0,
+      "fn_categorical": 316.0,
+      "fp_categorical": 350.0,
+      "exact_f1": 0.4137323943661972,
+      "exact_recall": 0.426497277676951,
+      "exact_precision": 0.4017094017094017,
+      "valence_rmse": 0.40934457211914305,
+      "arousal_rmse": 0.4056929978575404,
+      "va_rmse": 0.5763243767480624,
+      "valence_mae": 0.2782553191489362,
+      "arousal_mae": 0.3171489361702127,
+      "val_loss": 4.464159701665243
+    }
+  },
+  {
+    "path": "checkpoints/final_zho_laptop_v16_seed123/checkpoint_best.pt",
+    "seed": 123,
+    "exists": true,
+    "bytes": 5655540255,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 23,
+        "num_attribute_labels": 9,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_laptop_v16_seed123",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 123
+    },
+    "epoch": 23,
+    "metrics": {
+      "continuous_f1": 0.3860633976134545,
+      "continuous_recall": 0.39867526904184325,
+      "continuous_precision": 0.3742249970052055,
+      "tp_categorical": 229.0,
+      "fn_categorical": 322.0,
+      "fp_categorical": 358.0,
+      "exact_f1": 0.4024604569420035,
+      "exact_recall": 0.41560798548094374,
+      "exact_precision": 0.3901192504258944,
+      "valence_rmse": 0.37065856650799833,
+      "arousal_rmse": 0.438039000476972,
+      "va_rmse": 0.5738169907423697,
+      "valence_mae": 0.2643668122270742,
+      "arousal_mae": 0.33043668122270736,
+      "val_loss": 4.465627250671386
+    }
+  },
+  {
+    "path": "checkpoints/final_zho_laptop_v16_seed456/checkpoint_best.pt",
+    "seed": 456,
+    "exists": true,
+    "bytes": 5655540255,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 23,
+        "num_attribute_labels": 9,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_laptop_v16_seed456",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 456
+    },
+    "epoch": 11,
+    "metrics": {
+      "continuous_f1": 0.39412844626670523,
+      "continuous_recall": 0.41058026888763854,
+      "continuous_precision": 0.3789442682698305,
+      "tp_categorical": 236.0,
+      "fn_categorical": 315.0,
+      "fp_categorical": 361.0,
+      "exact_f1": 0.41114982578397213,
+      "exact_recall": 0.4283121597096189,
+      "exact_precision": 0.3953098827470687,
+      "valence_rmse": 0.4360133336477728,
+      "arousal_rmse": 0.42984131877011766,
+      "va_rmse": 0.6122672508314305,
+      "valence_mae": 0.26983050847457624,
+      "arousal_mae": 0.3294915254237288,
+      "val_loss": 4.3667556794484454
+    }
+  },
+  {
+    "path": "checkpoints/final_zho_laptop_v16_seed789/checkpoint_best.pt",
+    "seed": 789,
+    "exists": true,
+    "bytes": 5655540255,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 23,
+        "num_attribute_labels": 9,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_laptop_v16_seed789",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 789
+    },
+    "epoch": 15,
+    "metrics": {
+      "continuous_f1": 0.40100909173569915,
+      "continuous_recall": 0.40719525739768364,
+      "continuous_precision": 0.39500807539810506,
+      "tp_categorical": 234.0,
+      "fn_categorical": 317.0,
+      "fp_categorical": 334.0,
+      "exact_f1": 0.4182305630026809,
+      "exact_recall": 0.4246823956442831,
+      "exact_precision": 0.4119718309859155,
+      "valence_rmse": 0.4455573672619133,
+      "arousal_rmse": 0.4131652884204523,
+      "va_rmse": 0.6076404554314361,
+      "valence_mae": 0.2849572649572649,
+      "arousal_mae": 0.3176495726495726,
+      "val_loss": 4.405606571833292
+    }
+  },
+  {
+    "path": "checkpoints/final_zho_laptop_v16_seed1024/checkpoint_best.pt",
+    "seed": 1024,
+    "exists": true,
+    "bytes": 5655540255,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 23,
+        "num_attribute_labels": 9,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_laptop_train_v13c.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_laptop_v16_seed1024",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 1024
+    },
+    "epoch": 10,
+    "metrics": {
+      "continuous_f1": 0.3916834862046944,
+      "continuous_recall": 0.4073223912800179,
+      "continuous_precision": 0.37720107158872246,
+      "tp_categorical": 234.0,
+      "fn_categorical": 317.0,
+      "fp_categorical": 361.0,
+      "exact_f1": 0.4083769633507853,
+      "exact_recall": 0.4246823956442831,
+      "exact_precision": 0.39327731092436974,
+      "valence_rmse": 0.4113745979384967,
+      "arousal_rmse": 0.4345023678788272,
+      "va_rmse": 0.5983488677363462,
+      "valence_mae": 0.26905982905982906,
+      "arousal_mae": 0.3291452991452991,
+      "val_loss": 4.303239148457845
+    }
+  },
+  {
+    "path": "checkpoints/final_zho_restaurant_v16_seed42/checkpoint_best.pt",
+    "seed": 42,
+    "exists": true,
+    "bytes": 5655062751,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 7,
+        "num_attribute_labels": 6,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_restaurant_v16_seed42",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 42
+    },
+    "epoch": 10,
+    "metrics": {
+      "continuous_f1": 0.4952214250646445,
+      "continuous_recall": 0.5739622824008102,
+      "continuous_precision": 0.4354788603260384,
+      "tp_categorical": 457.0,
+      "fn_categorical": 304.0,
+      "fp_categorical": 546.0,
+      "exact_f1": 0.518140589569161,
+      "exact_recall": 0.6005256241787122,
+      "exact_precision": 0.4556331006979063,
+      "valence_rmse": 0.4379245361287089,
+      "arousal_rmse": 0.38464653130912285,
+      "va_rmse": 0.5828643524797901,
+      "valence_mae": 0.3537199124726477,
+      "arousal_mae": 0.29577680525164113,
+      "val_loss": 3.53330197652181
+    }
+  },
+  {
+    "path": "checkpoints/final_zho_restaurant_v16_seed123/checkpoint_best.pt",
+    "seed": 123,
+    "exists": true,
+    "bytes": 5655062751,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 7,
+        "num_attribute_labels": 6,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_restaurant_v16_seed123",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 123
+    },
+    "epoch": 22,
+    "metrics": {
+      "continuous_f1": 0.516169448200462,
+      "continuous_recall": 0.5945105405357489,
+      "continuous_precision": 0.4560710900682509,
+      "tp_categorical": 473.0,
+      "fn_categorical": 288.0,
+      "fp_categorical": 519.0,
+      "exact_f1": 0.5396463205932687,
+      "exact_recall": 0.621550591327201,
+      "exact_precision": 0.47681451612903225,
+      "valence_rmse": 0.43282200004266214,
+      "arousal_rmse": 0.38543487424375356,
+      "va_rmse": 0.5795644278285447,
+      "valence_mae": 0.3462579281183933,
+      "arousal_mae": 0.28763213530655396,
+      "val_loss": 3.615736405054728
+    }
+  },
+  {
+    "path": "checkpoints/final_zho_restaurant_v16_seed456/checkpoint_best.pt",
+    "seed": 456,
+    "exists": true,
+    "bytes": 5655062751,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 7,
+        "num_attribute_labels": 6,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_restaurant_v16_seed456",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 456
+    },
+    "epoch": 8,
+    "metrics": {
+      "continuous_f1": 0.49562908148783197,
+      "continuous_recall": 0.5783424761645135,
+      "continuous_precision": 0.4336144082376303,
+      "tp_categorical": 460.0,
+      "fn_categorical": 301.0,
+      "fp_categorical": 555.0,
+      "exact_f1": 0.5180180180180181,
+      "exact_recall": 0.6044678055190539,
+      "exact_precision": 0.45320197044334976,
+      "valence_rmse": 0.4301096927832329,
+      "arousal_rmse": 0.37548750919999635,
+      "va_rmse": 0.5709511514931066,
+      "valence_mae": 0.3492608695652174,
+      "arousal_mae": 0.2816521739130435,
+      "val_loss": 3.4859229532877603
+    }
+  },
+  {
+    "path": "checkpoints/final_zho_restaurant_v16_seed789/checkpoint_best.pt",
+    "seed": 789,
+    "exists": true,
+    "bytes": 5655062751,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 7,
+        "num_attribute_labels": 6,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_restaurant_v16_seed789",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 789
+    },
+    "epoch": 13,
+    "metrics": {
+      "continuous_f1": 0.5234441716822453,
+      "continuous_recall": 0.5836299338664719,
+      "continuous_precision": 0.47451108939357384,
+      "tp_categorical": 465.0,
+      "fn_categorical": 296.0,
+      "fp_categorical": 471.0,
+      "exact_f1": 0.5480259281084268,
+      "exact_recall": 0.6110381077529566,
+      "exact_precision": 0.4967948717948718,
+      "valence_rmse": 0.4457063983704823,
+      "arousal_rmse": 0.3963038912167636,
+      "va_rmse": 0.5964150968427404,
+      "valence_mae": 0.355483870967742,
+      "arousal_mae": 0.2991397849462366,
+      "val_loss": 3.5435748958587645
+    }
+  },
+  {
+    "path": "checkpoints/final_zho_restaurant_v16_seed1024/checkpoint_best.pt",
+    "seed": 1024,
+    "exists": true,
+    "bytes": 5655062751,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "model": {
+        "encoder_name": "hfl/chinese-roberta-wwm-ext-large",
+        "hidden_size": 768,
+        "num_entity_labels": 7,
+        "num_attribute_labels": 6,
+        "dropout": 0.1,
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_min": 1.0,
+        "va_max": 9.0,
+        "rethink": {
+          "enabled": true,
+          "num_iterations": 2,
+          "label_embedding_dim": 64
+        }
+      },
+      "data": {
+        "train_file": "data/subtask_3/zho/zho_restaurant_train_alltasks.jsonl",
+        "dev_file": "data/subtask_3/zho/zho_restaurant_dev_task3.jsonl",
+        "test_file": "data/subtask_3/zho/zho_restaurant_test_task3.jsonl",
+        "max_seq_length": 256,
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ]
+      },
+      "training": {
+        "batch_size": 4,
+        "learning_rate": 1.5e-05,
+        "encoder_lr": 1.5e-05,
+        "head_lr": 7.5e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "num_epochs": 30,
+        "max_grad_norm": 1.0,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "ema": {
+          "enabled": true,
+          "decay": 0.999
+        },
+        "loss_weights": {
+          "span": 2.0,
+          "pair": 1.0,
+          "entity": 1.0,
+          "attribute": 1.0,
+          "va": 1.0,
+          "va_valence": 1.0,
+          "va_arousal": 2.0,
+          "consistency": 0.5
+        },
+        "patience": 8,
+        "save_dir": "checkpoints/final_zho_restaurant_v16_seed1024",
+        "save_top_k": 3
+      },
+      "evaluation": {
+        "va_tolerance": 0.5,
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ]
+      },
+      "device": "cuda",
+      "seed": 1024
+    },
+    "epoch": 9,
+    "metrics": {
+      "continuous_f1": 0.5113111310581887,
+      "continuous_recall": 0.5737972482571526,
+      "continuous_precision": 0.4610978943228016,
+      "tp_categorical": 457.0,
+      "fn_categorical": 304.0,
+      "fp_categorical": 490.0,
+      "exact_f1": 0.5351288056206089,
+      "exact_recall": 0.6005256241787122,
+      "exact_precision": 0.4825765575501584,
+      "valence_rmse": 0.44740242264647423,
+      "arousal_rmse": 0.3886398320260021,
+      "va_rmse": 0.5926296034009214,
+      "valence_mae": 0.35728665207877464,
+      "arousal_mae": 0.29634573304157547,
+      "val_loss": 3.4510330963134765
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_seed42/checkpoint_best.pt",
+    "seed": 42,
+    "exists": true,
+    "bytes": 3201512190,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro.jsonl"
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 42,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_seed42",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 9,
+    "metrics": {
+      "continuous_f1": 0.30629102733875374,
+      "continuous_recall": 0.29759506757203835,
+      "continuous_precision": 0.3155104897001209,
+      "tp_categorical": 102.0,
+      "fn_categorical": 215.0,
+      "fp_categorical": 197.0,
+      "exact_f1": 0.33116883116883117,
+      "exact_recall": 0.3217665615141956,
+      "exact_precision": 0.3411371237458194,
+      "valence_rmse": 0.5940753236720732,
+      "arousal_rmse": 0.8175465448163648,
+      "va_rmse": 1.0105977652544333,
+      "valence_mae": 0.4833333333333333,
+      "arousal_mae": 0.6552941176470588,
+      "val_loss": 5.586720581054688
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_seed123/checkpoint_best.pt",
+    "seed": 123,
+    "exists": true,
+    "bytes": 3201512190,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro.jsonl"
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 123,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_seed123",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 21,
+    "metrics": {
+      "continuous_f1": 0.3048391690518748,
+      "continuous_recall": 0.29233787820747614,
+      "continuous_precision": 0.3184574137174225,
+      "tp_categorical": 100.0,
+      "fn_categorical": 217.0,
+      "fp_categorical": 191.0,
+      "exact_f1": 0.32894736842105265,
+      "exact_recall": 0.31545741324921134,
+      "exact_precision": 0.3436426116838488,
+      "valence_rmse": 0.5607762477138275,
+      "arousal_rmse": 0.8533943988567068,
+      "va_rmse": 1.0211522903073762,
+      "valence_mae": 0.46379999999999993,
+      "arousal_mae": 0.6416,
+      "val_loss": 5.608688402175903
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_seed456/checkpoint_best.pt",
+    "seed": 456,
+    "exists": true,
+    "bytes": 3201512190,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro.jsonl"
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 456,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_seed456",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 15,
+    "metrics": {
+      "continuous_f1": 0.3030365706072394,
+      "continuous_recall": 0.294433008665709,
+      "continuous_precision": 0.312158072732541,
+      "tp_categorical": 101.0,
+      "fn_categorical": 216.0,
+      "fp_categorical": 198.0,
+      "exact_f1": 0.32792207792207795,
+      "exact_recall": 0.3186119873817035,
+      "exact_precision": 0.3377926421404682,
+      "valence_rmse": 0.5886483930947822,
+      "arousal_rmse": 0.8483244989068419,
+      "va_rmse": 1.032550912129089,
+      "valence_mae": 0.48217821782178216,
+      "arousal_mae": 0.6688118811881186,
+      "val_loss": 5.620340366363525
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_seed789/checkpoint_best.pt",
+    "seed": 789,
+    "exists": true,
+    "bytes": 3201512190,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro.jsonl"
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 789,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_seed789",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 17,
+    "metrics": {
+      "continuous_f1": 0.2931535257698971,
+      "continuous_recall": 0.2797442950958798,
+      "continuous_precision": 0.3079129914770621,
+      "tp_categorical": 96.0,
+      "fn_categorical": 221.0,
+      "fp_categorical": 192.0,
+      "exact_f1": 0.3173553719008264,
+      "exact_recall": 0.3028391167192429,
+      "exact_precision": 0.3333333333333333,
+      "valence_rmse": 0.5765016623277567,
+      "arousal_rmse": 0.8799662635578708,
+      "va_rmse": 1.0519956234066123,
+      "valence_mae": 0.46416666666666667,
+      "arousal_mae": 0.6765624999999998,
+      "val_loss": 5.6309112930297855
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_seed1024/checkpoint_best.pt",
+    "seed": 1024,
+    "exists": true,
+    "bytes": 3201512190,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro.jsonl"
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 1024,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_seed1024",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 26,
+    "metrics": {
+      "continuous_f1": 0.31160819738761514,
+      "continuous_recall": 0.30325277253652766,
+      "continuous_precision": 0.32043709631359757,
+      "tp_categorical": 104.0,
+      "fn_categorical": 213.0,
+      "fp_categorical": 196.0,
+      "exact_f1": 0.3371150729335495,
+      "exact_recall": 0.3280757097791798,
+      "exact_precision": 0.3466666666666667,
+      "valence_rmse": 0.5770315282680702,
+      "arousal_rmse": 0.8470815281805024,
+      "va_rmse": 1.0249451204820677,
+      "valence_mae": 0.4800000000000001,
+      "arousal_mae": 0.6604807692307693,
+      "val_loss": 5.715761032104492
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_inductive_seed42/checkpoint_best.pt",
+    "seed": 42,
+    "exists": true,
+    "bytes": 3201544362,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 42,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_inductive_seed42",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 18,
+    "metrics": {
+      "continuous_f1": 0.3033881527108091,
+      "continuous_recall": 0.29477460894299434,
+      "continuous_precision": 0.31252023757501407,
+      "tp_categorical": 101.0,
+      "fn_categorical": 216.0,
+      "fp_categorical": 198.0,
+      "exact_f1": 0.32792207792207795,
+      "exact_recall": 0.3186119873817035,
+      "exact_precision": 0.3377926421404682,
+      "valence_rmse": 0.5906507570736562,
+      "arousal_rmse": 0.8507631984294926,
+      "va_rmse": 1.0356960638303416,
+      "valence_mae": 0.4832673267326733,
+      "arousal_mae": 0.6437623762376237,
+      "val_loss": 5.8015657329559325
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_inductive_seed123/checkpoint_best.pt",
+    "seed": 123,
+    "exists": true,
+    "bytes": 3201544426,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 123,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_inductive_seed123",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 11,
+    "metrics": {
+      "continuous_f1": 0.29805445164999445,
+      "continuous_recall": 0.2891222204491271,
+      "continuous_precision": 0.3075561875247426,
+      "tp_categorical": 99.0,
+      "fn_categorical": 218.0,
+      "fp_categorical": 199.0,
+      "exact_f1": 0.3219512195121952,
+      "exact_recall": 0.31230283911671924,
+      "exact_precision": 0.33221476510067116,
+      "valence_rmse": 0.594251927666502,
+      "arousal_rmse": 0.8231511269370758,
+      "va_rmse": 1.0152404302987206,
+      "valence_mae": 0.48101010101010105,
+      "arousal_mae": 0.6430303030303031,
+      "val_loss": 5.53341947555542
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_inductive_seed456/checkpoint_best.pt",
+    "seed": 456,
+    "exists": true,
+    "bytes": 3201544362,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 456,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_inductive_seed456",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 20,
+    "metrics": {
+      "continuous_f1": 0.2946244052408259,
+      "continuous_recall": 0.29137145439431833,
+      "continuous_precision": 0.29795080981612554,
+      "tp_categorical": 100.0,
+      "fn_categorical": 217.0,
+      "fp_categorical": 210.0,
+      "exact_f1": 0.31897926634768736,
+      "exact_recall": 0.31545741324921134,
+      "exact_precision": 0.3225806451612903,
+      "valence_rmse": 0.586112617164995,
+      "arousal_rmse": 0.8643459955365096,
+      "va_rmse": 1.0443284923815876,
+      "valence_mae": 0.4832000000000001,
+      "arousal_mae": 0.67,
+      "val_loss": 5.679406299591064
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_inductive_seed789/checkpoint_best.pt",
+    "seed": 789,
+    "exists": true,
+    "bytes": 3201544362,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 789,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_inductive_seed789",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 27,
+    "metrics": {
+      "continuous_f1": 0.29953281335759896,
+      "continuous_recall": 0.2948083210333466,
+      "continuous_precision": 0.3044111979399703,
+      "tp_categorical": 101.0,
+      "fn_categorical": 216.0,
+      "fp_categorical": 206.0,
+      "exact_f1": 0.32371794871794873,
+      "exact_recall": 0.3186119873817035,
+      "exact_precision": 0.3289902280130293,
+      "valence_rmse": 0.5875751479219025,
+      "arousal_rmse": 0.8495590003345882,
+      "va_rmse": 1.032954524412837,
+      "valence_mae": 0.48346534653465356,
+      "arousal_mae": 0.6524752475247525,
+      "val_loss": 5.729610404968262
+    }
+  },
+  {
+    "path": "checkpoints/v5repro_eng_laptop_inductive_seed1024/checkpoint_best.pt",
+    "seed": 1024,
+    "exists": true,
+    "bytes": 3201542929,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "CONNECTIVITY",
+          "DESIGN_FEATURES",
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "OPERATION_PERFORMANCE",
+          "PORTABILITY",
+          "PRICE",
+          "QUALITY",
+          "USABILITY"
+        ],
+        "dev_file": "data/subtask_3/eng/eng_laptop_dev_task3.jsonl",
+        "entity_labels": [
+          "BATTERY",
+          "COMPANY",
+          "CPU",
+          "DISPLAY",
+          "FANS_COOLING",
+          "GRAPHICS",
+          "HARDWARE",
+          "HARD_DISK",
+          "KEYBOARD",
+          "LAPTOP",
+          "MEMORY",
+          "MOTHERBOARD",
+          "MOUSE",
+          "MULTIMEDIA_DEVICES",
+          "NULL",
+          "OPTICAL_DRIVES",
+          "OS",
+          "OUT_OF_SCOPE",
+          "PORTS",
+          "POWER_SUPPLY",
+          "SHIPPING",
+          "SOFTWARE",
+          "SUPPORT",
+          "WARRANTY"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+        "train_file": "data/subtask_3/eng/eng_laptop_train_v5repro_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/deberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 10,
+        "num_entity_labels": 24,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 1024,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v5repro_eng_laptop_inductive_seed1024",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 22,
+    "metrics": {
+      "continuous_f1": 0.29785055414715117,
+      "continuous_recall": 0.28657545430561865,
+      "continuous_precision": 0.31004921165488436,
+      "tp_categorical": 98.0,
+      "fn_categorical": 219.0,
+      "fp_categorical": 195.0,
+      "exact_f1": 0.32131147540983607,
+      "exact_recall": 0.30914826498422715,
+      "exact_precision": 0.33447098976109213,
+      "valence_rmse": 0.567108671153915,
+      "arousal_rmse": 0.8350992853107531,
+      "va_rmse": 1.0094568149378604,
+      "valence_mae": 0.4565306122448979,
+      "arousal_mae": 0.6437755102040816,
+      "val_loss": 5.689959468841553
+    }
+  },
+  {
+    "path": "checkpoints/v13b_ukr_inductive_seed42/checkpoint_best.pt",
+    "seed": 42,
+    "exists": true,
+    "bytes": 4711344546,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ],
+        "dev_file": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+        "train_file": "data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/mdeberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 6,
+        "num_entity_labels": 7,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 42,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v13b_ukr_inductive_seed42",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 27,
+    "metrics": {
+      "continuous_f1": 0.4181158403807755,
+      "continuous_recall": 0.4304133650978571,
+      "continuous_precision": 0.40650151148130953,
+      "tp_categorical": 49.0,
+      "fn_categorical": 53.0,
+      "fp_categorical": 59.0,
+      "exact_f1": 0.4666666666666667,
+      "exact_recall": 0.4803921568627451,
+      "exact_precision": 0.4537037037037037,
+      "valence_rmse": 0.6684584764171051,
+      "arousal_rmse": 1.167861293133735,
+      "va_rmse": 1.3456361821435532,
+      "valence_mae": 0.5273469387755102,
+      "arousal_mae": 0.980204081632653,
+      "val_loss": 4.853511929512024
+    }
+  },
+  {
+    "path": "checkpoints/v13b_ukr_inductive_seed123/checkpoint_best.pt",
+    "seed": 123,
+    "exists": true,
+    "bytes": 4711344546,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ],
+        "dev_file": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+        "train_file": "data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/mdeberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 6,
+        "num_entity_labels": 7,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 123,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v13b_ukr_inductive_seed123",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 18,
+    "metrics": {
+      "continuous_f1": 0.41396728246712255,
+      "continuous_recall": 0.4545523101599777,
+      "continuous_precision": 0.3800355380026043,
+      "tp_categorical": 52.0,
+      "fn_categorical": 50.0,
+      "fp_categorical": 70.0,
+      "exact_f1": 0.4642857142857142,
+      "exact_recall": 0.5098039215686274,
+      "exact_precision": 0.4262295081967213,
+      "valence_rmse": 0.9436712269722886,
+      "arousal_rmse": 1.1434159348198714,
+      "va_rmse": 1.4825368071705285,
+      "valence_mae": 0.601153846153846,
+      "arousal_mae": 0.965,
+      "val_loss": 4.885521292686462
+    }
+  },
+  {
+    "path": "checkpoints/v13b_ukr_inductive_seed456/checkpoint_best.pt",
+    "seed": 456,
+    "exists": true,
+    "bytes": 4711344482,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ],
+        "dev_file": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+        "train_file": "data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/mdeberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 6,
+        "num_entity_labels": 7,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 456,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v13b_ukr_inductive_seed456",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 13,
+    "metrics": {
+      "continuous_f1": 0.40578532769230197,
+      "continuous_recall": 0.4376116279034629,
+      "continuous_precision": 0.3782744580182476,
+      "tp_categorical": 50.0,
+      "fn_categorical": 52.0,
+      "fp_categorical": 68.0,
+      "exact_f1": 0.4545454545454545,
+      "exact_recall": 0.49019607843137253,
+      "exact_precision": 0.423728813559322,
+      "valence_rmse": 0.7349027146500414,
+      "arousal_rmse": 1.1735970347610802,
+      "va_rmse": 1.3847064670896863,
+      "valence_mae": 0.5298000000000002,
+      "arousal_mae": 1.0053999999999998,
+      "val_loss": 4.665425697962443
+    }
+  },
+  {
+    "path": "checkpoints/v13b_ukr_inductive_seed789/checkpoint_best.pt",
+    "seed": 789,
+    "exists": true,
+    "bytes": 4711344546,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ],
+        "dev_file": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+        "train_file": "data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/mdeberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 6,
+        "num_entity_labels": 7,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 789,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v13b_ukr_inductive_seed789",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 29,
+    "metrics": {
+      "continuous_f1": 0.40937749399598145,
+      "continuous_recall": 0.4294450182114708,
+      "continuous_precision": 0.391101713014018,
+      "tp_categorical": 49.0,
+      "fn_categorical": 53.0,
+      "fp_categorical": 63.0,
+      "exact_f1": 0.45794392523364486,
+      "exact_recall": 0.4803921568627451,
+      "exact_precision": 0.4375,
+      "valence_rmse": 0.7447832173299332,
+      "arousal_rmse": 1.1876997146774508,
+      "va_rmse": 1.401903225283837,
+      "valence_mae": 0.513061224489796,
+      "arousal_mae": 1.0059183673469387,
+      "val_loss": 4.8002823193868
+    }
+  },
+  {
+    "path": "checkpoints/v13b_ukr_inductive_seed1024/checkpoint_best.pt",
+    "seed": 1024,
+    "exists": true,
+    "bytes": 4711344482,
+    "keys": [
+      "epoch",
+      "model_state_dict",
+      "optimizer_state_dict",
+      "scheduler_state_dict",
+      "metrics",
+      "config",
+      "global_step",
+      "best_metric",
+      "patience_counter",
+      "best_val_loss",
+      "rng_state",
+      "ema_state_dict"
+    ],
+    "config": {
+      "data": {
+        "attribute_labels": [
+          "GENERAL",
+          "MISCELLANEOUS",
+          "NULL",
+          "PRICES",
+          "QUALITY",
+          "STYLE_OPTIONS"
+        ],
+        "dev_file": "data/subtask_3/ukr/ukr_restaurant_dev_task3.jsonl",
+        "entity_labels": [
+          "AMBIENCE",
+          "DRINKS",
+          "FOOD",
+          "LOCATION",
+          "NULL",
+          "RESTAURANT",
+          "SERVICE"
+        ],
+        "max_seq_length": 256,
+        "test_file": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+        "train_file": "data/subtask_3/ukr/ukr_restaurant_train_v13b_inductive.jsonl",
+        "num_workers": 4,
+        "prefetch_factor": 2
+      },
+      "device": "cuda",
+      "evaluation": {
+        "metrics": [
+          "continuous_f1",
+          "exact_f1",
+          "va_rmse",
+          "va_mae"
+        ],
+        "va_tolerance": 0.5
+      },
+      "model": {
+        "dropout": 0.1,
+        "encoder_name": "microsoft/mdeberta-v3-base",
+        "hidden_size": 768,
+        "num_attribute_labels": 6,
+        "num_entity_labels": 7,
+        "rethink": {
+          "enabled": true,
+          "label_embedding_dim": 64,
+          "num_iterations": 2
+        },
+        "use_crf": false,
+        "va_hidden_size": 256,
+        "va_max": 9.0,
+        "va_min": 1.0
+      },
+      "seed": 1024,
+      "training": {
+        "batch_size": 8,
+        "ema": {
+          "decay": 0.999,
+          "enabled": true
+        },
+        "encoder_lr": 1.5e-05,
+        "fgm": {
+          "enabled": true,
+          "epsilon": 0.1
+        },
+        "head_lr": 7.5e-05,
+        "learning_rate": 1.5e-05,
+        "loss_weights": {
+          "attribute": 1.0,
+          "consistency": 0.5,
+          "entity": 1.0,
+          "pair": 1.0,
+          "span": 2.0,
+          "va": 1.0,
+          "va_arousal": 2.0,
+          "va_valence": 1.0
+        },
+        "max_grad_norm": 1.0,
+        "num_epochs": 30,
+        "patience": 8,
+        "save_dir": "checkpoints/v13b_ukr_inductive_seed1024",
+        "save_top_k": 3,
+        "warmup_ratio": 0.1,
+        "weight_decay": 0.01
+      }
+    },
+    "epoch": 24,
+    "metrics": {
+      "continuous_f1": 0.4204921304060701,
+      "continuous_recall": 0.42255336633943313,
+      "continuous_precision": 0.41845090647206,
+      "tp_categorical": 48.0,
+      "fn_categorical": 54.0,
+      "fp_categorical": 55.0,
+      "exact_f1": 0.4682926829268293,
+      "exact_recall": 0.47058823529411764,
+      "exact_precision": 0.46601941747572817,
+      "valence_rmse": 0.6676560366935458,
+      "arousal_rmse": 1.1427443210680739,
+      "va_rmse": 1.3234912794071092,
+      "valence_mae": 0.5022916666666667,
+      "arousal_mae": 0.9656250000000001,
+      "val_loss": 4.703291455904643
+    }
+  }
+]

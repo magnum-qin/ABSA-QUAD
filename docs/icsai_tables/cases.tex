@@ -1,0 +1,14 @@
+\begin{table*}[t]
+\centering\small
+\caption{Deterministically selected English restaurant dev examples (seed 42). IDs omit the common \texttt{rest26\_asqp\_dev\_} prefix. Cases illustrate outcomes, not their prevalence or cause. All categorical comparisons lowercase strings.}
+\label{tab:cases}
+\begin{tabular}{lp{5.1cm}p{10.0cm}}
+\toprule
+ID & Input sentence & Observed outputs \\
+\midrule
+2 & Customer service was fantastic and food was awesome & A recovers both gold categorical triples. For Customer service/fantastic, gold V/A is 7.33/7.33 and A predicts 8.26/8.33. B splits Customer service into two aspect spans; C preserves the gold categorical structure. \\
+29 & Service is attentive and they got my picky order straight & Gold contains one Service/attentive triple. A predicts that triple plus an extra NULL/attentive triple; B and C predict only the gold categorical triple. Their V/A values still differ from the gold annotation. \\
+23 & Mac 'n Cheese was good and a little spicy & Gold associates the aspect with both good and a little spicy. A recovers both categorical triples; B and C retain only good. All categories in this example are FOOD\#QUALITY. \\
+\bottomrule
+\end{tabular}
+\end{table*}

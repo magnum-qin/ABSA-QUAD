@@ -1,0 +1,13 @@
+test_all_configs_match_frozen_run_design (test_icsai_control.ControlTest) ... ok
+test_checkpoint_restores_c_arm_and_ema (test_icsai_control.ControlTest) ... ok
+test_duplicate_votes_and_wrong_order_rejected (test_icsai_control.ControlTest) ... ok
+test_earliest_best_even_at_zero_and_no_early_stop (test_icsai_control.ControlTest) ... ok
+test_initial_weights_rng_and_legacy_b_parity (test_icsai_control.ControlTest) ... ok
+test_real_loss_optimizer_step_all_arms (test_icsai_control.ControlTest) ... ok
+test_sampler_ignores_dropout_and_can_resume_epoch (test_icsai_control.ControlTest) ... ok
+test_zero_feedback_causal_path_and_gradients (test_icsai_control.ControlTest) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.162s
+
+OK

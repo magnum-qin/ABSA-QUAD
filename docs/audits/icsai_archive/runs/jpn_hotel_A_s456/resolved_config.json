@@ -1,0 +1,91 @@
+{
+  "icsai": {
+    "run_id": "jpn_hotel_A_s456",
+    "arm": "A",
+    "dataset": "jpn_hotel",
+    "design_sha256": "8fba66acbc7e17d0b43c7fd81c343440f111c720103df2d3af1b70df77d3922e",
+    "encoder_revision": "a0484667b22365f84929a935b5e50a51f71f159d",
+    "train_sha256": "e552138b01717a9c80d7bb0875f009debb1209f69a6e323aef418347557d7cb3",
+    "dev_sha256": "70c6c21de271ef90daec4a66a6cd14a66d2ea8eb85f01f8bd5d070e41db5e8e8",
+    "prediction_dir": "predictions/icsai_phase1/jpn_hotel_A_s456"
+  },
+  "model": {
+    "encoder_name": "/home/g24tka12/.cache/huggingface/hub/models--microsoft--mdeberta-v3-base/snapshots/a0484667b22365f84929a935b5e50a51f71f159d",
+    "hidden_size": 768,
+    "num_entity_labels": 8,
+    "num_attribute_labels": 9,
+    "va_hidden_size": 256,
+    "dropout": 0.1,
+    "va_min": 1.0,
+    "va_max": 9.0,
+    "use_crf": false,
+    "use_uml": false,
+    "category_embed_dim": 0,
+    "rethink": {
+      "enabled": false,
+      "num_iterations": 2,
+      "label_embedding_dim": 64
+    }
+  },
+  "data": {
+    "train_file": "data/icsai_phase1/gold_clean/jpn_hotel.jsonl",
+    "dev_file": "data/subtask_3/jpn/jpn_hotel_dev_task3.jsonl",
+    "max_seq_length": 256,
+    "num_workers": 0,
+    "entity_labels": [
+      "FACILITIES",
+      "FOOD_DRINKS",
+      "HOTEL",
+      "LOCATION",
+      "NULL",
+      "ROOMS",
+      "ROOM_AMENITIES",
+      "SERVICE"
+    ],
+    "attribute_labels": [
+      "CLEANLINESS",
+      "COMFORT",
+      "DESIGN_FEATURES",
+      "GENERAL",
+      "MISCELLANEOUS",
+      "NULL",
+      "PRICE",
+      "QUALITY",
+      "STYLE_OPTIONS"
+    ]
+  },
+  "training": {
+    "batch_size": 8,
+    "gradient_accumulation_steps": 1,
+    "num_epochs": 30,
+    "patience": 31,
+    "encoder_lr": 1.5e-05,
+    "head_lr": 7.5e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_grad_norm": 1.0,
+    "fgm": {
+      "enabled": true,
+      "epsilon": 0.1,
+      "warmup_guard": "same existing trainer rule for all arms"
+    },
+    "ema": {
+      "enabled": true,
+      "decay": 0.999
+    },
+    "loss_weights": {
+      "span": 2.0,
+      "pair": 1.0,
+      "entity": 1.0,
+      "attribute": 1.0,
+      "va": 1.0,
+      "va_valence": 1.0,
+      "va_arousal": 2.0,
+      "consistency": 0.5
+    },
+    "save_top_k": 1,
+    "save_dir": "checkpoints/icsai_phase1/jpn_hotel_A_s456"
+  },
+  "seed": 456,
+  "device": "cuda"
+}

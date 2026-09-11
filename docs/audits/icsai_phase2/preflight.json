@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "scope": "Actual offline pretrained initialization only; no optimizer steps, dev/test evaluation or performance claims.",
+  "design_sha256": "8fba66acbc7e17d0b43c7fd81c343440f111c720103df2d3af1b70df77d3922e",
+  "core_datasets": [
+    "eng_restaurant",
+    "zho_restaurant",
+    "tat_restaurant"
+  ],
+  "core_initialization": {
+    "42": {
+      "A": {
+        "full_sha256": "83e92a9d1e0b90ba1900a07811c72a0f702c9b2bbd402edef7cbc861fc05f623",
+        "shared_sha256": "83e92a9d1e0b90ba1900a07811c72a0f702c9b2bbd402edef7cbc861fc05f623",
+        "total_parameters": 282528790
+      },
+      "B": {
+        "full_sha256": "5a6393fa7d591a353c399487f20d14816e6fc28ea90a2ff2c8db916b5bca90c3",
+        "shared_sha256": "83e92a9d1e0b90ba1900a07811c72a0f702c9b2bbd402edef7cbc861fc05f623",
+        "total_parameters": 297125356
+      },
+      "C": {
+        "full_sha256": "5a6393fa7d591a353c399487f20d14816e6fc28ea90a2ff2c8db916b5bca90c3",
+        "shared_sha256": "83e92a9d1e0b90ba1900a07811c72a0f702c9b2bbd402edef7cbc861fc05f623",
+        "total_parameters": 297125356
+      }
+    },
+    "123": {
+      "A": {
+        "full_sha256": "6b9e6176362bb678f7da7777df5249df31b07e1f9cc0e8017e62c1ce056ce55a",
+        "shared_sha256": "6b9e6176362bb678f7da7777df5249df31b07e1f9cc0e8017e62c1ce056ce55a",
+        "total_parameters": 282528790
+      },
+      "B": {
+        "full_sha256": "d530a067ac3213a532b21398b87c650ed45f30c9298ddada10214f9b25f4fbc9",
+        "shared_sha256": "6b9e6176362bb678f7da7777df5249df31b07e1f9cc0e8017e62c1ce056ce55a",
+        "total_parameters": 297125356
+      },
+      "C": {
+        "full_sha256": "d530a067ac3213a532b21398b87c650ed45f30c9298ddada10214f9b25f4fbc9",
+        "shared_sha256": "6b9e6176362bb678f7da7777df5249df31b07e1f9cc0e8017e62c1ce056ce55a",
+        "total_parameters": 297125356
+      }
+    },
+    "456": {
+      "A": {
+        "full_sha256": "6764597ca853d0d3d3b203ba2c661d600c13211a1418c41c3bbfe00e8279e22a",
+        "shared_sha256": "6764597ca853d0d3d3b203ba2c661d600c13211a1418c41c3bbfe00e8279e22a",
+        "total_parameters": 282528790
+      },
+      "B": {
+        "full_sha256": "4285971c749161bff5ec8dd2ed28fad7d9e5779e4c4929586b59d6338939eecf",
+        "shared_sha256": "6764597ca853d0d3d3b203ba2c661d600c13211a1418c41c3bbfe00e8279e22a",
+        "total_parameters": 297125356
+      },
+      "C": {
+        "full_sha256": "4285971c749161bff5ec8dd2ed28fad7d9e5779e4c4929586b59d6338939eecf",
+        "shared_sha256": "6764597ca853d0d3d3b203ba2c661d600c13211a1418c41c3bbfe00e8279e22a",
+        "total_parameters": 297125356
+      }
+    }
+  },
+  "config_sha256": {
+    "configs/icsai_phase2/eng_restaurant_A_s42.json": "b78b40aa130804f0b7b36cf6572f1e2fde50ea4cf81ecf7b4e93156cc76f7868",
+    "configs/icsai_phase2/eng_restaurant_A_s123.json": "3127d20a6e28799d8b068a27ce43015549ac849a3da76e5895c6b4a4044ac44e",
+    "configs/icsai_phase2/eng_restaurant_A_s456.json": "8571d7c1d7bd6702e59f6d08e362becb3c6e87d63aec64f5a5013cd4e508883f",
+    "configs/icsai_phase2/eng_restaurant_B_s42.json": "e4f2b488187247f533a647a993e2f2f4a86c0b1810403ea35ff30607b77f56ea",
+    "configs/icsai_phase2/eng_restaurant_B_s123.json": "664af3b074b8c50ed737ad3c429a06b870f02699c5a8970220cecbd294ace52c",
+    "configs/icsai_phase2/eng_restaurant_B_s456.json": "3396228c8020d6a4404136e9403937dcd133c449cb4d981be378c9c0604c93e5",
+    "configs/icsai_phase2/eng_restaurant_C_s42.json": "104a692a219e2ea3191a97a6fd6005a6770e3b058ba970814352eb35fb702ef7",
+    "configs/icsai_phase2/eng_restaurant_C_s123.json": "6da41ff908b15f70d775aa0c5bd1e607d40995922621c505e497e70d93ccf508",
+    "configs/icsai_phase2/eng_restaurant_C_s456.json": "68964e5ab0a5f8dcaae0aa633e53b17f6f4fbbaa33a5e619153da92ac77b577d",
+    "configs/icsai_phase2/eng_laptop_A_s42.json": "0ac2055ecbc760b489b4bb3f4085554e76045de0b69cfff7a8e9967e21157cf8",
+    "configs/icsai_phase2/eng_laptop_A_s123.json": "33f08b441022bcc3764782b4961f957bb254c2a6dba79b0707f7447d0b498381",
+    "configs/icsai_phase2/eng_laptop_A_s456.json": "51b07efa800b56b29a8512b48a48b3a100e5c0e7d6c609dff7d07ff4d813d472",
+    "configs/icsai_phase2/jpn_hotel_A_s42.json": "b337003201d273a242f0d078d4f42e514b493a05f798936c6a04eb185dd51997",
+    "configs/icsai_phase2/jpn_hotel_A_s123.json": "424ffa1770a370016086b51113e1d52133e162def0147ad4aab77aaa3942e1ce",
+    "configs/icsai_phase2/jpn_hotel_A_s456.json": "8ea03f29fb91f509cb62e8c790711896443328d8fc0525e7503aa9d42638ff2c",
+    "configs/icsai_phase2/rus_restaurant_A_s42.json": "77d835598f3b50b0d386445e9518d5b4e0cffcdf4898113194c4c67bdc9ed83b",
+    "configs/icsai_phase2/rus_restaurant_A_s123.json": "088f716b5a3db4f8391257734a7206faf54c211ee3aa694612a9bb6f49c9222c",
+    "configs/icsai_phase2/rus_restaurant_A_s456.json": "1754a861699d5653d27adad260885e8c96da4fb42283b44249f9beba006b5f9f",
+    "configs/icsai_phase2/tat_restaurant_A_s42.json": "d1d165fb070a8e75bfda54904dc3aac67a0f92b285b0396fb5c457c1667b6f23",
+    "configs/icsai_phase2/tat_restaurant_A_s123.json": "6354427404efff0350e018a764813ec53addf884b5341b4db04273a5f77d443c",
+    "configs/icsai_phase2/tat_restaurant_A_s456.json": "8a126a328d7f80f0160cbe4af76f0d669b0a1bbf5f8c48b4e3fdde36404af63f",
+    "configs/icsai_phase2/tat_restaurant_B_s42.json": "d9a0fac56bb32c2bc56c680e19b0205f9bda54261ec960939d87cc35dc5afb08",
+    "configs/icsai_phase2/tat_restaurant_B_s123.json": "9b5c7650001db1bffb7d71db3160c80a97c54bbb74985749c354694af41a0e72",
+    "configs/icsai_phase2/tat_restaurant_B_s456.json": "0d6a33d77141d331e8962a033c27833085c24c464663fd074e0674d83ad1456f",
+    "configs/icsai_phase2/tat_restaurant_C_s42.json": "e32881e6912aeb9a9e3eaf5c56012361e2f79e6b144d1ae31e5a3f0414d3b289",
+    "configs/icsai_phase2/tat_restaurant_C_s123.json": "ab90d0d49702d4e99882229e28a4f88042c30a99ae9940510f0dd920878ce68b",
+    "configs/icsai_phase2/tat_restaurant_C_s456.json": "5085e4ab9bd0a416a7bd0cefcc8077ccee828bcb5e7c1d5b230a04f32e49d3e7",
+    "configs/icsai_phase2/ukr_restaurant_A_s42.json": "b0d330c21f9e941d8680499f40b2e1353ff8025c80575759efe392b72005b3e5",
+    "configs/icsai_phase2/ukr_restaurant_A_s123.json": "0ee1a1fe91d9c47c1070805c15c9c3b834c0672112b156767770bafc8281992d",
+    "configs/icsai_phase2/ukr_restaurant_A_s456.json": "ac54e4ebb6e6595df6f1fbc73c0d1427cb6aa6ba66fa52006917cb933dedef1b",
+    "configs/icsai_phase2/zho_restaurant_A_s42.json": "e25d51bce387b0aaf194c8b77ab75aa204e25f7e2d9ef5a58ca66da463988584",
+    "configs/icsai_phase2/zho_restaurant_A_s123.json": "bd5f8610baeb939d4dc7112b46cb34f4b01d4d47ab201e048748173cb5c91e41",
+    "configs/icsai_phase2/zho_restaurant_A_s456.json": "c20ac22bef763630f389710db481f8d5f746a864d6a3883127de563cff751e0d",
+    "configs/icsai_phase2/zho_restaurant_B_s42.json": "de9195ec28a75e0f3f1faa01d9a9e7777beb480fb3444db9a0c0d496cdaa17f5",
+    "configs/icsai_phase2/zho_restaurant_B_s123.json": "e219ede090604dde2f0c5eea18b01add20a7e1b403c3198408c67e1355e2a3eb",
+    "configs/icsai_phase2/zho_restaurant_B_s456.json": "bfb154e1bf429f5ad3af066c94e442342c1e9527fb3f7f4bb695d4f488538a42",
+    "configs/icsai_phase2/zho_restaurant_C_s42.json": "69ebcba507f31b042c0a07edf89a0400ecec30586e58d942e0f5d0b3f737feda",
+    "configs/icsai_phase2/zho_restaurant_C_s123.json": "5a4b37b46d90c03fe274c70ab6041de0bf0465bde7216839fc3c96ee99b3b007",
+    "configs/icsai_phase2/zho_restaurant_C_s456.json": "8dfd3864cef0ea2f528d52d0c2d0266cce725c68dcb9352b4f622d6ad0ffc4c2",
+    "configs/icsai_phase2/zho_laptop_A_s42.json": "9d0b4ae56f96506bd2fe5a1d1c58a4a8970f321548496c0e19d65b5547415462",
+    "configs/icsai_phase2/zho_laptop_A_s123.json": "3f547d5cafec8cb169425125e260c49b25b0b7f2cc05f8b93c01c0a1c7370e25",
+    "configs/icsai_phase2/zho_laptop_A_s456.json": "553e211dc90986d36eb77ee0e00458c46a979cc93b6dafee0ebcfe83ae5705a5"
+  },
+  "implementation_sha256": {
+    "src/models/icsai_control.py": "93518997591e070c54e21ba1eb439d42bc9c1be862fa486995d0ff016e1735ca",
+    "scripts/icsai/control_runtime.py": "421615f75af22e81e4df61c805c89a75ad2d9edd0826e3fe080f66b78ea4f3d5",
+    "scripts/icsai/run_control.py": "6ee303a55e30a2499e6f20be493962228f0a85fa96ee9c0dd17eb0b523637ecc",
+    "scripts/icsai/prepare_control.py": "864469eaba34085dc62f477253faefe9572255f5c6e7e37ddf0eae06845ca243",
+    "src/models/dimabsa_model.py": "d75097a0c2f00af6a11f689a1d806b006ed603d90ec513fe246eb60115d87a9b",
+    "src/models/feature_rethink.py": "2a5e4f954ec598c300da906b9a1057b1874f99ca2d18cba8fcb094f0ae603c30",
+    "src/models/va_module.py": "d1e3edc68969ff768c50decb9c2121dd81bb9f4b85760dbefd3123f2d9555d22",
+    "src/data/dataset.py": "dda97dd6d8d406123e4c31f925a7392a1a81694b0477d6b1eaf1f6f5eda707ba",
+    "src/evaluation/metrics.py": "795c637e441606bb764cadf7305e35a7cfa20240fe0a3d03ca300cf23030bb31",
+    "scripts/train.py": "da5ed0539e8261a44824b966d8dc52963903899012dd4ca8c7e299f4e512580a",
+    "scripts/inference.py": "82cf80c44e93e55e98810c4aed06bad9d7b3a346d5c75580b7282e4dde45a476"
+  },
+  "torch_version": "2.10.0+cu128",
+  "pretrained_revision": "a0484667b22365f84929a935b5e50a51f71f159d"
+}

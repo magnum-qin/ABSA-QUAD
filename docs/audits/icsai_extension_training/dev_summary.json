@@ -1,0 +1,40 @@
+{
+  "scope": "Dev-selected single-model results only; no test scoring or significance claims.",
+  "groups": [
+    {
+      "dataset": "eng_laptop",
+      "arm": "A",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.26455699330959803,
+      "dev_cf1_sample_sd": 0.008822807724702113
+    },
+    {
+      "dataset": "jpn_hotel",
+      "arm": "A",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.2770381096911095,
+      "dev_cf1_sample_sd": 0.009948771122237462
+    },
+    {
+      "dataset": "rus_restaurant",
+      "arm": "A",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.39476872566813676,
+      "dev_cf1_sample_sd": 0.02483456303763979
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "arm": "A",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.3756671919557119,
+      "dev_cf1_sample_sd": 0.02424661281042435
+    },
+    {
+      "dataset": "zho_laptop",
+      "arm": "A",
+      "n_seeds": 3,
+      "dev_cf1_mean": 0.33917422303653844,
+      "dev_cf1_sample_sd": 0.008751201033683308
+    }
+  ]
+}

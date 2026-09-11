@@ -1,0 +1,596 @@
+[
+  {
+    "original": "docs/audits/icsai_core_analysis/test_freeze.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_analysis/test_freeze.log.gz",
+    "sha256": "aa780906dda789491035cff7057800169eca60db090315ad4e2bd8798619c4f8",
+    "bytes": 1132
+  },
+  {
+    "original": "docs/audits/icsai_core_analysis/analysis.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_analysis/analysis.log.gz",
+    "sha256": "b77ffdbb650ef25583a8b4407e5b384f0ac807e73748d5aa9b34f121bb6d5882",
+    "bytes": 3734
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/queue.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/queue.log.gz",
+    "sha256": "aa31b5166b56de11086a1a2ea4e2776f151f6e6b64c76e04704ecd11e00ddb41",
+    "bytes": 13200
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/jpn_hotel_A_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/jpn_hotel_A_s456.train.log.gz",
+    "sha256": "62fe9f011e91542ffe184dd5e756189fc97266c9714c4dbb198d547c01a15430",
+    "bytes": 1189283
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/eng_laptop_A_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/eng_laptop_A_s123.train.log.gz",
+    "sha256": "3ee117041857cdb47475c959ca8c272b1558d12fe41bb5fd3cd3d612beef93c6",
+    "bytes": 2982411
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/jpn_hotel_A_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/jpn_hotel_A_s42.train.log.gz",
+    "sha256": "36965d52158f7be49ddc5e6c7a23da5711fd00d0c51ce41131bf05121e25fc28",
+    "bytes": 1189595
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/zho_laptop_A_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/zho_laptop_A_s456.predict-dev.log.gz",
+    "sha256": "b6016b116a61f5ec35c8d05f20a887d62c3ad965a4ab19006a4a1e74d88c5f7c",
+    "bytes": 1044
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/rus_restaurant_A_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/rus_restaurant_A_s456.predict-dev.log.gz",
+    "sha256": "ea431ca48575988655bd1f9173a8e1e956aa01260eb75ac16cebf3ccb0e1a67f",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/jpn_hotel_A_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/jpn_hotel_A_s123.predict-dev.log.gz",
+    "sha256": "c185ded3f369eff3dc1485efabe367207f723bacf16430e965b8fb3da957ab83",
+    "bytes": 1043
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/ukr_restaurant_A_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/ukr_restaurant_A_s123.predict-dev.log.gz",
+    "sha256": "b846f892ffe9728e38d1a2396c0b778f8d50f9f76715c8f3db36c5f5f86aac0e",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/zho_laptop_A_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/zho_laptop_A_s123.train.log.gz",
+    "sha256": "d1532c57740bad24fabfbb43df58a4508a3d9c2d64693104b4ce7780c98b4901",
+    "bytes": 2574895
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/eng_laptop_A_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/eng_laptop_A_s123.predict-dev.log.gz",
+    "sha256": "76aa8bc9e37be30f90a6d8f0da8b2ecceda9b697da579c96b66b08f8ad165a17",
+    "bytes": 1044
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/rus_restaurant_A_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/rus_restaurant_A_s42.predict-dev.log.gz",
+    "sha256": "e34ff011cdd581ba2343de1e2736fec176183eef2fa63ef0a9b418cdee417517",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/eng_laptop_A_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/eng_laptop_A_s456.predict-dev.log.gz",
+    "sha256": "1e7c92e4398cd1a1e9edb72ee19971bdc5a52b22929e384f4b5d860deb75b0ff",
+    "bytes": 1044
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/rus_restaurant_A_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/rus_restaurant_A_s123.predict-dev.log.gz",
+    "sha256": "b84b8a959365c904afef0c866830e00a8afbc85d96a903f298a4b822ff2d8fe5",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/zho_laptop_A_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/zho_laptop_A_s42.train.log.gz",
+    "sha256": "9aea1b61b648019a8d3de1b321dafa79bb581924430dabadded8895d24683cb8",
+    "bytes": 2574508
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/eng_laptop_A_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/eng_laptop_A_s42.predict-dev.log.gz",
+    "sha256": "706194dcd9c0d4b2a40dc22822c9002766a19b31e35e2183f6ab4e089f656092",
+    "bytes": 1043
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/ukr_restaurant_A_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/ukr_restaurant_A_s456.train.log.gz",
+    "sha256": "5738f19444ad101f826760f26e4e1655102343457a9394738248044696a03123",
+    "bytes": 909713
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/ukr_restaurant_A_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/ukr_restaurant_A_s456.predict-dev.log.gz",
+    "sha256": "0858e872662a9f16a35f2b2ae1fc407f99d37b1a2b7682688f9314cdf3bb6e94",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/rus_restaurant_A_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/rus_restaurant_A_s42.train.log.gz",
+    "sha256": "9230a77200b114f665711fd53e712406548f8e5960992f20ce86127716c136c3",
+    "bytes": 911403
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/jpn_hotel_A_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/jpn_hotel_A_s123.train.log.gz",
+    "sha256": "ae6c55f390eb531538375c05811d271d7350e1f428e59f001c78119aaccc7ad9",
+    "bytes": 1188964
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/eng_laptop_A_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/eng_laptop_A_s456.train.log.gz",
+    "sha256": "c8f543175bb0ff51d40e38dd493db9a5cb5f6f0f468411e27965c39fc1802d90",
+    "bytes": 2982164
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/zho_laptop_A_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/zho_laptop_A_s42.predict-dev.log.gz",
+    "sha256": "f6f1587d1d8b5943c62be4293b1b65bde0d882301e3151da3a7f6769573e55aa",
+    "bytes": 1043
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/zho_laptop_A_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/zho_laptop_A_s123.predict-dev.log.gz",
+    "sha256": "b76c9910a358b0dfcbc5fb779310d06f7fa9e57e91441a85f6c156ca5057f74e",
+    "bytes": 1044
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/zho_laptop_A_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/zho_laptop_A_s456.train.log.gz",
+    "sha256": "03fb2529d45b7f0b157c9188b571f45bc5f266ce0a95ef814c127485aa969db9",
+    "bytes": 2573925
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/ukr_restaurant_A_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/ukr_restaurant_A_s42.train.log.gz",
+    "sha256": "090f2188072c99eff587ee025c6b857c9505f6e81c377d001a4d9b58e9fb4040",
+    "bytes": 908987
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/rus_restaurant_A_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/rus_restaurant_A_s123.train.log.gz",
+    "sha256": "d74c12e483b110cb9fa2d420635d60ef661a4cb0b6e5a1cb8f6fe6e5a82f50fd",
+    "bytes": 909754
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/eng_laptop_A_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/eng_laptop_A_s42.train.log.gz",
+    "sha256": "6295cdfafa059b21b3ad118634ce064293b3e086f2b3fd5cea9ea35f2d55ef22",
+    "bytes": 2981639
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/jpn_hotel_A_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/jpn_hotel_A_s456.predict-dev.log.gz",
+    "sha256": "52a81714d8422914c910cb33219a0c04f2b2f655ed55728e82802429c9658d4e",
+    "bytes": 1043
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/jpn_hotel_A_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/jpn_hotel_A_s42.predict-dev.log.gz",
+    "sha256": "3f9e2cba4d52cc843898be96a47babcdfb21ae32bdec0a8ff7a7700bc1548d95",
+    "bytes": 1042
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/ukr_restaurant_A_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/ukr_restaurant_A_s42.predict-dev.log.gz",
+    "sha256": "acfc5e162faa886f3dcdf3334da5ef3160e1e408d2254d3a0f10f45f3b72d29a",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/rus_restaurant_A_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/rus_restaurant_A_s456.train.log.gz",
+    "sha256": "933f414d59fcb21df184f6793fb818ddcf232dd828a689552b9482be6c8f1edf",
+    "bytes": 910046
+  },
+  {
+    "original": "docs/audits/icsai_extension_training/ukr_restaurant_A_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_training/ukr_restaurant_A_s123.train.log.gz",
+    "sha256": "d86c7266dcb294a2b24626d8c0250b1ea62c08c6b74f487afad11c5b5b190c03",
+    "bytes": 908110
+  },
+  {
+    "original": "docs/audits/icsai_cost/run.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_cost/run.log.gz",
+    "sha256": "51f787184d811df6e6646268a15dae1a7ae158ed6322f615cbb84212442e6651",
+    "bytes": 4249
+  },
+  {
+    "original": "docs/audits/icsai_phase2/unit_tests.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_phase2/unit_tests.log.gz",
+    "sha256": "19f9ec96b67d678a009c18f7436adcbeaf50d1e3006f3a58644e9b5a41b16e4e",
+    "bytes": 773
+  },
+  {
+    "original": "docs/audits/icsai_phase2/phase1_verification.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_phase2/phase1_verification.log.gz",
+    "sha256": "9079dd40692e48ca9ae226ca50b1612f07b1990824ab7a556854e9b1b3ecce3d",
+    "bytes": 846
+  },
+  {
+    "original": "docs/audits/icsai_phase2/gpu_smoke_attempt1_stale_gate.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_phase2/gpu_smoke_attempt1_stale_gate.log.gz",
+    "sha256": "02649491030cdd25f2cca64908111437a668ebbfd9e99b58ce2dedead49313a1",
+    "bytes": 557
+  },
+  {
+    "original": "docs/audits/icsai_phase2/tokenizer_check.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_phase2/tokenizer_check.log.gz",
+    "sha256": "8c6de967322b5ba9b32682c5dc570edcbb8e701e565535551cf0838ede146cf7",
+    "bytes": 1086
+  },
+  {
+    "original": "docs/audits/icsai_phase2/gpu_smoke.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_phase2/gpu_smoke.log.gz",
+    "sha256": "674605fc04ca25846bb7574d8d07b4ec3147c472de0ad216f7e865c79e34ec0f",
+    "bytes": 7764
+  },
+  {
+    "original": "docs/audits/icsai_phase2/preflight.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_phase2/preflight.log.gz",
+    "sha256": "9da930546fa9a2fb684ea111cd64b7483df6619839b44827b348ad1a5739e585",
+    "bytes": 2029
+  },
+  {
+    "original": "docs/audits/icsai_extension_test/pipeline.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_extension_test/pipeline.log.gz",
+    "sha256": "e6a98c8199d8fbb94f6b2c7cf4b9cdde704d44a20f7ea0e5867db1862dadb8df",
+    "bytes": 12096
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_C_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_C_s42.predict-dev.log.gz",
+    "sha256": "f548bfc19c53d155075892c5c6349f5a78d9f05a10ad6dd62e0d8bd9a03a0262",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_A_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_A_s456.train.log.gz",
+    "sha256": "1665e07f90fbba2b36a68d15685494e8370efb0a1ad2dc2148e9f39705a9a75e",
+    "bytes": 1686102
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_A_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_A_s42.predict-dev.log.gz",
+    "sha256": "4dc42c814a66d40f29f19528b17282519b7927153a50ec32cb20d652aa4391d7",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_A_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_A_s123.train.log.gz",
+    "sha256": "0f9a2e0eb82bcb6a5ebfdcaee96916ab0fffeb8ae7ef225c627a37dead6b9abe",
+    "bytes": 1687696
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_B_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_B_s123.train.log.gz",
+    "sha256": "7d1466246e2524c99c4e400129f6c04905a1d3f1a84d977b2efebe062f2de99e",
+    "bytes": 4463200
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_B_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_B_s456.predict-dev.log.gz",
+    "sha256": "00b22641d35760562fa949935811071d991bd5ff54e9eb85bca3b962fdd416c0",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_A_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_A_s123.predict-dev.log.gz",
+    "sha256": "8ce2cf6fd08223e335f7c1cd94f637df89f8bb6eff900dd935516ad703e1e77e",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_A_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_A_s456.train.log.gz",
+    "sha256": "b43fa52817da402def5f7289e44d9ebf793a19f0b0bf475a96056e27b9dab80c",
+    "bytes": 910392
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_C_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_C_s456.train.log.gz",
+    "sha256": "92a289a548e5fceb7f9c75086b4508e24f441bbbba2a4975d9fdba06b48bf689",
+    "bytes": 1690826
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_C_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_C_s42.predict-dev.log.gz",
+    "sha256": "3d5103cbed6d9e31f65b31e8b849695e01d11abc9b995ed615ee97e075844b2c",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_A_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_A_s123.train.log.gz",
+    "sha256": "1b1b9d63eff394bdfd97da112572afb7a5652132671093cd300b3af591b28476",
+    "bytes": 4427711
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_A_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_A_s456.predict-dev.log.gz",
+    "sha256": "334d7167b46e94e913e91e2ab0062dd17efcd36f9fb408b5d9eb9933d3a9c1eb",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_B_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_B_s42.train.log.gz",
+    "sha256": "3cd075766b30e46f16b8a9fbf5111b5858ba5929462328b8fd8d167787396701",
+    "bytes": 1692914
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_A_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_A_s42.predict-dev.log.gz",
+    "sha256": "82e1f08b2c753a0996fd4624c0e8380f96b1181613883ef8eb320804407e3933",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_C_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_C_s123.train.log.gz",
+    "sha256": "b7cd0d4095c0bca0b37eed4f661445c0e6c47e8cf71341817f026b5db8be08df",
+    "bytes": 915552
+  },
+  {
+    "original": "docs/audits/icsai_core_training/supervisor.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/supervisor.log.gz",
+    "sha256": "c3ddd26fd720848dde3d8eb205886074d2d63a94ee37c8ba159767ab2762fc9e",
+    "bytes": 23751
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_C_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_C_s123.train.log.gz",
+    "sha256": "58187805feef64ea907d2f6a084809fb20be1e4a5c2d8677ae7f9149936d3a89",
+    "bytes": 1695272
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_B_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_B_s42.train.log.gz",
+    "sha256": "37cf8f23fcb4db282a446f3d73ada79d022d1954355e5b19ef8d8a8eabd69e9e",
+    "bytes": 4463010
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_B_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_B_s42.predict-dev.log.gz",
+    "sha256": "cbe5b13e79650fdffad1a498fa741f600580e5511b260d25eca71ec637e4cb93",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_C_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_C_s456.train.log.gz",
+    "sha256": "6e48a4eab25bdb964983c3467d5db3f1219e17d1ce573b86de05da721498fc68",
+    "bytes": 914899
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_A_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_A_s42.train.log.gz",
+    "sha256": "a7db904f77c959c185ea72149a7a56ebc08027a5e7513c2b371483416d445033",
+    "bytes": 4428511
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_C_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_C_s123.train.log.gz",
+    "sha256": "01947356651c8abdf80fffa773f37a76699ffa1250ab53f81f6c962db77f7259",
+    "bytes": 4464449
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_C_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_C_s42.train.log.gz",
+    "sha256": "ab4676a22c8513eca6a57a46afca0bf34e9b7f4e2c8bcccc6b596c988c912b21",
+    "bytes": 4464277
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_A_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_A_s456.train.log.gz",
+    "sha256": "d02e494c1d469a47080e0791c3ab498012089d0718a915cd388ea8dba4e54808",
+    "bytes": 4426330
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_A_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_A_s42.predict-dev.log.gz",
+    "sha256": "fa9d55ce637284458ec8d315a6dd4596f29a074b3d39ce9d4587fc6605cde22c",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_A_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_A_s123.predict-dev.log.gz",
+    "sha256": "2e939e43b72fb742701d68c1b7b6524578e5a3c7608dfdb6e6db47a6bcd7d05d",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_A_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_A_s42.train.log.gz",
+    "sha256": "5d312e56571091c4be8fbf90cd71ad83c69b7707ae9557e5388ecf6f0a4cc7e9",
+    "bytes": 910504
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_A_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_A_s456.predict-dev.log.gz",
+    "sha256": "ecd039334d34d939a412676c53aa78b1f53dd7e7c767ef8ce52b58912e09b416",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_B_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_B_s123.predict-dev.log.gz",
+    "sha256": "5786788d2cbae4f7d167a1e3708c6ae8c120e991d06aa391a3158e1717a4bf66",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_B_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_B_s456.train.log.gz",
+    "sha256": "67f3b5652ff9c0b5e4c4a60dd2944fe651212ad1e90485628cee7c189d3ae383",
+    "bytes": 915547
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_B_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_B_s42.predict-dev.log.gz",
+    "sha256": "9713df331751550a058f2680e80a7f5b904f230ca76764c508ba8fc26902b545",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_A_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_A_s123.train.log.gz",
+    "sha256": "7d65ab57eac2696154a0856041253d8e41105f2218f27c3b3504e7d1d618bc83",
+    "bytes": 908774
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_B_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_B_s42.train.log.gz",
+    "sha256": "45c94a3c6e9ef1ad416ce8e69b6573f7c7e0fa7686edd7ae5997e379bbd6c3cf",
+    "bytes": 914252
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_A_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_A_s42.train.log.gz",
+    "sha256": "03557f61d99c5058a3da0351ea1d6690c89dbc0b9835be0bbb7a0ef8873da912",
+    "bytes": 1686868
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_A_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_A_s456.predict-dev.log.gz",
+    "sha256": "203008bd3c00b02e59752162840abd792a7991afa52292769294e64e46320686",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_B_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_B_s123.predict-dev.log.gz",
+    "sha256": "79e8ebc14ab8dc624e240b5551d35fdf4f7c8401937bedda87446efdb2221678",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_B_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_B_s456.train.log.gz",
+    "sha256": "aaeb5def7c4cf1c6cb1b7d0fd09b8bca181880197584a28c3b2804210aabbe29",
+    "bytes": 1690929
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_C_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_C_s456.train.log.gz",
+    "sha256": "ea32a9878ebb4eea2f57acdaeb59ceb93b29da77aa0cee00c08955ee2cc179fa",
+    "bytes": 4462404
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_C_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_C_s456.predict-dev.log.gz",
+    "sha256": "65be1a0defc93c4da4d97fb99e640992c11638f6fc71303b088db6ed9ca267c5",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_C_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_C_s42.predict-dev.log.gz",
+    "sha256": "fcffc0bcea9a8c3d42bf343dc73bc33bdecbf021415465d422a0515155e0606e",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_B_s456.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_B_s456.train.log.gz",
+    "sha256": "c9edcec9bc51b8986123a87bcbb177f965b61bcf4c4576e007bba5bb6a7e48a6",
+    "bytes": 4461680
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_B_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_B_s123.train.log.gz",
+    "sha256": "105efb624208dca5c24887443994627cad085dc291ec92260d70456cf9620473",
+    "bytes": 915058
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_C_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_C_s42.train.log.gz",
+    "sha256": "65b936aa1553c199554338dc0a47d8cd2cdd778645ad3552d50667a1585aa26c",
+    "bytes": 1696439
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_B_s42.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_B_s42.predict-dev.log.gz",
+    "sha256": "a080594b72201aa441c2efad9fe6d621639ab572a47ec1aa72f1dc98a3882d05",
+    "bytes": 1047
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_B_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_B_s123.predict-dev.log.gz",
+    "sha256": "30bac18dd91f66f32ea002129b3d74420d1bd88dca4f6832923bb6024eee4e1e",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_C_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_C_s123.predict-dev.log.gz",
+    "sha256": "be8b0420ce0f200dec90533ef05b64f7a6acee4636e5b73ce6cca344adb7dee4",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_C_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_C_s123.predict-dev.log.gz",
+    "sha256": "ab0643f7f1370003ac56d5f4479615c4959de028bc9c5448430a8d9405a4ff33",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_C_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_C_s456.predict-dev.log.gz",
+    "sha256": "82163c0b7aa7ba8cdba4e3515725e826d2bd999781e1e8589239676aeb8535bf",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_B_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_B_s456.predict-dev.log.gz",
+    "sha256": "97876d55db8acb1442e24d036bfb90672c389e58b4326305acf1cc0e773efe91",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_C_s42.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_C_s42.train.log.gz",
+    "sha256": "b28f4e86e56e424243162318fc8c8699736acc97580fd6400389af150b16fa90",
+    "bytes": 915368
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_C_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_C_s123.predict-dev.log.gz",
+    "sha256": "bc3bcc0b70a8443365d118cc4c8c6497dd1b89c207756a819a1e2e71655a3e82",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/zho_restaurant_B_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/zho_restaurant_B_s456.predict-dev.log.gz",
+    "sha256": "b3062722e3a2f46d1f840fe3090ac56bd0121b8bd95fe631de86807680b830ab",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_B_s123.train.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_B_s123.train.log.gz",
+    "sha256": "ddf880412038fa588d1fdd1641fd7d13ff5b3cc45b3bf9ccb2fe7dc3e3bd59d7",
+    "bytes": 1697373
+  },
+  {
+    "original": "docs/audits/icsai_core_training/tat_restaurant_A_s123.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/tat_restaurant_A_s123.predict-dev.log.gz",
+    "sha256": "6ea99d92c530d6e4ac97a8c764146d57d6ea4968c3f2727fffc95caf200f53fa",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_training/eng_restaurant_C_s456.predict-dev.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_training/eng_restaurant_C_s456.predict-dev.log.gz",
+    "sha256": "6745fce7abc0f8fdf229bd8a648ace689de1fc4d6151cf109b22d4d54d8be0c2",
+    "bytes": 1048
+  },
+  {
+    "original": "docs/audits/icsai_core_test/pipeline.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_test/pipeline.log.gz",
+    "sha256": "73591ef57cbe9c00bebfad67bf6f899085e6beab5fd26ad5ec7af70482148f11",
+    "bytes": 17012
+  },
+  {
+    "original": "docs/audits/icsai_core_test/pipeline.initial_launch_exited.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_test/pipeline.initial_launch_exited.log.gz",
+    "sha256": "970bc554d664225c6402f7d280f748a0c32e0c6bcc411e5f4f76df499fc7953a",
+    "bytes": 650
+  },
+  {
+    "original": "docs/audits/icsai_core_test/preflight.log",
+    "archive": "docs/audits/icsai_archive/logs/icsai_core_test/preflight.log.gz",
+    "sha256": "a4b1a3dd732dd75a824078114af3992e67d8060bfe9a090bf4d32838f3209f9e",
+    "bytes": 89
+  }
+]

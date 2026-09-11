@@ -1,0 +1,13 @@
+{
+  "plan_day": "2026-09-11",
+  "status": "complete",
+  "completed_at": "2026-09-10T10:12:39.465061+00:00",
+  "measurements": 60,
+  "checkpoint_loading_records": 9,
+  "pages": 5,
+  "tables": 6,
+  "overfull_boxes": 0,
+  "tex_sha256": "d89d049a8716f14ff29a03ef8ead0d4ac97394fc9b693d13227bf40817b3b2bd",
+  "pdf_sha256": "60c7cc62cc2812d773d35eebf3bb802722f6a1bcddde094b46c392ca33948b98",
+  "assessment": "Share with caveats: fixed English workload, fixed arm order, resident sequential ensemble; not general production latency."
+}

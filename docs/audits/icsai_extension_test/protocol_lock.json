@@ -1,0 +1,302 @@
+{
+  "frozen_at": "2026-09-10T09:03:14.815262+00:00",
+  "design_sha256": "8fba66acbc7e17d0b43c7fd81c343440f111c720103df2d3af1b70df77d3922e",
+  "datasets": [
+    "eng_laptop",
+    "jpn_hotel",
+    "rus_restaurant",
+    "ukr_restaurant",
+    "zho_laptop"
+  ],
+  "models": [
+    {
+      "id": "eng_laptop_A_s42",
+      "dataset": "eng_laptop",
+      "arm": "A",
+      "seed": "42",
+      "best_epoch": "18",
+      "best_dev_cf1": "0.2559172856910053",
+      "global_step": "15300",
+      "train_wall_seconds": "4348.061938618979",
+      "prediction_wall_seconds": "8.26461603899952",
+      "checkpoint": "checkpoints/icsai_phase1/eng_laptop_A_s42/checkpoint_best.pt",
+      "checkpoint_sha256": "33df40d4a0b982745e3ff0972a32c619d59bb04bd0594f40c640ac60b9cd8e83",
+      "checkpoint_bytes": 4521124093,
+      "config_sha256": "0ac2055ecbc760b489b4bb3f4085554e76045de0b69cfff7a8e9967e21157cf8"
+    },
+    {
+      "id": "jpn_hotel_A_s42",
+      "dataset": "jpn_hotel",
+      "arm": "A",
+      "seed": "42",
+      "best_epoch": "30",
+      "best_dev_cf1": "0.269901311846274",
+      "global_step": "6000",
+      "train_wall_seconds": "2719.84014777001",
+      "prediction_wall_seconds": "8.294585255003767",
+      "checkpoint": "checkpoints/icsai_phase1/jpn_hotel_A_s42/checkpoint_best.pt",
+      "checkpoint_sha256": "f61cdf1fa906d7393fdea105e54cb66cdc790cf7bc8b9d1045f769b99af42bde",
+      "checkpoint_bytes": 4520914621,
+      "config_sha256": "b337003201d273a242f0d078d4f42e514b493a05f798936c6a04eb185dd51997"
+    },
+    {
+      "id": "rus_restaurant_A_s42",
+      "dataset": "rus_restaurant",
+      "arm": "A",
+      "seed": "42",
+      "best_epoch": "30",
+      "best_dev_cf1": "0.3697330581199082",
+      "global_step": "4650",
+      "train_wall_seconds": "2535.2377391259943",
+      "prediction_wall_seconds": "7.788262152986135",
+      "checkpoint": "checkpoints/icsai_phase1/rus_restaurant_A_s42/checkpoint_best.pt",
+      "checkpoint_sha256": "0c2cda1338777f28637df896ed6c050c45ed411d1be3cba02911eb08ba8e59af",
+      "checkpoint_bytes": 4520865405,
+      "config_sha256": "77d835598f3b50b0d386445e9518d5b4e0cffcdf4898113194c4c67bdc9ed83b"
+    },
+    {
+      "id": "ukr_restaurant_A_s42",
+      "dataset": "ukr_restaurant",
+      "arm": "A",
+      "seed": "42",
+      "best_epoch": "24",
+      "best_dev_cf1": "0.35574719268097665",
+      "global_step": "4650",
+      "train_wall_seconds": "2445.3730556689843",
+      "prediction_wall_seconds": "7.7469160970067605",
+      "checkpoint": "checkpoints/icsai_phase1/ukr_restaurant_A_s42/checkpoint_best.pt",
+      "checkpoint_sha256": "5165214d6dff0b2ed6b15446654d15c1de52d1449966b9d05ef3506312e69460",
+      "checkpoint_bytes": 4520865405,
+      "config_sha256": "b0d330c21f9e941d8680499f40b2e1353ff8025c80575759efe392b72005b3e5"
+    },
+    {
+      "id": "zho_laptop_A_s42",
+      "dataset": "zho_laptop",
+      "arm": "A",
+      "seed": "42",
+      "best_epoch": "19",
+      "best_dev_cf1": "0.3433869904697921",
+      "global_step": "13110",
+      "train_wall_seconds": "4463.677206558001",
+      "prediction_wall_seconds": "8.889330962992972",
+      "checkpoint": "checkpoints/icsai_phase1/zho_laptop_A_s42/checkpoint_best.pt",
+      "checkpoint_sha256": "6f0e700f790787870fc0bdd2a0b1e945868756cad6d3e234a4183b1e60c9c308",
+      "checkpoint_bytes": 4521100655,
+      "config_sha256": "9d0b4ae56f96506bd2fe5a1d1c58a4a8970f321548496c0e19d65b5547415462"
+    },
+    {
+      "id": "eng_laptop_A_s123",
+      "dataset": "eng_laptop",
+      "arm": "A",
+      "seed": "123",
+      "best_epoch": "27",
+      "best_dev_cf1": "0.26420153693175324",
+      "global_step": "15300",
+      "train_wall_seconds": "4602.794195988012",
+      "prediction_wall_seconds": "8.263304383988725",
+      "checkpoint": "checkpoints/icsai_phase1/eng_laptop_A_s123/checkpoint_best.pt",
+      "checkpoint_sha256": "fd86e0b5a13805c4ce1717b8723e21e0d1db13e544dbe0bfb2ab745ad76f6bf8",
+      "checkpoint_bytes": 4521125295,
+      "config_sha256": "33f08b441022bcc3764782b4961f957bb254c2a6dba79b0707f7447d0b498381"
+    },
+    {
+      "id": "jpn_hotel_A_s123",
+      "dataset": "jpn_hotel",
+      "arm": "A",
+      "seed": "123",
+      "best_epoch": "30",
+      "best_dev_cf1": "0.27281050744407315",
+      "global_step": "6000",
+      "train_wall_seconds": "2939.776512551005",
+      "prediction_wall_seconds": "8.323831771005644",
+      "checkpoint": "checkpoints/icsai_phase1/jpn_hotel_A_s123/checkpoint_best.pt",
+      "checkpoint_sha256": "f9aedd4175b5a5a871400136e1ee2bb0e5901cddf4bceacefb9e710057a728a4",
+      "checkpoint_bytes": 4520915823,
+      "config_sha256": "424ffa1770a370016086b51113e1d52133e162def0147ad4aab77aaa3942e1ce"
+    },
+    {
+      "id": "rus_restaurant_A_s123",
+      "dataset": "rus_restaurant",
+      "arm": "A",
+      "seed": "123",
+      "best_epoch": "28",
+      "best_dev_cf1": "0.41939717602776955",
+      "global_step": "4650",
+      "train_wall_seconds": "2840.3410514100106",
+      "prediction_wall_seconds": "7.77754944600747",
+      "checkpoint": "checkpoints/icsai_phase1/rus_restaurant_A_s123/checkpoint_best.pt",
+      "checkpoint_sha256": "69ab90dfb09541b6e86b3d44673e92e30e1c006efaf31ae511a9df30f7e093e0",
+      "checkpoint_bytes": 4520866607,
+      "config_sha256": "088f716b5a3db4f8391257734a7206faf54c211ee3aa694612a9bb6f49c9222c"
+    },
+    {
+      "id": "ukr_restaurant_A_s123",
+      "dataset": "ukr_restaurant",
+      "arm": "A",
+      "seed": "123",
+      "best_epoch": "13",
+      "best_dev_cf1": "0.3685891912864254",
+      "global_step": "4650",
+      "train_wall_seconds": "2804.3851216360054",
+      "prediction_wall_seconds": "7.739848400990013",
+      "checkpoint": "checkpoints/icsai_phase1/ukr_restaurant_A_s123/checkpoint_best.pt",
+      "checkpoint_sha256": "8fd23cdc833719ffb2ee83777bb53503054ac4327e0cc0c87fc0657b2367217c",
+      "checkpoint_bytes": 4520866607,
+      "config_sha256": "0ee1a1fe91d9c47c1070805c15c9c3b834c0672112b156767770bafc8281992d"
+    },
+    {
+      "id": "zho_laptop_A_s123",
+      "dataset": "zho_laptop",
+      "arm": "A",
+      "seed": "123",
+      "best_epoch": "29",
+      "best_dev_cf1": "0.3450222696858729",
+      "global_step": "13110",
+      "train_wall_seconds": "4280.089136546012",
+      "prediction_wall_seconds": "8.878826556989225",
+      "checkpoint": "checkpoints/icsai_phase1/zho_laptop_A_s123/checkpoint_best.pt",
+      "checkpoint_sha256": "53e66f8746c24fcce4778acde5ff6e46c5cdfff4a8f2a519901034d7fc48cdb1",
+      "checkpoint_bytes": 4521100719,
+      "config_sha256": "3f547d5cafec8cb169425125e260c49b25b0b7f2cc05f8b93c01c0a1c7370e25"
+    },
+    {
+      "id": "eng_laptop_A_s456",
+      "dataset": "eng_laptop",
+      "arm": "A",
+      "seed": "456",
+      "best_epoch": "16",
+      "best_dev_cf1": "0.2735521573060356",
+      "global_step": "15300",
+      "train_wall_seconds": "4335.770534963987",
+      "prediction_wall_seconds": "8.31008477899013",
+      "checkpoint": "checkpoints/icsai_phase1/eng_laptop_A_s456/checkpoint_best.pt",
+      "checkpoint_sha256": "aa9f53f4a1fbec2cb29033a4f09713ea0ff49b3c87762248c9e8fdb96c9f3237",
+      "checkpoint_bytes": 4521125231,
+      "config_sha256": "51b07efa800b56b29a8512b48a48b3a100e5c0e7d6c609dff7d07ff4d813d472"
+    },
+    {
+      "id": "jpn_hotel_A_s456",
+      "dataset": "jpn_hotel",
+      "arm": "A",
+      "seed": "456",
+      "best_epoch": "30",
+      "best_dev_cf1": "0.2884025097829813",
+      "global_step": "6000",
+      "train_wall_seconds": "2460.8355870560044",
+      "prediction_wall_seconds": "8.355457983008819",
+      "checkpoint": "checkpoints/icsai_phase1/jpn_hotel_A_s456/checkpoint_best.pt",
+      "checkpoint_sha256": "ca8479f9584fc3c205da8d30cb95d9e84d60017b48f9e553e789f1a39709da6c",
+      "checkpoint_bytes": 4520915759,
+      "config_sha256": "8ea03f29fb91f509cb62e8c790711896443328d8fc0525e7503aa9d42638ff2c"
+    },
+    {
+      "id": "rus_restaurant_A_s456",
+      "dataset": "rus_restaurant",
+      "arm": "A",
+      "seed": "456",
+      "best_epoch": "29",
+      "best_dev_cf1": "0.3951759428567325",
+      "global_step": "4650",
+      "train_wall_seconds": "2258.5339628110232",
+      "prediction_wall_seconds": "7.665931864990853",
+      "checkpoint": "checkpoints/icsai_phase1/rus_restaurant_A_s456/checkpoint_best.pt",
+      "checkpoint_sha256": "df85f7ebae4b376a9404a5367e2cee6bfe58ce4212ca086c620cb41a36294363",
+      "checkpoint_bytes": 4520866543,
+      "config_sha256": "1754a861699d5653d27adad260885e8c96da4fb42283b44249f9beba006b5f9f"
+    },
+    {
+      "id": "ukr_restaurant_A_s456",
+      "dataset": "ukr_restaurant",
+      "arm": "A",
+      "seed": "456",
+      "best_epoch": "30",
+      "best_dev_cf1": "0.4026651918997336",
+      "global_step": "4650",
+      "train_wall_seconds": "2269.9678751489846",
+      "prediction_wall_seconds": "7.796568944002502",
+      "checkpoint": "checkpoints/icsai_phase1/ukr_restaurant_A_s456/checkpoint_best.pt",
+      "checkpoint_sha256": "b915bcf5ea1db11d1d755745db37204b0109d5ef67c2a2cf118107f2fb240e61",
+      "checkpoint_bytes": 4520866543,
+      "config_sha256": "ac54e4ebb6e6595df6f1fbc73c0d1427cb6aa6ba66fa52006917cb933dedef1b"
+    },
+    {
+      "id": "zho_laptop_A_s456",
+      "dataset": "zho_laptop",
+      "arm": "A",
+      "seed": "456",
+      "best_epoch": "27",
+      "best_dev_cf1": "0.32911340895395025",
+      "global_step": "13110",
+      "train_wall_seconds": "4240.2583446479985",
+      "prediction_wall_seconds": "8.90877456200542",
+      "checkpoint": "checkpoints/icsai_phase1/zho_laptop_A_s456/checkpoint_best.pt",
+      "checkpoint_sha256": "39dac5843e1a6fdd10fc08944091e27b69b90f875f6e599570cf1555a27a37bc",
+      "checkpoint_bytes": 4521100655,
+      "config_sha256": "553e211dc90986d36eb77ee0e00458c46a979cc93b6dafee0ebcfe83ae5705a5"
+    }
+  ],
+  "test_inputs": [
+    {
+      "dataset": "eng_laptop",
+      "path": "data/subtask_3/eng/eng_laptop_test_task3.jsonl",
+      "sha256": "76dad16c5aba037dbeb8f839f73eb0c7f84a15ea621dbe959ee58a1189f34688",
+      "rows": 1000
+    },
+    {
+      "dataset": "jpn_hotel",
+      "path": "data/subtask_3/jpn/jpn_hotel_test_task3.jsonl",
+      "sha256": "ff991f6b36c29d5731146725bb1c0f36eba19111a47ba5d5d47847c677538cb6",
+      "rows": 800
+    },
+    {
+      "dataset": "rus_restaurant",
+      "path": "data/subtask_3/rus/rus_restaurant_test_task3.jsonl",
+      "sha256": "ab7832c6d7ae372bb4b0e8f25412dfa7500e3679373420bb4fdeb60038cdf91e",
+      "rows": 630
+    },
+    {
+      "dataset": "ukr_restaurant",
+      "path": "data/subtask_3/ukr/ukr_restaurant_test_task3.jsonl",
+      "sha256": "b52c53a7ca8d5a4bbf3855a67ff38fb0642fa920553bd65601d5abd171c539c0",
+      "rows": 630
+    },
+    {
+      "dataset": "zho_laptop",
+      "path": "data/subtask_3/zho/zho_laptop_test_task3.jsonl",
+      "sha256": "413f447616b870b6af21d57d813daccf99d21604125dc327ee0c8cd36e1b4d37",
+      "rows": 1000
+    }
+  ],
+  "inference": {
+    "span_topk_threshold": 0.0,
+    "pair_threshold": 0.3,
+    "dual_layer": false,
+    "single_model": "Primary architecture analysis; no model averaging",
+    "three_seed_ensemble": {
+      "members": [
+        42,
+        123,
+        456
+      ],
+      "vote_threshold": 2
+    },
+    "new_rule": "Use existing exact-string categorical triple voting and VA arithmetic mean. Check one vote per seed per triple before use; duplicate violation is an implementation gate, never silently count as multiple seeds. No test tuning."
+  },
+  "test_exposure": {
+    "already_exposed": true,
+    "previous_lock": "docs/audits/tallip_kd/official_test/protocol_lock.json",
+    "existing_results": "docs/audits/tallip_kd/official_test/official_test_metrics.json",
+    "new_experiments_label": "Post-competition, post-test-exposure fixed-protocol supplementary evaluation; not a new blind/hidden test.",
+    "selection": "Train/dev only; no test-dependent architecture, threshold, seed, checkpoint, dataset or reporting selection."
+  },
+  "statistics": "Each seed, mean and sample SD; fixed three-seed vote-2 ensembles secondary. Equal-domain eight-domain macro descriptive only. No new B/C tests or significance claims.",
+  "source_sha256": {
+    "scripts/icsai/extension_test.py": "29f2df04ccc19902da622cd6df4fb85a61fdab3c1d009f829b2ef1f9f3216779",
+    "scripts/icsai/core_test.py": "bd5cc748e3b9ab69fc8185df3c6ca07e54a21fe494247f7280104a83b65a262a",
+    "scripts/kd/tallip_common.py": "15ac280e00b5aa0be05ab27a36797f3ecb9910260ebcbc46a9d008fdfbe0dc3d",
+    "src/models/icsai_control.py": "93518997591e070c54e21ba1eb439d42bc9c1be862fa486995d0ff016e1735ca",
+    "scripts/icsai/run_control.py": "6ee303a55e30a2499e6f20be493962228f0a85fa96ee9c0dd17eb0b523637ecc",
+    "docs/audits/icsai_extension_test/dev_statistics.json": "a252871d6a33c16f6da8388f2f348b5330ea5909bcf79af177dae2bdec7ec284"
+  },
+  "evaluator_sha256": "75eee32e50c5ebbd0000ed810b818954abedb9899f56987227c813667e3f9dbe"
+}

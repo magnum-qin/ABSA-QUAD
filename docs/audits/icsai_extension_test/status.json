@@ -1,0 +1,10 @@
+{
+  "stage": "complete",
+  "pid": 2381009,
+  "updated_at": "2026-09-10T09:06:53.204409+00:00",
+  "single_models": 15,
+  "ensembles": 5,
+  "dev_crosschecks": 15,
+  "test_crosschecks": 20,
+  "eight_domain_single_models": 24
+}

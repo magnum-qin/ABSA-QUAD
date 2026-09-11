@@ -1,0 +1,18 @@
+{
+  "plan_day": "2026-09-12",
+  "status": "complete",
+  "completed_at": "2026-09-10T14:35:18.583632+00:00",
+  "pages": 6,
+  "tables": 7,
+  "figures": 1,
+  "references": 11,
+  "prediction_hash_checks": 56,
+  "cases": 3,
+  "empty_strata": 1,
+  "overfull_boxes": 0,
+  "undefined_refs": 0,
+  "tex_sha256": "360145945fe640583d9dce81e0f9d55252ee813b3517f87f334cc5b23d865984",
+  "pdf_sha256": "f5b8d4e6ee897fd2852ab8dc7af111cdee28bd399df799d3cfdd003cde2622f4",
+  "source_zip_sha256": "dde503843bc74826494b1cf5d72459e98d078863493f77d672e7356abe0c745b",
+  "assessment": "Second manuscript complete for supervisor review; no supervisor feedback or submission claimed."
+}

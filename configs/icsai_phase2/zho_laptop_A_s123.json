@@ -1,0 +1,106 @@
+{
+  "icsai": {
+    "run_id": "zho_laptop_A_s123",
+    "arm": "A",
+    "dataset": "zho_laptop",
+    "design_sha256": "8fba66acbc7e17d0b43c7fd81c343440f111c720103df2d3af1b70df77d3922e",
+    "encoder_revision": "a0484667b22365f84929a935b5e50a51f71f159d",
+    "train_sha256": "cb42521ee379ecfdbad87b2d2fd32eb4d5dc4add4b0693965325ec29e58009ca",
+    "dev_sha256": "2251f376139777906ecc509b5709988abdf56bee0f15af52781cfdbb65ca6cdd",
+    "prediction_dir": "predictions/icsai_phase1/zho_laptop_A_s123"
+  },
+  "model": {
+    "encoder_name": "/home/g24tka12/.cache/huggingface/hub/models--microsoft--mdeberta-v3-base/snapshots/a0484667b22365f84929a935b5e50a51f71f159d",
+    "hidden_size": 768,
+    "num_entity_labels": 23,
+    "num_attribute_labels": 9,
+    "va_hidden_size": 256,
+    "dropout": 0.1,
+    "va_min": 1.0,
+    "va_max": 9.0,
+    "use_crf": false,
+    "use_uml": false,
+    "category_embed_dim": 0,
+    "rethink": {
+      "enabled": false,
+      "num_iterations": 2,
+      "label_embedding_dim": 64
+    }
+  },
+  "data": {
+    "train_file": "data/icsai_phase1/gold_clean/zho_laptop.jsonl",
+    "dev_file": "data/subtask_3/zho/zho_laptop_dev_task3.jsonl",
+    "max_seq_length": 256,
+    "num_workers": 0,
+    "entity_labels": [
+      "BATTERY",
+      "COMPANY",
+      "CPU",
+      "DISPLAY",
+      "FANS_COOLING",
+      "GRAPHICS",
+      "HARDWARE",
+      "HARD_DISK",
+      "KEYBOARD",
+      "LAPTOP",
+      "MEMORY",
+      "MOTHERBOARD",
+      "MOUSE",
+      "MULTIMEDIA_DEVICES",
+      "NULL",
+      "OPTICAL_DRIVES",
+      "OS",
+      "PORTS",
+      "POWER_SUPPLY",
+      "SHIPPING",
+      "SOFTWARE",
+      "SUPPORT",
+      "WARRANTY"
+    ],
+    "attribute_labels": [
+      "CONNECTIVITY",
+      "DESIGN_FEATURES",
+      "GENERAL",
+      "NULL",
+      "OPERATION_PERFORMANCE",
+      "PORTABILITY",
+      "PRICE",
+      "QUALITY",
+      "USABILITY"
+    ]
+  },
+  "training": {
+    "batch_size": 8,
+    "gradient_accumulation_steps": 1,
+    "num_epochs": 30,
+    "patience": 31,
+    "encoder_lr": 1.5e-05,
+    "head_lr": 7.5e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "max_grad_norm": 1.0,
+    "fgm": {
+      "enabled": true,
+      "epsilon": 0.1,
+      "warmup_guard": "same existing trainer rule for all arms"
+    },
+    "ema": {
+      "enabled": true,
+      "decay": 0.999
+    },
+    "loss_weights": {
+      "span": 2.0,
+      "pair": 1.0,
+      "entity": 1.0,
+      "attribute": 1.0,
+      "va": 1.0,
+      "va_valence": 1.0,
+      "va_arousal": 2.0,
+      "consistency": 0.5
+    },
+    "save_top_k": 1,
+    "save_dir": "checkpoints/icsai_phase1/zho_laptop_A_s123"
+  },
+  "seed": 123,
+  "device": "cuda"
+}

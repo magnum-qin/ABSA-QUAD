@@ -1,0 +1,14 @@
+{
+  "pages": 6,
+  "tables": 7,
+  "prediction_hash_checks": 56,
+  "undefined_citations": [],
+  "overfull_boxes": 0,
+  "original_iconip_sha256": "00e0286add19ac58bd91bb4a0809a45971b4fff8e20cc1b05d10c54a18b6e87d",
+  "tex_sha256": "360145945fe640583d9dce81e0f9d55252ee813b3517f87f334cc5b23d865984",
+  "pdf_sha256": "f5b8d4e6ee897fd2852ab8dc7af111cdee28bd399df799d3cfdd003cde2622f4",
+  "scope": "Second manuscript complete for supervisor review; no supervisor feedback or submission claimed.",
+  "latest_review": "review_0912.json",
+  "figures": 1,
+  "references": 11
+}
