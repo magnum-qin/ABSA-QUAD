@@ -7,7 +7,7 @@
 | 项目 | 入口 |
 |---|---|
 | 八项修改及验收位置 | [ICSAI_REVISION_V3.md](ICSAI_REVISION_V3.md) |
-| 原系统来源与版本 | [paper_iconip_current.tex](paper_iconip_current.tex)，按早期系统稿件引用；不推断最终出版状态 |
+| 原系统来源与版本 | [paper_iconip_current.tex](paper_iconip_current.tex)，仅保留历史源文件；按 2026-09-15 导师意见，不再作为论文参考文献引用 |
 | 实验矩阵与数据身份 | [experiment_matrix.json](audits/icsai_phase1/experiment_matrix.json)、[gold_input_manifest.json](audits/icsai_phase1/gold_input_manifest.json) |
 | 实现与预检锁 | [implementation.lock.json](audits/icsai_phase2/implementation.lock.json)、[preflight.json](audits/icsai_phase2/preflight.json) |
 | 核心模型、预测与评分 | [protocol_lock.json](audits/icsai_core_test/protocol_lock.json)、[predictions.lock.json](audits/icsai_core_test/predictions.lock.json)、[test_statistics.json](audits/icsai_core_test/test_statistics.json) |

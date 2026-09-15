@@ -20,7 +20,7 @@
       "all_stage_traces_recomputed": true,
       "six_holm_values_recomputed": true,
       "seed_differences_recomputed": 18,
-      "original_citations_plus_three": 14,
+      "citation_count": 13,
       "implicit_partition_records": 16
     },
     "local_assets": "not_requested"
@@ -260,24 +260,24 @@
       "schema": "pdf_read_preflight/1",
       "verdict": "PASS",
       "file": "docs/paper_icsai_v3.pdf",
-      "sha256": "66ef3040db42d46f338f82f1dbbde0549267c7933303769d9f2dc47fd695c073",
+      "sha256": "dedd011a85f6d5917216ca0dc57b00ded04c3e63be2632dc609297cfecc3388e",
       "declared_page_count": 7,
       "enumerated_page_count": 7,
       "reader_page_count": 7,
       "warnings": [],
-      "generated_at": "2026-09-11T17:35:25.291182+00:00",
+      "generated_at": "2026-09-15T07:32:44.817988+00:00",
       "tool": "pdf_read_preflight/1.0.0"
     },
     {
       "schema": "pdf_read_preflight/1",
       "verdict": "PASS",
       "file": "docs/paper_icsai_v3_supplement.pdf",
-      "sha256": "376997867bee98e1d2bb14dd1b4ac359ee8fb93251408621d187ba82aa254063",
+      "sha256": "473b08ecb1719e6c029d628a03e0849808947bc5c94ff47c4405dac79e60ed4e",
       "declared_page_count": 4,
       "enumerated_page_count": 4,
       "reader_page_count": 4,
       "warnings": [],
-      "generated_at": "2026-09-11T17:35:25.495727+00:00",
+      "generated_at": "2026-09-15T07:32:45.004010+00:00",
       "tool": "pdf_read_preflight/1.0.0"
     }
   ],
@@ -292,6 +292,18 @@
       "No visible clipping or overlapping tables",
       "References fit without orphan final page"
     ],
-    "venue_format_certification": false
+    "venue_format_certification": false,
+    "reviewed_on": "2026-09-15"
+  },
+  "updated_on": "2026-09-15",
+  "numeric_local_note": "Local-asset scoring validation retained from 2026-09-12; its bibliography count is historical. Current citation checks are in numeric_records.",
+  "supervisor_revision": {
+    "unpublished_iconip_citation_removed": true,
+    "numbered_contributions": [
+      1,
+      2,
+      3
+    ],
+    "experiment_results_unchanged": true
   }
 }

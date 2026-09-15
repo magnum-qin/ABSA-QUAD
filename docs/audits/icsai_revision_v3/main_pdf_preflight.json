@@ -2,11 +2,11 @@
   "schema": "pdf_read_preflight/1",
   "verdict": "PASS",
   "file": "docs/paper_icsai_v3.pdf",
-  "sha256": "66ef3040db42d46f338f82f1dbbde0549267c7933303769d9f2dc47fd695c073",
+  "sha256": "dedd011a85f6d5917216ca0dc57b00ded04c3e63be2632dc609297cfecc3388e",
   "declared_page_count": 7,
   "enumerated_page_count": 7,
   "reader_page_count": 7,
   "warnings": [],
-  "generated_at": "2026-09-11T17:35:25.291182+00:00",
+  "generated_at": "2026-09-15T07:32:44.817988+00:00",
   "tool": "pdf_read_preflight/1.0.0"
 }

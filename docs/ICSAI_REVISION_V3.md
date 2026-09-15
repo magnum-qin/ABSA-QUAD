@@ -5,7 +5,7 @@
 | # | 修改 | 最终位置与证据 |
 |---|---|---|
 | 1 | 摘要不再把 B–A 差异直接归因于反馈；加入 B–C 三个差值及校正结论 | 正文 Abstract；与原 core test 六项 contrasts 对应。B–C 同时影响 forward content 和 gradient 的限制也进入摘要。 |
-| 2 | 说明原系统出处、版本、旧主张与新实验区别 | Introduction 第二个系统段落、Qin 等本地稿件引用；补充 S1；原始稿件路径、完整 commit 与 SHA-256 在 artifact manifest。未虚构最终出版信息。 |
+| 2 | 说明原系统出处、版本、旧主张与新实验区别 | Introduction 的实现说明、补充 S1 的代码和实验锁；2026-09-15 按 Suzuki 老师意见删除未发表 ICONIP 稿件的正文引用及参考文献条目，历史源文件仅保留作内部归档。 |
 | 3 | 明确 B/C 的直接 BIO 监督只在最终输出，初稿 loss 为 detached margin 参照 | Method / Assignment and Training Objective 末段；补充 S2；对照原模型 `_compute_loss` 和 forward 输出覆盖逻辑。 |
 | 4 | 说明 C 切断 embedding、probability、初稿头反馈任务梯度及融合输入列数据梯度 | Method / BIO Feedback and Its Control；Results 的 B–C 表述；补充 S2 解释 margin gate、weight decay/EMA 边界。 |
 | 5 | 完成全部三域、三 seed、A/B/C 共 27 检查点的开发集阶段诊断 | Results / Intermediate BIO Diagnostics、主表 V；补充 S3 和阶段明细表；`stage_summary.json` 与 27 组 tag traces。全部最终输出精确复现原开发集预测，无训练或重新选模。 |
@@ -29,3 +29,7 @@ NULL 支持的原审阅意见不够完整。数据预处理实际上给 NULL asp
 - 源码包的资产清单与隔离重建结果见 `docs/audits/icsai_revision_v3/archive_validation.json`；不把包中未提供的权重/数据/原 quad 预测称为完整备份。
 
 正式投稿前仍由作者确认会场格式与作者信息。本轮仅完成这八项修改，没有额外训练、发布、投稿或代替作者作出版声明。
+
+## 2026-09-15 导师意见修订
+
+删除未发表 ICONIP 稿件的正式引用，并移除补充材料中以该稿件作为论文依据的表述；参考文献现为 13 条。贡献段采用 “Our main contributions are as follows:” 及 (1)、(2)、(3) 编号。实验数值不变。

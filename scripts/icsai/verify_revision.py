@@ -95,7 +95,8 @@ def record_checks():
     main = (ROOT / 'docs/paper_icsai_v3.tex').read_text()
     cited = {key for group in re.findall(r'\\cite\{([^}]+)\}', main) for key in group.split(',')}
     bibliography = set(re.findall(r'\\bibitem\{([^}]+)\}', main))
-    assert cited == bibliography and len(cited) == 14
+    assert cited == bibliography and len(cited) == 13
+    assert 'qin2026leader' not in cited
     for name in ('paper_icsai_v3', 'paper_icsai_v3_supplement'):
         tex = (ROOT / 'docs' / (name + '.tex')).read_text()
         for path in re.findall(r'\\input\{([^}]+)\}', tex):
@@ -103,7 +104,7 @@ def record_checks():
     return dict(protected_originals=len(plan['protected_original_sha256']),
                 stage_runs=27, stage_summary_rows=21, all_stage_traces_recomputed=True,
                 six_holm_values_recomputed=True, seed_differences_recomputed=18,
-                original_citations_plus_three=14, implicit_partition_records=16)
+                citation_count=13, implicit_partition_records=16)
 
 
 def local_checks():

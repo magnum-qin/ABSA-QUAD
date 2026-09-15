@@ -1,9 +1,10 @@
 {
   "status": "passed",
+  "updated_on": "2026-09-15",
   "archive": "docs/paper_icsai_v3_source.zip",
-  "sha256": "93fc9d591031d9890391d33598af133b83eb9b3d9681a047d951d10375f48f78",
+  "sha256": "b7f4becf6cfb1a278444636f00e17011395bf2e7b21ed38386a79efa6a1359d5",
   "files_verified": 689,
-  "isolated_directory": "/tmp/icsai-v3-package-4hdumi_2",
+  "isolated_directory": "/tmp/icsai-sept15-cbp92s2x",
   "commands": [
     {
       "command": [
@@ -11,8 +12,7 @@
         "scripts/icsai/build_revision_tables.py"
       ],
       "exit_code": 0,
-      "stdout": "Generated four v3 tables with source and trace checks\n",
-      "stderr": ""
+      "stdout": "Generated four v3 tables with source and trace checks\n"
     },
     {
       "command": [
@@ -20,23 +20,7 @@
         "scripts/icsai/verify_revision.py"
       ],
       "exit_code": 0,
-      "stdout": "{\n  \"record_checks\": {\n    \"protected_originals\": 132,\n    \"stage_runs\": 27,\n    \"stage_summary_rows\": 21,\n    \"all_stage_traces_recomputed\": true,\n    \"six_holm_values_recomputed\": true,\n    \"seed_differences_recomputed\": 18,\n    \"original_citations_plus_three\": 14,\n    \"implicit_partition_records\": 16\n  },\n  \"local_assets\": \"not_requested\"\n}\n",
-      "stderr": ""
-    },
-    {
-      "command": [
-        "python3",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "tests",
-        "-p",
-        "test_icsai_revision_diagnostics.py"
-      ],
-      "exit_code": 0,
-      "stdout": "",
-      "stderr": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.000s\n\nOK\n"
+      "stdout": "{\n  \"record_checks\": {\n    \"protected_originals\": 132,\n    \"stage_runs\": 27,\n    \"stage_summary_rows\": 21,\n    \"all_stage_traces_recomputed\": true,\n    \"six_holm_values_recomputed\": true,\n    \"seed_differences_recomputed\": 18,\n    \"citation_count\": 13,\n    \"implicit_partition_records\": 16\n  },\n  \"local_assets\": \"not_requested\"\n}\n"
     }
   ],
   "four_regenerated_tables_byte_identical": true,
@@ -44,17 +28,14 @@
     {
       "file": "paper_icsai_v3.pdf",
       "pages": 7,
-      "compile_exit_code": 0,
       "extracted_text_matches_delivered_pdf": true
     },
     {
       "file": "paper_icsai_v3_supplement.pdf",
       "pages": 4,
-      "compile_exit_code": 0,
       "extracted_text_matches_delivered_pdf": true
     }
   ],
   "workspace_members_match_archive": true,
-  "eight_requested_changes_complete": true,
   "additional_training": false
 }

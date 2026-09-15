@@ -20,7 +20,6 @@ The companion source archive preserves repository-relative paths. Start with \pa
 \toprule
 Evidence & Repository-relative entry point \\
 \midrule
-Earlier system source & \path{docs/paper_iconip_current.tex}; earlier system manuscript, rather than a newly asserted proceedings publication. Its metadata and source hash are retained. \\
 Experiment matrix & \path{docs/audits/icsai_phase1/experiment_matrix.json} \\
 Input identities & \path{docs/audits/icsai_phase1/gold_input_manifest.json} \\
 Implementation lock & \path{docs/audits/icsai_phase2/implementation.lock.json} and \path{preflight.json} in that directory \\
@@ -35,7 +34,7 @@ Literature checks & \path{docs/audits/icsai_revision_v3/literature_verification.
 \bottomrule
 \end{longtable}
 
-The earlier manuscript describes heterogeneous encoders, augmentation, and five-seed development ensembles, including broader category/affect feedback. The current fixed experiment checks the active implementation, whose pair-fusion output is discarded. It adds the A/B/C intervention, shared initialization/data-order controls, gold-only training, corrected fixed-seed test comparisons, uniform eight-dataset evaluation, and inference-cost measurements. Earlier development rankings are not pooled with these results. The source archive includes the earlier manuscript for provenance; its historical claims are not endorsed as new controlled findings.
+The fixed experiment checks the active implementation, whose pair-fusion output is discarded. It uses the A/B/C intervention, shared initialization/data-order controls, gold-only training, corrected fixed-seed test comparisons, uniform eight-dataset evaluation, and inference-cost measurements. Historical development rankings are not pooled with these results. Implementation provenance is established by the archived code, configuration, and experiment locks.
 
 The original official scorer is identified by SHA-256
 \path{75eee32e50c5ebbd0000ed810b818954abedb9899f56987227c813667e3f9dbe}
@@ -72,7 +71,7 @@ Per-seed cF1, categorical F1, V/A errors, and counts are retained in \path{impli
 These entries are derived from the existing core test record, not new model runs. The three seeds are 42, 123, and 456 in the stated order. Mean differences use unrounded scores; small apparent discrepancies from subtracting four-decimal means arise from rounding. Holm correction still covers the original six contrasts, and the sentence bootstrap remains conditional on these trained seeds. No equivalence or full-training-process uncertainty claim is made.
 
 \section{Literature Verification and Reproduction Limits}
-IMN was checked through arXiv MCP at \url{https://arxiv.org/abs/1906.06906v1}, including Sections 3.3--3.4 (message passing and learning); formal metadata were verified at \url{https://aclanthology.org/P19-1048/}. IMKTN was checked at \url{https://arxiv.org/abs/2004.01935v3}, including Section 3's routing and document-knowledge transfer; formal metadata were verified at \url{https://aclanthology.org/2021.findings-emnlp.152/}. The latter is a 2021 conference publication despite the initial 2020 arXiv identifier. These sources establish related mechanisms, not dimensional cF1 baselines. The earlier LEADER source is explicitly treated as a local manuscript with version provenance, without inventing a DOI or final proceedings status.
+IMN was checked through arXiv MCP at \url{https://arxiv.org/abs/1906.06906v1}, including Sections 3.3--3.4 (message passing and learning); formal metadata were verified at \url{https://aclanthology.org/P19-1048/}. IMKTN was checked at \url{https://arxiv.org/abs/2004.01935v3}, including Section 3's routing and document-knowledge transfer; formal metadata were verified at \url{https://aclanthology.org/2021.findings-emnlp.152/}. The latter is a 2021 conference publication despite the initial 2020 arXiv identifier. These sources establish related mechanisms, not dimensional cF1 baselines.
 
 The source archive includes manuscripts, tables, scripts, configurations, stage-tag traces, aggregate results, and provenance records. Raw datasets, original quad-prediction files, and full model weights are not bundled. Table rebuilding from included records requires only Python's standard library. Full prediction/scoring replay requires the exact external assets named by the manifests and the original compatible Python environment. The reproduction guide distinguishes these modes and gives commands; absence of external assets is not described as a successful full replay. No online publication or submission is implied by this local package.
 \end{document}

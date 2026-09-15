@@ -6,7 +6,7 @@
     "all_stage_traces_recomputed": true,
     "six_holm_values_recomputed": true,
     "seed_differences_recomputed": 18,
-    "original_citations_plus_three": 14,
+    "citation_count": 13,
     "implicit_partition_records": 16
   },
   "local_assets": "not_requested"
