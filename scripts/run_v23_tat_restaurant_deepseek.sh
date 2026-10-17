@@ -2,7 +2,7 @@
 # tat KD full pipeline: silver-label native pool -> distill data -> 5-seed -> ensemble eval
 set -e
 cd /home/g24tka12/ABSA-QUAD
-KEY="REDACTED_DEEPSEEK_KEY"
+KEY="${DEEPSEEK_API_KEY:?export DEEPSEEK_API_KEY first}"
 
 # 1) append test transductive text to pool
 conda run -n absa --no-capture-output python -c "
